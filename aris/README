@@ -1,0 +1,34 @@
+This is the README for the GNU Aris distribution.
+Aris is a logical proof program, and supports propositional and predicate logic, Boolean algebra, and arithmetical logic in the form of abstract sequences (seqlog).
+
+  Copyright (C) 2012 Ian Dunn
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+See the file ./INSTALL for building and installation instructions.
+
+Distribution: ftp://ftp.gnu.org/gnu/aris/
+
+Home page: http://www.gnu.org/software/aris/
+
+Mailing list: bug-aris@gnu.org
+- please use this list for all discussion: bug reports, enhancements, etc.
+- anyone is welcome to join the list; to do so, visit
+  http://lists.gnu.org/mailman/listinfo/bug-aris
+
+Bug reports:
+ Please include enough information for the maintainers to reproduce the
+ problem.  Generally speaking, that means:
+- the contents of any input files necessary to reproduce the bug
+  and command line invocations of the program(s) involved (very important!).
+- a description of the problem and any samples of the erroneous output.
+- the version number of the program(s) involved (use --version).
+- hardware, operating system, and compiler versions (uname -a).
+- unusual options you gave to configure, if any (see config.status).
+- anything else that you think would be helpful.
+
+See AUTHORS and THANKS for contributors.
+
+GNU Aris is free software.  See the COPYING file for copying conditions.

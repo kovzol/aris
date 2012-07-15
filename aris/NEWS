@@ -1,0 +1,33 @@
+This NEWS file records important changes.
+
+  Copyright (C) 2012, Ian Dunn.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+1.8
+
+  * Added LaTeX conversion functionality.
+
+  * Stricter syntax checking.
+
+  * Parenthesis parsing fixed up.
+
+  * Fixed selection bug.
+
+  * Temporarily removed grade flag.
+
+  * Added text checking flag.
+
+1.7
+
+  * Built Windows version.
+
+  * Goal window now displays its proof name.
+
+  * The rules have been touched up, removing a lot of bugs
+
+  * Subproofs are corrected, and no longer crash when several are made.
+
+  * Isar interoperability has been improved.

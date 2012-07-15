@@ -1,0 +1,15 @@
+Additional contributers to GNU Aris.
+
+  Copyright (C) 2012, Ian Dunn.
+
+  Copying and distribution of this file, with or without modification,
+  are permitted in any medium without royalty provided the copyright
+  notice and this notice are preserved.
+
+Thanks to:
+
+     Bram van Heuveln for his knowledge of logic.
+
+     Karl Berry and RMS for pointing at s-expressions and interoperability.
+
+See also the AUTHORS and ChangeLog files.

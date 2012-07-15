@@ -1,0 +1,63 @@
+<html lang="en">
+<head>
+<title>Axioms - GNU Aris Manual</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="GNU Aris Manual">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Sequence-Logic.html#Sequence-Logic" title="Sequence Logic">
+<link rel="next" href="Induction.html#Induction" title="Induction">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for GNU Aris, the logical proof program.
+
+Copyright (C) 2012 Ian Dunn
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.3 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, with no Front-Cover Texts,
+     and with no Back-Cover Texts.  A copy of the license is included
+     in the section entitled ``GNU Free Documentation License''.
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="Axioms"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="Induction.html#Induction">Induction</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Sequence-Logic.html#Sequence-Logic">Sequence Logic</a>
+<hr>
+</div>
+
+<h3 class="section">7.1 Axioms</h3>
+
+<p>Sequence Logic, often abbreviated 'seqlog', uses the following six axioms:
+
+     <ul>
+<li>VxVy(~s(x) = z(y))
+<li>VxVy(s(x) = s(y) &rarr; x = y)
+<li>Vx(v(S,x) = f_S(x))
+<li>Vx(v(n,z(x)) = 0)
+<li>Vx(~v(n,x) = \0)
+<li>VxVy(v(n,x) = v(n,y) &rarr; x = y)
+</ul>
+
+   <p>The first axiom states that no sucessor is the zero object, or, to put it differently, that the zero object is the first object.  The second axiom states that no two different objects have the same sucessor.  Using these two axioms, a 'Universal Sequence' can be defined, in a way similar to how the Peano Axioms define the natural numbers.  The third axiom is the definition of a sequence, stating that the value under a given sequence 'S' of every object 'x' can be determined by a function.  The rule 'sq' introduces such a sequence (see <a href="sq.html#sq">sq</a>).
+
+   <p>The fourth axiom defines zero, and introduces the natural numbers.  It states that the first element in the natural numbers is zero.  The fifth axiom defines the null object, and states that the natural numbers are defined on all inputs.  The sixth axiom states that the natural numbers are one-to-one, or that if two numbers are equal, then the objects that they represent are equal.
+
+   </body></html>
+

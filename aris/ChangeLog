@@ -1,0 +1,1398 @@
+2012-07-09  Ian Dunn  <dunni@gnu.org>
+
+	* aio.c (aio_get_first_attribute): Removed check for name;
+	Returns it instead.
+	(aio_get_next_attribute): Same.
+	(aio_open): Uses modified implementation of aio_get_**_attribute.
+	Modified to allow different elements in conclusions and premises.
+	Conclusions allow for absence of elements, such as 'file' or 'depth'.
+
+2012-07-08  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (usage): Added 'lm' rule usage.
+	(parse_args): Added 't' to getopt_long arguments.
+	Prints "Correct!" and exits if '--text' is specified.
+	(main): Passes 'verbose' argument into 'proof_eval'
+
+2012-07-04  Ian Dunn  <dunni@gnu.org>
+
+	* sen-parent.c (sen_parent_rem_sentence): Returns the new focused item;
+	Fixes index bug (HAHA!!).
+
+2012-07-03  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c: Temporarily removed grade flag.
+
+2012-06-22  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (check_sides): Allows for 'nil' symbol.
+
+	* sexpr-process.c (sexpr_collect_vars_to_proof): Touched up.
+
+2012-06-21  Ian Dunn  <dunni@gnu.org>
+
+	* aris-proof.c (aris_proof_to_proof): Touched up.
+	(aris_proof_adjust_lines): Touched up.
+
+	* app.c (app_quit): Touched up.
+
+2012-06-17  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (convert_sd_latex): Added to convert sentence data to a
+	LaTeX string.
+	(convert_proof_latex): Added to convert a proof into a LaTeX source
+	document.
+	(main): Implemented LaTeX argument.
+	(parse_args): Implemented LaTeX argument
+
+2012-06-16  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (parse_args): Parses the arguments
+	(main): Moved argument parsing.
+
+2012-06-15  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (check_symbols): Added check for contradiction and tautology.
+
+2012-06-10  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (check_arg_text): Added check for syntactical error.
+
+	* sen-data.c (sen_data_evaluate): Added check for syntactical error.
+
+	* process.h: Added 'ISLEGIT' and 'ISSEP' macros.
+	Added 'ISGOOD' macro.
+
+	* process.c (check_symbols): Added to check predicates / function symbols.
+	(check_infix): Added to check infix predicates / function symbols.
+	(check_sides): Implemented ISGOOD.
+	(check_generalities): Implemented 'get_gen' to check the scope of a part.
+
+2012-06-02  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-misc.c (process_misc): Changed subproof reference error
+	message.
+
+2012-06-01  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (convert_sexpr): Added check for conversion of 'nil'.
+	(infix_to_prefix): Added check for 'nil'.
+	(infix_to_prefix_func): Added check for 'nil'.
+
+	* sexpr-process.c (sexpr_get_ids): Added check for 'nil'.
+
+	* process.h: Added id for 'nil'.
+
+2012-05-31  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (check_generalities): Fixed bug.
+
+	* sexpr-process-equiv.c (proc_dm): Uses 'sexpr_elim_quant'.
+
+	* aio.c (aio_open): Implements DEPTH_DEFAULT.
+
+	* aris-proof.c (aris_proof_create_new_prem): Implements DEPTH_DEFAULT.
+	(aris_proof_create_new_conc): Same.
+	(aris_proof_create_new_sub): Same.
+
+	* sen-data.h: Added 'DEPTH_DEFAULT'.
+
+	* sexpr-process-bool.c (proc_sn): Fixed bug.
+
+2012-05-30  Ian Dunn  <dunni@gnu.org>
+
+	* process.h: Added ids for 'elm' and '<'.
+
+	* sentence.c (get_index): Gets the BYTE index of an iterator.
+	(get_iter_at_index): Gets the iterator at a specific BYTE index.
+	(sentence_key): Implements 'get_index' and 'get_iter_at_index'.
+
+2012-05-29  Ian Dunn  <dunni@gnu.org>
+
+	* aio.c (aio_open): Checks for a subproof beginning after one ends.
+
+	* sexpr-process-equiv.c (proc_dn): Fixed bug; was checking for standard
+	negation; changed to sexpr negation.
+
+	* aris-proof.c (aris_proof_kill): Checks the selected sentences to confirm
+	that the first sentence isn't being killed.
+
+	* callbacks.c (menu_activated): Prevents user from killing first sentence.
+
+	* process.c (parse_parens): Allocates an extra byte for the null byte.
+	(reverse_parse_parens): Same.
+
+	* sentence.c (sentence_out): Clears the hi-lights from parentheses matching.
+
+2012-05-25  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (main): Added text option to check the correctness of the text.
+
+2012-05-24  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (gui_help): Added additional error message.
+
+2012-05-23  Ian Dunn  <dunni@gnu.org>
+
+	* vec.h: Removed vec_int_un.
+
+	* sentence.c: Added comments.
+
+	* sen-data.c: Added comments.
+
+	* list.c: Added comments.
+
+	* vec.c: Added comments.
+
+	* process.c: Added comments.
+
+	* sexpr-process.c: Added comments.
+
+	* sexpr-process-misc.c (proc_lm): Touched up.
+	(proc_sp): Touched up.
+
+2012-05-18  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.c (sentence_init): Same as sen_data_init.
+	(sentence_destroy): Same as sen_data_destroy.
+	(sentence_gui_init): Sets width-chars property of 'widget' for indent;
+	Fixes subproof bug.
+	Changed type from 'void' to 'int'.
+	(sentence_key): Fixed parentheses matching.
+
+	* sen-data.c (sen_data_init): Sets 'sexpr', 'text', and 'file' to NULL
+	by default.
+	(sen_data_destroy): Frees memory from 'indices' as necessary.
+
+2012-05-17  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-equiv.c (proc_sb): Checks for possibility of top connective
+	changing.
+
+	* sexpr-process-bool.c (proc_bi): Checks for possibility of top connective
+	changing.
+
+2012-05-16  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (check_text): Added memory checks.
+
+	* sexpr-process-bool.c (proc_bi): Added extra checks.
+	(proc_sn): Same.
+
+	* sexpr-process-equiv.c (proc_as): Added extra checks.
+	(proc_sb): Same.
+	(proc_ep): Generalized and added checks.
+
+	* callbacks.c (evaluate_line): Constructs list 'lines' from the entire proof.
+
+	* sen-data.c (sen_data_evaluate): Fixed bugs.
+
+2012-05-15  Ian Dunn  <dunni@gnu.org>
+
+	* aio.c, proof.c, goal.c, aris-proof.c, sentence.c: Added additional argument
+	to sen_data_init calls.
+
+	* callbacks.c (evaluate_line): Converts to input to sen_data_evaluate.
+
+	* sen-data.c (sen_data_can_select_as_ref): Added for subproof checks.
+	(sen_data_evaluate): Modified to check for subproofs.
+	(sen_data_init): Added sexpr arg.
+
+2012-05-14  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-quant.c (proc_bv): Fixed.
+	(proc_nq): Fixed.
+	(proc_pr): Fixed.
+
+	* sexpr-process-equiv.c (proc_dt): Added difference checking.
+	(recurse_co): Checks for an opening parenthesis before checking quantifiers.
+	(recurse_id): Same.
+
+	* vec.c (vec_str_sub): Modified to confirm that each object in the larger
+	vector matches at least one in the smaller vector.
+
+2012-05-12  Ian Dunn  <dunni@gnu.org>
+
+	* interop-isar.c (parse_quants): Added to process quantifiers in
+	'isar_to_aris'.
+	(isar_to_aris): Compressed quantifiers to if blocks.
+	Implemented 'parse_quants'.
+	(parse_connectives): Implements 'realloc' to modify the size of 'gen'.
+	(parse_pred_func): Parses a generic predicate or function.
+
+	* interop-isar.h (parse_connectives): Added declaration.
+
+2012-05-11  Ian Dunn  <dunni@gnu.org>
+
+	* interop-isar.c: Implemented 'CHECK_ALLOC'.
+	(parse_connectives): Finished implementation.
+	(correct_conditionals): Removed;  Replaced by 'parse_connectives'.
+
+	* callbacks.c: Implemented 'CHECK_ALLOC'.
+
+	* goal.c: Implemented 'CHECK_ALLOC'.
+
+	* sentence.c: Implemented 'CHECK_ALLOC'.
+
+	* aris-proof.c: Implemented 'CHECK_ALLOC'.
+
+	* sexpr-process*.c: Implemented 'CHECK_ALLOC'.
+
+	* process.c: Implemented 'CHECK_ALLOC'.
+
+	* process.h (CHECK_ALLOC): Checks allocation results, returns an error.
+
+2012-05-10  Ian Dunn  <dunni@gnu.org>
+
+	* interop-isar.c (parse_connectives): Checks connectives, and groups them accordingly.
+
+2012-05-09  Ian Dunn  <dunni@gnu.org>
+
+	* goal.c (goal_add_line): Implemented ls_push_obj.
+	(goal_update_title): Updates the title of a goal to match its parent.
+	(goal_init): Calls update title if the parent has a current file.
+
+	* senetence.c (sentence_init): Implemented ls_push_obj.
+	(select_reference): Same.
+	(select_sentence): Same.
+	Begins checking a subproof at the iterator AFTER the subproof.
+
+	* aio.c (aio_open): Implemented ls_push_obj.
+
+	* list.c (ls_find): Changed 'itm != NULL' to 'itm'.
+	(ls_nth): Same.
+	(ls_copy): Same.
+	(ls_clear): Same.
+	(ls_ins_obj): Changed 'ls->head == NULL' to '!ls->head'.
+	(ls_rem_obj): Same.
+	(ls_push_obj): Convenience function to add an object to the end of a list.
+
+	* sen-parent.c (sen_parent_get_window): Removed.
+	(sen_parent_rem_sentence): Implemented 'ls_find'.
+	(sen_parent_destroy): Changed 'ev_itr != NULL' to 'ev_itr'.
+	(sen_parent_set_font): Same.
+
+	* proof.c (proof_eval): Added opening comments.
+
+	* aris-proof.c (aris_proof_copy): Added opening comments.
+	(aris_proof_kill): Same.
+	(aris_proof_yank): Same.
+	(aris_proof_toggle_boolean_mode): Same.
+	(aris_proof_set_filename): Calls 'goal_update_title'.
+
+2012-05-08  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (gui_about): Added GNU information.
+	Updated description and website.
+
+	* aris.c (usage): Added GNU help line.
+	Updated bug report and website.
+	(version): Added GNU information.
+
+2012-05-06  Ian Dunn  <dunni@gnu.org>
+
+	* interop-isar.c (isar_parse_theorem): Parses a 'theorem' declaration.
+	(isar_parse_lemma): Added more implementation.
+
+2012-05-05  Ian Dunn  <dunni@gnu.org>
+
+	* interop-isar.c (parse_thy): Added handling of all key words.
+	Determines where the current block ends by looking for "\n\n".
+	(isar_parse_null): Added to check for text, comments, etc.
+	(isar_parse_case): Added more implementation.
+	(isar_parse_def): Addeed more implemenation.
+	(isar_parse_fun): Added implementation, works for general case.
+	(isar_parse_lemma): Added implementation, works for general case.
+
+	* interop-isar.h: Changed types of isar_parse_xyz functions; return position
+	of end of string.
+	Added key_function structure.
+	(parse_thy): Outputs the constructed proof in its args.
+
+2012-05-04  Ian Dunn  <dunni@gnu.org>
+
+	* interop-isar.c (isar_mod_fun): Modifies function declarations.
+	(isar_parse_syn): Parses a 'type_synonym' declaration.
+	(isar_parse_fun): Parses a 'fun' declaration.
+	(isar_parse_lemma): Parses a 'lemma' declaration.
+	(isar_parse_datatype): Parses a 'datatype' declaration.
+	(isar_parse_primrec): Parses a 'primrec' declaration.
+	(isar_parse_case): Parses a 'case' declaration.
+	(isar_parse_def): Parses a 'def' declaration.
+
+	* sentence.c (sentence_gui_init): Added tags for 'hilight' and 'negative'.
+	(sentence_key): Hi-lights matching parentheses when moving to the left or
+	right.
+
+2012-05-03  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-misc.c (proc_lm): Fixed bug, checks for already existing
+	sentences.
+	Checks for '='.
+
+	* vec.c (vec_str_cmp): Changed 'vec_nth' call to 'vec_str_nth'
+
+	* aio.c (aio_save): Adds 'depth' data element.
+	Writes proof mode.
+	(aio_open): Reads 'depth' data argument.
+	Reads proof mode.
+
+	* parse.c (parse_vars_parens): Removed.
+	(parse_par_parts): Removed.
+	(parse_parts): Removed.
+	(parse_vars): Removed.
+	Moved parse_parens and reverse_parse_parens into process.c.
+	Removed parse.c.
+
+	* process.c (collect_variables_to_proof): Removed.
+	(collect_variables): Removed.
+	(not_check): Removed.
+	(find_top_connective): Removed.
+
+	* aris-proof.c (aris_proof_collect_vars): Removed.
+	(aris_proof_init_from_proof): Initializes 'ap->selected'.
+	(aris_proof_kill): Sets proof changed status.
+	(aris_proof_yank): Same.
+
+	* sentence.c (sentence_can_select_as_ref): Self-explanatory.
+
+	* callbacks.c (menu_activated): Moved variable collection to evaluate_line.
+	(evaluate_line): Collects variables before processing.
+	Checks for the possibility of having a line as a reference to determine
+	  whether or not to collect variables from the line.
+	Converts all previous lines to sexprs if they haven't been already.
+	Fixed arbitrary bug.
+	When passed in a subproof as a reference, it correctly gets the lines.
+	(evaluate_proof): Doesn't collect variables, but clears out ap->vars.
+	Calculates the sexpr text before processing.
+
+	* sen-data.c (sen_data_evaluate): Uses 'sd->sexpr' element.
+
+	* sen-data.h (sen_data): Added 'sexpr' element.
+
+	* proof.c (proof_eval): Converts all text to sexprs before processing.
+	Fixed arbitrary bug.
+
+	* sexpr-process.c (sexpr_parse_vars): Set to check for a space before the
+	variable found.
+	(sexpr_collect_vars_to_proof): Added; replaces 'collect_variables_to_proof'.
+	Set so that only NEW variables are added.
+	Doesn't modify arbitrary state of already existing variables.
+	(sexpr_get_ids): Checks for entire string equality when determining new
+	parts.
+	Checks for '='.
+
+2012-05-02  Ian Dunn  <dunni@gnu.org>
+
+	* sen-data.c (sen_data_evaluate): Converts references to sexprs.
+
+	* proof.c (proof_eval): Added to evaluate a proof.
+
+	* aris.c (main): Moved text checking into the getopt switch statement.
+	Uses proof_eval to evaluate proofs.
+	(list_rules): Added 'sq' and 'in' to rules listed.
+
+	* process.c (get_ids): Removed.
+
+	* process.h (sen_ids enum): Changed all to 'SEN_xyz'.
+	Changed 'SEN_ID_COMMA' to 'SEN_ID_SPACE'.
+	Changed 'SEN_ID_SENEND' to 'SEN_ID_END'.
+
+	* sexpr-process.c (sexpr_get_ids): Added; replaces get_ids.
+	(sexpr_parse_vars): Added; replaces parse_vars_parens.
+	(sexpr_quant_infer): Set up so that if a space is in the variable when
+	cons != 0, returns -3.
+
+	* sexpr-process-misc.c (proc_in): Finished.
+	(proc_lm): Finished.
+
+2012-05-01  Ian Dunn  <dunni@gnu.org>
+
+	* stuff: Happy Birthday Me!
+
+2012-04-30  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-misc.c: Added; replaces process-misc.c.
+	(proc_lm): Added.
+	(proc_sp): Added and finished.
+	(proc_sq): Added and finished.
+	(proc_in): Added.
+
+	* aris.c (list_rules): Added '*' to boolean rules.
+
+	* sexpr-process-equiv.c (proc_dt): Finished quantifier mode.
+	(recurse_co): Accounts for quantifiers.
+	(recurse_id): Same.
+
+	* sexpr-process-quant.c (help_fv): Handles fv.
+	(proc_fv): Finished.
+	(proc_bv): Finished.
+	(proc_ei): Reversed conc and prem args to sexpr_quant_infer.
+	(proc_nq): Finished.
+	(proc_pr): Finished.
+
+	* sexpr-process.c (sexpr_get_quant_vars): Checks to confirm the current
+	variable is entirely the desired variable.
+	(sexpr_get_pred_args): Eliminates the parentheses on the input string first.
+
+2012-04-29  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.c (sentence_key): Added instances for 'elm' and 'nil'.
+
+	* sexpr-process-equiv.c: Replaced 'vec_add_obj' with 'vec_str_add_obj'.
+	Replaced 'vec_nth' with 'vec_str_nth'.
+
+	* sexpr-process-infer.c: Replaced 'vec_add_obj' with 'vec_str_add_obj'.
+	Replaced 'vec_nth' with 'vec_str_nth'.
+
+	* process.h: Removed 'quant_infer' and 'find_unmatched'.
+	Added 'nil' member to connectives_list struct.
+
+	* vec.c (vec_str_add_obj): Adds the string to the vector; allows memory to
+	be easily freed outside of the function.
+	(vec_str_nth): Gets a string instead of its pointer.
+	(vec_str_cmp): Replaced 'vec_nth' with 'vec_str_nth'.
+
+	* process.c (convert_sexpr): Replaced 'vec_nth' with 'vec_str_nth'.
+	Replaced 'vec_add_obj' with 'vec_str_add_obj'.
+	'calloc' now allocates exact size.
+	(infix_to_prefix): 'calloc' now allocates exact size.
+	(infix_to_prefix_func): Same.
+	(get_pred_func_args): Replaced 'vec_add_obj' with 'vec_str_add_obj'.
+	(get_gen): Gets a single generality.
+	(get_generalities): Implements 'get_gen' instead of 'parse_par_parts'.
+	Removed 'quant_infer' and 'find_unmatched'.
+
+	* sexpr-process-quant.c (proc_fv): Touched up.
+	(proc_ug): Checks return from sexpr_quant_infer.
+	(proc_ui): Same.
+	(proc_eg): Same.
+	(proc_ei): Same.
+
+	* sexpr-process.c (sexpr_get_quant_vars): Fixed strncmp call in for loop.
+	(sexpr_quant_infer): Checks for function symbols.
+
+2012-04-28  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process.c (sexpr_replace_var): Added implementation.
+
+2012-04-27  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-quant.c (proc_fv): Began implementation.
+
+2012-04-26  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process.c (sexpr_find_unmatched): Fixed bug - checks for similar
+	strings in while loop.
+
+	* callbacks.c (evaluate_line): Converts text to sexprs before passing them
+	into process.
+
+	* sentence.c (sentence_text_changed): Frees memory from sexpr object if it
+	exists.
+
+	* sentence.h (sentence struct): Added 'sexpr' object to store converted form.
+
+2012-04-25  Ian Dunn  <dunni@gnu.org>
+
+	* Makefile.am: Changed input to sexpr-process-xyz.c as opposed to
+	process-xyz.c
+
+	* aris.c (main): Converts conclusion and premises to sexpr form before
+	processing.
+
+	* sexpr-process.h: Moved all of the proc_xy functions from process.h.
+	Defined S_AND, S_OR, etc.
+
+	* sexpr-process.c (sexpr_not_check): Moved from sexpr-process-infer.c - finished.
+	(sexpr_add_not): Moved from sexpr-process-infer.c.
+	(sexpr_elim_not): Same - finished.
+	(sexpr_get_generalities): Same.
+	(sexpr_find_top_connective): Same - finished.
+	(find_unmatched_o_paren): Moved from sexpr-process-equiv.c.
+	(sexpr_find_unmatched): Same.
+	(sexpr_get_pred_args): Added; Self explanatory (may not be needed).
+	(sexpr_elim_quant): Gets the quantifier, variable and scope from a sentence.
+	(sexpr_get_quant_vars): Gets the offsets from the beginning of a quantifier's scope of
+	its variable.
+	(sexpr_replace_var): Added.
+	(sexpr_quant_infer): Process ug, ui, eg, and ei.
+
+	* sexpr-process-quant.c (proc_ug): Added - finished.
+	(proc_ui): Same.
+	(proc_eg): Same.
+	(proc_ei): Same.
+	(proc_bv): Added.
+	(proc_nq): Same.
+	(proc_pr): Same.
+	(proc_ii): Added - finished.
+	(proc_fv): Added.
+
+	* sexpr-process-bool.c (process_boolean): Added.
+
+	* sexpr-process-infer.c (process_inference): Added.
+
+	* sexpr-process-equiv.c (proc_id): Finished.
+	(recurse_id): Added - finished.
+	(recurse_co): Finished.
+	(proc_co): Finished.
+	(process_equivalence): Added.
+
+2012-04-24  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-equiv.c (proc_sb): Finished.
+	(proc_dt): Finished standard mode.
+	(proc_ep): Finished.
+	(proc_dn): Finished.
+	(recurse_co): Added.
+	(proc_co): Added - finished.
+
+	* sexpr-process-bool.c (proc_bi): Finished.
+	(proc_bd): Finished.
+
+2012-04-23  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (convert_sexpr): Converts tautology and contradiction symbols.
+
+	* sexpr-process-equiv.c (proc_as): Finished.
+	(find_unmatched_o_paren): Added.
+	(sexpr_find_unmatched): Added.
+
+	* sexpr-process-bool.c (proc_bn): Added - finished.
+	(proc_bd): Added.
+	(proc_sn): Added - finished.
+
+2012-04-17  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-bool.c (proc_bi): Added.
+
+	* sexpr-process-equiv.c (get_working_level): Added.
+	(proc_co): Began implementation.
+
+	* process.c (infix_to_prefix): Added implementation for element predicate.
+
+	* process.h (connectives_list): Added 'elm' element.
+	Updated connectives lists.
+
+2012-04-16  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-equiv.c (proc_eq): Added - finished.
+
+2012-04-15  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-equiv.c (proc_im): Added - finished.
+	(proc_dm): Same - BOTH modes.
+
+	* sexpr-process-infer.c (sexpr_not_check): Added - still needs implementation.
+	(sexpr_add_not): Added.
+	(sexpr_elim_not): Added - still needs implementation.
+	(sexpr_get_generalities): Added.
+	(sexpr_find_top_connective): Added - still needs implementation.
+	(proc_mp): Added - finished.
+	(proc_ad): Same.
+	(proc_sm): Same.
+	(proc_cn): Same.
+	(proc_hs): Same.
+	(proc_ds): Same.
+	(proc_ex): Same.
+	(proc_cd): Same.
+
+	* vec.c (vec_add_obj): Uses realloc.
+	(vec_str_cmp): Compares the contents of two string vectors.
+
+2012-04-13  Ian Dunn  <dunni@gnu.org>
+
+	* parse.c (parse_par_parts): Set up to skip over '=', '<', '+', and '*'.
+
+	* process.c (get_pred_func_args): Finished implementation.
+	(infix_to_prefix): Finished implementation.
+	(infix_to_prefix_func): Converts '+' and '*' to prefix notation; allows
+	predicates to be checked for first.
+
+2012-04-12  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (get_pred_func_args): Gets args from predicates or function
+	symbols.
+	(infix_to_prefix): Converts '=' and '<' to prefix notation.
+
+2012-04-08  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (conn_to_sexpr): Converts connectives to their sexpr form.
+
+2012-04-07  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (convert_sexpr): Converts sentences to their sexpr form.
+
+	* interop-isar.h: Added.
+	Added correct_conditonals.
+
+	* interop-isar.c: Added.
+	Moved parse_thy and isar_to_aris from aio.c into interop-isar.c.
+	(correct_conditionals): Corrects grouping of conditionals.
+
+2012-04-05  Ian Dunn  <dunni@gnu.org>
+
+	* process-bool.c (proc_bi): Added functionality.
+
+	* aris-proof.c: Changed boolean mode menu item's icon.
+
+2012-04-03  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.h: Added sentence_check_boolean_rule.
+
+	* sentence.c (sentence_check_boolean_rule): Added to check for boolean mode compatability.
+
+	* callbacks.c (menu_activated): Added check for MENU_BOOLEAN.
+
+	* menu.h (MENU_ID): Added MENU_BOOLEAN
+
+	* app.c (the_app_set_focus): Added call to rules_table_set_boolean_mode.
+
+	* aris_proof.c (aris_proof_init): Initializes boolean mode flag to the boolean flag given
+	to the app.
+	(aris_proof_init_from_proof): Initializes boolean mode flag from the given proof.
+	(aris_proof_to_proof): Sets new proof's boolean flag to boolean flag of current aris
+	proof.
+	Added MENU_SIZE enumeration.
+	Added Boolean mode menu item.
+	(aris_proof_toggle_boolean_mode): Added to change the proof and rules to boolean mode.
+
+	* rules-table.c (rules_table_set_boolean_mode): Sets the sensitivity of certain rules
+	buttons to correspond with boolean mode.
+
+	* rules-table.h: Added rules_table_set_boolean_mode.
+
+	* aris-proof.h: Added boolean flag.
+	Added aris_proof_toggle_boolean_mode.
+
+2012-03-30  Ian Dunn  <dunni@gnu.org>
+
+	* rules-table.c (rules_table_init): Set it up so that the boolean rules are
+	insensitive outside of boolean mode.
+	(rules_table_set_font): Set up so that all rules are changed even in boolean
+	mode.
+
+	* rules-table.h: Added boole member to rules table.
+
+	* aris-proof.c (aris_proof_init): Disabled subproofs for the moment.
+
+2012-03-20  Ian Dunn  <dunni@gnu.org>
+
+	* process-bool.c (proc_bi): Added implementation.
+
+2012-03-19  Ian Dunn  <dunni@gnu.org>
+
+	* aio.c (parse_thy): Added.
+	(isar_to_aris): Added.
+
+2012-03-18  Ian Dunn  <dunni@gnu.org>
+
+	* aris-proof.c (aris_proof_init): Initializes selected list.
+	(aris_proof_copy): Sets sd->depth to -1 if the line ends a subproof.
+
+	* callbacks.c (sentence_btn_release): Implements select_sentence.
+
+	* sentence.h (select_sentence): Added.
+	(sentence_set_selected): Added.
+	(select_reference): Moved from callbacks.h.
+	Added selected flag to sentence struct.
+
+	* sentence.c (sentence_copy_to_data): Rearranged args of sen_data_init to
+	proper order.
+
+2012-03-09  Ian Dunn  <dunni@gnu.org>
+
+	* app.h (BG_COLORS): changed BG_COLOR_BURNT_ORANGE to BG_COLOR_RED_ORANGE.
+
+	* aris-proof.c (aris_proof_copy): Changed to use yanked and selected as lists.
+	Finished implementation.
+	(aris_proof_kill): Same.
+	(aris_proof_yank): Added implementation.
+
+	* aris-proof.h: Changed yanked and selected elements to lists.
+
+2012-03-07  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (proc_dm): Check for only one generality.
+	Cleaned up.
+	(proc_co): Removed explicit obtaining of connective, left it to
+	get_generalities.
+	(proc_id): Cleaned up comments.
+
+	* vec.c (destroy_str_vec): Confirm that the freed value exists first.
+
+	* rules.h: Fixed typo.
+
+2012-03-06  Ian Dunn  <dunni@gnu.org>
+
+	* process-bool.c (proc_bi): Added some implementation.
+
+	* process.h (find_unmathced): Added declaration of find_unmatched.
+
+	* process.c (find_unmatched): Moved into process.c.
+
+2012-03-02  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.h (gui_copy): Changed return type to item_t.
+	(gui_kill): Same.
+
+	* callbacks.c (gui_copy): Removed handling of ap->yanked.
+	(gui_kill): Same.
+	(menu_activated): Calls aris_proof_copy, aris_proof_kill, and aris_proof_yank
+	instead of gui_copy, gui_kill, and gui_yank.
+
+	* aris-proof.c (aris_proof_copy): Added functionality to copy the focused or
+	selected lines.
+	(aris_proof_kill): Added functionality to kill the focused or selected lines.
+
+	* aris-proof.h (aris_proof_copy): Added.
+	(aris_proof_kill): Added.
+	(aris_proof_yank): Added.
+	Added selected element to aris_proof struct.
+
+	* sentence.h (sentence_set_reference): Added additional parm for
+	entire subproof.
+
+	* sentence.c (sentence_init): Added implementation for indices.
+	(sentence_set_reference): Accounts for subproofs.
+	(select_reference): Implemented subproofs and indices.
+	Added checks for verbose when adding or removing a reference.
+	(sentence_check_entire): Added to check if only the subproof premise or the
+	entire subproof should be selected.
+	(sentence_in): Added call to sentence_check_entire.
+	(sentence_out): Same thing.
+
+2012-03-01  Ian Dunn  <dunni@gnu.org>
+
+	* process.h: Added check for win32, to remove internationalization.
+
+	* rules.h: Added check for win32, to remove internationalization.
+
+	* configure.ac: Added symbol into config.h for WIN32 build.
+
+2012-02-28  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (sentence_btn_release): Added check for shift+button-1.
+	(sentence_btn_press): Added check for shift+button-1.
+
+	* app.h: Added burnt_orange to colors enum.
+
+	* process-equiv.c (proc_dm): Fixed some return strings.
+	(proc_dm): Added recursion.
+
+	* process-bool.c (proc_sn): Added implementation.
+
+2012-02-27  Ian Dunn  <dunni@gnu.org>
+
+	* process-bool.c (proc_sn): Added initial difference checking.
+
+	* process.h: Changed cli connective for contradiction to ^.
+
+	* sentence.c (select_reference): Implements app's verbose flag.
+	(sentence_key): Implemented verbose flag.
+	(sentence_key): Changed key code for contradiction.
+
+	* aris.c (main): Initializes app with verbose flag.
+
+	* aris-proof.c (aris_proof_init): Sets add_subproof and end_subproof menu
+	items to insensitive when boolean mode is active.
+
+	* app.c (init_app): Added initialization for boolean element.
+	(init_app): Added parm for verbose flag.
+
+	* app.h: Added boolean element to app structure.
+	Added verbose element to app structure.
+
+2012-02-26  Ian Dunn  <dunni@gnu.org>
+
+	* process.h: Changed cli connective for contradiction to /.
+
+	* process-quant.c (proc_nq): Fixed bug.
+
+	* process-equiv.c (proc_eq): Cleaned up.
+
+2012-02-25  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (proc_as): Fixed bug.
+
+	* app.c (init_app): Added parm for boolean flag.
+
+	* rules-table.c (rules_table_init): Added parm for boolean flag.
+	(rules_table_init): Added initialization for boolean mode.
+	(rules_table_init): Added tooltip text to the rules.
+
+	* rules-table.h (rules_table_init): Added parm for boolean flag.
+
+	* rules.h: Added values for 'bi', 'bn', 'bd', and 'sn' to rules enum.
+	Added entries in rules_list for 'bi', 'bn', 'bd', and 'sn'.
+	Added rules_names array.
+
+	* aris.c (main): Added boolean flag.
+
+2012-02-24  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (proc_eq): Implemented find_unmatched.
+	(all): No longer using unsigned ints with find_difference.
+
+	* process-bool.c (proc_sn): Added.
+	(proc_bn): Added check for correct connective/symbol pair.
+
+	* process.h (proc_sn): Added definition.
+
+2012-02-23  Ian Dunn  <dunni@gnu.org>
+
+	* all: Changed #defines in .h files to omit trailing and leading underscores.
+
+	* process-misc.c: Added GPL notice.
+
+	* process-main.c: Added GPL notice.
+
+	* app.h: Added GPL notice.
+
+	* aio.h: Added GPL notice.
+
+	* process-bool.c (proc_bn): Added implementation.
+
+2012-02-23  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (main): Finished implementation of file flag.
+
+	* sen-data.c (sen_data_evaluate): Added.
+
+	* process.c (collect_variables): Added, replaces sentence_collect_variables.
+
+2012-02-22  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c: Added internationalization to status bar messages.
+
+	* aris-proof.c: Added internationalization to status bar messages.
+
+	* process-bool.c: Added.
+	(process_bool): Added.
+	(proc_bi): Added.
+	(proc_bd): Added.
+	(proc_bn): Added.
+
+	* process-quant.c: Added definitions of process functions.
+	Added internationalization of return strings.
+
+	* process-equiv.c: Added internationalization of return strings.
+
+	* process-infer.c: Added internationalization of return strings.
+
+	* vec.c, vec.h: Added commenting of functions.
+
+2012-02-21  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c: Added definitions of process functions.
+
+	* all: Added commenting on functions.
+
+2012-02-20  Ian Dunn  <dunni@gnu.org>
+
+	* process-infer.c (proc_mp): Added definition.
+	(proc_ad): Added definition.
+	(proc_sm): Added definition.
+	(proc_cn): Added definition.
+	(proc_hs): Added definition.
+	(proc_ds): Added definition.
+	(proc_ex): Added definition.
+	(proc_cd): Added definition.
+
+	* process-quant.c (process_quantifiers): Changed checks for rules to include
+	'bv' and 'fv'.
+
+	* process.h (proc_ef): Changed to 'proc_lm'.
+
+	* rules.h: Added RULE_SP to rules enum.
+	Changed RULE_EF to RULE_LM, RULE_VS to RULE_BV, and RULE_IE to RULE_FV.
+
+	* aio.h: Added #define for subproof data.
+
+	* menu.c: Added MENU_ADD_SUB and MENU_END_SUB to menu id enum.
+
+	* aris-proof.c (aris_proof_create_new_sub): Added.
+	(aris_proof_end_sub): Added.
+	Added 'add subproof' and 'end subproof' menu items.
+	(aris_proof_create_sentence): Added checking for depth.
+
+	* sentence.c (sentence_init): Initializes depth and subproof of sentence.
+	(sentence_text_changed): Takes the text from GtkTextView instead of GtkEntry.
+	(sentence_key): Changed implementation from GtkEntry to GtkTextView.
+
+	* sen-data.c (sen_data_init): Added parameters 'subproof' and 'depth'.
+
+	* sen-data.h: Added 'subproof' member to sen_data struct.
+
+	* sentence.h: Changed 'entry' from GtkEntry to GtkTextView.
+
+2012-02-19  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.h: Removed 'font' member from sentence struct.
+
+	* aris-proof.h: Added sen_parent 'sp' member to aris_proof struct.
+
+2012-02-16  Ian Dunn  <dunni@gnu.org>
+
+	* process-quant.c (process_quantifiers): Added implementation for 'nq'.
+
+2012-02-15  Ian Dunn  <dunni@gnu.org>
+
+	* all: changed 'memcmp' to strncmp.
+
+	* process-equiv.c (process_equivalence): Changed 'memcmp' sto strncmp.
+	(process_equivalence): Finished quantifier 'dm' implementation.
+
+	* process-infer.c (process_inference): Changed 'memcmp' to strncmp.
+
+	* process.h (str_eq): Removed.
+
+	* all: changed 'str_eq' calls to '!strcmp'.
+
+2012-02-14  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (find_top_connective): Implementation changed to a specific case of get_generalities (one that only has two generalities).
+	Changed type of process.c - removed 'const' identifier from 'conn'.
+
+	* process-quant.c (process_quantifiers): Finished implementation of 'ie'.
+	Finished implementation of 'pr'.
+
+	* process-equiv.c (process_equivalence): Added implementation of quantifier distribution.
+
+2012-02-13  Ian Dunn  <dunni@gnu.org>
+
+	* process-quant.c (process_quantifiers): Altered implementation of quant_infer.
+
+	* process.c (quant_infer): Accounted for possibility of function symbols.
+	Changed type, removed 'arb_var', and added 'vars' and 'type'.
+
+	* sentence.h: Changed sentence element 'vars' to unsigned char **.
+
+2012-02-11  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (process_equivalence): Fixed 'id' parenthesis error.
+
+	* process.h (proc_sp): Added declaration.
+
+	* process-misc.c (proc_sp): Began definition.
+
+	* process-misc.c (proc_ef): 'ef' allows for different ordering of premises.
+
+	* vec.c (vec_pop_obj): Added definition - removes last element.
+
+	* vec.h (vec_pop_obj): Added declaration.
+
+2012-02-10  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (process_equivalence): Finished 'sb' implementation.
+	(find_difference): Moved to process.c
+
+2012-02-09  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (check_text): Implemented check_generalities.
+
+	* vec.c (destroy_str_vec): Added definition - frees memory used by string
+	vectors.
+
+	* vec.h: Added declaration of destroy_str_vec.
+
+2012-02-06  Ian Dunn  <dunni@gnu.org>
+
+	* aio.c (aio_open): Checks for file data member being empty string.
+
+	* process.c (check_generalities): Added definition.
+
+	* process.h: Added declaration of check_generalities.
+
+	* process.c (check_text): Added generalities checking.
+
+2012-02-05  Ian Dunn  <dunni@gnu.org>
+
+	* process-misc.c (proc_ef): Added more implementation.
+	Finished implementation, except for error handling and vector removal.
+
+	* process.h: Changed ID_VARSTART to ID_SENEND.
+
+2012-02-03  Ian Dunn  <dunni@rpi.ed>
+
+	* sentence.h: Added proof member to sentence struct.
+
+	* proces.c (get_ids): Added flag for gui/cli conns.
+
+	* Makefile.am: Added 'process-misc.c' to aris_SOURCES element.
+
+	* process-misc.c (proc_ef): Added.
+
+	* process-misc.c: Added.
+
+	* process.h: Added proc_ef declaration.
+
+	* rules-table.c (rule_toggled): Added implemenation to get external file.
+
+	* aris.c (main): Added checking for external file file specifier.
+
+2012-02-01  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (main): Added text checking for the conclusion for cli.
+
+	* process.h: Changed type of get_ids.
+
+	* process.c (get_ids): Changed type.
+
+2012-01-31  Ian Dunn  <dunni@gnu.org>
+
+	* process.c: Added definition of get_ids.
+
+	* aris.c (main): Added text checking for each premise for cli.
+
+2012-01-30  Ian Dunn  <dunni@gnu.org>
+
+	* process.h: Added connectives_list struct.
+	Added global connectives_lists cli_conns, gui_conns, and main_conns.
+	Changed #defines for connectives, makes cli usable.
+	Added declaration for get_ids.
+
+2012-01-29  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.c (sentence_text_changed): Null terminated sen->text.
+
+2012-01-28  Ian Dunn  <dunni@gnu.org>
+
+	* sen_parent.h: Fixed typo on sen_parent_destroy declaration.
+	Added declaration for sen_parent_set_sb.
+
+	* configure.ac: Set compilation flags to C99.
+
+2012-01-27  Ian Dunn  <dunni@gnu.org>
+
+	* process.h: Added id enumeration.
+	Added sen_id struct.
+
+2012-01-26  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (process_equivalence): Implemented parse_par_parts in all
+	sections as necessary.
+
+2012-01-24  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (process_equivalence): Implemented parse_par_parts.
+	(find_unmatched): Added.
+	(process_equivalence): Implemented find_unmatched in 'as' and 'sb'.
+
+2012-01-19  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (get_generalities): Added comments.
+
+2012-01-17  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (gui_help): Uses help_file member of the_app to open help.
+
+	* aris.c (main): Uses argv[0] to determine working_dir and help_file.
+
+	* app.c (init_app): Dynamically allocate help_file and working_dir members.
+	(app_quit): Added calls to free() for help_file and working_dir.
+
+	* app.h: Added help_file member to app structure.
+
+2012-01-12  Ian Dunn  <dunni@gnu.org>
+
+	* process.c: Removed parse functions.
+	(get_generalities): Uses parse_par_parts to determine generalities.
+
+	* parse.c: Added to hold parse functions.
+
+	* process.h (parse_par_parts): Added.
+	Rearranged function declarations for order and readability.
+
+2012-01-02  Ian Dunn  <dunni@gnu.org>
+
+	* sen-data.c (sen_data_init): Text member allocated to the exact amount
+	of characters.
+
+	* process-equiv.c (process_equivalence): Fixed 'id' to zero end of
+	connective.
+
+	* app.h Added working_dir member.
+
+2011-12-28  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (gui_set_custom): Added.
+	(menu_activated): Added implementation for custom font size.
+	(rule_menu_activated): Added implementation for custom font size.
+
+	* app.h: Added enum entry FONT_TYPE_CUSTOM.
+
+	* menu.h: Added enum entry MENU_CUSTOM.
+
+	* aris-proof.c: Added custom font size menu item.
+
+	* rules-table.c: Added custom font size menu item.
+
+2011-12-28  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (rule_menu_activated): Added entries for fonts.
+	(gui_about): Added more information to the about dialog.
+
+	* rules-table.c (rules_table_set_font): Added.
+	Added font menu to rules table.
+	(rules_table_init): Removed gtk_widget_set_size_request (rt->window).
+
+	* rules-table.h: Added font member to rules_table.
+
+	* app.h: Changed font sizes.
+
+2011-12-27  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (process_equivalence): Finished implementation of
+	standard dt.
+
+2011-12-21  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (goal_menu_activate): Sets parent's status bar when
+	goal hidden.
+
+	* process-equiv.c (process_equivalence): Fixed bug in 'co' - correctly
+	accounts for parenthesis.
+	(process_equivalence): Fixed bug in 'eq' - Correctly finds biconditional.
+	(process_equivalence): 'as' and 'im' correctly implement recursion.
+
+	* aris.c (main): Set to show rules table after first gui shown.
+
+	* rules-table.c (rules_table_init): No longer shows rules table on creation.
+
+	* rules-table.h (rules_table_align): Added.
+
+	* aris-proof.c (aris_proof_collect_vars): Accounts for dst_ptr == NULL.
+
+	* process.c (check_text): Added.
+
+2011-12-20  Ian Dunn  <dunni@gnu.org>
+
+	* goal.c (goal_check_line): Sets background of proof sentence
+	line number to crimson if errors leading up to it, emerald if everything
+	checks out.
+
+	* app.h: Added crimson and emerald to background colors.
+
+	* sentence.c (sentence_gui_init): Placed line number label inside event box.
+
+	* sentence.h: Added event box member to sentence struct.
+
+	* aio.c (aio_open): Allows for no conclusions.
+
+2011-12-19  Ian Dunn  <dunni@gnu.org>
+
+	* process-equiv.c (process_equivalence): dm checks for correct parentheses
+	position.
+	(process_equivalence): Account for instance == 0 in 'dt'.
+	(process_equivalence): Made 'as' recursive.
+	Same for 'dn'.
+	Same for 'im'.
+	(process_equivalence): Added implementation for 'sb'.
+
+	* app.c (the_app_set_focus): Accounted for the possibility that the
+	newly focused proof was the tail of the_app->guis.
+
+	* sen-data.c (sen_data_check_text): Changed return type to int.
+
+	* process.c (check_conns): Shortened, set up to a single loop.
+
+	* sentence.c (sentence_collect_variables): Fixed.
+
+	* sen-data.h (sen_data_collect_vars): Added.
+
+2011-12-18  Ian Dunn  <dunni@gnu.org>
+	* sentence.c (sentence_connect_signals): Connected to size-allocate;
+	Fixes scrolling bug (I WON).
+
+	* callbacks.h (sentence_mapped): Added.
+
+	* aris-proof.c (aris_proof_init_from_proof): Set all sentences to white,
+	fixes color bug.
+
+	* process-infer.c (process_inference): Fixed double free bug in 'hs'.
+
+	* process.c (check_sides): Changed tmp_str to static allocation.
+
+	* process-equiv.c (process_equivalence): Added memory frees for 'ep'.
+	(find_difference): Added.
+	(process_equivalence): Cleaned up 'id', removing the redundant sections.
+	(process_equivalence): Accounted for instance == 2 in 'dt'.
+
+2011-12-17  Ian Dunn  <dunni@gnu.org>
+
+	* process-quant.c (process_quantifiers): Added implemenation for vec_nth.
+
+	* process.c (quant_infer): Added implementation for vec_nth.
+
+	* process-equiv.c (process_equivalence): Added implementation for vec_nth.
+	(process_equivalence): Added implementation for 'ep'.
+
+	* process-infer.c (process_inference): Added implementation for vec_nth.
+	(process_inference): 'mp' - Checks for longest premise.
+	(process_inference): 'ds' - Same.
+	(process_inference): 'ad' - No longer accounts for commutativity.
+
+	* vec.h (vec_nth): Added.
+
+2011-12-16  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (find_top_connective): Determines length of connective so that
+	equals can be used as connective.
+
+	* process-quant.c (process_quantifiers): Added implementation for 'ii'.
+
+2011-12-15  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (goal_delete): Gets the current goal from the
+	user data.
+
+	* goal.c (goal_init): Connected signal to goal_focus_in.
+	(goal_init): Set user data for signals to the current goal.
+
+	* callbacks.h (goal_focus_in): Added.
+
+	* processs-quant.c (process_quantifiers): Added inital checks for
+	'ii' and 'ie'.
+
+	* process-equiv.c (process_equivalence): Added initial checks for 'sb'
+	and 'ep'.
+
+	* rules-table.c (rules_table_init): Added additional rules to rules
+	table.
+
+	* rules.h: Added 'sb', 'ep', 'ii', and 'ie' to rules list.
+	Removed 'av'.
+
+	* aris.c (main): Changed argument errors to argument warnings, set
+	to ignore invalid option arguments.
+	(main): Added file flag usage.
+
+	* aris-proof.c (aris_proof_set_filename): Set title to basename of
+	new file name.
+
+2011-12-14  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (gui_about): Added icon to about dialog.
+
+	* menu.h: Separated typedef menu_item_data and menu_item_data
+	definition.
+
+	* icon.h: Created.
+
+	* app.c (init_app): Added initialization of icon.
+	(init_app): Set icon of rules window.
+	(the_app_add_gui): Same for new gui and gui's goal window.
+	Added include for goal.h and icon.h
+
+	* app.h: Added icon element to app structure.
+
+2011-12-13  Ian Dunn  <dunni@gnu.org>
+
+	* goal.c (goal_init_from_list): Added.
+
+	* app.c (the_app_set_focus): Set so that guis->head is modified.
+
+	* aio.c (aio_get_first_attribute): Added.
+	(aio_get_next_attribute): Added.
+
+	* all: Error checking on return values of EVERYTHING.
+
+	* process.c (die_spaces_die): Changed return type to int.
+
+	* vec.c (vec_add_obj): Changed return type to int.
+	(vec_clear): Same.
+
+	* aris-proof.h: Removed title member of aris_proof struct.
+
+	* aris-proof.c (aris_proof_post_init): Changed return type to int.
+	(aris_proof_adjust_lines): Same.
+	(aris_proof_collect_vars): Same.
+	(aris_proof_remove_sentence): Same.
+	(aris_proof_set_title): Removed.
+	(aris_proof_init_from_proof): Implemented goal_init_from_list.
+
+	* sen-data.c (sen_data_check_text): Added.
+
+	* sentence.c (sentence_init): Checks the type of parent, and sets the
+	line number accordingly.
+	(sentence_init): Added call to sentence_connect_signals.
+	(sentece_init_to_goal): Removed.
+	(sentence_collect_variables): Account for multiple variables.
+
+	* goal.c (goal_destroy): Added.
+	(goal_add_line): Changed sentence_init_to_goal to sentence_init)
+
+	* sen-parent.c (sen_parent_destroy): Added.
+
+2011-12-12  Ian Dunn  <dunni@gnu.org>
+
+	* all: Check return value on calloc.
+
+	* all: Altered any while loops that iterate through lists to for loops.
+
+	* aio.c (aio_save): Check for return value from xml calls
+	(aio_save): Saves proof goals in place of proof variables.
+	(aio_save): Saves sentence variables.
+	(aio_save): Checks for largest ref line number when saving refs.
+
+	* sen-data.c (sen_data_init): Copies variables.
+
+	* sen-data.h: Modified sen-data struct to hold variables.
+
+	* sentence.c (sentence_text_changed): Alters goal's corresponding
+	proof sentence's line number color when goal's text is changed.
+	(sentence_text_changed): Alters value of any sentences that
+	reference the changed line.
+	(sentence_check_text): Added.
+	(sentence_copy_to_data): Copies variables into sen_data struct.
+	(sentence_set_reference): Added.
+	(sentence_in, sentence_out): Use sentence_set_reference.
+
+	* sen-parent.c (sen_parent_set_sb): Added.
+
+	* list.c (ls_find): Added.
+	(ls_nth): Added.
+
+	* src/Makefile.am: Added rules-table.c and rules-table.h to aris_SOURCES.
+
+	Changed all files to account for rules-table.h and rules-table.c
+
+	* rules-table.h: Created.
+
+	* rules-table.c: Created from rules.c (renamed)
+
+	* rules.h: Changed to only hold rules enumeration and list.
+	Everything else put into rules-table.h.
+
+	* aris-proof.c (aris_proof_to_proof): Stores goals in proof struct.
+
+	* proof.h: Changed proof vars member to goals.
+
+	* goal.c (goal_add_line): Sets the parent to changed.
+	(goal_rem_line): Same.
+
+	* callbacks.c (evaluate_line): Gave functionality.
+
+	* process.h: Modifies connectives if GUI is being used.
+
+2011-12-11  Ian Dunn  <dunni@gnu.org>
+
+	* WINDOWS: cross-compiled successfully
+
+	* configure.ac: Modified for PKG_CHECK_MODULES
+
+	* doc: Begin creation of documentation
+
+	* config.h: Created for HELP_FILE definition
+
+	* configure.ac: Modified for HELP_FILE definition
+
+2011-12-10  Ian Dunn  <dunni@gnu.org>
+
+	* src/Makefile.am: Created.
+
+	* Makefile.am: Created.
+
+	* configure.ac: Created.
+	Compilation flags changed from gtk+-3.0 to gtk+-2.0
