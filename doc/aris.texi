@@ -1,0 +1,1136 @@
+\input texinfo @c -*-texinfo-*-
+@c %**start of header
+@setfilename aris.info
+@settitle GNU Aris Manual
+@c %**end of header
+
+@include version.texi
+@include fdl.texi
+
+@dircategory Mathematics
+@direntry
+* GNU Aris: (aris).    The logical proof interface.
+@end direntry
+
+@copying
+This manual is for GNU Aris, the logical proof program.
+
+Copyright (C) 2012 Ian Dunn
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled
+``GNU Free Documentation License''.
+@end quotation
+@end copying
+
+@titlepage
+@title  GNU Aris
+@subtitle Edition @value{EDITION}, for @code{aris} version @value{VERSION}
+@subtitle @value{UPDATED}
+@author by Ian Dunn
+
+@page
+@vskip 0pt plus 1filll
+@insertcopying{}
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top Aris
+
+@insertcopying
+
+This manual is for GNU Aris, the logical proof program.
+
+
+This is edition @value{EDITION}, for @code{aris} version @value{VERSION}
+@end ifnottex
+
+@menu
+* Introduction::         Overview of Aris.
+* Terms::                Terms used in this manual.
+* Options::              The command-line options used for Aris.
+* Basic Usage::          A quick walkthrough of Aris usage.
+* Keyboard Shortcuts::   The keyboard shortcuts used in Aris.
+* Rules Index::          The logical rules used in Aris.
+* Customization::        Customizing GNU Aris.
+* Submission::           Submitting proofs for grading.
+* Sequence Logic::       An overview of Sequence Logic.
+* Interoperability::     An explanation of interoperability.
+@end menu
+
+@node Introduction
+@chapter Introduction
+
+This manual is for GNU Aris, a sequential proof program, designed to assist anyone interested in solving logical proofs.  Aris supports both propositional and predicate logic, as well as Boolean algebra and arithmetical logic in the form of abstract sequences.  It uses a predefined set of both inference and equivalence rules, however gives the user options to use older proofs as lemmas, including Isabelle's Isar proofs.
+
+@node Terms
+@chapter Terms
+
+@table @asis
+
+@item Biconditional
+A biconditional is a connective that connects two sentences, denoted by @samp{<->}.  A biconditional claims that @samp{sentence a if and only if sentence b} is a new sentence.  A biconditional can be inserted in Aris using the key combination @kbd{CTRL+5} (@pxref{Keyboard Shortcuts}).
+
+@item Conclusion
+A conclusion is a sentence that is derived from a combination of other sentences and a rule.  A focused conclusion will be highlighted in cyan.  A conclusion has a set of references associated with it, which are highlighted in violet.
+
+@item Conditional
+A conditional is a connective that connects two sentences, denoted by @samp{@arrow{}}.  A conditional claims that @samp{if sentence a, then sentence b} is a new sentence.  A conditional can be inserted in Aris using the key combination @kbd{CTRL+4} (@pxref{Keyboard Shortcuts}).
+
+@item Conjunction
+A conjunction is a connective that connects two or more sentences, denoted by @samp{^}.  A conjunction claims that @samp{sentence a and sentence b} is a new sentence.  A conjunction can be inserted in Aris using the key combination @kbd{CTRL+7} (@pxref{Keyboard Shortcuts}).
+
+@item Connective
+A connective is a logical symbol that connects one or more sentences.  The connectives used in system @sc{psi} are conjuction (@samp{^}), disjunction (@samp{v}), negation, (@samp{~}), conditional (@samp{@arrow{}}), and biconditional (@samp{<->}).  In addition, system @sc{psi} recognizes the one-place connectives of the tautology (@samp{T}) and the contradiction (@samp{!}).
+
+@item Contradiction
+A contradiction is a zero-place connective that stands on its own, denoted by @samp{!}.  A contradiction represents something that is always false.  A contradiction is only used with the boolean rules (@pxref{Boolean Rules}), and can be inserted using the key combination @kbd{CTRL+6}.
+
+@item Disjunction
+A disjunction is a connective that connects two or more sentences, denoted by @samp{v}.  A disjunction claims that @samp{sentence a or sentence b} is a new sentence.  A disjunction can be inserted in Aris using the key combination @kbd{CTRL+\} (@pxref{Keyboard Shortcuts}).
+
+@item Evaluate
+To evaluate a sentence means different things depending on the type of sentence.  At the very least, evaluation checks the sentence for text errors, i.e. mis-matched parenthesis, etc.  Evaluating a conclusion checks that the sentence's text logically follows from the given references and its rule.  Evaluating a goal means checking the corresponding proof for a sentence with this exact same text.  To evaluate a sentence use the key combination @kbd{CTRL+E} (@pxref{Keyboard Shortcuts}).
+
+@item Evaluation Value
+An evaluation value is the value that appears to the right of a sentence's text entry.  It can either be @samp{ }, @samp{T}, @samp{F}, @samp{*}, @samp{#}, or @samp{?}.  @samp{ } means that the sentence is awaiting evaluation, except in the case of premises, where this could also mean that there are no errors with it.  @samp{T} means that either the conclusion logically follows from its references and rule, or that the goal has been found in the corresponding proof.  @samp{F} means that either the conclusion does not logically follow from its references and rule, or that the goal has not been found in the corresponding proof.  @samp{*} means that there is a text error with this sentence.  @samp{?} means that one of the conclusion's references has a text error.  @samp{#} means that the conclusion is missing a rule.
+
+@item Existential
+An existential is a quantifier that precedes the rest of sentence, denoted by @samp{3}.  An existential claims that @samp{there exists at least on item that has property property P} is a new sentence, assuming that @samp{P} is a valid predicate. An existential quantifier can be inserted into Aris using the key combination @kbd{CTRL+3}.
+
+@item Function Symbol
+A function symbol maps one object to another object.  These are always lower case.  Examples of a function symbol is seqlog's @samp{z} and @samp{s} symbols (@pxref{Sequence Logic}).
+
+@item Goal
+A goal is a sentence that the user is looking to meet in a certain proof.  The goal window contains all of these sentences, and can be toggled by the key combination @kbd{CTRL+L} (@pxref{Keyboard Shortcuts}).  When a sentence in the proof matches a goal, the proof sentence's line number is highlighted in red, while the goal's line number is changed to match the proof sentence's line number.
+
+@item Negation
+A negation is a connective that is inserted in front of a sentence, denoted by @samp{~}.  A neagion claims that the opposite of the negation is true.  A negation can be inserted into Aris using the key combination @kbd{CTRL+`} (@pxref{Keyboard Shortcuts}).
+
+@item Null Object
+A null object is an object, denoted by @samp{nil}.  In Aris it resembles a null byte, @samp{\0}, and represents an undefined object in a sequence.  A null object can be inserted by using the key combination @kbd{CTRL+.}.
+
+@item Predicate
+A predicate is a type of logical symbol that denotes a property of or relation between one or more objects.  These always begin with capital letters, and generally use prefix notation.  Exceptions of this are the identity predicate (@samp{=}), the less than predicate (@samp{<}), and the element of predicate.
+
+@item Premise
+A premise is a sentence that is given.  A premise has no rule associated with it, nor does it have an evaluation value, unless there is an error in it.  Any variables introduced in a premise are not considered arbitrary.
+
+@item Proof
+A proof is a set of sentences, beginning with a set of premises and ending with a set of conclusions, that the user is trying to derive something from.  The proof window is the main window that appears when the user opens up a proof.
+
+@item Quantifier
+A quantifier is a type of logical symbol that claims something about the amount, or quantity, of an object that holds a specific property.  The quantifiers used in system @sc{psi} are the universal (@samp{V}), and the existential (@samp{3}).
+
+@item Reference
+A reference is a sentence that is being used to derive a conclusion.  A reference is highlighted in violet, and can be added or removed from the current sentence by holding down @kbd{CTRL}, and left-clicking on the desired reference.
+
+@item Rules
+The rules in Aris are a combination of inference rules, equivalence rules, and predicate rules that the user can use to derive sentences.  The rules window (also referred to as the rules tablet) is shared amongst all of the proofs in Aris.  It can be toggled by the key combination @kbd{CTRL+R} (@pxref{Keyboard Shortcuts}) from any proof window. For the list of rules, @ref{Rules Index}.
+
+@item Sentence
+A sentence is a line in Aris.  A sentence always consists of a text entry, a line number, and an evaluation value.
+
+@item Subproof
+A proof within a proof.  To begin a subproof in Aris, use the key combination @kbd{CTRL+B}, and to exit one, use the key combination @kbd{CTRL+D}.
+
+@item Tautology
+A tautology is a zero-place connective that stands on its own, denoted by @samp{T}.  A tautology represents something that is always true.  A tautology is only used with the boolean rules (@pxref{Boolean Rules}), and can be inserted using the key combination @kbd{CTRL+1}.
+
+@item Universal
+A universal is a quantifier that precedes the rest of sentence, denoted by @samp{V}.  A universal claims that @samp{for all items, they have property P} is a new sentence, assuming that @samp{P} is a valid predicate. A universal quantifier can be inserted into Aris using the key combination @kbd{CTRL+2}.
+
+@item Variable
+A variable represents an object within a proof.  A variable is introduced when it is first used.  If the line that it is introduced in is a premise, the start of a subproof, or a line using existential instantiation (@pxref{ei}), then it is @strong{not} considered arbitrary.  Otherwise, it is.  Only the variables from lines that can be selected from the current line are taken into account when processing it.  This means that after a subproof is ended, then lines after it don't worry about variables introduced within it.
+
+@end table
+
+@node Options
+@chapter Options
+
+@table @asis
+
+@item @samp{-a VARIABLE}
+@itemx @samp{--variable=VARIABLE}
+Use VARIABLE as a known variable in evaluation mode.  Prepend an '*' to specifiy that the variable is arbitrary.
+
+@item @samp{-b}
+@itemx @samp{--boolean}
+Start Aris in boolean mode.
+
+@item @samp{-c CONCLUSION}
+@itemx @samp{--conclusion=CONCLUSION}
+Use CONCLUSION as a conclusion in evaluation mode.  This flag can only be specified once.
+
+@item @samp{-e}
+@itemx @samp{--evaluate}
+Run Aris in evaluation mode.  This means that no GUI will be loaded.
+
+@item @samp{-f FILE}
+@itemx @samp{--file=FILE}
+Evaluate FILE if running Aris in evaluation mode, otherwise load FILE in Aris.  This flag can be specified multiple times.
+
+@item @samp{-g}
+@itemx @samp{--grade}
+Grades a file specified by the file flag.  This flag is ignored if used more than once.
+
+@item @samp{-l}
+@itemx @samp{--list}
+List the rules available in Aris, and exit.
+
+@item @samp{-p PREMISE}
+@itemx @samp{--premise=PREMISE}
+Use PREMISE as a premise in evalution mode.  This flag can be specified multiple times.
+
+@item @samp{-r RULE}
+@itemx @samp{--rule=RULE}
+Use RULE as a rule in evaluation mode.  This flag can only be specified once.
+
+@item @samp{-t TEXT}
+@itemx @samp{--text=TEXT}
+Simply check the correctness of TEXT in evaluation mode.
+
+@item @samp{-v}
+@itemx @samp{--verbose}
+Run Aris verbosely, printing status and error messages.
+
+@item @samp{-x}
+@itemx @samp{--latex=FILE}
+Convert FILE to a LaTeX proof file in evaluation mode.
+
+@item @samp{--version}
+Print the version of Aris and exit.
+
+@item @samp{-h}
+@itemx @samp{--help}
+Print a help message and exit.
+
+@end table
+
+@node Basic Usage
+@chapter Basic Usage
+
+This chapter describes the basic usage of GNU Aris.
+
+@menu
+* Startup::     When the program is started.
+* Connectives:: Using connectives.
+* Adding::      Adding sentences to the proof.
+* Selecting::   Selecting sentences.
+@end menu
+
+@node Startup
+@section Startup
+
+When Aris is loaded up, you will see a few things.  You will see the rules window and a proof window.  The rules window contains the different rules.  A rule will not be selected if a premise is in focus.
+
+@node Connectives
+@section Connectives
+
+Aris has several connectives (@pxref{Terms, Connectives}).  When the keyboard command for the desired connective is activated, the desired connective will be inserted at the current cursor point, overwriting selected text.
+
+@node Adding
+@section Adding Sentences
+
+Hitting @kbd{Ctrl+J} adds a conclusion to the proof.  A conlusion is always added after the current line, or, if the line is a premise, then the conclusion is added after the last premise.  If the current line is a conclusion, then it is highlighted in cyan.  Hitting @kbd{Ctrl+P} adds a premise to the proof.  A premise will always be added after the last premise.  Pressing @kbd{Ctrl+B} adds a subproof to the proof.  When in a subproof, a conclusion will always be added within the subproof.  The first line of a subproof does not require a rule, but instead acts as a premise.  Pressing @kbd{Ctrl+D} ends the current subproof.  This creates a new conclusion just after the subproof.
+
+@node Selecting
+@section Selecting Sentences
+
+Holing @kbd{CTRL}, and left-clicking on a sentence will select a sentence as a reference sentence.  The current line's reference sentences are highlighted in violet.  Only a line before the current line can be selected as a reference.  In addition, if the sentence is in a different subproof than the current line, then the sentence can not be selected as a reference.  Each rule requires a specific amount of references (@pxref{Rules Index}).
+
+Holding @kbd{SHIFT} and left-clicking on a sentence will select the sentence.  The sentence will be highlighted in red-orange.  Multiple sentences can be selected this way, however when another action is taken, all of them will be de-selected.  Pressing @kbd{CTRL+K} will kill (cut) the selected lines, and @kbd{CTRL+G} will copy the selected lines.  If no lines are selected, then the current line will be used.
+
+@node Keyboard Shortcuts
+@chapter Keyboard Shortcuts
+
+@table @asis
+
+@item @kbd{CTRL+N}
+Start a new proof.
+
+@item @kbd{CTRL+O}
+Open an existing proof.
+
+@item @kbd{CTRL+S}
+Save the current proof.
+
+@item @kbd{CTRL+SHIFT+S}
+Save the current proof under a different name.
+
+@item @kbd{CTRL+W}
+Close the current proof.
+
+@item @kbd{CTRL+Q}
+Exit Aris.
+
+@item @kbd{CTRL+P}
+Insert a new premise after the current line.
+
+@item @kbd{CTRL+J}
+Insert a new conclusion after the current line.
+
+@item @kbd{CTRL+B}
+Begin a new subproof after the current line.
+
+@item @kbd{CTRL+D}
+End the current subproof, if there is one.
+
+@item @kbd{CTRL+G}
+Copy the current line.
+
+@item @kbd{CTRL+K}
+Kill the current line.
+
+@item @kbd{CTRL+I}
+Insert the copied/killed line.
+
+@item @kbd{CTRL+E}
+Evaluate the current line.
+
+@item @kbd{CTRL+F}
+Evaluate the current proof.
+
+@item @kbd{CTRL+L}
+Toggle the goal window for the current proof.
+
+@item @kbd{CTRL+M}
+Toggle boolean mode for the current proof.
+
+@item @kbd{CTRL+R}
+Toggle the rules window.
+
+@item @kbd{CTRL+-}
+Change the font size to small (8pt).
+
+@item @kbd{CTRL+0}
+Change the font size to medium (12pt).
+
+@item @kbd{CTRL+=}
+Change the font size to large (16pt).
+
+@item @kbd{F1}
+Display Aris help.
+
+@item @kbd{CTRL+7}
+Insert a conjunction (@samp{^}) into Aris.
+
+@item @kbd{CTRL+\}
+Insert a disjunction (@samp{v}) into Aris.
+
+@item @kbd{CTRL+`}
+Insert a negation (@samp{-}) into Aris.
+
+@item @kbd{CTRL+4}
+Insert a conditional (@samp{@arrow{}}) into Aris.
+
+@item @kbd{CTRL+5}
+Insert a biconditional (@samp{<->}) into Aris.
+
+@item @kbd{CTRL+2}
+Insert a universal (@samp{V}) into Aris.
+
+@item @kbd{CTRL+3}
+Insert an existential (@samp{3}) into Aris.
+
+@item @kbd{CTRL+6}
+Insert a tautology (@samp{T}) into Aris.
+
+@item @kbd{CTRL+1}
+Insert a contradiction (@samp{!}) into Aris.
+
+@item @kbd{CTRL+;}
+Insert an 'element of' predicate into Aris.
+
+@item @kbd{CTRL+.}
+Insert a null object (@samp{nil}) into Aris.
+
+@end table
+
+@node Rules Index
+@chapter Rules Index
+
+The rules are divided into five categories: Inference, Equivalence, Predicate, Boolean, and Miscellaneous.
+
+@menu
+* Inference Rules::     Rules that work on basic logic.
+* Equivalence Rules::   Rules that work on sentence parts.
+* Predicate Rules::     Rules that work with predicates and quantifiers.
+* Boolean Rules::       Rules that handle Boolean Algebra
+* Miscellaneous Rules:: Rules that don't fit in anywhere else.
+@end menu
+
+@node Inference Rules
+@section Inference Rules
+
+The premises of any of these rules can be in any order.
+
+@menu
+* mp::  Modus Ponens
+* ad::  Addition
+* sm::  Simplification
+* cn::  Conjunction
+* hs::  Hypothetical Syllogism
+* ds::  Disjunctive Syllogism
+* ex::  Excluded Middle
+* cd::  Constructive Dilemma
+@end menu
+
+@node mp
+@subsection Modus Ponens
+
+@itemize @w{}
+@item
+ P -> Q
+@item
+ P
+@item
+--------
+@item
+ Q
+@end itemize
+
+One of the basic rules of logic, modus ponens say that @samp{if P happens, then Q must happen.  P happened, so Q must happen}. @sp 1
+For example, if it is known that @samp{If the dog begins to bark, then someone is at the door}, and it is also known that @samp{the dog has begun to bark}, then modus ponens says that @samp{someone must be at the door}.
+
+Modus Ponens requires exactly two references.
+
+@node ad
+@subsection Addition
+
+@itemize @w{}
+@item
+ P
+@item
+--------
+@item
+ P v Q v R v ...
+@end itemize
+
+What addition says is that something is already known, so it must be true that that something or something else, or something else, etc. must also be true. @sp 1
+For example, if it is known that @samp{The sky is blue}, then addition says that it can be inferred that @samp{The sky is blue, or the sky is yellow, or the sky is pink}, since only one of those statements has to be true.
+
+Addition requires exactly one reference.
+
+@node sm
+@subsection Simplification
+
+@itemize @w{}
+@item
+ P ^ Q ^ R ^ ...
+@item
+--------
+@item
+ P (or Q, or R, or ...)
+@end itemize
+
+Simplification says that if it is known that P and Q and R, etc. is known to be true, then P is true. @sp 1
+For instance, if it is known that @samp{It is cloudy, and it is raining}, then simplification allows the inference of @samp{It is cloudy} and @samp{It is raining}.
+
+Simplification requires exactly one reference.
+
+@node cn
+@subsection Conjunction
+
+@itemize @w{}
+@item
+ P
+@item
+ Q
+@item
+ R
+@item
+--------
+@item
+ P ^ Q ^ R
+@end itemize
+
+What conjunction is saying is the exact opposite of simplification.  If P is known, and Q is known, and R is know, etc. then P and Q and R, etc. is also known. @sp 1
+Take for example, that it is known that @samp{I don't like green eggs and ham}, and @samp{I would not eat them in a house}, and @samp{I would not eat them with a mouse}.  Conjunction allows us to infer that @samp{I don't like green egss and ham, and I would not eat them in a house, and I would not eat them with a mouse.}.
+
+Conjunction requires at least two references.
+
+@node hs
+@subsection Hypothetical Syllogism
+
+@itemize @w{}
+@item
+ P @arrow{} Q
+@item
+ R @arrow{} S
+@item
+ Q @arrow{} R
+@item
+--------
+@item
+ P @arrow{} S
+@end itemize
+
+Also referred to as the chain rule, hypothetical syllogism states that if one knows that 'if P then Q', and 'if R then S', then one can infer 'if P then S'.  For example, if it is known @samp{if it is raining, then it is cloudy}, and @samp{if it is cloudy, then it is not sunny}, and @samp{if it is not sunny, then it is cold}, then hypothetical syllogism allows us to infer that @samp{if it is raining, then it is cold}.  This works with any number of conditional statements, as long as they all follow this pattern.
+
+Hypothetical Syllogism requires at least two references.
+
+@node ds
+@subsection Disjunctive Syllogism
+
+@itemize @w{}
+@item
+ ~P
+@item
+ P v Q v R
+@item
+ ~R
+@item
+--------
+@item
+ Q
+@end itemize
+
+Disjunctive syllogism is commonly used when disjunctions are present.  It claims that if one knows that 'P or Q or R', and 'P is false', and 'R is false', then Q must be true.  This works with any number of disjuncts.
+
+@node ex
+@subsection Excluded Middle
+
+@itemize @w{}
+@item
+--------
+@item
+ P v ~P
+@end itemize
+
+A law of logic, excluded middle asserts that something is either true, or it is not true.
+
+Excluded middle requires zero references.
+
+@node cd
+@subsection Constructive Dilemma
+
+@itemize @w{}
+@item
+ P @arrow{} R
+@item
+ P v Q
+@item
+ Q @arrow{} S
+@item
+--------
+@item
+ R v S
+@end itemize
+
+Constructive Dilemma requires at least three references.
+
+@node Equivalence Rules
+@section Equivalence Rules
+
+Equivalence rules operate on any valid part of the sentence, and work both ways.  Each equivalence rule requires one reference.
+
+@menu
+* im::  Implication
+* dm::  DeMorgan
+* as::  Association
+* co::  Commutativity
+* id::  Idempotence
+* dt::  Distribution
+* eq::  Equivalence
+* dn::  Double Negation
+* ep::  Exportation
+* sb::  Subsumption
+* Recursion:: Recursion in the equivalence rules
+@end menu
+
+@node im
+@subsection Implication
+
+@itemize @w{}
+@item
+P @arrow{} Q <=> ~P v Q
+@end itemize
+
+Implication uses the definition of the conditional.  It is also valid to claim something such as ~(~P v Q) v (~R v S) <=> (P @arrow{} Q) @arrow{} (R @arrow{} S), because implication is recursive.
+
+@node dm
+@subsection DeMorgan
+
+@itemize @w{}
+@item
+~(P ^ Q) <=> ~P v ~Q
+@item
+~(P v Q) <=> ~P ^ ~Q
+@item
+~3x(P(x)) <=> Vx(~P(x))
+@item
+~Vx(P(x)) <=> 3x(~P(x))
+@end itemize
+
+DeMorgan's Laws.
+
+@node as
+@subsection Association
+
+@itemize @w{}
+@item
+P ^ (Q ^ R) <=> P ^ Q ^ R
+@item
+P v (Q v R) <=> P v Q v R
+@end itemize
+
+A note to users, typically association is used as P ^ (Q ^ R) <=> (P ^ Q) ^ R.  While Aris will allow you to prove that this is equivalent, association allows the removal of one pair of parentheses at a time.  (P ^ Q) ^ (R ^ S) <=> P ^ Q ^ R ^ S is also valid in Aris, because association allows recursion, but only when removing several sets of parentheses or adding several sets of parentheses.
+
+@node co
+@subsection Commutativity
+
+@itemize @w{}
+@item
+P ^ Q ^ R <=> Q ^ R ^ P
+@item
+P v Q v R <=> Q v R v P
+@end itemize
+
+Just like addition and multiplication, conjunctions and disjunctions are commutative.  This of course means that @samp{I would like some pie and I would like some cake} is the same as saying @samp{I would like some cake and I would like some pie}.
+
+@node id
+@subsection Idempotence
+
+@itemize @w{}
+@item
+P ^ P ^ Q ^ R ^ R ^ R <=> P ^ Q ^ R
+@item
+P v P v Q v R v R v R <=> P v Q v R
+@end itemize
+
+Idempotence claims that @samp{I like blue and I like blue} is the same as saying @samp{I like blue}.
+
+@node dt
+@subsection Distribution
+
+@itemize @w{}
+@item
+P ^ (Q0 v Q1 v ... v Qn) <=> (P ^ Q0) v (P ^ Q1) v (P ^ Q2) v ... v (P ^ Qn)
+@item
+P v (Q0 v Q1 ^ ... ^ Qn) <=> (P v Q0) ^ (P v Q1) ^ (P v Q2) ^ ... ^ (P v Qn)
+@item
+3x(P(x) v Q(x)) <=> 3x(P(x)) v 3x(Q(x))
+@item
+Vx(P(x) ^ Q(x)) <=> Vx(P(x)) ^ Vx(Q(x))
+@end itemize
+
+@node eq
+@subsection Equivalence
+
+@itemize @w{}
+@item
+P <-> Q <=> (P @arrow{} Q) ^ (Q @arrow{} R)
+@end itemize
+
+Equivalence uses the definition of the biconditional.  Claiming that @samp{P if and only if Q} is exactly the same as claiming @samp{if P then Q} and @samp{if Q then P}.  Equivalence is the only rule that works with biconditionals explicitly, and is thus used any time a biconditional is seen.
+
+@node dn
+@subsection Double Negation
+
+@itemize @w{}
+@item
+~~P <=> P
+@end itemize
+
+You probably learned in english class that saying @samp{I would not like to disagree} is the same thing as saying @samp{I would like to agree}.  That's what double negation claims.
+
+@node ep
+@subsection Exportation
+
+@itemize @w{}
+@item
+(P ^ Q) @arrow{} R <=> P @arrow{} (Q @arrow{} R)
+@end itemize
+
+@node sb
+@subsection Subsumption
+
+@itemize @w{}
+@item
+P ^ (P v Q) <=> P
+@item
+P v (P ^ Q) <=> P
+@end itemize
+
+@node Recursion
+@subsection Recursion in the Equivalence Rules
+
+For the convenience of the user, the equivalence rules work recursively.  For example
+
+@itemize @w{}
+@item
+~(~P v Q) v (~R v S)
+@item
+--------
+@item
+(P @arrow{} Q) @arrow{} (R @arrow{} S)
+@end itemize
+
+This is an example of using implication recursively.  Recursion only works if the rule is being used the same way.  For example, removing multiple parentheses with association is fine, however adding and removing parentheses with association is not.
+
+Commutatvitity and idempotence work differently than the others when it comes to recursion.  If commutativity is applied to a connective, then no parts of that connective, or parts of those parts, and so on, can be used in commutativity.  However, other parts from the sentence can be rearranged.  The same goes for idempotence.
+
+@node Predicate Rules
+@section Predicate Rules
+
+The predicate rules are the rules that work specifically with predicate logic.
+
+@menu
+* ug:: Universal Generalization
+* ui:: Universal Instantiation
+* eg:: Existential Generalization
+* ei:: Existential Instantiation
+* bv:: Bound Variable
+* nq:: Null Quantifier
+* pr:: Prenex
+* ii:: Identity
+* fv:: Free Variable
+@end menu
+
+@node ug
+@subsection Universal Generalization
+
+@itemize @w{}
+@item
+P(a) ; a is arbitrary
+@item
+--------
+@item
+Vx(P(x))
+@end itemize
+
+Universal Generalization claims that if a property @samp{P} is true for some arbitrary object, then it is true for all objects.  A symbol is arbitrary if nothing is known about, or rather if it was not introduced through a premise or using existential instantiation. @ref{Terms, Variables}
+
+Universal Generalization uses exactly one reference.
+
+@node ui
+@subsection Universal Instantiation
+
+@itemize @w{}
+@item
+Vx(P(x))
+@item
+--------
+@item
+P(a)
+@end itemize
+
+Universal Generalization claims that if a property @samp{P} is true for all objects, then it must be true for an object @samp{a}.
+
+Universal Generalization uses exactly one reference.
+
+@node eg
+@subsection Existential Generalization
+
+@itemize @w{}
+@item
+P(a)
+@item
+--------
+@item
+3x(P(x))
+@end itemize
+
+Existential Generalization claims that if @samp{P} is true for some object, then there exists an object for which @samp{P} is true.
+
+Existential Generalization uses exactly one reference.
+
+@node ei
+@subsection Existential Instantiation.
+
+@itemize @w{}
+@item
+3x(P(x))
+@item
+--------
+@item
+P(a) ; a must not have been used before
+@end itemize
+
+Existential Instantiation claims that if there exists an object for which property @samp{P} is true, then it can be claimed that some unused object has this property.  In this case, @samp{a} becomes a placeholder for the object.  @ref{Terms, Variables}
+
+Existential Instantiation uses exactly one reference.
+
+@node bv
+@subsection Bound Variable
+
+@itemize @w{}
+@item
+Vx(P(x)) <=> Vy(P(y))
+@item
+3x(P(x)) <=> 3y(P(y))
+@end itemize
+
+Bound Variable allows the user to substitute any bound variable for another bound variable, given that the second bound variable does not appear anywhere in the scope of the quantifier of the first bound variable.  For example, if it is known that Vx(Vy(P(x) ^ P(y))), an invalid use of bound variable would be to state that Vx(Vx(P(x) ^ P(x))).
+
+As an equivalence rule, bound variable uses only one reference, and can work on any part of the sentence.
+
+@node nq
+@subsection Null Quantifier
+
+@itemize @w{}
+@item
+Vx(P(a)) <=> P(a)
+@end itemize
+
+If a quantifier's bound variable does not appear in its scope, then the quantifier is said to be null, and can be removed using Null Quantifier.
+
+As an equivalence rule, null quantifier can be used on any part of the sentence, and only uses one reference.
+
+@node pr
+@subsection Prenex
+
+@itemize @w{}
+@item
+3x(P(x) ^ Q(a)) <=> 3x(P(x)) ^ Q(a)
+@item
+Vx(P(x) ^ Q(a)) <=> Vx(P(x)) ^ Q(a)
+@item
+3x(P(x) v Q(a)) <=> 3x(P(x)) v Q(a)
+@item
+Vx(P(x) v Q(a)) <=> Vx(P(x)) v Q(a)
+@end itemize
+
+The Prenex Laws are used to move quantifiers to the start of the sentence.
+
+Prenex uses only one reference, and, being an equivalence rule, can be used on any part of the sentence.
+
+@node ii
+@subsection Identity
+
+@itemize @w{}
+@item
+--------
+@item
+ a = a
+@end itemize
+
+Identity asserts that any variable is identical to itself.
+
+Identity does not use any references.
+
+@node fv
+@subsection Free Variable
+
+@itemize @w{}
+@item
+a = b
+@item
+P(a)
+@item
+--------
+@item
+P(b)
+@end itemize
+
+Free Variable allows the user to substitute a free variable for another free variable, given that the two are identical.
+
+Free Variable uses exactly two references.
+
+@node Boolean Rules
+@section Boolean Rules
+
+Aris can be set to use 'boolean mode', a mode used for boolean algebra.  In boolean mode, only equivalence rules and boolean rules can be used.
+
+@menu
+* bi::  Boolean Identity
+* bn::  Boolean Negation
+* bd::  Boolean Dominance
+* sn::  Symbol Negation
+@end menu
+
+@node bi
+@subsection Boolean Identity
+
+@itemize @w{}
+@item
+A ^ T <=> A
+@item
+A v ! <=> A
+@end itemize
+
+Boolean Identity claims that the conjunction of a sentence with a tautology is logically equivalent to the sentence.  It also claims that the disjunction of a sentence an a contradiction is logically equivalent to the sentence.
+
+@node bn
+@subsection Boolean Negation
+
+@itemize @w{}
+@item
+A ^ ~A <=> !
+@item
+A v ~A <=> T
+@end itemize
+
+Boolean Negation claims that the conjunction of a setentence and its contradiction is a contradiction, and the disjunction of a sentence and its negation is a tautology.
+
+@node bd
+@subsection Boolean Dominance
+
+@itemize @w{}
+@item
+A ^ ! <=> !
+@item
+A v T <=> T
+@end itemize
+
+Boolean Dominance claims that the conjunction of a sentence and a contradiction is logically equivalent to a contradiction.  It also claims that the disjunction of a sentence and a tautology is logically equivalent to a tautology.
+
+@node sn
+@subsection Symbol Negation
+
+@itemize @w{}
+@item
+~T <=> !
+@item
+~! <=> T
+@end itemize
+
+Symbol Negation claims that a tautology is the opposite of a contradiction.
+
+@node Miscellaneous Rules
+@section Miscellaneous Rules
+
+@menu
+* lm:: Lemma
+* sp:: Subproof
+* sq:: Sequence
+* in:: Induction
+@end menu
+
+@node lm
+@subsection Lemma
+
+This handy little rule allows one to use proofs one has already done.  The premises don't have to match exactly, but they must be of the same form.
+Aris will check for each symbol it recognizes (connectives, quantifiers, parentheses, comma, and identity).  These symbols must match exactly.  Aris will then check that the sentences match the correct form, or rather that they appear in the correct order.
+
+For example, if you already did a proof of the form:
+
+@itemize @w{}
+@item
+A <-> B
+@item
+A
+@item
+--------
+@item
+B
+@end itemize
+
+And want to reuse it, then your reference sentences must be in the form @samp{A} <-> @samp{B}, and @samp{A}.  In general, they do not have to be in that order, however.  Then, your conclusion must be the second half of the biconditional.
+
+This is where Isar interoperability comes in.  Instead of selecting a previous Aris proof, a .thy file can be used.  Aris will attempt to translate it into a form that it can use, using most of the keywords as references, and the lemmas and theorems as goals.  These are the sentences that can be proved.  For more information, see @ref{Isabelle/Isar}.
+
+@node sp
+@subsection Subproof
+
+Given a subproof with premise 'P' and conclusion (the LAST sentence) 'Q', one can infer from subproof 'P @arrow{} Q'.
+
+@node sq
+@subsection Sequence
+
+This introduces a new sequence given a function.  The sequence introduced this way must not have been used, and the final argument of the given function must be the bound variable of the sentence.
+
+@node in
+@subsection Induction
+
+@itemize @w{}
+@item
+Vx(P(z(x)) ^ (P(x) @arrow{} P(s(x))))
+@item
+--------
+@item
+Vx(P(x))
+@end itemize
+
+This rule is how Aris implements mathematical induction.  @samp{P(z(x))} is the base case, and the inductive step is @samp{P(x)} @arrow{} @samp{P(s(x))}.
+
+@node Customization
+@chapter Customization
+
+GNU Aris can be customized using the customization dialog, or manually through the customization file.  The customization dialog can be accessed through the rules table, under 'Help'.
+
+@menu
+* Dialog::      The customization dialog.
+* Config File:: The customization file format.
+@end menu
+
+@node Dialog
+@section Customization Dialog
+
+
+When the dialog appears, there are several tabs.  These are explained as follows:
+
+@table @asis
+
+@item Main Keys
+This tab allows the user to customize the keyboard shortcuts that Aris uses with the proof and rules table menus.  Each entry corresponds to a menu item.  The only option that can not be edited is the 'Contents' menu keyboard shortcut.
+
+@item Goal Keys
+This tab allows the user to customize the keyboard shortcuts that Aris uses with the goal menus.
+
+@item Display
+This tab allows the user to customize the display settings.  Included in here are the font size presets, which will be set to the indicated size when activated; the default font size, which Aris will be in when loaded; and the color preferences, which will change the colors that Aris hilights different objects in.
+
+@item Internal
+This tab allows the user to set internal preferences.  Right now, the only item in this tab is the IP Address of the Grade Server. (@pxref{Submission})
+
+@end table
+
+For a description of the format of key commands, see @ref{Config File}.
+
+@node Config File
+@section Customization File
+
+The config file uses s-expressions to store the customization file.  It is stored under the home directory, and called @samp{.aris}.  There are several key words that it recognizes:
+
+@table @asis
+
+@item @samp{key-cmd}
+@itemx @samp{(key-cmd 'cmd' 'key')}
+
+Assigns menu @samp{cmd} to keyboard shortcut @samp{key}. The keyboard shortcuts are all in the same format, which is either @kbd{s} or @kbd{c}, a plus sign, then a letter.  A @kbd{c} before the letter means @samp{Hold control, and press the key}, and @kbd{s} means the same except with the shift key.
+
+@item @samp{font-size}
+@itemx @samp{(font-size 'type' size)}
+
+Assigns @samp{size} to font type @samp{type}.  The @samp{type} key word can be either @samp{Small}, which means set the small font preset, @samp{Medium}, which means set the medium font preset, @samp{Large}, which means set the large font preset, or @samp{Default}, which means set the font size that Aris loads up with intially.
+
+@item @samp{color-pref}
+@itemx @samp{(color-pref 'type' color)}
+
+Assigns @samp{color} to color preference @samp{type}.  The @samp{color} key word is in hexidecimal.
+
+@item @samp{grade-ip}
+@itemx @samp{(grade-ip 'addr')}
+
+Sets the IP address of the grading server to @samp{addr}.
+
+@end table
+
+@node Submission
+@chapter Proof Submission
+
+GNU Aris allows users to submit their proofs to a grading server, which allows instructors to use Aris in their classes.  Aris submits proofs through FTP, and allows users to indicate an email for themselves and an optional email for their instructors.
+
+Submission submits all open proofs for submission.  It allows users to specify a problem designation for each open proof.
+
+Grading runs by checking the correctness of the entire proof.  It is the responsibility of the grading server to confirm that the proof is the correct proof.
+
+When the files are submitted, Aris submits them to the server, along with a directive file.  The directive file will be named @samp{USER.directive}, where @samp{USER} is the base name of the email address specified.  The files submitted will be renamed to be @samp{BASE-USER.tle}, where @samp{BASE} is the original basename of the file.  This prevents filename conflicts on the FTP server.
+
+@node Sequence Logic
+@chapter Sequence Logic
+
+Sequence Logic, often abbreviated 'seqlog', is an alternative arithmetical representation system from the standard Peano Axioms.
+
+Seqlog uses the symbols 's' (the sucessor function), 'z' (the zero function), 'n' (the sequence of natural numbers), 'v' (the value function), '0' (the number zero), and '\0' (null object).
+
+@menu
+* Axioms::      The axioms used by seqlog.
+* Induction::   An overview of the induction scheme.
+@end menu
+
+@node Axioms
+@section Axioms
+
+Sequence Logic, often abbreviated 'seqlog', uses the following six axioms:
+
+@itemize
+@item
+VxVy(~s(x) = z(y))
+@item
+VxVy(s(x) = s(y) @arrow{} x = y)
+@item
+Vx(v(S,x) = f_S(x))
+@item
+Vx(v(n,z(x)) = 0)
+@item
+Vx(~v(n,x) = \0)
+@item
+VxVy(v(n,x) = v(n,y) @arrow{} x = y)
+@end itemize
+
+The first axiom states that no sucessor is the zero object, or, to put it differently, that the zero object is the first object.  The second axiom states that no two different objects have the same sucessor.  Using these two axioms, a 'Universal Sequence' can be defined, in a way similar to how the Peano Axioms define the natural numbers.  The third axiom is the definition of a sequence, stating that the value under a given sequence 'S' of every object 'x' can be determined by a function.  The rule 'sq' introduces such a sequence (@pxref{sq}).
+
+The fourth axiom defines zero, and introduces the natural numbers.  It states that the first element in the natural numbers is zero.  The fifth axiom defines the null object, and states that the natural numbers are defined on all inputs.  The sixth axiom states that the natural numbers are one-to-one, or that if two numbers are equal, then the objects that they represent are equal.
+
+@node Induction
+@section Induction
+
+Mathematical induction requires a base case, and an inductive step.  In Aris, this is used in conjunction (ha @pxref{cn}) with seqlog.  For seqlog, the induction scheme is:
+
+@itemize @w{}
+@item
+Vx(P(z(x)) ^ (P(x) @arrow{} P(s(x)))) @arrow{} Vx(P(x))
+@end itemize
+
+@node Interoperability
+@chapter Interoperability
+
+In addition to everything else Aris can do, Aris can also use other proofs from other systems with the lemma rule (@pxref{lm}).
+
+@menu
+* Isabelle/Isar::        The proof system Isar.
+@end menu
+
+@node Isabelle/Isar
+@section Isar Interoperability
+
+Aris will scan an Isar proof, which is a proof done using Isabelle, and look for certain keywords.
+
+@menu
+* fun::                 The 'fun' keyword.
+* type_synonym::        The 'type_synonym' keyword.
+* lemma/theorem::       The 'lemma' keyword.
+* case::                The 'case' keyword.
+* primrec::             The 'primrec' keyword.
+* definition::          The 'definiton' keyword.
+* datatype::            The 'datatype' keyword.
+* class::               The 'class' keyword.
+* instance::            The 'instance' keyword.
+* other::               Everything else.
+@end menu
+
+@node fun
+@subsection fun keyword.
+
+Standard definition of a function in seqlog.
+
+@node type_synonym
+@subsection type_synonym keyword
+
+@node lemma/theorem
+@subsection lemma and theorem keywords
+
+Lemmas and theorems are treated the same.  Lemmas end up as the goals of the proofs that Aris creates, and are the actual sentences that can be deduced.  It takes the 'if-then' form of each lemma.
+
+@node case
+@subsection case keyword
+
+@node primrec
+@subsection primrec keyword
+
+@node definition
+@subsection definition keyword
+
+@node datatype
+@subsection datatype keyword
+
+@node class
+@subsection class keyword
+
+@node instance
+@subsection instance keyword
+
+@node other
+@subsection everything else
+
+@bye
