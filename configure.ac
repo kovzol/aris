@@ -2,6 +2,7 @@ AC_PREREQ(2.60)
 AC_INIT([GNU Aris], [2.0], [bug-aris@gnu.org])
 AC_CONFIG_HEADER(src/config.h)
 AC_CONFIG_SRCDIR(src/aris.c)
+AC_CONFIG_AUX_DIR(build-aux)
 AM_INIT_AUTOMAKE
 AC_ARG_PROGRAM
 
@@ -38,7 +39,7 @@ AC_SUBST(XML_LIBS)
 AC_DEFINE_UNQUOTED([HELP_FILE], "file://`pwd`/doc/aris/index.html", [The help HTML file path])
 
 if test "$WIN32" = "yes"; then
-   AC_DEFINE([WIN32])
+   AC_DEFINE([WIN32], [], ["Used when compiling for Windows"])
 fi
 
 AC_CONFIG_FILES([Makefile src/Makefile])
