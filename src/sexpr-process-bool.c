@@ -103,6 +103,7 @@ proc_bi (unsigned char * prem, unsigned char * conc)
 
   int li, si;
 
+  // Rollback sh_sen to just before the first o-paren.
   si = li = i;
   if (sh_sen[si] == '(')
     {
@@ -114,7 +115,8 @@ proc_bi (unsigned char * prem, unsigned char * conc)
 	   && (!strncmp (sh_sen + si - 1, S_AND, S_CL)
 	       || !strncmp (sh_sen + si - 1, S_OR, S_CL)
 	       || !strncmp (sh_sen + si - 1, S_CON, S_CL)
-	       || !strncmp (sh_sen + si - 1, S_BIC, S_CL)))
+	       || !strncmp (sh_sen + si - 1, S_BIC, S_CL)
+	       || !strncmp (sh_sen + si - 1, S_NOT, S_NL)))
     {
       while (sh_sen[si] != '(')
 	si--;
@@ -143,6 +145,13 @@ proc_bi (unsigned char * prem, unsigned char * conc)
 
       if (li < 0)
 	return _("Boolean Identity constructed incorrectly.");
+
+      if (si < 0)
+	{
+	  // The equivalence uses all of sh_sen.
+	  // this means that li needs to be zero.
+	  li = 0;
+	}
     }
 
   if (ln_sen[li] != '(')
@@ -182,15 +191,35 @@ proc_bi (unsigned char * prem, unsigned char * conc)
       return _("There must be a conjunction or a disjunction in one sentence.");
     }
 
-  if ((!strcmp (conn, S_AND) && strcmp (rsen, S_TAU))
-      && (!strcmp (conn, S_OR) && strcmp (rsen, S_CTR)))
+  unsigned char * good_side, * bad_side;
+
+  if (ISSBOOL(lsen))
+    {
+      good_side = lsen;
+      bad_side = rsen;
+    }
+  else if (ISSBOOL(rsen))
+    {
+      good_side = rsen;
+      bad_side = lsen;
+    }
+  else
+    {
+      free (rsen);
+      free (lsen);
+      return _("There must be a tautology or a contradiction in the generalities.");
+    }
+
+  if ((!strcmp (conn, S_AND) && strcmp (good_side, S_TAU))
+      && (!strcmp (conn, S_OR) && strcmp (good_side, S_CTR)))
     {
       free (lsen);
       free (rsen);
 
-      return _("There must be a tautology or a contradiction in the generalities.");
+      return _("A tautology must be matched with a conjunction, and a contradiction \
+with a disjunction.");
     }
-  free (rsen);
+  free (good_side);
 
   unsigned char * oth_sen;
   int oth_pos;
@@ -200,8 +229,8 @@ proc_bi (unsigned char * prem, unsigned char * conc)
   strncpy (oth_sen, ln_sen, li);
   oth_pos = li;
 
-  oth_pos += sprintf (oth_sen + oth_pos, "%s", lsen);
-  free (lsen);
+  oth_pos += sprintf (oth_sen + oth_pos, "%s", bad_side);
+  free (bad_side);
 
   strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
 
