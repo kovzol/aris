@@ -131,6 +131,81 @@ find_difference (unsigned char * sen_0, unsigned char * sen_1)
   return i;
 }
 
+int
+parse_tags (const unsigned char * in_str, const int init_pos,
+	    unsigned char ** out_str, const char * o_tag,
+	    const char * c_tag)
+{
+  //The lengths of the tags will be needed.
+  int o_len, c_len;
+
+  o_len = strlen (o_tag);
+  c_len = strlen (c_tag);
+
+  if (strncmp (in_str + init_pos, o_tag, o_len))
+    {
+      if (out_str)
+	*out_str = NULL;
+      return -2;
+    }
+
+  //The opening and closing parentheses count.
+  int o_tag_count, c_tag_count;
+
+  //The offset of the last tag.
+  int tag_pos;
+
+  //Temporary strings that take the return from strchr.
+  unsigned char * o_str, * c_str;
+
+  o_tag_count = 1;
+  c_tag_count = 0;
+
+  tag_pos = init_pos + 1;
+
+  while (o_tag_count != c_tag_count)
+    {
+      //Find the next opening and closing parentheses.
+      o_str = (unsigned char*) strstr ((const char *) in_str + tag_pos, o_tag);
+      c_str = (unsigned char*) strstr ((const char *) in_str + tag_pos, c_tag);
+
+      //If the offset of c_str from in_str,
+      // is less than the offset of o_str from in_str,
+      //then this is a closing parentheses.
+      if (c_str != NULL
+	  && (o_str == NULL || (c_str - in_str) < (o_str - in_str)))
+	{
+	  c_tag_count++;
+	  tag_pos = c_str - in_str + c_len;
+	}
+      else if (o_str != NULL)
+	{
+	  o_tag_count++;
+	  tag_pos = o_str - in_str + o_len;
+	}
+      else
+	{
+	  //If both strings are NULL, then return -1.
+	  return -2;
+	}
+    }
+
+  tag_pos--;
+
+  if (out_str)
+    {
+      // Allocate enough room for out_str,
+      // and copy the parentheses construct from in_str.
+      *out_str = (unsigned char*) calloc (tag_pos - init_pos + 2, sizeof (char));
+      CHECK_ALLOC (*out_str, -1);
+      strncpy (*out_str, in_str + init_pos, tag_pos - init_pos + 1);
+      (*out_str)[tag_pos - init_pos + 1] = '\0';
+    }
+
+  //Return tag_pos.
+  return tag_pos;
+}
+
 /* Parses parentheses on an input string.
  *  input:
  *    in_str - the string to parse.
@@ -298,7 +373,6 @@ reverse_parse_parens (const unsigned char * in_str, const int init_pos, unsigned
 
   if (out_str)
     {
-
       //Allocate space for out_str.
       *out_str = (unsigned char *) calloc (init_pos - paren_pos + 2, sizeof (char));
       CHECK_ALLOC (*out_str, -2);
@@ -398,7 +472,9 @@ check_sides (const unsigned char * chk_str, const unsigned int init_pos)
   unsigned char tmp_str[CL];
 
   if (!isalnum (chk_str[init_pos - 1]) && chk_str[init_pos - 1] != ')'
-      && (init_pos < CL || strncmp (chk_str + init_pos - CL, NIL, CL)))
+      && (init_pos < CL || (strncmp (chk_str + init_pos - CL, NIL, CL)
+			    && strncmp (chk_str + init_pos - CL, CTR, CL)
+			    && strncmp (chk_str + init_pos - CL, TAU, CL))))
     return 0;
 
   //This connective must not be the last character.
