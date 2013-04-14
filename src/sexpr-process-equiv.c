@@ -81,10 +81,15 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
       destroy_str_vec (gens_0);
       destroy_str_vec (gens_1);
 
+      // If only one generality, there is either a negation or quantifier.
+
+      // Check for a negation.
       if (sexpr_not_check (sen_0) || sexpr_not_check (sen_1))
 	{
 	  if (!sexpr_not_check (sen_0) || !sexpr_not_check (sen_1))
 	    return -2;
+
+	  // Eliminate the negation, and continue.
 
 	  int ret;
 	  unsigned char * not_sen_0, * not_sen_1;
@@ -106,6 +111,8 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
 	  return ret;
 	}
 
+      // Check for a quantifier.
+
       if ((sen_0[0] == '(' && sen_1[0] == '(')
 	  && ((!strncmp (sen_0 + 2, S_UNV, S_CL)
 	       || !strncmp (sen_0 + 2, S_EXL, S_CL))
@@ -119,6 +126,8 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
 	    {
 	      return -2;
 	    }
+
+	  // Eliminate the quantifier and continue.
 
 	  unsigned char * scope_0, * scope_1, * var_0, * var_1;
 	  unsigned char quant_0[S_CL + 1], quant_1[S_CL + 1];
@@ -1049,7 +1058,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 	  || (strncmp (sh_sen + i - 1, S_AND, S_CL)
 	      &&  strncmp (sh_sen + i - 1, S_OR, S_CL)))
 	{
-	  return _("There must be a connective at the difference.");
+	  return _("The top connective must change between sentences.");
 	}
 
       tmp_pos = parse_parens (sh_sen, i - S_CL + 1, &tmp_str);
