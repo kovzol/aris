@@ -32,8 +32,8 @@ static char * letter_regexp, * greek_regexp, * nat_regexp,
   * ql_regexp, * float_regexp, * ident_regexp, * lident_regexp,
   * symident_regexp, * var_regexp;
 
-#define ISABELLE_PATH "/home/skolar/source/isar/Isabelle2013/bin/"
-#define ISABELLE_EXEC "/home/skolar/source/isar/Isabelle2013/bin/isabelle-process"
+#define ISABELLE_PATH "define-me"
+#define ISABELLE_EXEC "define-me"
 
 static const char * is_args[3] = {ISABELLE_EXEC,
 				  "-I",
