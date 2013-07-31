@@ -36,6 +36,14 @@
 #define S_CL  sexpr_conns.cl
 #define S_NL  sexpr_conns.nl
 
+int sexpr_get_part (unsigned char * in_str,
+		    unsigned int init_pos,
+		    unsigned char ** out_str);
+
+unsigned char * sexpr_car (unsigned char * in_str);
+
+unsigned char * sexpr_cdr (unsigned char * in_str);
+
 int sexpr_not_check (unsigned char * in_str);
 
 unsigned char * sexpr_add_not (unsigned char * in_str);
