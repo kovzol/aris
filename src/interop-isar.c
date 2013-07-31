@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <gtk/gtk.h>
 
 #include "vec.h"
 #include "process.h"
@@ -9,6 +10,623 @@
 #include "list.h"
 #include "proof.h"
 #include "sen-data.h"
+
+static const char * greek_syms[] = {
+  "\\<alpha>", "\\<beta>", "\\<gamma>",
+  "\\<delta>", "\\<epsilon>", "\\<zeta>",
+  "\\<eta>", "\\<theta>", "\\<iota>", "\\<kappa>",
+  "\\<mu>", "\\<nu>", "\\<xi>", "\\<pi>", "\\<rho>",
+  "\\<sigma>", "\\<tau>", "\\<upsilon>", "\\<phi>",
+  "\\<chi>", "\\<psi>", "\\<omega>", "\\<Gamma>",
+  "\\<Delta>", "\\<Theta>", "\\<Lambda>", "\\<Xi>",
+  "\\<Pi>", "\\<Sigma>", "\\<Upsilon>", "\\<Phi>",
+  "\\<Psi>", "\\<Omega>", NULL
+};
+
+static char * latin_regexp = "[a-zA-Z]";
+static char * digit_regexp = "[0-9]";
+static char * sym_regexp = "[!#$%&*+-/<=>?@^_|~]";
+static char * string_regexp = "\"[^\"]\"";
+static char * astring_regexp = "\'[^\']\'";
+static char * letter_regexp, * greek_regexp, * nat_regexp,
+  * ql_regexp, * float_regexp, * ident_regexp, * lident_regexp,
+  * symident_regexp, * var_regexp;
+
+#define ISABELLE_PATH "/home/skolar/source/isar/Isabelle2013/bin/"
+#define ISABELLE_EXEC "/home/skolar/source/isar/Isabelle2013/bin/isabelle-process"
+
+static const char * is_args[3] = {ISABELLE_EXEC,
+				  "-I",
+				  NULL};
+
+int
+isar_run_cmds (unsigned char ** inputs, unsigned char ** output)
+{
+  GPid new_pid;
+  int sout, sin;
+  GError * g_err;
+
+  g_spawn_async_with_pipes (ISABELLE_PATH,
+			    (gchar **) is_args,
+			    NULL,
+			    0,
+			    NULL, NULL,
+			    &new_pid,
+			    &sin, &sout, NULL,
+			    &g_err);
+
+  FILE * in_stream, * out_stream;
+  in_stream = fdopen (sin, "w");
+  int i;
+  for (i = 0; inputs[i]; i++)
+    {
+      fprintf (in_stream, "%s;\r\n", inputs[i]);
+    }
+  fclose (in_stream);
+
+  out_stream = fdopen (sout, "r");
+  char c;
+  vec_t * c_vec;
+  c_vec = init_vec (sizeof(char));
+  if (!c_vec)
+    return -1;
+
+  while ((c = fgetc(out_stream)) != EOF)
+    {
+      char tmp_c = c;
+      int v_ret;
+      v_ret = vec_add_obj (c_vec, &tmp_c);
+      if (v_ret == -1)
+	return -1;
+    }
+  fclose (out_stream);
+
+  *output = (unsigned char *) calloc (c_vec->num_stuff + 1, sizeof (char));
+  CHECK_ALLOC ((*output), -1);
+
+  for (i = 0; i < c_vec->num_stuff; i++)
+    {
+      char * tmp_c = vec_nth (c_vec, i);
+      (*output)[i] = (unsigned char) *tmp_c;
+    }
+
+  (*output)[i] = '\0';
+  destroy_vec (c_vec);
+
+  g_spawn_close_pid (new_pid);
+
+  return 0;
+}
+
+
+int
+isar_prep_regexps ()
+{
+  /*
+  int l_len, d_len, s_len, lt_len, gr_len, nat_len, ql_len,
+    var_len;
+
+  int tf_len, tv_len;
+  char * tf_regexp, * tv_regexp;
+
+  l_len = 8, d_len = 5, s_len = 20;
+
+  nat_regexp = (char *) calloc (d_len + 2, sizeof (char));
+  CHECK_ALLOC (nat_regexp, -1);
+  nat_len = sprintf (nat_regexp, "%s+", digit_regexp);
+
+  letter_regexp = (char *) calloc (l_len * 4 + gr_len + 32,
+				   sizeof (char));
+  CHECK_ALLOC (letter_regexp, -1);
+  lt_len = sprintf (letter_regexp,
+		    "%s|\\\\<%s>|\\\\<%s%s>|%s|\\\\<^isub>|\\\\<^isup>",
+		    latin_regexp, latin_regexp, latin_regexp,
+		    latin_regexp, greek_regexp);
+
+  sprintf (float_regexp, "%s.%s|-%s.%s",
+	   nat_regexp, nat_regexp,
+	   nat_regexp, nat_regexp);
+
+  sprintf (ql_regexp, "%s|%s|_|'",
+	   letter_regexp, digit_regexp);
+
+  sprintf (ident_regexp, "%s%s*", letter_regexp,
+	   ql_regexp);
+
+  sprintf (lident_regexp, "%s(.%s)+", ident_regexp, ident_regexp);
+
+  sprintf (symident_regexp, "%s+ | \\\\<%s>",
+	   sym_regexp,
+	   ident_regexp);
+
+  var_len = sprintf (var_regexp, "?%s|?%s.%s", ident_regexp,
+		     ident_regexp, nat_regexp);
+
+  tf_len = sprintf (tf_regexp, "'%s", ident_regexp);
+
+  tv_len = sprintf (tv_regexp, "?%s|?%s.%s", tf_regexp, tf_regexp, nat_regexp);
+  */
+
+  return 0;
+}
+
+int
+is_latin (char * input)
+{
+  return isalpha (*input);
+}
+
+int
+is_greek (char * input)
+{
+  int i;
+  for (i = 0; greek_syms[i]; i++)
+    {
+      if (!strcmp (input, greek_syms[i]))
+	break;
+    }
+
+  return (greek_syms[i] != NULL);
+}
+
+int
+is_sym (char * input)
+{
+  return ispunct (*input);
+}
+
+int
+is_digit (char * input)
+{
+  return isdigit (*input);
+}
+
+int
+is_nat (char * input)
+{
+  int i;
+  for (i = 0; input[i]; i++)
+    {
+      if (!is_digit (input + i))
+	break;
+    }
+
+  return (input[i] == '\0');
+}
+
+int
+is_float (char * input)
+{
+  char * chk;
+  int chk_0, chk_1;
+  // nat.nat | -nat.nat
+  chk = strtok (input, ".");
+  if (chk[0] == '-')
+    chk += 1;
+
+  chk_0 = is_nat (chk);
+  if (!chk_0)
+    return 0;
+
+  chk = strtok (NULL, ".");
+  chk_1 = is_nat (chk);
+
+  return chk_1;
+}
+
+int
+is_letter (char * input)
+{
+  int check, chk, chk_0, chk_1;
+  check = is_latin (input);
+  chk = (input[0] == '\\'
+	 && input[1] == '<'
+	 && is_latin (input + 2));
+
+  chk_0 = (chk
+	   && input[3] == '>'
+	   && input[4] == '\0');
+  chk_1 = (chk
+	   && input[3] == ' '
+	   && is_latin (input + 4)
+	   && input[5] == '>'
+	   && input[6] == '\0');
+
+  if (check || chk_0 || chk_1)
+    return 1;
+
+  check = is_greek (input);
+  if (check)
+    return 1;
+
+  chk = !strcmp (input, "\\<^isub>")
+    || !strcmp (input, "\\<^isup>");
+
+  if (chk)
+    return 1;
+
+  return 0;
+}
+
+int
+is_quasiletter (char * input)
+{
+  return (is_letter (input) || is_digit (input)
+	  || *input == '_' || *input == '\'');
+}
+
+int
+parse_verbatim (const unsigned char * in_str, const int init_pos,
+		unsigned char ** out_str)
+{
+    //The opening and closing verbatim count.
+  int o_verb, c_verb;
+
+  //The offset of the last verbs.
+  int verb_pos;
+
+  //Temporary strings that take the return from strchr.
+  unsigned char * o_str, * c_str;
+
+  o_verb = 1;
+  c_verb = 0;
+
+  verb_pos = init_pos + 1;
+
+  while (o_verb != c_verb)
+    {
+      //Find the next opening and closing verbtheses.
+      o_str = (unsigned char*) strstr ((const char *) in_str + verb_pos, "{*");
+      c_str = (unsigned char*) strstr ((const char *) in_str + verb_pos, "*}");
+
+      //If the offset of c_str from in_str,
+      // is less than the offset of o_str from in_str,
+      //then this is a closing verbtheses.
+      if (c_str != NULL
+	  && (o_str == NULL || (c_str - in_str) < (o_str - in_str)))
+	{
+	  c_verb += 1;
+	  verb_pos = c_str - in_str + 2;
+	}
+      else if (o_str != NULL)
+	{
+	  o_verb += 1;
+	  verb_pos = o_str - in_str + 2;
+	}
+      else
+	{
+	  //If both strings are NULL, then return -1.
+	  return -1;
+	}
+    }
+
+  verb_pos--;
+
+  if (out_str)
+    {
+      // Allocate enough room for out_str,
+      // and copy the verbtheses construct from in_str.
+      *out_str = (unsigned char*) calloc (verb_pos - init_pos + 2, sizeof (char));
+      CHECK_ALLOC (*out_str, -2);
+      strncpy (*out_str, in_str + init_pos, verb_pos - init_pos + 1);
+      (*out_str)[verb_pos - init_pos + 1] = '\0';
+    }
+
+  //Return verb_pos.
+  return verb_pos;
+}
+
+/*
+  verbatim: {* [^"*}"] *}  // Not valid regexp
+
+  name: ident | symident | string | nat
+  parname: \( name \)
+  nameref: name | longident
+
+  int: nat | -nat
+  real: float | int
+
+  text: verbatim : nameref
+  comment: -- text
+
+  classdecl: name (< | \subseteq) nameref (,nameref)*
+  sort: nameref
+  arity: \( sort (,sort)* \) sort
+
+  type: nameref | typefree | typevar
+  term: nameref | var
+  prop: term
+
+  inst: _ | term
+  insts: inst*
+
+  typespec: (typefree | \( typefree (,typefree)* \))name
+  typespec_sorts: (typefree (:: sort)? | \( typefree (:: sort)? (, typefree (:: sort)?)* \)) name
+
+  term_pat: \( ('is' term)+ \)
+  prop_pat: \( ('is' prop)+ \)
+
+  vars: name+ (:: type)?
+  props: (thmdecl)? (prop (prop_pat)?)+
+
+  atom: nameref | typefree | typevar | var | nat | float | keyword
+  arg: atom | \( args \) | \[ args \]
+  args: arg*
+  attributes: \[ (nameref args (, nameref args)*)? \]
+
+  axmdecl: name (attributes)? ':'
+  thmdecl: thmbind ':'
+  thmdef: thmbind '='
+  thmref: ( (nameref (selection)? | altstring) (attributes)? | \[ attributes \])
+  thmrefs: thmref+
+  thmbind: (name attributes | name | attributes)
+  selection: \( (nat | nat '-' (nat)?) (, (nat | nat '-' (nat)?))* \)
+
+
+  ('chapter' | 'section' | 'subsection' | 'subsubsection' | 'text') target? text
+  ('header' | 'text_raw' | 'sect' | 'subsect' | 'subsubsect' | 'txt' | 'txt_raw') text
+  '@{' antiquotation '}'
+  antiquotation:
+  ('theory' options name
+  | 'thm' options styles thmrefs
+  | 'lemma' options prop 'by' method method?
+  | 'prop' options styles prop
+  | 'term' options styles term
+  | 'value' options styles term
+  | 'term_type' options styles term
+  | 'typeof' options styles term
+  | 'const' options term
+  | 'abbrev' options term
+  | 'typ' options name
+  | 'type' options name
+  | 'class' options name
+  | 'text' options name
+  | 'goals' options
+  | 'subgoals' options
+  | 'prf' options thmrefs
+  | 'full_prf' options thmrefs
+  | 'ML' options name
+  | 'ML_type' options name
+  | 'ML_struct' options name
+  | 'file' options name)
+
+  options: \[ option (, option)* \]
+  option: (name | name = name)
+  styles: \( style (, style)* \)
+  style: name+
+
+  tags: tag*
+  tag: '%' (ident | string)
+
+  rule, body, concatenation, atom: 71-72
+
+  'theory' name 'imports' name+ uses? 'begin'
+  uses: 'uses' (name | parname)+
+  'context' name 'begin'
+  target: \( 'in' name \)
+
+  'axiomatization' fixes? ('where' specs)?
+  'definition' target? (decl 'where')? thmdecl? prop
+  'abbreviation' target? mode? (decl 'where')? prop
+  fixes: (name (::type)? (mixfix)? | vars) ('and' (name (::type)? mixfix? | vars))*
+  specs: thmdecl? props ('and' thmdecl? props)*
+  decl: name (::type)? mixfix?
+
+  ('declaration' | 'syntax_declaration') (\( 'pervasive' \))? target? text
+  'declare' target? thmrefs ('and' thmrefs)*
+
+
+  locale_expr, instance, qualifier, pos_insts, named_insts: 83
+
+  ---------
+
+  context_elem: ('fixes' fixes ('and' fixes)* | 'constrains' name::type ('and' name::type)*
+  | 'assumes' props ('and' props)* | 'defines' thmdecl? prop prop_pat? ('and' thmdecl? prop prop_pat?)*
+  | 'notes' thmdef? thmrefs ('and' thmdef? thmrefs))
+
+  equations: 88
+
+  'class' class_spec 'begin'?
+  class_spec: name = (nameref '+' context_elem+ | nameref | context_elem+)
+  'instantiation' nameref ('and' nameref)* :: arity 'begin'
+  'instance' (nameref ('and' nameref)* ::arity | nameref ('<' | \subseteq) nameref)
+  'subclass' target? nameref
+
+  spec: 94
+
+  'type_synonym' typespec = type mixfix?
+  'typedecl' typespec mixfix?
+  'arities' (nameref::arity)+
+
+  'consts' (name::type mixfix?)+
+  'defs' opt? (axmdecl prop)+
+  opt: \( 'unchecked' 'overloaded' \)
+
+  'axioms' (axmdecl prop)+
+  ('lemmas' | 'theorems') target? thmdef? thmrefs ('and' thmdef? thmrefs)
+
+  'notepad' 'begin'
+  'end'
+
+  'fix' vars ('and' vars)*
+  ('assume' | 'presume') props ('and' props)*
+  'def' def ('and' def)*
+  def: thmdecl? name ('==' | \cong) term term_pat?
+
+  'let' term ('and' term)* = term ('and' term ('and' term)* = term)*
+
+  'note' thmdef? thmrefs ('and' thmdef? thmrefs)
+  ('from' | 'with' | 'using' | 'unfolding') thmrefs ('and' thmrefs)*
+
+  ('lemma' | 'theorem' | 'corollary' | 'schematic_lemma' | 'schematic_theorm' | 'schematic_corollary') target? (goal | longgoal)
+  ('have' | 'show' | 'hence' | 'thus') goal
+  'print_statement' modes? thmrefs
+  goal: props ('and' props)*
+  longgoal: thmdecl? context_elem* conclusion
+  ('shows' goal | 'obtains' parname? case ('|' parname? case))
+  case: vars ('and' vars)* 'where' props ('and' props)*
+
+  method: (nameref | '(' methods ')') ('?' | '+' | '[' nat? ']')?
+  methods: (nameref args | method) ((',' | '|') (nameref args | method))*
+
+  goal_spec: '[' ((nat '-' nat) | (nat '-') | nat | '!') ']'
+
+  'proof' method?
+  'qed' method?
+  'by' method method?
+  '.' | '..' | 'sorry'
+
+  'fact' thmrefs?
+  'rule' thmrefs?
+  rulemod: ('intro' | 'elim' | 'dest') ('del' | (('!' | '?')? nat?)) ':' thmrefs
+  ('intro' | 'elim' | 'dest') ('!' | '?')? nat?
+  'rule' 'del'
+  'OF' thmrefs
+  'of' insts ('concl' ':' insts)?
+
+  'where' (((name | var | typefree | typevar) '=' (type | term)) ('and' ((name | var | typefree | typevar) '=' (type | term)))*)?
+
+  ('apply' | 'apply_end') method
+  'defer' nat?
+  'prefer' nat
+
+  'method_setup' name '=' text text?
+
+  'obtain' parname? vars ('and' vars)* 'where' props ('and' props)*
+  'guess' vars ('and' vars)
+
+  ('also' | 'finally') ('(' thmrefs ')')?
+  'trans' ('add' | 'del')?
+
+  'case' (caseref | '(' caseref ('_' | name)+ ')')
+  caseref: nameref attributes?
+
+  'case_names' (name ('[' ('_' | name)+ ']')?)+
+  'case_conclusion' name name*
+  'params' name* ('and' name*)*
+  'consumes' nat?
+
+  'cases' ('(' 'no_simp' ')')? (insts ('and' insts)*)? rule?
+  ('induct' | 'induction') ('(' 'no_simp' ')')? (definsts ('and' definsts)*)? arbitrary? taking? rule?
+  'coinduct' insts taking rule?
+  rule: ('rule' ':' thmref+) | (('type' | 'pred' | 'set') ':' nameref+)
+  definst: (name ('==' | \cong) term) | ('(' term ')') | inst
+  definsts: definst*
+  arbitrary: 'arbitrary' ':' (term* 'and')+
+  taking: 'taking' ':' insts
+
+  'cases' spec
+  'induct' spec
+  'coinduct' spec
+  spec: 'del' | (('type' | 'pred' | 'set') ':' nameref)
+
+  'typ' modes? type
+  'term' modes? term
+  'prop' modes? prop
+  'thm' modes? thmrefs
+  ('prf' | 'full_prf') modes? thmrefs?
+  'pr' modes? nat?
+  modes: '(' name+ ')'
+
+  7.1.2 (138 theirs, not mine)
+
+  infix: '(' ('infix' | 'infxl' | 'infixr') string nat ')'
+  mixfix: infix | ('(' string prios? nat? ')') | ('(' 'binder' string prios? nat ')')
+  struct_mixfix: mixfix | ('(' 'structure' ')')
+  prios: '[' nat (',' nat)* ']'
+
+  'simp' | 'cong' | 'split' ('add' | 'del')?
+
+  'simproc_setup' name '(' term ('|' term)* ') '=' text ('identifier' nameref+)?
+  'simproc' ('del' ':' | 'add' ':')? name+
+
+  'simplified' opt? thmrefs?
+  '(' ('no_asm' | 'no_asm_simp' | 'no_asm_use') ')'
+
+  ('intro' | 'elim' | 'dest') ('!' | '?')? nat?
+  'rule' 'del'
+  'iff' ('del' | 'add'? '?'?)
+  'rule' thmrefs?
+
+  'blast' nat? clamod*
+  'auto' (nat nat)? clasimpmod*
+  'force' clasimpmod*
+  ('fast' | 'slow' | 'best') clamod*
+  ('fastfoce' | 'slowsimp' | 'bestsimp') clasimpmod*
+  'deepen' nat? clamod*
+  clamod: ('del' | (('intro' | 'elim' | 'dest') ('!' | '?')?)) ':' thmrefs
+  clasimpmod: (('simp' ('add' | 'del' | 'only')?) | (('cong' | 'split') ('add' | 'del')?)
+  | ('iff' ('del' | ('add'? '?'?)))
+  | ('del' | (('intro' | 'elim' | 'dest') ('!' | '?')?))) ':' thmrefs
+
+  ('safe' | 'clarify') clamod*
+  'clarsimp' clasimpmod*
+
+  194 (mine)
+
+  'primrec' target? fixes 'where' equations
+  ('fun' | 'function') target? functionopts? fixes 'where' equations
+  equations: thmdecl? prop ('|' thmdecl? prop)*
+  functionopts: '(' ('sequential' | 'domintros') (',' ('sequential' | 'domintros')) ')'
+  'termination' term?
+
+ */
+
+
+// Returns the position of the end of the markup.
+int
+isar_parse_markup (char * input_str)
+{
+  int pos = 0;
+  // Skip over the keyword.
+  while (!isspace(input_str[pos]))
+    pos++;
+  // Depending on the command, it may have an optional name afterwards.
+  // Will end up at {*,*} pair.
+  // Skip the whitespace.
+  while (isspace(input_str[pos]))
+    pos++;
+
+  int ret;
+  ret = parse_tags (input_str, pos, NULL, "{*", "*}");
+  if (ret == -1)
+    return -1;
+
+  return ret;
+}
+
+// only really need the imports.
+// theory name imports keywords? 'begin'
+int
+isar_parse_theory (char * input_str)
+{
+  // start of input_str is 'theory';
+  // next will be the name.
+  // That's not exactly important though.
+  // Mostly want the includes.
+}
+
+int
+isar_parse_axiomatiziation (char * input_str)
+{
+  return 0;
+}
+
+// This will need return values.
+int
+isar_parse_definition (char * input_str)
+{
+  // Basically definition c where t ==> c \equiv t
+  // For Aris, this will most likely be (<b> c t)
+  return 0;
+}
+
+int
+isar_parse_abbreviation (char * input_str)
+{
+  // Similar to parse_definition.
+  return 0;
+}
 
 // Defined sequences.
 vec_t * seqs;
