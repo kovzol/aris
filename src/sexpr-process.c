@@ -1,6 +1,6 @@
 /* Processing functions used by all sexpr processing functions.
 
-   Copyright (C) 2012 Ian Dunn.
+   Copyright (C) 2012, 2013 Ian Dunn.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,74 @@
 #include "vec.h"
 #include "var.h"
 #include "list.h"
+
+int
+sexpr_get_part (unsigned char * in_str, unsigned int init_pos, unsigned char ** out_str)
+{
+  int fin_pos = 0;
+  int tmp_pos;
+
+  switch (in_str[init_pos])
+    {
+    case '(':
+      tmp_pos = parse_parens (in_str, init_pos, out_str);
+      if (tmp_pos == -2)
+	return -1;
+
+      fin_pos = tmp_pos + 1;
+      break;
+
+    case ' ':
+      fin_pos++;
+      break;
+
+    default:
+      tmp_pos = init_pos;
+      while (in_str[tmp_pos] != ' ' && in_str[tmp_pos] != ')')
+	tmp_pos++;
+
+      (*out_str) = (unsigned char *) calloc (tmp_pos - init_pos + 1, sizeof (char));
+      CHECK_ALLOC ((*out_str), -1);
+      strncpy ((*out_str), in_str + init_pos, tmp_pos - init_pos);
+      (*out_str)[tmp_pos - init_pos] = '\0';
+
+      fin_pos = tmp_pos;
+      break;
+    }
+
+  return fin_pos;
+}
+
+unsigned char *
+sexpr_car (unsigned char * in_str)
+{
+  unsigned char * out_str;
+  int pos;
+  pos = sexpr_get_part (in_str, 1, &out_str);
+  if (pos == -1)
+    return NULL;
+
+  return out_str;
+}
+
+unsigned char *
+sexpr_cdr (unsigned char * in_str)
+{
+  unsigned char * out_str, * car;
+  int pos, len;
+  pos = sexpr_get_part (in_str, 1, &car);
+  if (pos == -1)
+    return NULL;
+
+  len = strlen (in_str);
+  out_str = (unsigned char *) calloc (len - pos + 1, sizeof (char));
+  CHECK_ALLOC (out_str, NULL);
+
+  sprintf (out_str, "(%s", in_str + pos + 1);
+
+  return out_str;
+}
+  
 
 /* Checks for a negation on a sexpr string.
  *  input:
