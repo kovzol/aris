@@ -52,6 +52,7 @@ enum CONF_MENU_ID {
   CONF_MENU_EVAL_PROOF,
   CONF_MENU_GOAL,
   CONF_MENU_BOOLEAN,
+  CONF_MENU_IMPORT,
   CONF_MENU_TOGGLE_RULES,
   CONF_MENU_SMALL,
   CONF_MENU_MEDIUM,
@@ -151,6 +152,10 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
   {N_("Toggle Boolean Mode"),
    N_("Toggle Boolean mode for the current proof."), NULL,
    CONF_OBJ_MENU, MENU_BOOLEAN, conf_menu_value, GTK_STOCK_CONVERT},
+
+  {N_("Import Proof..."),
+   N_("Import the premises and conclusions of a proof."), NULL,
+   CONF_OBJ_MENU, MENU_IMPORT, conf_menu_value, GTK_STOCK_CONVERT},
 
   {N_("Toggle Rules"), N_("Show/Hide the rules tablet."), NULL,
    CONF_OBJ_MENU, MENU_TOGGLE_RULES, conf_menu_value,
@@ -262,7 +267,7 @@ enum MENU_ORDER {
 enum MENU_SIZE {
   FILE_MENU_SIZE = 8,
   EDIT_MENU_SIZE = 8,
-  PROOF_MENU_SIZE = 5,
+  PROOF_MENU_SIZE = 6,
   RULES_MENU_SIZE = 2,
   FONT_MENU_SIZE = 4,
   HELP_MENU_SIZE = 2

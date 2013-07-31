@@ -43,17 +43,6 @@
 
 // Main menu array.
 
-/*
-static mid_t head_text[NUM_MENUS] =
-  {
-    {N_("File"), NULL, NULL, PARENT, -1},
-    {N_("Edit"), NULL, NULL, PARENT, -1},
-    {N_("Proof"), NULL, NULL, PARENT, -1},
-    {N_("Rules"), NULL, NULL, PARENT, -1},
-    {N_("Font"), NULL, NULL, PARENT, -1},
-    {N_("Help"), NULL, NULL, PARENT, -1}
-  };
-*/
 static const char * head_text[] =
   {
     N_("File"), N_("Edit"), N_("Proof"),
@@ -402,7 +391,8 @@ aris_proof_create_menu (sen_parent * ap)
     main_menu_conf[CONF_MENU_EVAL_PROOF],
     menu_separator,
     main_menu_conf[CONF_MENU_GOAL],
-    main_menu_conf[CONF_MENU_BOOLEAN]
+    main_menu_conf[CONF_MENU_BOOLEAN],
+    main_menu_conf[CONF_MENU_IMPORT]
   };
 
   memcpy (main_proof_menu, main_proof_array,
@@ -1119,16 +1109,16 @@ aris_proof_import_proof (aris_proof * ap)
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
 
   int ret;
-  ret = gtk_dialog_run (GTK_DIALOG (file_chooser));
-  gtk_widget_destroy (file_chooser);
+  char * filename;
 
+  ret = gtk_dialog_run (GTK_DIALOG (file_chooser));
   if (ret != GTK_RESPONSE_ACCEPT)
     return 0;
 
-  char * filename;
-  proof_t * proof;
-
   filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
+  gtk_widget_destroy (file_chooser);
+
+  proof_t * proof;
 
   proof = aio_open (filename);
   if (!proof)
@@ -1229,7 +1219,7 @@ aris_proof_import_proof (aris_proof * ap)
 	  sentence * sen_chk;
 
 	  sd = sen_data_init (-1, RULE_LM, pf_text, refs,
-			      0, filename, 0, -1, NULL);
+			      0, filename, 0, DEPTH_DEFAULT, NULL);
 	  if (!sd)
 	    return -1;
 

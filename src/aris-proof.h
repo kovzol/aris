@@ -96,4 +96,6 @@ int aris_proof_submit (aris_proof * ap, const char * hw,
 		       const char * user_email,
 		       const char * instr_email);
 
+int aris_proof_import_proof (aris_proof * ap);
+
 #endif /*  ARIS_PROOF_H  */

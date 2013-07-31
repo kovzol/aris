@@ -1469,6 +1469,10 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_toggle_boolean_mode (ap);
       break;
 
+    case MENU_IMPORT:
+      aris_proof_import_proof (ap);
+      break;
+
     case MENU_TOGGLE_RULES:
       gui_toggle_rules (ap);
       break;
