@@ -51,7 +51,7 @@ typedef void * (* conf_obj_value_func) (conf_obj * obj, int get);
 #define N_(String) String
 #endif
 
-#define REPORT() printf ("Line %i reporting!\n", __LINE__);
+#define REPORT() printf ("%s:%i reporting!\n", __FILE__, __LINE__);
 #define CHECK_ALLOC(o,r) if (!o) {perror (NULL); return r; }
 
 #endif /*  ARIS_TYPE_DEF_H  */
