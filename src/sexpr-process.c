@@ -1078,7 +1078,8 @@ sexpr_get_ids (unsigned char * sen, int ** ids, vec_t * sen_ids)
 	  int new_id;
 
 	  start = end = i;
-	  while (isalnum (sen[end]))
+	  end++;
+	  while (ISLEGIT (sen[end]))
 	    end++;
 
 	  if (sen_ids)
