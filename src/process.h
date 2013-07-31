@@ -44,7 +44,16 @@
 
 #define ISCONN(s) IS_TYPE_CONN (s, main_conns)
 
-#define ISGOOD(s) (!strncmp (s, UNV, CL) || !strncmp (s, EXL, CL) || *(s) == '(' || isupper (*(s)) || !strncmp (s, NOT, NL) || !strncmp (s, CTR, CL) || !strncmp (s, TAU, CL))
+#define ISGOOD(s) (!strncmp (s, UNV, CL)     \
+		   || !strncmp (s, EXL, CL)  \
+		   || *(s) == '('	     \
+		   || isupper (*(s))	     \
+		   || !strncmp (s, NOT, NL)  \
+		   || !strncmp (s, CTR, CL)  \
+		   || !strncmp (s, TAU, CL))
+
+#define ISSBOOL(s) (!strncmp (s, S_TAU, S_CL) || !strncmp (s, S_CTR, S_CL))
+
 
 enum CONN_ORDER {
   AND_CONN=0,
