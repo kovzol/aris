@@ -1259,6 +1259,22 @@ sentence_copy_text (sentence * sen)
 
   ret_str[i] = '\0';
 
+  // Handle comments.
+
+  unsigned char * semi_str, * fin_str;
+  semi_str = strchr (ret_str, ';');
+  if (semi_str)
+    {
+      int ret_len;
+      semi_str[0] = '\0';
+      ret_len = strlen (ret_str);
+      fin_str = (unsigned char *) calloc (ret_len + 1, sizeof (char));
+      CHECK_ALLOC (fin_str, NULL);
+      memcpy (fin_str, ret_str, ret_len);
+      free (ret_str);
+      ret_str = fin_str;
+    }
+
   return ret_str;
 }
 
