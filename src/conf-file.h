@@ -155,7 +155,7 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
 
   {N_("Import Proof..."),
    N_("Import the premises and conclusions of a proof."), NULL,
-   CONF_OBJ_MENU, MENU_IMPORT, conf_menu_value, GTK_STOCK_CONVERT},
+   CONF_OBJ_MENU, MENU_IMPORT, conf_menu_value, GTK_STOCK_HARDDISK},
 
   {N_("Toggle Rules"), N_("Show/Hide the rules tablet."), NULL,
    CONF_OBJ_MENU, MENU_TOGGLE_RULES, conf_menu_value,
@@ -181,7 +181,7 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
    GTK_STOCK_NETWORK},
 
   {N_("Customize"), N_("Customize GNU Aris."), NULL, CONF_OBJ_MENU,
-   MENU_CUSTOMIZE, conf_menu_value, GTK_STOCK_INDEX},
+   MENU_CUSTOMIZE, conf_menu_value, GTK_STOCK_SELECT_COLOR},
 
   {N_("Contents"), N_("Display help for GNU Aris."), NULL,
    CONF_OBJ_MENU, MENU_CONTENTS, conf_menu_value, GTK_STOCK_HELP},
