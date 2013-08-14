@@ -1195,30 +1195,6 @@ sentence_copy_text (sentence * sen)
   ret_str = (char *) calloc (1, sizeof (char));
   CHECK_ALLOC (ret_str, NULL);
 
-  /*TODO: Set this up to check for the semicolon mark,
-    and stop copying after that.  Will probably be in next release.
-
-    Something a little like this:
-
-  while (1)
-    {
-      int end_condition;
-
-      if (sen->mark)
-	end_condition
-	= (gtk_text_iter_get_marks (&start)->value == sen->mark);
-      else
-	end_condition = gtk_text_iter_is_end (&start);
-
-      if (end_condition)
-	break;
-
-      ...
-      Rest of stuff
-      ...
-    }
-  */
-
   while (!gtk_text_iter_is_end (&start))
     {
       GdkPixbuf * pixbuf;
