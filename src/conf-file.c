@@ -408,7 +408,7 @@ conf_font_value (conf_obj * obj, int get)
       if (ret_chk != 1)
 	strcpy (size, _("Default"));
 
-      alloc_size = strlen (size) + 15 + (int) log10 ((double) val);
+      alloc_size = strlen (size) + 16 + (int) log10 ((double) val) + 1;
       ret = (char *) calloc (alloc_size + 1 , sizeof (char));
       CHECK_ALLOC (ret, NULL);
 
