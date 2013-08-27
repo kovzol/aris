@@ -1,9 +1,26 @@
 2013-08-27  Ian Dunn  <dunni@gnu.org>
 
+	* process-main.c (process): Cleaned up comments.
+
+	* sen-data.c (sen_data_evaluate): Doesn't switch to GUI conns
+	before opening file.
+
+	* typedef.h (REPORT): Changed to print to stderr instead of
+	stdout.
+
+	* proof.c (proof_eval): Checks for existence of sexpr before
+	collecting variables.
+
 	* src/Makefile.am: Links against libws2_32.a for Windows
 	sockets.
 
 	* aris.c (main): Added Windows socket initialzation.
+	Changed argument flags to all use one element of the
+	argument structure.
+	(parse_args): Updated the flag arguments.
+	(main): Same.
+	Doesn't set main_conns to gui_conns for file evaluation.
+	(grade_file): Removed the verbose from the proof_eval call.
 
 	* app.c (the_app_submit): Added error check for ftp_connect
 	call.
