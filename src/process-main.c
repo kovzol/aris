@@ -27,28 +27,6 @@ process (unsigned char * conc, vec_t * prems, const char * rule, vec_t * vars,
   int ret;
   unsigned char * tmp_str, * conclusion;
 
-  /*
-  tmp_str = die_spaces_die (conc);
-  if (!tmp_str)
-    return NULL;
-
-  conclusion = convert_sexpr (tmp_str);
-  if (!conclusion)
-    return NULL;
-
-  for (i = 0; i < prems->num_stuff; i++)
-    {
-      unsigned char ** p_tmp = vec_nth (prems, i);
-
-      *p_tmp = die_spaces_die (*p_tmp);
-      if (!(*p_tmp))
-	return NULL;
-      *p_tmp = convert_sexpr (*p_tmp);
-            if (!(*p_tmp))
-	return NULL;
-    }
-  */
-
   conclusion = conc;
 
   char * infer, * equiv, * quant, * misc, * bool;
