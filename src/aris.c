@@ -69,11 +69,20 @@ static struct option const long_opts[] =
 
 // The structure for holding the argument flags.
 
+enum ARG_FLAGS {
+  ARG_FLAG_VERBOSE = 1 << 0,
+  ARG_FLAG_EVALUATE = 1 << 1,
+  ARG_FLAG_BOOLEAN = 1 << 2,
+  ARG_FLAG_GRADE = 1 << 3
+};
+
+#define AF_VERBOSE(flags) (flags & 1)
+#define AF_EVALUATE(flags) ((flags >> 1) & 1)
+#define AF_BOOLEAN(flags) ((flags >> 2) & 1)
+#define AF_GRADE(flags) ((flags >> 3) & 1)
+
 struct arg_items {
-  int verbose : 1;
-  int evaluate : 1;
-  int boolean : 1;
-  int grade : 1;
+  char flags;
   char * file_name[256];
   char * latex_name[256];
   char * conclusion;
@@ -465,7 +474,7 @@ convert_proof_latex (proof_t * proof, FILE * file)
   return 0;
 }
 
-/* Grades a single proof against a file.
+/* Grades a single proof.
  */
 int
 grade_file (proof_t * c_file)
@@ -479,11 +488,11 @@ grade_file (proof_t * c_file)
   if (!rets)
     return -1;
 
-  ret_chk = proof_eval (c_file, rets, 1);
+  ret_chk = proof_eval (c_file, rets, 0);
   if (ret_chk == -1)
     return -1;
 
-  int i, wrong;
+  int i, wrong = 0;
   item_t * ev_itr;
 
   ev_itr = c_file->everything->head;
@@ -568,7 +577,7 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
   int c_ret;
 
   cur_file = cur_grade = cur_latex = 0;
-  ai->verbose = ai->boolean = ai->evaluate = 0;
+  ai->flags = '\0';
   ai->rule_file = NULL;
   for (c = 0; c < 256; c++)
     {
@@ -590,7 +599,7 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
     {
       int opt_idx = 0;
 
-      c = getopt_long (argc, argv, "ep:c:r:t:a:f:g:i:s:x:lbvh", long_opts, &opt_idx);
+      c = getopt_long (argc, argv, "ep:c:r:t:a:f:gi:s:x:lbvh", long_opts, &opt_idx);
 
       if (c == -1)
 	break;
@@ -598,8 +607,9 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
       switch (c)
 	{
 	case 'e':
-	  ai->evaluate = 1;
+	  ai->flags |= ARG_FLAG_EVALUATE;
 	  break;
+
 	case 'p':
 	  if (optarg)
 	    {
@@ -783,7 +793,7 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
 	  break;
 
 	case 'g':
-	  ai->grade = 1;
+	  ai->flags |= ARG_FLAG_GRADE;
 	  break;
 
 	case 'i':
@@ -813,7 +823,7 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
 	    }
 
 	case 'b':
-	  ai->boolean = 1;
+	  ai->flags |= ARG_FLAG_BOOLEAN;
 	  break;
 
 	case 'l':
@@ -821,7 +831,7 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
 	  break;
 
 	case 'v':
-	  ai->verbose = 1;
+	  ai->flags |= ARG_FLAG_VERBOSE;
 	  break;
 
 	case 'x':
@@ -893,12 +903,12 @@ main (int argc, char *argv[])
   prems = args.prems;
   conc = args.conclusion;
   vars = args.vars;
-  verbose = args.verbose;
-  evaluate_mode = args.evaluate;
-  boolean = args.boolean;
-  file_name = args.file_name;
-  latex_name = args.latex_name;
-  grade = args.grade;
+  verbose = AF_VERBOSE (args.flags);
+  evaluate_mode = AF_EVALUATE (args.flags);
+  boolean = AF_BOOLEAN (args.flags);
+  file_name = (char **) args.file_name;
+  latex_name = (char **) args.latex_name;
+  grade = AF_GRADE (args.flags);
   rule = args.rule;
   rule_file = args.rule_file;
 
@@ -995,8 +1005,6 @@ main (int argc, char *argv[])
 
       if (cur_file > 0)
 	{
-	  main_conns = gui_conns;
-
 	  if (grade)
 	    {
 	      int g;
