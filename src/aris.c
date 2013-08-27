@@ -33,6 +33,10 @@
 #include "interop-isar.h"
 #include "menu.h"
 
+#ifdef WIN32
+#include <winsock2.h>
+#endif
+
 #ifdef ARIS_GUI
 #include <gtk/gtk.h>
 #include "app.h"
@@ -897,6 +901,16 @@ main (int argc, char *argv[])
   grade = args.grade;
   rule = args.rule;
   rule_file = args.rule_file;
+
+#ifdef WIN32
+  WSADATA wsaData;
+  int wsa_res = WSAStartup (MAKEWORD (2, 2), &wsaData);
+  if (wsa_res != NO_ERROR)
+    {
+      fprintf (stderr, "Could not initialize windows sockets: %i\n", wsa_res);
+      return -2;
+    }
+#endif
 
   cur_file = cur_latex = -1;
 

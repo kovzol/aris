@@ -19,6 +19,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "config.h"
+
+#ifndef WIN32
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#else
+#include <winsock2.h>
+#endif
 
 #include "process.h"
 #include "app.h"
@@ -560,6 +569,7 @@ ftp_get_response (FILE * ftp_sock, int * port)
 
   *buf_str = '\0';
   sscanf (response_buffer, "%i", &ret_code);
+  fprintf (stderr, "%s\n", response_buffer);
 
   if (port)
     {
@@ -578,6 +588,25 @@ ftp_get_response (FILE * ftp_sock, int * port)
 
 #define FTP_PORT 21
 
+/* Taken from the info pages for libc sockets. */
+
+static void
+init_sockaddr (struct sockaddr_in *name,
+	       const char *hostname,
+	       int port)
+{
+  struct hostent *hostinfo;
+  name->sin_family = AF_INET;
+  name->sin_port = htons (port);
+  hostinfo = gethostbyname (hostname);
+  if (!hostinfo)
+    {
+      perror (NULL);
+      return;
+    }
+  name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
+}
+
 /* Initiates the ftp connection.
  *  input:
  *    ip_addr - the IP Address of the ftp server.
@@ -590,28 +619,25 @@ ftp_connect (char * ip_addr)
   int ret_chk;
   FILE * ret;
 
-  GSocket * sock;
-
-  sock = g_socket_new (G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
-		       G_SOCKET_PROTOCOL_DEFAULT, NULL);
-  if (!sock)
+  int sock;
+  struct sockaddr_in addr;
+  sock = socket (PF_INET, SOCK_STREAM, 0);
+  if (sock < 0)
     {
       perror (NULL);
       return NULL;
     }
 
-  GInetAddress * inet_addr;
-  GSocketAddress * addr;
+  init_sockaddr (&addr, ip_addr, FTP_PORT);
 
-  inet_addr = g_inet_address_new_from_string (ip_addr);
-  addr = g_inet_socket_address_new (inet_addr, FTP_PORT);
-  if (g_socket_connect (sock, addr, NULL, NULL) == FALSE)
+  ret_chk = connect (sock, (struct sockaddr *) &addr, sizeof (addr));
+  if (ret_chk != 0)
     {
       perror (NULL);
       return NULL;
     }
 
-  ret = fdopen (g_socket_get_fd (sock), "w+");
+  ret = fdopen (sock, "w+");
   if (!ret)
     {
       perror (NULL);
@@ -671,11 +697,9 @@ ftp_send (FILE * ftp_sock, char * file_name, char * buffer)
 
   buf = buffer;
 
-  GSocket * sock;
-
-  sock = g_socket_new (G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM,
-		       G_SOCKET_PROTOCOL_DEFAULT, NULL);
-  if (!sock)
+  int sock;
+  sock = socket (PF_INET, SOCK_STREAM, 0);
+  if (sock < 0)
     {
       perror (NULL);
       return -2;
@@ -684,19 +708,18 @@ ftp_send (FILE * ftp_sock, char * file_name, char * buffer)
   fprintf (ftp_sock, "PASV\r\n");
   fflush (ftp_sock);
   ret_chk = ftp_get_response (ftp_sock, &port);
-  if (ret_chk != 221)
+  if (ret_chk != 227)
     {
       fprintf (ftp_sock, "QUIT\r\n");
       fclose (ftp_sock);
       return -2;
     }
 
-  GInetAddress * host;
-  GSocketAddress * response;
-  host = g_inet_address_new_from_string (the_app->ip_addr);
-  response = g_inet_socket_address_new (host, port);
-
-  if (g_socket_connect (sock, response, NULL, NULL) == FALSE)
+  int rc;
+  struct sockaddr_in addr;
+  init_sockaddr (&addr, the_app->ip_addr, port);
+  rc = connect (sock, (struct sockaddr *) &addr, sizeof (addr));
+  if (rc < 0)
     {
       perror (NULL);
       return -2;
@@ -713,11 +736,11 @@ ftp_send (FILE * ftp_sock, char * file_name, char * buffer)
       return -2;
     }
 
-  write_file = fdopen (g_socket_get_fd (sock), "w");
+  write_file = fdopen (sock, "w");
   if (!write_file)
     {
       perror (NULL);
-      return -1;
+      return -2;
     }
 
   while (*buf)
@@ -757,6 +780,8 @@ the_app_submit (const char * user_email, const char * instr_email,
   FILE * ftp_file;
 
   ftp_file = ftp_connect (the_app->ip_addr);
+  if (!ftp_file)
+    return -3;
 
   char * email_base;
 
@@ -778,8 +803,9 @@ the_app_submit (const char * user_email, const char * instr_email,
 
   int dir_pos = 0;
 
-  dir_buffer = (char *) calloc (strlen (user_email) + strlen (instr_email)
-				+ 16, sizeof (char));
+  int alloc_size = strlen (user_email) + strlen (instr_email) + 16;
+
+  dir_buffer = (char *) calloc (alloc_size + 3, sizeof (char));
   CHECK_ALLOC (dir_buffer, -1);
 
   dir_pos += sprintf (dir_buffer, "user: %s\ninstr: %s\n",
@@ -863,8 +889,6 @@ the_app_submit (const char * user_email, const char * instr_email,
   fprintf (ftp_file, "QUIT\r\n");
   fflush (ftp_file);
 
-  g_socket_shutdown (g_socket_new_from_fd (fileno (ftp_file), NULL),
-		     TRUE, TRUE, NULL);
   fclose (ftp_file);
 
   return 0;

@@ -1,3 +1,36 @@
+2013-08-27  Ian Dunn  <dunni@gnu.org>
+
+	* src/Makefile.am: Links against libws2_32.a for Windows
+	sockets.
+
+	* aris.c (main): Added Windows socket initialzation.
+
+	* app.c (the_app_submit): Added error check for ftp_connect
+	call.
+	(init_sockaddr): Added to ease initialization of socket
+	addresses.
+	(ftp_connect): Changed to use UNIX sockets instead of glib
+	sockets.
+	(ftp_send): Same.
+
+2013-08-26  Ian Dunn  <dunni@gnu.org>
+
+	* conf-file.h: Changed Grade IP Default to 127.0.0.1.
+
+2013-08-14  Ian Dunn  <dunni@gnu.org>
+
+	* conf-file.h: Changed stock icons for `customize' and
+	`import proof'.
+
+	* sentence.c (sentence_copy_text): Added support for comments.
+
+2013-07-31  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process.c (sexpr_get_ids): Changed to use ISLEGIT.
+
+	* aris-proof.c (aris_proof_create_menu): Added 'Import proof'
+	option.
+
 2013-04-14  Ian Dunn  <dunni@gnu.org>
 
 	* sexpr-process-bool.c (proc_bi): Fixed to check for

@@ -23,13 +23,16 @@ AM_CFLAGS += -DARIS_GUI
 AM_LDFLAGS = $(LDFLAGS) $(GTK_LIBS) $(XML_LIBS)
 AM_LDFLAGS += -lm
 
+
 if WIN32
 AM_CFLAGS += \
         -mms-bitfields
 
 AM_LDFLAGS += \
-        -Wl,-subsystem,windows	\
-	-lws2_32
+        -Wl,-subsystem,windows
+
+## Yes, this is necessary.
+LDADD = -lws2_32
 endif
 
 aris_SOURCES =
