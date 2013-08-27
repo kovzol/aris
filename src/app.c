@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "config.h"
 
 #ifndef WIN32
@@ -569,7 +570,6 @@ ftp_get_response (FILE * ftp_sock, int * port)
 
   *buf_str = '\0';
   sscanf (response_buffer, "%i", &ret_code);
-  fprintf (stderr, "%s\n", response_buffer);
 
   if (port)
     {
@@ -628,14 +628,32 @@ ftp_connect (char * ip_addr)
       return NULL;
     }
 
+  // Set non-blocking mode.
+  ret_chk = fcntl (sock, F_SETFL, O_NONBLOCK);
+
+  fd_set fds;
+  struct timeval tv;
+
+  FD_ZERO (&fds);
+  FD_SET (sock, &fds);
+
+  tv.tv_sec = 10;
+  tv.tv_usec = 0;
+
   init_sockaddr (&addr, ip_addr, FTP_PORT);
 
+  // Use select to check on connection time.
   ret_chk = connect (sock, (struct sockaddr *) &addr, sizeof (addr));
-  if (ret_chk != 0)
+  ret_chk = select (FD_SETSIZE, &fds, NULL, NULL, &tv);
+
+  if (ret_chk <= 0)
     {
       perror (NULL);
       return NULL;
     }
+
+  // Change back to blocking for reading and writing.
+  ret_chk = fcntl (sock, F_SETFL, 0);
 
   ret = fdopen (sock, "w+");
   if (!ret)
@@ -777,7 +795,7 @@ the_app_submit (const char * user_email, const char * instr_email,
 		struct submit_ent * entries)
 {
   int ret_chk;
-  FILE * ftp_file;
+  FILE * ftp_file = NULL;
 
   ftp_file = ftp_connect (the_app->ip_addr);
   if (!ftp_file)
