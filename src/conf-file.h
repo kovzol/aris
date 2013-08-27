@@ -339,6 +339,6 @@ static const char * config_default ="\
 (color-pref \'Bad\' 7f0000)\n\
 (color-pref \'Good\' 007f00)\n\
 (color-pref \'Selection\' ff0d00)\n\
-(grade-ip \'128.113.17.16\')\n";
+(grade-ip \'127.0.0.1\')\n";
 
 #endif /*  ARIS_CONF_FILE_H  */
