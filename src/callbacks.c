@@ -1258,6 +1258,7 @@ gui_submit_show (GtkWidget * window)
       GtkWidget * label;
       label = gtk_label_new (_("Please save your work first."));
       gtk_table_attach_defaults (GTK_TABLE (table), label, 0, 2, i, i + 1);
+      gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, FALSE);
     }
 
   gtk_container_add (GTK_CONTAINER (content), table);
@@ -1315,7 +1316,7 @@ gui_submit_show (GtkWidget * window)
 						 GTK_DIALOG_DESTROY_WITH_PARENT,
 						 GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_CLOSE,
-						 "Unable to connect to server: %s",
+						 "Unable to submit files to server: %s",
 						 the_app->ip_addr);
 	  gtk_dialog_run (GTK_DIALOG (error_dialog));
 	  gtk_widget_destroy (error_dialog);
