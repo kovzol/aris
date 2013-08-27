@@ -145,7 +145,7 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
    CONF_OBJ_MENU, MENU_EVAL_PROOF, conf_menu_value,
    GTK_STOCK_SELECT_ALL},
 
-  {N_("Goal..."),
+  {N_("Toggle Goals..."),
    N_("Check/Modify the current goal(s) for the current proof."),
    NULL, CONF_OBJ_MENU, MENU_GOAL, conf_menu_value, GTK_STOCK_INDEX},
 
