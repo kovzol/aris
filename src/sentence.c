@@ -32,7 +32,18 @@
 #include "goal.h"
 #include "vec.h"
 
+//#define LETTERS
+
+#ifdef LETTERS
 static char * sen_values[6] = {" ", "T", "F", "*", "?", "#"};
+#else
+static char * sen_values[6] = {GTK_STOCK_MEDIA_STOP,
+			       GTK_STOCK_APPLY,
+			       GTK_STOCK_CANCEL,
+			       GTK_STOCK_STOP,
+			       GTK_STOCK_SPELL_CHECK,
+			       GTK_STOCK_SELECT_COLOR};
+#endif
 
 // GTextCharPredicate for determining the location of the comment.
 static gboolean
@@ -235,9 +246,15 @@ sentence_gui_init (sentence * sen)
 
   sen->entry = gtk_text_view_new ();
 
+
+#ifdef LETTERS
   sen->value = gtk_label_new (NULL);
   gtk_label_set_justify (GTK_LABEL (sen->value), GTK_JUSTIFY_FILL);
   gtk_label_set_width_chars (GTK_LABEL (sen->value), 2);
+#else
+  sen->value = gtk_image_new_from_stock (sen_values[0], GTK_ICON_SIZE_MENU);
+  //sen->value = gtk_image_new ();
+#endif
 
   gtk_box_pack_start (GTK_BOX (sen->panel), sen->eventbox, FALSE,
 		      FALSE, 0);
@@ -453,7 +470,11 @@ sentence_set_font (sentence * sen, int font)
   sentence_resize_text (sen, font_size);
   LABEL_SET_FONT (sen->line_no, the_app->fonts[font]);
   ENTRY_SET_FONT (sen->entry, the_app->fonts[font]);
+#ifdef LETTERS
   LABEL_SET_FONT (sen->value, the_app->fonts[font]);
+#else
+  //gtk_image_set_from_stock (GTK_WIDGET (sen->value), sen_values[sen->value_type], sen_value_sizes[font]);
+#endif
   LABEL_SET_FONT (sen->rule_box, the_app->fonts[font]);
 
   sen->font_resizing = 0;
@@ -522,6 +543,7 @@ sentence_set_bg (sentence * sen, int bg_color)
 			  the_app->bg_colors[bg_color]);
   gtk_widget_modify_bg (sen->entry, GTK_STATE_SELECTED, inv);
   sen->bg_color = bg_color;
+  free (inv);
 }
 
 /* Sets the evaluation value of a sentence.
@@ -535,7 +557,11 @@ void
 sentence_set_value (sentence * sen, int value_type)
 {
   sen->value_type = value_type;
+#ifdef LETTERS
   gtk_label_set_text (GTK_LABEL (sen->value), sen_values[value_type]);
+#else
+  gtk_image_set_from_stock (GTK_IMAGE (sen->value), sen_values [value_type], GTK_ICON_SIZE_MENU);
+#endif
 }
 
 /* Connects the callback signals to a sentence.
