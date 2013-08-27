@@ -1041,7 +1041,6 @@ gui_customize_show (GtkWidget * window)
       tbl_label = gtk_label_new (labels[j]);
       gtk_notebook_append_page (GTK_NOTEBOOK (notebook), tables[j],
 				tbl_label);
-
     }
 
   gtk_container_add (GTK_CONTAINER (content), notebook);
@@ -1063,8 +1062,8 @@ gui_customize_show (GtkWidget * window)
 	      for (i = 0; i < sizes[j]; i++)
 		{
 		  obj_i = confs[j][i];
-		  const char * str_i
-		    = gtk_entry_get_text (GTK_ENTRY (obj_i.widget));
+		  const char * str_i;
+		  str_i = gtk_entry_get_text (GTK_ENTRY (obj_i.widget));
 
 		  if (str_i[0] == '\0')
 		    continue;
@@ -1076,8 +1075,8 @@ gui_customize_show (GtkWidget * window)
 
 		      obj_k = confs[j][k];
 
-		      const char * str_k
-			= gtk_entry_get_text (GTK_ENTRY (obj_k.widget));
+		      const char * str_k;
+		      str_k = gtk_entry_get_text (GTK_ENTRY (obj_k.widget));
 
 		      if (str_k[0] == '\0')
 			continue;
@@ -1140,7 +1139,6 @@ gui_customize_show (GtkWidget * window)
 	    {
 	      tables[j] = gtk_table_new (13, 4, FALSE);
 
-
 	      for (i = 0; i < sizes[j]; i++)
 		{
 
@@ -1173,7 +1171,6 @@ gui_customize_show (GtkWidget * window)
 
   return 0;
 }
-
 
 /* Runs the submission dialog.
  *  input:
@@ -1299,7 +1296,26 @@ gui_submit_show (GtkWidget * window)
 	  gl = gl->next->next;
 	}
 
-      the_app_submit (user_email, instr_email, entries);
+      int rc;
+      rc = the_app_submit (user_email, instr_email, entries);
+      if (rc == -3)
+	{
+	  GtkWidget * error_dialog;
+	  error_dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+						 GTK_DIALOG_DESTROY_WITH_PARENT,
+						 GTK_MESSAGE_ERROR,
+						 GTK_BUTTONS_CLOSE,
+						 "Unable to connect to server: %s",
+						 the_app->ip_addr);
+	  gtk_dialog_run (GTK_DIALOG (error_dialog));
+	  gtk_widget_destroy (error_dialog);
+	  /*
+	   Something.
+	   We can't use the status bar here, since this is run from
+	   the rules window, which doesn't have a status bar (and
+	   doesn' need one.
+	  */
+	}
 
       for (i = 0; i < the_app->guis->num_stuff; i++)
 	{
