@@ -1194,8 +1194,7 @@ gui_submit_show (GtkWidget * window)
   //      - GtkEdit [      ]
 
   GtkWidget * dialog, * content, * table;
-  GtkWidget * hw_label, * hw_entry, * user_label, * user_entry,
-    * instr_label, * instr_entry;
+  GtkWidget * user_label, * user_entry, * instr_label, * instr_entry;
 
   dialog = gtk_dialog_new_with_buttons (_("Submit Proofs"),
 					GTK_WINDOW (window),
@@ -1223,7 +1222,7 @@ gui_submit_show (GtkWidget * window)
   sep_label = gtk_label_new (_("    "));
   gtk_table_attach_defaults (GTK_TABLE (table), sep_label, 0, 2, 2, 3);
 
-  GtkWidget * proof_label;
+  GtkWidget * proof_label, * hw_label;
 
   hw_label = gtk_label_new (_("Problem"));
   proof_label = gtk_label_new (_("File Name"));
@@ -1241,13 +1240,24 @@ gui_submit_show (GtkWidget * window)
 
       ap = g_itr->value;
 
-      label = gtk_label_new (ap->cur_file);
-      entry = gtk_entry_new ();
+      if (ap->cur_file)
+	{
 
-      gtk_table_attach_defaults (GTK_TABLE (table), entry, 0, 1, i, i + 1);
-      gtk_table_attach_defaults (GTK_TABLE (table), label, 1, 2, i, i + 1);
+	  label = gtk_label_new (ap->cur_file);
+	  entry = gtk_entry_new ();
 
-      i++;
+	  gtk_table_attach_defaults (GTK_TABLE (table), entry, 0, 1, i, i + 1);
+	  gtk_table_attach_defaults (GTK_TABLE (table), label, 1, 2, i, i + 1);
+	  
+	  i++;
+	}
+    }
+
+  if (i == 4)
+    {
+      GtkWidget * label;
+      label = gtk_label_new (_("Please save your work first."));
+      gtk_table_attach_defaults (GTK_TABLE (table), label, 0, 2, i, i + 1);
     }
 
   gtk_container_add (GTK_CONTAINER (content), table);
@@ -1309,12 +1319,6 @@ gui_submit_show (GtkWidget * window)
 						 the_app->ip_addr);
 	  gtk_dialog_run (GTK_DIALOG (error_dialog));
 	  gtk_widget_destroy (error_dialog);
-	  /*
-	   Something.
-	   We can't use the status bar here, since this is run from
-	   the rules window, which doesn't have a status bar (and
-	   doesn' need one.
-	  */
 	}
 
       for (i = 0; i < the_app->guis->num_stuff; i++)
