@@ -1141,6 +1141,7 @@ gui_customize_show (GtkWidget * window)
 	      gtk_widget_destroy (dialog);
 	      return -2;
 	    }
+	  free (path);
 
 	  for (j = 0; j < 4; j++)
 	    {
