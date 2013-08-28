@@ -1116,7 +1116,7 @@ gui_customize_show (GtkWidget * window)
 
 	  FILE * conf_file;
 	  char * path, * home_dir;
-	  int alloc_size, path_pos;
+	  int alloc_size, path_pos = 0;
 
 	  home_dir = getenv ("HOME");
 	  if (!home_dir)
