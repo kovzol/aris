@@ -1,9 +1,24 @@
+This is aris.info, produced by makeinfo version 5.1 from aris.texi.
+
+This manual is for GNU Aris, the logical proof program.
+
+   Copyright (C) 2013 Ian Dunn
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.3 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, with no Front-Cover Texts,
+     and with no Back-Cover Texts.  A copy of the license is included in
+     the section entitled "GNU Free Documentation License".
+INFO-DIR-SECTION Mathematics
+START-INFO-DIR-ENTRY
+* GNU Aris: (aris).    The logical proof interface.
+END-INFO-DIR-ENTRY
+
                      Version 1.3, 3 November 2008
 
-     This is aris.info, produced by makeinfo version 4.13 from /home/skolar/programming/aris-working/aris-working-raw/aris/doc//fdl.texi.
-
      Copyright (C) 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc.
-     `http://fsf.org/'
+     <http://fsf.org/>
 
      Everyone is permitted to copy and distribute verbatim copies
      of this license document, but changing it is not allowed.
@@ -28,21 +43,21 @@
      free program should come with manuals providing the same freedoms
      that the software does.  But this License is not limited to
      software manuals; it can be used for any textual work, regardless
-     of subject matter or whether it is published as a printed book.
-     We recommend this License principally for works whose purpose is
+     of subject matter or whether it is published as a printed book.  We
+     recommend this License principally for works whose purpose is
      instruction or reference.
 
   1. APPLICABILITY AND DEFINITIONS
 
      This License applies to any manual or other work, in any medium,
-     that contains a notice placed by the copyright holder saying it
-     can be distributed under the terms of this License.  Such a notice
+     that contains a notice placed by the copyright holder saying it can
+     be distributed under the terms of this License.  Such a notice
      grants a world-wide, royalty-free license, unlimited in duration,
      to use that work under the conditions stated herein.  The
      "Document", below, refers to any such manual or work.  Any member
-     of the public is a licensee, and is addressed as "you".  You
-     accept the license if you copy, modify or distribute the work in a
-     way requiring permission under copyright law.
+     of the public is a licensee, and is addressed as "you".  You accept
+     the license if you copy, modify or distribute the work in a way
+     requiring permission under copyright law.
 
      A "Modified Version" of the Document means any work containing the
      Document or a portion of it, either copied verbatim, or with
@@ -60,12 +75,12 @@
      regarding them.
 
      The "Invariant Sections" are certain Secondary Sections whose
-     titles are designated, as being those of Invariant Sections, in
-     the notice that says that the Document is released under this
-     License.  If a section does not fit the above definition of
-     Secondary then it is not allowed to be designated as Invariant.
-     The Document may contain zero Invariant Sections.  If the Document
-     does not identify any Invariant Sections then there are none.
+     titles are designated, as being those of Invariant Sections, in the
+     notice that says that the Document is released under this License.
+     If a section does not fit the above definition of Secondary then it
+     is not allowed to be designated as Invariant.  The Document may
+     contain zero Invariant Sections.  If the Document does not identify
+     any Invariant Sections then there are none.
 
      The "Cover Texts" are certain short passages of text that are
      listed, as Front-Cover Texts or Back-Cover Texts, in the notice
@@ -76,27 +91,27 @@
      A "Transparent" copy of the Document means a machine-readable copy,
      represented in a format whose specification is available to the
      general public, that is suitable for revising the document
-     straightforwardly with generic text editors or (for images
-     composed of pixels) generic paint programs or (for drawings) some
-     widely available drawing editor, and that is suitable for input to
-     text formatters or for automatic translation to a variety of
-     formats suitable for input to text formatters.  A copy made in an
-     otherwise Transparent file format whose markup, or absence of
-     markup, has been arranged to thwart or discourage subsequent
-     modification by readers is not Transparent.  An image format is
-     not Transparent if used for any substantial amount of text.  A
-     copy that is not "Transparent" is called "Opaque".
+     straightforwardly with generic text editors or (for images composed
+     of pixels) generic paint programs or (for drawings) some widely
+     available drawing editor, and that is suitable for input to text
+     formatters or for automatic translation to a variety of formats
+     suitable for input to text formatters.  A copy made in an otherwise
+     Transparent file format whose markup, or absence of markup, has
+     been arranged to thwart or discourage subsequent modification by
+     readers is not Transparent.  An image format is not Transparent if
+     used for any substantial amount of text.  A copy that is not
+     "Transparent" is called "Opaque".
 
      Examples of suitable formats for Transparent copies include plain
      ASCII without markup, Texinfo input format, LaTeX input format,
-     SGML or XML using a publicly available DTD, and
-     standard-conforming simple HTML, PostScript or PDF designed for
-     human modification.  Examples of transparent image formats include
-     PNG, XCF and JPG.  Opaque formats include proprietary formats that
-     can be read and edited only by proprietary word processors, SGML or
-     XML for which the DTD and/or processing tools are not generally
-     available, and the machine-generated HTML, PostScript or PDF
-     produced by some word processors for output purposes only.
+     SGML or XML using a publicly available DTD, and standard-conforming
+     simple HTML, PostScript or PDF designed for human modification.
+     Examples of transparent image formats include PNG, XCF and JPG.
+     Opaque formats include proprietary formats that can be read and
+     edited only by proprietary word processors, SGML or XML for which
+     the DTD and/or processing tools are not generally available, and
+     the machine-generated HTML, PostScript or PDF produced by some word
+     processors for output purposes only.
 
      The "Title Page" means, for a printed book, the title page itself,
      plus such following pages as are needed to hold, legibly, the
@@ -134,8 +149,8 @@
      may not use technical measures to obstruct or control the reading
      or further copying of the copies you make or distribute.  However,
      you may accept compensation in exchange for copies.  If you
-     distribute a large enough number of copies you must also follow
-     the conditions in section 3.
+     distribute a large enough number of copies you must also follow the
+     conditions in section 3.
 
      You may also lend copies, under the same conditions stated above,
      and you may publicly display copies.
@@ -149,12 +164,11 @@
      these Cover Texts: Front-Cover Texts on the front cover, and
      Back-Cover Texts on the back cover.  Both covers must also clearly
      and legibly identify you as the publisher of these copies.  The
-     front cover must present the full title with all words of the
-     title equally prominent and visible.  You may add other material
-     on the covers in addition.  Copying with changes limited to the
-     covers, as long as they preserve the title of the Document and
-     satisfy these conditions, can be treated as verbatim copying in
-     other respects.
+     front cover must present the full title with all words of the title
+     equally prominent and visible.  You may add other material on the
+     covers in addition.  Copying with changes limited to the covers, as
+     long as they preserve the title of the Document and satisfy these
+     conditions, can be treated as verbatim copying in other respects.
 
      If the required texts for either cover are too voluminous to fit
      legibly, you should put the first ones listed (as many as fit
@@ -162,40 +176,39 @@
      adjacent pages.
 
      If you publish or distribute Opaque copies of the Document
-     numbering more than 100, you must either include a
-     machine-readable Transparent copy along with each Opaque copy, or
-     state in or with each Opaque copy a computer-network location from
-     which the general network-using public has access to download
-     using public-standard network protocols a complete Transparent
-     copy of the Document, free of added material.  If you use the
-     latter option, you must take reasonably prudent steps, when you
-     begin distribution of Opaque copies in quantity, to ensure that
-     this Transparent copy will remain thus accessible at the stated
-     location until at least one year after the last time you
-     distribute an Opaque copy (directly or through your agents or
-     retailers) of that edition to the public.
+     numbering more than 100, you must either include a machine-readable
+     Transparent copy along with each Opaque copy, or state in or with
+     each Opaque copy a computer-network location from which the general
+     network-using public has access to download using public-standard
+     network protocols a complete Transparent copy of the Document, free
+     of added material.  If you use the latter option, you must take
+     reasonably prudent steps, when you begin distribution of Opaque
+     copies in quantity, to ensure that this Transparent copy will
+     remain thus accessible at the stated location until at least one
+     year after the last time you distribute an Opaque copy (directly or
+     through your agents or retailers) of that edition to the public.
 
      It is requested, but not required, that you contact the authors of
-     the Document well before redistributing any large number of
-     copies, to give them a chance to provide you with an updated
-     version of the Document.
+     the Document well before redistributing any large number of copies,
+     to give them a chance to provide you with an updated version of the
+     Document.
 
   4. MODIFICATIONS
 
      You may copy and distribute a Modified Version of the Document
      under the conditions of sections 2 and 3 above, provided that you
-     release the Modified Version under precisely this License, with
-     the Modified Version filling the role of the Document, thus
-     licensing distribution and modification of the Modified Version to
-     whoever possesses a copy of it.  In addition, you must do these
-     things in the Modified Version:
+     release the Modified Version under precisely this License, with the
+     Modified Version filling the role of the Document, thus licensing
+     distribution and modification of the Modified Version to whoever
+     possesses a copy of it.  In addition, you must do these things in
+     the Modified Version:
 
        A. Use in the Title Page (and on the covers, if any) a title
-          distinct from that of the Document, and from those of
-          previous versions (which should, if there were any, be listed
-          in the History section of the Document).  You may use the
-          same title as a previous version if the original publisher of
-          that version gives permission.
+          distinct from that of the Document, and from those of previous
+          versions (which should, if there were any, be listed in the
+          History section of the Document).  You may use the same title
+          as a previous version if the original publisher of that
+          version gives permission.
 
        B. List on the Title Page, as authors, one or more persons or
           entities responsible for authorship of the modifications in
@@ -225,31 +238,30 @@
 
        I. Preserve the section Entitled "History", Preserve its Title,
           and add to it an item stating at least the title, year, new
-          authors, and publisher of the Modified Version as given on
-          the Title Page.  If there is no section Entitled "History" in
-          the Document, create one stating the title, year, authors,
-          and publisher of the Document as given on its Title Page,
-          then add an item describing the Modified Version as stated in
-          the previous sentence.
+          authors, and publisher of the Modified Version as given on the
+          Title Page.  If there is no section Entitled "History" in the
+          Document, create one stating the title, year, authors, and
+          publisher of the Document as given on its Title Page, then add
+          an item describing the Modified Version as stated in the
+          previous sentence.
 
        J. Preserve the network location, if any, given in the Document
           for public access to a Transparent copy of the Document, and
           likewise the network locations given in the Document for
-          previous versions it was based on.  These may be placed in
-          the "History" section.  You may omit a network location for a
-          work that was published at least four years before the
-          Document itself, or if the original publisher of the version
-          it refers to gives permission.
+          previous versions it was based on.  These may be placed in the
+          "History" section.  You may omit a network location for a work
+          that was published at least four years before the Document
+          itself, or if the original publisher of the version it refers
+          to gives permission.
 
        K. For any section Entitled "Acknowledgements" or "Dedications",
-          Preserve the Title of the section, and preserve in the
-          section all the substance and tone of each of the contributor
+          Preserve the Title of the section, and preserve in the section
+          all the substance and tone of each of the contributor
           acknowledgements and/or dedications given therein.
 
-       L. Preserve all the Invariant Sections of the Document,
-          unaltered in their text and in their titles.  Section numbers
-          or the equivalent are not considered part of the section
-          titles.
+       L. Preserve all the Invariant Sections of the Document, unaltered
+          in their text and in their titles.  Section numbers or the
+          equivalent are not considered part of the section titles.
 
        M. Delete any section Entitled "Endorsements".  Such a section
           may not be included in the Modified Version.
@@ -262,11 +274,11 @@
 
      If the Modified Version includes new front-matter sections or
      appendices that qualify as Secondary Sections and contain no
-     material copied from the Document, you may at your option
-     designate some or all of these sections as invariant.  To do this,
-     add their titles to the list of Invariant Sections in the Modified
-     Version's license notice.  These titles must be distinct from any
-     other section titles.
+     material copied from the Document, you may at your option designate
+     some or all of these sections as invariant.  To do this, add their
+     titles to the list of Invariant Sections in the Modified Version's
+     license notice.  These titles must be distinct from any other
+     section titles.
 
      You may add a section Entitled "Endorsements", provided it contains
      nothing but endorsements of your Modified Version by various
@@ -275,15 +287,15 @@
      definition of a standard.
 
      You may add a passage of up to five words as a Front-Cover Text,
-     and a passage of up to 25 words as a Back-Cover Text, to the end
-     of the list of Cover Texts in the Modified Version.  Only one
-     passage of Front-Cover Text and one of Back-Cover Text may be
-     added by (or through arrangements made by) any one entity.  If the
-     Document already includes a cover text for the same cover,
-     previously added by you or by arrangement made by the same entity
-     you are acting on behalf of, you may not add another; but you may
-     replace the old one, on explicit permission from the previous
-     publisher that added the old one.
+     and a passage of up to 25 words as a Back-Cover Text, to the end of
+     the list of Cover Texts in the Modified Version.  Only one passage
+     of Front-Cover Text and one of Back-Cover Text may be added by (or
+     through arrangements made by) any one entity.  If the Document
+     already includes a cover text for the same cover, previously added
+     by you or by arrangement made by the same entity you are acting on
+     behalf of, you may not add another; but you may replace the old
+     one, on explicit permission from the previous publisher that added
+     the old one.
 
      The author(s) and publisher(s) of the Document do not by this
      License give permission to use their names for publicity for or to
@@ -293,8 +305,8 @@
 
      You may combine the Document with other documents released under
      this License, under the terms defined in section 4 above for
-     modified versions, provided that you include in the combination
-     all of the Invariant Sections of all of the original documents,
+     modified versions, provided that you include in the combination all
+     of the Invariant Sections of all of the original documents,
      unmodified, and list them all as Invariant Sections of your
      combined work in its license notice, and that you preserve all
      their Warranty Disclaimers.
@@ -321,20 +333,20 @@
      documents released under this License, and replace the individual
      copies of this License in the various documents with a single copy
      that is included in the collection, provided that you follow the
-     rules of this License for verbatim copying of each of the
-     documents in all other respects.
+     rules of this License for verbatim copying of each of the documents
+     in all other respects.
 
      You may extract a single document from such a collection, and
      distribute it individually under this License, provided you insert
-     a copy of this License into the extracted document, and follow
-     this License in all other respects regarding verbatim copying of
-     that document.
+     a copy of this License into the extracted document, and follow this
+     License in all other respects regarding verbatim copying of that
+     document.
 
   7. AGGREGATION WITH INDEPENDENT WORKS
 
      A compilation of the Document or its derivatives with other
-     separate and independent documents or works, in or on a volume of
-     a storage or distribution medium, is called an "aggregate" if the
+     separate and independent documents or works, in or on a volume of a
+     storage or distribution medium, is called an "aggregate" if the
      copyright resulting from the compilation is not used to limit the
      legal rights of the compilation's users beyond what the individual
      works permit.  When the Document is included in an aggregate, this
@@ -379,8 +391,8 @@
 
      However, if you cease all violation of this License, then your
      license from a particular copyright holder is reinstated (a)
-     provisionally, unless and until the copyright holder explicitly
-     and finally terminates your license, and (b) permanently, if the
+     provisionally, unless and until the copyright holder explicitly and
+     finally terminates your license, and (b) permanently, if the
      copyright holder fails to notify you of the violation by some
      reasonable means prior to 60 days after the cessation.
 
@@ -392,33 +404,33 @@
      after your receipt of the notice.
 
      Termination of your rights under this section does not terminate
-     the licenses of parties who have received copies or rights from
-     you under this License.  If your rights have been terminated and
-     not permanently reinstated, receipt of a copy of some or all of
-     the same material does not give you any rights to use it.
+     the licenses of parties who have received copies or rights from you
+     under this License.  If your rights have been terminated and not
+     permanently reinstated, receipt of a copy of some or all of the
+     same material does not give you any rights to use it.
 
- 10. FUTURE REVISIONS OF THIS LICENSE
+  10. FUTURE REVISIONS OF THIS LICENSE
 
      The Free Software Foundation may publish new, revised versions of
      the GNU Free Documentation License from time to time.  Such new
      versions will be similar in spirit to the present version, but may
      differ in detail to address new problems or concerns.  See
-     `http://www.gnu.org/copyleft/'.
+     <http://www.gnu.org/copyleft/>.
 
      Each version of the License is given a distinguishing version
      number.  If the Document specifies that a particular numbered
      version of this License "or any later version" applies to it, you
      have the option of following the terms and conditions either of
      that specified version or of any later version that has been
-     published (not as a draft) by the Free Software Foundation.  If
-     the Document does not specify a version number of this License,
-     you may choose any version ever published (not as a draft) by the
-     Free Software Foundation.  If the Document specifies that a proxy
-     can decide which future versions of this License can be used, that
+     published (not as a draft) by the Free Software Foundation.  If the
+     Document does not specify a version number of this License, you may
+     choose any version ever published (not as a draft) by the Free
+     Software Foundation.  If the Document specifies that a proxy can
+     decide which future versions of this License can be used, that
      proxy's public statement of acceptance of a version permanently
      authorizes you to choose that version for the Document.
 
- 11. RELICENSING
+  11. RELICENSING
 
      "Massive Multiauthor Collaboration Site" (or "MMC Site") means any
      World Wide Web server that publishes copyrightable works and also
@@ -448,7 +460,6 @@
      site under CC-BY-SA on the same site at any time before August 1,
      2009, provided the MMC is eligible for relicensing.
 
-
 ADDENDUM: How to use this License for your documents
 ====================================================
 
@@ -476,25 +487,9 @@ combination of the three, merge those two alternatives to suit the
 situation.
 
    If your document contains nontrivial examples of program code, we
-recommend releasing these examples in parallel under your choice of
-free software license, such as the GNU General Public License, to
-permit their use in free software.
-
-INFO-DIR-SECTION Mathematics
-START-INFO-DIR-ENTRY
-* GNU Aris: (aris).    The logical proof interface.
-END-INFO-DIR-ENTRY
-
-   This manual is for GNU Aris, the logical proof program.
-
-   Copyright (C) 2012 Ian Dunn
-
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover Texts,
-     and with no Back-Cover Texts.  A copy of the license is included
-     in the section entitled "GNU Free Documentation License".
+recommend releasing these examples in parallel under your choice of free
+software license, such as the GNU General Public License, to permit
+their use in free software.
 
 
 File: aris.info,  Node: Top,  Next: Introduction,  Up: (dir)
@@ -504,18 +499,18 @@ Aris
 
 This manual is for GNU Aris, the logical proof program.
 
-   Copyright (C) 2012 Ian Dunn
+   Copyright (C) 2013 Ian Dunn
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
      Version 1.3 or any later version published by the Free Software
      Foundation; with no Invariant Sections, with no Front-Cover Texts,
-     and with no Back-Cover Texts.  A copy of the license is included
-     in the section entitled "GNU Free Documentation License".
+     and with no Back-Cover Texts.  A copy of the license is included in
+     the section entitled "GNU Free Documentation License".
 
    This manual is for GNU Aris, the logical proof program.
 
-   This is edition 1.0, for `aris' version 1.7
+   This is edition 1.2, for 'aris' version 2.1
 
 * Menu:
 
@@ -552,170 +547,169 @@ File: aris.info,  Node: Terms,  Next: Options,  Prev: Introduction,  Up: Top
 
 Biconditional
      A biconditional is a connective that connects two sentences,
-     denoted by `<->'.  A biconditional claims that `sentence a if and
+     denoted by '<->'.  A biconditional claims that 'sentence a if and
      only if sentence b' is a new sentence.  A biconditional can be
-     inserted in Aris using the key combination `CTRL+5' (*note
-     Keyboard Shortcuts::).
+     inserted in Aris using the key combination 'CTRL+5' (*note Keyboard
+     Shortcuts::).
 
 Conclusion
      A conclusion is a sentence that is derived from a combination of
      other sentences and a rule.  A focused conclusion will be
-     highlighted in cyan.  A conclusion has a set of references
-     associated with it, which are highlighted in violet.
+     highlighted in cyan, although this color can be changed (*note
+     Customization::).  A conclusion has a set of references associated
+     with it, which are highlighted in violet.
 
 Conditional
      A conditional is a connective that connects two sentences, denoted
-     by `->'.  A conditional claims that `if sentence a, then sentence
+     by '->'.  A conditional claims that 'if sentence a, then sentence
      b' is a new sentence.  A conditional can be inserted in Aris using
-     the key combination `CTRL+4' (*note Keyboard Shortcuts::).
+     the key combination 'CTRL+4' (*note Keyboard Shortcuts::).
 
 Conjunction
      A conjunction is a connective that connects two or more sentences,
-     denoted by `^'.  A conjunction claims that `sentence a and
-     sentence b' is a new sentence.  A conjunction can be inserted in
-     Aris using the key combination `CTRL+7' (*note Keyboard
-     Shortcuts::).
+     denoted by '^'.  A conjunction claims that 'sentence a and sentence
+     b' is a new sentence.  A conjunction can be inserted in Aris using
+     the key combination 'CTRL+7' (*note Keyboard Shortcuts::).
 
 Connective
      A connective is a logical symbol that connects one or more
      sentences.  The connectives used in system PSI are conjuction
-     (`^'), disjunction (`v'), negation, (`~'), conditional (`->'), and
-     biconditional (`<->').  In addition, system PSI recognizes the
-     one-place connectives of the tautology (`T') and the contradiction
-     (`!').
+     ('^'), disjunction ('v'), negation, ('~'), conditional ('->'), and
+     biconditional ('<->').  In addition, system PSI recognizes the
+     one-place connectives of the tautology ('T') and the contradiction
+     ('!').
 
 Contradiction
      A contradiction is a zero-place connective that stands on its own,
-     denoted by `!'.  A contradiction represents something that is
+     denoted by '!'.  A contradiction represents something that is
      always false.  A contradiction is only used with the boolean rules
      (*note Boolean Rules::), and can be inserted using the key
-     combination `CTRL+6'.
+     combination 'CTRL+6'.
 
 Disjunction
      A disjunction is a connective that connects two or more sentences,
-     denoted by `v'.  A disjunction claims that `sentence a or sentence
+     denoted by 'v'.  A disjunction claims that 'sentence a or sentence
      b' is a new sentence.  A disjunction can be inserted in Aris using
-     the key combination `CTRL+\' (*note Keyboard Shortcuts::).
+     the key combination 'CTRL+\' (*note Keyboard Shortcuts::).
 
 Evaluate
-     To evaluate a sentence means different things depending on the
-     type of sentence.  At the very least, evaluation checks the
-     sentence for text errors, i.e. mis-matched parenthesis, etc.
-     Evaluating a conclusion checks that the sentence's text logically
-     follows from the given references and its rule.  Evaluating a goal
-     means checking the corresponding proof for a sentence with this
-     exact same text.  To evaluate a sentence use the key combination
-     `CTRL+E' (*note Keyboard Shortcuts::).
+     To evaluate a sentence means different things depending on the type
+     of sentence.  At the very least, evaluation checks the sentence for
+     text errors, i.e.  mis-matched parenthesis, etc.  Evaluating a
+     conclusion checks that the sentence's text logically follows from
+     the given references and its rule.  Evaluating a goal means
+     checking the corresponding proof for a sentence with this exact
+     same text.  To evaluate a sentence use the key combination 'CTRL+E'
+     (*note Keyboard Shortcuts::).
 
 Evaluation Value
      An evaluation value is the value that appears to the right of a
-     sentence's text entry.  It can either be ` ', `T', `F', `*', `#',
-     or `?'.  ` ' means that the sentence is awaiting evaluation,
-     except in the case of premises, where this could also mean that
-     there are no errors with it.  `T' means that either the conclusion
-     logically follows from its references and rule, or that the goal
-     has been found in the corresponding proof.  `F' means that either
-     the conclusion does not logically follow from its references and
-     rule, or that the goal has not been found in the corresponding
-     proof.  `*' means that there is a text error with this sentence.
-     `?' means that one of the conclusion's references has a text
-     error.  `#' means that the conclusion is missing a rule.
+     sentence's text entry.  It can either be ' ', 'T', 'F', '*', '#',
+     or '?'.  ' ' means that the sentence is awaiting evaluation, except
+     in the case of premises, where this could also mean that there are
+     no errors with it.  'T' means that either the conclusion logically
+     follows from its references and rule, or that the goal has been
+     found in the corresponding proof.  'F' means that either the
+     conclusion does not logically follow from its references and rule,
+     or that the goal has not been found in the corresponding proof.
+     '*' means that there is a text error with this sentence.  '?' means
+     that one of the conclusion's references has a text error.  '#'
+     means that the conclusion is missing a rule.
 
 Existential
      An existential is a quantifier that precedes the rest of sentence,
-     denoted by `3'.  An existential claims that `there exists at least
+     denoted by '3'.  An existential claims that 'there exists at least
      on item that has property property P' is a new sentence, assuming
-     that `P' is a valid predicate. An existential quantifier can be
-     inserted into Aris using the key combination `CTRL+3'.
+     that 'P' is a valid predicate.  An existential quantifier can be
+     inserted into Aris using the key combination 'CTRL+3'.
 
 Function Symbol
      A function symbol maps one object to another object.  These are
-     always lower case.  Examples of a function symbol is seqlog's `z'
-     and `s' symbols (*note Sequence Logic::).
+     always lower case.  Examples of a function symbol is seqlog's 'z'
+     and 's' symbols (*note Sequence Logic::).
 
 Goal
      A goal is a sentence that the user is looking to meet in a certain
-     proof.  The goal window contains all of these sentences, and can
-     be toggled by the key combination `CTRL+L' (*note Keyboard
+     proof.  The goal window contains all of these sentences, and can be
+     toggled by the key combination 'CTRL+L' (*note Keyboard
      Shortcuts::).  When a sentence in the proof matches a goal, the
      proof sentence's line number is highlighted in red, while the
      goal's line number is changed to match the proof sentence's line
      number.
 
 Negation
-     A negation is a connective that is inserted in front of a
-     sentence, denoted by `~'.  A neagion claims that the opposite of
-     the negation is true.  A negation can be inserted into Aris using
-     the key combination `CTRL+`' (*note Keyboard Shortcuts::).
+     A negation is a connective that is inserted in front of a sentence,
+     denoted by '~'.  A neagion claims that the opposite of the negation
+     is true.  A negation can be inserted into Aris using the key
+     combination 'CTRL+`' (*note Keyboard Shortcuts::).
 
 Null Object
-     A null object is an object, denoted by `nil'.  In Aris it
-     resembles a null byte, `\0', and represents an undefined object in
-     a sequence.  A null object can be inserted by using the key
-     combination `CTRL+.'.
+     A null object is an object, denoted by 'nil'.  In Aris it resembles
+     a null byte, '\0', and represents an undefined object in a
+     sequence.  A null object can be inserted by using the key
+     combination 'CTRL+.'.
 
 Predicate
      A predicate is a type of logical symbol that denotes a property of
      or relation between one or more objects.  These always begin with
      capital letters, and generally use prefix notation.  Exceptions of
-     this are the identity predicate (`='), the less than predicate
-     (`<'), and the element of predicate.
+     this are the identity predicate ('='), the less than predicate
+     ('<'), and the element of predicate.
 
 Premise
      A premise is a sentence that is given.  A premise has no rule
      associated with it, nor does it have an evaluation value, unless
-     there is an error in it.  Any variables introduced in a premise
-     are not considered arbitrary.
+     there is an error in it.  Any variables introduced in a premise are
+     not considered arbitrary.
 
 Proof
-     A proof is a set of sentences, beginning with a set of premises
-     and ending with a set of conclusions, that the user is trying to
-     derive something from.  The proof window is the main window that
-     appears when the user opens up a proof.
+     A proof is a set of sentences, beginning with a set of premises and
+     ending with a set of conclusions, that the user is trying to derive
+     something from.  The proof window is the main window that appears
+     when the user opens up a proof.
 
 Quantifier
      A quantifier is a type of logical symbol that claims something
      about the amount, or quantity, of an object that holds a specific
      property.  The quantifiers used in system PSI are the universal
-     (`V'), and the existential (`3').
+     ('V'), and the existential ('3').
 
 Reference
      A reference is a sentence that is being used to derive a
-     conclusion.  A reference is highlighted in violet, and can be
-     added or removed from the current sentence by holding down `CTRL',
-     and left-clicking on the desired reference.
+     conclusion.  A reference is highlighted in violet, and can be added
+     or removed from the current sentence by holding down 'CTRL', and
+     left-clicking on the desired reference.
 
 Rules
-     The rules in Aris are a combination of inference rules,
-     equivalence rules, and predicate rules that the user can use to
-     derive sentences.  The rules window (also referred to as the rules
-     tablet) is shared amongst all of the proofs in Aris.  It can be
-     toggled by the key combination `CTRL+R' (*note Keyboard
-     Shortcuts::) from any proof window. For the list of rules, *note
-     Rules Index::.
+     The rules in Aris are a combination of inference rules, equivalence
+     rules, and predicate rules that the user can use to derive
+     sentences.  The rules window (also referred to as the rules tablet)
+     is shared amongst all of the proofs in Aris.  It can be toggled by
+     the key combination 'CTRL+R' (*note Keyboard Shortcuts::) from any
+     proof window.  For the list of rules, *note Rules Index::.
 
 Sentence
-     A sentence is a line in Aris.  A sentence always consists of a
-     text entry, a line number, and an evaluation value.
+     A sentence is a line in Aris.  A sentence always consists of a text
+     entry, a line number, and an evaluation value.
 
 Subproof
      A proof within a proof.  To begin a subproof in Aris, use the key
-     combination `CTRL+B', and to exit one, use the key combination
-     `CTRL+D'.
+     combination 'CTRL+B', and to exit one, use the key combination
+     'CTRL+D'.
 
 Tautology
      A tautology is a zero-place connective that stands on its own,
-     denoted by `T'.  A tautology represents something that is always
+     denoted by 'T'.  A tautology represents something that is always
      true.  A tautology is only used with the boolean rules (*note
      Boolean Rules::), and can be inserted using the key combination
-     `CTRL+1'.
+     'CTRL+1'.
 
 Universal
      A universal is a quantifier that precedes the rest of sentence,
-     denoted by `V'.  A universal claims that `for all items, they have
-     property P' is a new sentence, assuming that `P' is a valid
-     predicate. A universal quantifier can be inserted into Aris using
-     the key combination `CTRL+2'.
+     denoted by 'V'.  A universal claims that 'for all items, they have
+     property P' is a new sentence, assuming that 'P' is a valid
+     predicate.  A universal quantifier can be inserted into Aris using
+     the key combination 'CTRL+2'.
 
 Variable
      A variable represents an object within a proof.  A variable is
@@ -728,75 +722,73 @@ Variable
      ended, then lines after it don't worry about variables introduced
      within it.
 
-
 
 File: aris.info,  Node: Options,  Next: Basic Usage,  Prev: Terms,  Up: Top
 
 3 Options
 *********
 
-`-a VARIABLE'
-`--variable=VARIABLE'
+'-a VARIABLE'
+'--variable=VARIABLE'
      Use VARIABLE as a known variable in evaluation mode.  Prepend an
      '*' to specifiy that the variable is arbitrary.
 
-`-b'
-`--boolean'
+'-b'
+'--boolean'
      Start Aris in boolean mode.
 
-`-c CONCLUSION'
-`--conclusion=CONCLUSION'
+'-c CONCLUSION'
+'--conclusion=CONCLUSION'
      Use CONCLUSION as a conclusion in evaluation mode.  This flag can
      only be specified once.
 
-`-e'
-`--evaluate'
+'-e'
+'--evaluate'
      Run Aris in evaluation mode.  This means that no GUI will be
      loaded.
 
-`-f FILE'
-`--file=FILE'
+'-f FILE'
+'--file=FILE'
      Evaluate FILE if running Aris in evaluation mode, otherwise load
      FILE in Aris.  This flag can be specified multiple times.
 
-`-g'
-`--grade'
+'-g'
+'--grade'
      Grades a file specified by the file flag.  This flag is ignored if
      used more than once.
 
-`-l'
-`--list'
+'-l'
+'--list'
      List the rules available in Aris, and exit.
 
-`-p PREMISE'
-`--premise=PREMISE'
+'-p PREMISE'
+'--premise=PREMISE'
      Use PREMISE as a premise in evalution mode.  This flag can be
      specified multiple times.
 
-`-r RULE'
-`--rule=RULE'
+'-r RULE'
+'--rule=RULE'
      Use RULE as a rule in evaluation mode.  This flag can only be
      specified once.
 
-`-t TEXT'
-`--text=TEXT'
+'-t TEXT'
+'--text=TEXT'
      Simply check the correctness of TEXT in evaluation mode.
 
-`-v'
-`--verbose'
+'-v'
+'--verbose'
      Run Aris verbosely, printing status and error messages.
 
-`-x'
-`--latex=FILE'
+'-x'
+'--latex=FILE'
      Convert FILE to a LaTeX proof file in evaluation mode.
 
-`--version'
+'--version'
      Print the version of Aris and exit.
 
-`-h'
-`--help'
+'-h'
+'--help'
      Print a help message and exit.
-
 
 
 File: aris.info,  Node: Basic Usage,  Next: Keyboard Shortcuts,  Prev: Options,  Up: Top
@@ -840,15 +832,15 @@ File: aris.info,  Node: Adding,  Next: Selecting,  Prev: Connectives,  Up: Basic
 4.3 Adding Sentences
 ====================
 
-Hitting `Ctrl+J' adds a conclusion to the proof.  A conlusion is always
+Hitting 'Ctrl+J' adds a conclusion to the proof.  A conlusion is always
 added after the current line, or, if the line is a premise, then the
 conclusion is added after the last premise.  If the current line is a
-conclusion, then it is highlighted in cyan.  Hitting `Ctrl+P' adds a
+conclusion, then it is highlighted in cyan.  Hitting 'Ctrl+P' adds a
 premise to the proof.  A premise will always be added after the last
-premise.  Pressing `Ctrl+B' adds a subproof to the proof.  When in a
+premise.  Pressing 'Ctrl+B' adds a subproof to the proof.  When in a
 subproof, a conclusion will always be added within the subproof.  The
 first line of a subproof does not require a rule, but instead acts as a
-premise.  Pressing `Ctrl+D' ends the current subproof.  This creates a
+premise.  Pressing 'Ctrl+D' ends the current subproof.  This creates a
 new conclusion just after the subproof.
 
 
@@ -857,20 +849,20 @@ File: aris.info,  Node: Selecting,  Prev: Adding,  Up: Basic Usage
 4.4 Selecting Sentences
 =======================
 
-Holing `CTRL', and left-clicking on a sentence will select a sentence
-as a reference sentence.  The current line's reference sentences are
+Holing 'CTRL', and left-clicking on a sentence will select a sentence as
+a reference sentence.  The current line's reference sentences are
 highlighted in violet.  Only a line before the current line can be
-selected as a reference.  In addition, if the sentence is in a
-different subproof than the current line, then the sentence can not be
-selected as a reference.  Each rule requires a specific amount of
-references (*note Rules Index::).
+selected as a reference.  In addition, if the sentence is in a different
+subproof than the current line, then the sentence can not be selected as
+a reference.  Each rule requires a specific amount of references (*note
+Rules Index::).
 
-   Holding `SHIFT' and left-clicking on a sentence will select the
+   Holding 'SHIFT' and left-clicking on a sentence will select the
 sentence.  The sentence will be highlighted in red-orange.  Multiple
 sentences can be selected this way, however when another action is
-taken, all of them will be de-selected.  Pressing `CTRL+K' will kill
-(cut) the selected lines, and `CTRL+G' will copy the selected lines.
-If no lines are selected, then the current line will be used.
+taken, all of them will be de-selected.  Pressing 'CTRL+K' will kill
+(cut) the selected lines, and 'CTRL+G' will copy the selected lines.  If
+no lines are selected, then the current line will be used.
 
 
 File: aris.info,  Node: Keyboard Shortcuts,  Next: Rules Index,  Prev: Basic Usage,  Up: Top
@@ -878,105 +870,108 @@ File: aris.info,  Node: Keyboard Shortcuts,  Next: Rules Index,  Prev: Basic Usa
 5 Keyboard Shortcuts
 ********************
 
-`CTRL+N'
+The keyboard shortcuts here (with the exception of the connectives) can
+be changed using customization *Note Customization::.  The shortcuts
+listed here are the default shortcuts for Aris.
+
+'CTRL+N'
      Start a new proof.
 
-`CTRL+O'
+'CTRL+O'
      Open an existing proof.
 
-`CTRL+S'
+'CTRL+S'
      Save the current proof.
 
-`CTRL+SHIFT+S'
+'CTRL+SHIFT+S'
      Save the current proof under a different name.
 
-`CTRL+W'
+'CTRL+W'
      Close the current proof.
 
-`CTRL+Q'
+'CTRL+Q'
      Exit Aris.
 
-`CTRL+P'
+'CTRL+P'
      Insert a new premise after the current line.
 
-`CTRL+J'
+'CTRL+J'
      Insert a new conclusion after the current line.
 
-`CTRL+B'
+'CTRL+B'
      Begin a new subproof after the current line.
 
-`CTRL+D'
+'CTRL+D'
      End the current subproof, if there is one.
 
-`CTRL+G'
+'CTRL+G'
      Copy the current line.
 
-`CTRL+K'
+'CTRL+K'
      Kill the current line.
 
-`CTRL+I'
+'CTRL+I'
      Insert the copied/killed line.
 
-`CTRL+E'
+'CTRL+E'
      Evaluate the current line.
 
-`CTRL+F'
+'CTRL+F'
      Evaluate the current proof.
 
-`CTRL+L'
+'CTRL+L'
      Toggle the goal window for the current proof.
 
-`CTRL+M'
-     Toggle boolean mode for the current proof.
+'CTRL+M'
+     Toggle boolean mode for the current proof *Note Boolean Rules::.
 
-`CTRL+R'
+'CTRL+R'
      Toggle the rules window.
 
-`CTRL+-'
+'CTRL+-'
      Change the font size to small (8pt).
 
-`CTRL+0'
+'CTRL+0'
      Change the font size to medium (12pt).
 
-`CTRL+='
+'CTRL+='
      Change the font size to large (16pt).
 
-`F1'
+'F1'
      Display Aris help.
 
-`CTRL+7'
-     Insert a conjunction (`^') into Aris.
+'CTRL+7'
+     Insert a conjunction ('^') into Aris.
 
-`CTRL+\'
-     Insert a disjunction (`v') into Aris.
+'CTRL+\'
+     Insert a disjunction ('v') into Aris.
 
-`CTRL+`'
-     Insert a negation (`-') into Aris.
+'CTRL+`'
+     Insert a negation ('-') into Aris.
 
-`CTRL+4'
-     Insert a conditional (`->') into Aris.
+'CTRL+4'
+     Insert a conditional ('->') into Aris.
 
-`CTRL+5'
-     Insert a biconditional (`<->') into Aris.
+'CTRL+5'
+     Insert a biconditional ('<->') into Aris.
 
-`CTRL+2'
-     Insert a universal (`V') into Aris.
+'CTRL+2'
+     Insert a universal ('V') into Aris.
 
-`CTRL+3'
-     Insert an existential (`3') into Aris.
+'CTRL+3'
+     Insert an existential ('3') into Aris.
 
-`CTRL+6'
-     Insert a tautology (`T') into Aris.
+'CTRL+6'
+     Insert a tautology ('T') into Aris.
 
-`CTRL+1'
-     Insert a contradiction (`!') into Aris.
+'CTRL+1'
+     Insert a contradiction ('!') into Aris.
 
-`CTRL+;'
+'CTRL+;'
      Insert an 'element of' predicate into Aris.
 
-`CTRL+.'
-     Insert a null object (`nil') into Aris.
-
+'CTRL+.'
+     Insert a null object ('nil') into Aris.
 
 
 File: aris.info,  Node: Rules Index,  Next: Customization,  Prev: Keyboard Shortcuts,  Up: Top
@@ -1020,20 +1015,17 @@ File: aris.info,  Node: mp,  Next: ad,  Up: Inference Rules
 6.1.1 Modus Ponens
 ------------------
 
-      P -> Q
+     P -> Q
+     P
+     -----
+     Q
 
-      P
+   One of the basic rules of logic, modus ponens say that 'if P happens,
+then Q must happen. P happened, so Q must happen'.
 
-     -------
-
-      Q
-
-   One of the basic rules of logic, modus ponens say that `if P
-happens, then Q must happen.  P happened, so Q must happen'.
-
-   For example, if it is known that `If the dog begins to bark, then
-someone is at the door', and it is also known that `the dog has begun
-to bark', then modus ponens says that `someone must be at the door'.
+   For example, if it is known that 'If the dog begins to bark, then
+someone is at the door', and it is also known that 'the dog has begun to
+bark', then modus ponens says that 'someone must be at the door'.
 
    Modus Ponens requires exactly two references.
 
@@ -1043,18 +1035,16 @@ File: aris.info,  Node: ad,  Next: sm,  Prev: mp,  Up: Inference Rules
 6.1.2 Addition
 --------------
 
-      P
-
-     -------
-
-      P v Q v R v ...
+     P
+     -----
+     P v Q v R v ...
 
    What addition says is that something is already known, so it must be
 true that that something or something else, or something else, etc.
 must also be true.
 
-   For example, if it is known that `The sky is blue', then addition
-says that it can be inferred that `The sky is blue, or the sky is
+   For example, if it is known that 'The sky is blue', then addition
+says that it can be inferred that 'The sky is blue, or the sky is
 yellow, or the sky is pink', since only one of those statements has to
 be true.
 
@@ -1066,17 +1056,15 @@ File: aris.info,  Node: sm,  Next: cn,  Prev: ad,  Up: Inference Rules
 6.1.3 Simplification
 --------------------
 
-      P ^ Q ^ R ^ ...
+     P ^ Q ^ R ^ ...
+     -----
+     P (or Q, or R, or ...)
 
-     -------
-
-      P (or Q, or R, or ...)
-
-   Simplification says that if it is known that P and Q and R, etc. is
+   Simplification says that if it is known that P and Q and R, etc.  is
 known to be true, then P is true.
 
-   For instance, if it is known that `It is cloudy, and it is raining',
-then simplification allows the inference of `It is cloudy' and `It is
+   For instance, if it is known that 'It is cloudy, and it is raining',
+then simplification allows the inference of 'It is cloudy' and 'It is
 raining'.
 
    Simplification requires exactly one reference.
@@ -1087,23 +1075,19 @@ File: aris.info,  Node: cn,  Next: hs,  Prev: sm,  Up: Inference Rules
 6.1.4 Conjunction
 -----------------
 
-      P
-
-      Q
-
-      R
-
-     -------
-
-      P ^ Q ^ R
+     P
+     Q
+     R
+     -----
+     P ^ Q ^ R
 
    What conjunction is saying is the exact opposite of simplification.
-If P is known, and Q is known, and R is know, etc. then P and Q and R,
-etc. is also known.
+If P is known, and Q is known, and R is know, etc.  then P and Q and R,
+etc.  is also known.
 
-   Take for example, that it is known that `I don't like green eggs and
-ham', and `I would not eat them in a house', and `I would not eat them
-with a mouse'.  Conjunction allows us to infer that `I don't like green
+   Take for example, that it is known that 'I don't like green eggs and
+ham', and 'I would not eat them in a house', and 'I would not eat them
+with a mouse'.  Conjunction allows us to infer that 'I don't like green
 egss and ham, and I would not eat them in a house, and I would not eat
 them with a mouse.'.
 
@@ -1115,24 +1099,20 @@ File: aris.info,  Node: hs,  Next: ds,  Prev: cn,  Up: Inference Rules
 6.1.5 Hypothetical Syllogism
 ----------------------------
 
-      P -> Q
-
-      R -> S
-
-      Q -> R
-
-     -------
-
-      P -> S
+     P -> Q
+     R -> S
+     Q -> R
+     -----
+     P -> S
 
    Also referred to as the chain rule, hypothetical syllogism states
 that if one knows that 'if P then Q', and 'if R then S', then one can
-infer 'if P then S'.  For example, if it is known `if it is raining,
-then it is cloudy', and `if it is cloudy, then it is not sunny', and
-`if it is not sunny, then it is cold', then hypothetical syllogism
-allows us to infer that `if it is raining, then it is cold'.  This
-works with any number of conditional statements, as long as they all
-follow this pattern.
+infer 'if P then S'. For example, if it is known 'if it is raining, then
+it is cloudy', and 'if it is cloudy, then it is not sunny', and 'if it
+is not sunny, then it is cold', then hypothetical syllogism allows us to
+infer that 'if it is raining, then it is cold'.  This works with any
+number of conditional statements, as long as they all follow this
+pattern.
 
    Hypothetical Syllogism requires at least two references.
 
@@ -1142,20 +1122,16 @@ File: aris.info,  Node: ds,  Next: ex,  Prev: hs,  Up: Inference Rules
 6.1.6 Disjunctive Syllogism
 ---------------------------
 
-      ~P
+     ~P
+     P v Q v R
+     ~R
+     -----
+     Q
 
-      P v Q v R
-
-      ~R
-
-     -------
-
-      Q
-
-   Disjunctive syllogism is commonly used when disjunctions are
-present.  It claims that if one knows that 'P or Q or R', and 'P is
-false', and 'R is false', then Q must be true.  This works with any
-number of disjuncts.
+   Disjunctive syllogism is commonly used when disjunctions are present.
+It claims that if one knows that 'P or Q or R', and 'P is false', and 'R
+is false', then Q must be true.  This works with any number of
+disjuncts.
 
 
 File: aris.info,  Node: ex,  Next: cd,  Prev: ds,  Up: Inference Rules
@@ -1163,9 +1139,8 @@ File: aris.info,  Node: ex,  Next: cd,  Prev: ds,  Up: Inference Rules
 6.1.7 Excluded Middle
 ---------------------
 
-     -------
-
-      P v ~P
+     -----
+     P v ~P
 
    A law of logic, excluded middle asserts that something is either
 true, or it is not true.
@@ -1178,15 +1153,11 @@ File: aris.info,  Node: cd,  Prev: ex,  Up: Inference Rules
 6.1.8 Constructive Dilemma
 --------------------------
 
-      P -> R
-
-      P v Q
-
-      Q -> S
-
-     -------
-
-      R v S
+     P -> R
+     P v Q
+     Q -> S
+     -----
+     R v S
 
    Constructive Dilemma requires at least three references.
 
@@ -1221,9 +1192,9 @@ File: aris.info,  Node: im,  Next: dm,  Up: Equivalence Rules
 
      P -> Q <=> ~P v Q
 
-   Implication uses the definition of the conditional.  It is also
-valid to claim something such as ~(~P v Q) v (~R v S) <=> (P -> Q) ->
-(R -> S), because implication is recursive.
+   Implication uses the definition of the conditional.  It is also valid
+to claim something such as ~(~P v Q) v (~R v S) <=> (P -> Q) -> (R ->
+S), because implication is recursive.
 
 
 File: aris.info,  Node: dm,  Next: as,  Prev: im,  Up: Equivalence Rules
@@ -1232,11 +1203,8 @@ File: aris.info,  Node: dm,  Next: as,  Prev: im,  Up: Equivalence Rules
 --------------
 
      ~(P ^ Q) <=> ~P v ~Q
-
      ~(P v Q) <=> ~P ^ ~Q
-
      ~3x(P(x)) <=> Vx(~P(x))
-
      ~Vx(P(x)) <=> 3x(~P(x))
 
    DeMorgan's Laws.
@@ -1248,13 +1216,12 @@ File: aris.info,  Node: as,  Next: co,  Prev: dm,  Up: Equivalence Rules
 -----------------
 
      P ^ (Q ^ R) <=> P ^ Q ^ R
-
      P v (Q v R) <=> P v Q v R
 
    A note to users, typically association is used as P ^ (Q ^ R) <=> (P
-^ Q) ^ R.  While Aris will allow you to prove that this is equivalent,
-association allows the removal of one pair of parentheses at a time.
-(P ^ Q) ^ (R ^ S) <=> P ^ Q ^ R ^ S is also valid in Aris, because
+^ Q) ^ R. While Aris will allow you to prove that this is equivalent,
+association allows the removal of one pair of parentheses at a time.  (P
+^ Q) ^ (R ^ S) <=> P ^ Q ^ R ^ S is also valid in Aris, because
 association allows recursion, but only when removing several sets of
 parentheses or adding several sets of parentheses.
 
@@ -1265,13 +1232,12 @@ File: aris.info,  Node: co,  Next: id,  Prev: as,  Up: Equivalence Rules
 -------------------
 
      P ^ Q ^ R <=> Q ^ R ^ P
-
      P v Q v R <=> Q v R v P
 
    Just like addition and multiplication, conjunctions and disjunctions
-are commutative.  This of course means that `I would like some pie and
-I would like some cake' is the same as saying `I would like some cake
-and I would like some pie'.
+are commutative.  This of course means that 'I would like some pie and I
+would like some cake' is the same as saying 'I would like some cake and
+I would like some pie'.
 
 
 File: aris.info,  Node: id,  Next: dt,  Prev: co,  Up: Equivalence Rules
@@ -1280,11 +1246,10 @@ File: aris.info,  Node: id,  Next: dt,  Prev: co,  Up: Equivalence Rules
 -----------------
 
      P ^ P ^ Q ^ R ^ R ^ R <=> P ^ Q ^ R
-
      P v P v Q v R v R v R <=> P v Q v R
 
-   Idempotence claims that `I like blue and I like blue' is the same as
-saying `I like blue'.
+   Idempotence claims that 'I like blue and I like blue' is the same as
+saying 'I like blue'.
 
 
 File: aris.info,  Node: dt,  Next: eq,  Prev: id,  Up: Equivalence Rules
@@ -1292,14 +1257,11 @@ File: aris.info,  Node: dt,  Next: eq,  Prev: id,  Up: Equivalence Rules
 6.2.6 Distribution
 ------------------
 
-     P ^ (Q0 v Q1 v ... v Qn) <=> (P ^ Q0) v (P ^ Q1) v (P ^ Q2) v ...
+     P ^ (Q0 v Q1 v ...  v Qn) <=> (P ^ Q0) v (P ^ Q1) v (P ^ Q2) v ...
      v (P ^ Qn)
-
-     P v (Q0 v Q1 ^ ... ^ Qn) <=> (P v Q0) ^ (P v Q1) ^ (P v Q2) ^ ...
+     P v (Q0 v Q1 ^ ...  ^ Qn) <=> (P v Q0) ^ (P v Q1) ^ (P v Q2) ^ ...
      ^ (P v Qn)
-
      3x(P(x) v Q(x)) <=> 3x(P(x)) v 3x(Q(x))
-
      Vx(P(x) ^ Q(x)) <=> Vx(P(x)) ^ Vx(Q(x))
 
 
@@ -1311,8 +1273,8 @@ File: aris.info,  Node: eq,  Next: dn,  Prev: dt,  Up: Equivalence Rules
      P <-> Q <=> (P -> Q) ^ (Q -> R)
 
    Equivalence uses the definition of the biconditional.  Claiming that
-`P if and only if Q' is exactly the same as claiming `if P then Q' and
-`if Q then P'.  Equivalence is the only rule that works with
+'P if and only if Q' is exactly the same as claiming 'if P then Q' and
+'if Q then P'.  Equivalence is the only rule that works with
 biconditionals explicitly, and is thus used any time a biconditional is
 seen.
 
@@ -1324,8 +1286,8 @@ File: aris.info,  Node: dn,  Next: ep,  Prev: eq,  Up: Equivalence Rules
 
      ~~P <=> P
 
-   You probably learned in english class that saying `I would not like
-to disagree' is the same thing as saying `I would like to agree'.
+   You probably learned in english class that saying 'I would not like
+to disagree' is the same thing as saying 'I would like to agree'.
 That's what double negation claims.
 
 
@@ -1343,7 +1305,6 @@ File: aris.info,  Node: sb,  Next: Recursion,  Prev: ep,  Up: Equivalence Rules
 ------------------
 
      P ^ (P v Q) <=> P
-
      P v (P ^ Q) <=> P
 
 
@@ -1352,13 +1313,11 @@ File: aris.info,  Node: Recursion,  Prev: sb,  Up: Equivalence Rules
 6.2.11 Recursion in the Equivalence Rules
 -----------------------------------------
 
-For the convenience of the user, the equivalence rules work
-recursively.  For example
+For the convenience of the user, the equivalence rules work recursively.
+For example
 
      ~(~P v Q) v (~R v S)
-
-     -------
-
+     -----
      (P -> Q) -> (R -> S)
 
    This is an example of using implication recursively.  Recursion only
@@ -1400,15 +1359,13 @@ File: aris.info,  Node: ug,  Next: ui,  Up: Predicate Rules
 ------------------------------
 
      P(a) ; a is arbitrary
-
-     -------
-
+     -----
      Vx(P(x))
 
-   Universal Generalization claims that if a property `P' is true for
+   Universal Generalization claims that if a property 'P' is true for
 some arbitrary object, then it is true for all objects.  A symbol is
 arbitrary if nothing is known about, or rather if it was not introduced
-through a premise or using existential instantiation. *note Variables:
+through a premise or using existential instantiation.  *note Variables:
 Terms.
 
    Universal Generalization uses exactly one reference.
@@ -1420,13 +1377,11 @@ File: aris.info,  Node: ui,  Next: eg,  Prev: ug,  Up: Predicate Rules
 -----------------------------
 
      Vx(P(x))
-
-     -------
-
+     -----
      P(a)
 
-   Universal Generalization claims that if a property `P' is true for
-all objects, then it must be true for an object `a'.
+   Universal Generalization claims that if a property 'P' is true for
+all objects, then it must be true for an object 'a'.
 
    Universal Generalization uses exactly one reference.
 
@@ -1437,13 +1392,11 @@ File: aris.info,  Node: eg,  Next: ei,  Prev: ui,  Up: Predicate Rules
 --------------------------------
 
      P(a)
-
-     -------
-
+     -----
      3x(P(x))
 
-   Existential Generalization claims that if `P' is true for some
-object, then there exists an object for which `P' is true.
+   Existential Generalization claims that if 'P' is true for some
+object, then there exists an object for which 'P' is true.
 
    Existential Generalization uses exactly one reference.
 
@@ -1454,14 +1407,12 @@ File: aris.info,  Node: ei,  Next: bv,  Prev: eg,  Up: Predicate Rules
 --------------------------------
 
      3x(P(x))
-
-     -------
-
+     -----
      P(a) ; a must not have been used before
 
    Existential Instantiation claims that if there exists an object for
-which property `P' is true, then it can be claimed that some unused
-object has this property.  In this case, `a' becomes a placeholder for
+which property 'P' is true, then it can be claimed that some unused
+object has this property.  In this case, 'a' becomes a placeholder for
 the object.  *note Variables: Terms.
 
    Existential Instantiation uses exactly one reference.
@@ -1473,7 +1424,6 @@ File: aris.info,  Node: bv,  Next: nq,  Prev: ei,  Up: Predicate Rules
 --------------------
 
      Vx(P(x)) <=> Vy(P(y))
-
      3x(P(x)) <=> 3y(P(y))
 
    Bound Variable allows the user to substitute any bound variable for
@@ -1508,11 +1458,8 @@ File: aris.info,  Node: pr,  Next: ii,  Prev: nq,  Up: Predicate Rules
 ------------
 
      3x(P(x) ^ Q(a)) <=> 3x(P(x)) ^ Q(a)
-
      Vx(P(x) ^ Q(a)) <=> Vx(P(x)) ^ Q(a)
-
      3x(P(x) v Q(a)) <=> 3x(P(x)) v Q(a)
-
      Vx(P(x) v Q(a)) <=> Vx(P(x)) v Q(a)
 
    The Prenex Laws are used to move quantifiers to the start of the
@@ -1527,9 +1474,8 @@ File: aris.info,  Node: ii,  Next: fv,  Prev: pr,  Up: Predicate Rules
 6.3.8 Identity
 --------------
 
-     -------
-
-      a = a
+     -----
+     a = a
 
    Identity asserts that any variable is identical to itself.
 
@@ -1542,11 +1488,8 @@ File: aris.info,  Node: fv,  Prev: ii,  Up: Predicate Rules
 -------------------
 
      a = b
-
      P(a)
-
-     -------
-
+     -----
      P(b)
 
    Free Variable allows the user to substitute a free variable for
@@ -1561,7 +1504,9 @@ File: aris.info,  Node: Boolean Rules,  Next: Miscellaneous Rules,  Prev: Predic
 =================
 
 Aris can be set to use 'boolean mode', a mode used for boolean algebra.
-In boolean mode, only equivalence rules and boolean rules can be used.
+In boolean mode, only equivalence rules that handle negations,
+conjunctions, or disjunctions and boolean rules can be used.  In
+standard mode, the boolean rules can still be used, however.
 
 * Menu:
 
@@ -1577,13 +1522,12 @@ File: aris.info,  Node: bi,  Next: bn,  Up: Boolean Rules
 ----------------------
 
      A ^ T <=> A
-
-     A v ! <=> A
+     A v !  <=> A
 
    Boolean Identity claims that the conjunction of a sentence with a
 tautology is logically equivalent to the sentence.  It also claims that
-the disjunction of a sentence an a contradiction is logically
-equivalent to the sentence.
+the disjunction of a sentence an a contradiction is logically equivalent
+to the sentence.
 
 
 File: aris.info,  Node: bn,  Next: bd,  Prev: bi,  Up: Boolean Rules
@@ -1592,7 +1536,6 @@ File: aris.info,  Node: bn,  Next: bd,  Prev: bi,  Up: Boolean Rules
 ----------------------
 
      A ^ ~A <=> !
-
      A v ~A <=> T
 
    Boolean Negation claims that the conjunction of a setentence and its
@@ -1605,8 +1548,7 @@ File: aris.info,  Node: bd,  Next: sn,  Prev: bn,  Up: Boolean Rules
 6.4.3 Boolean Dominance
 -----------------------
 
-     A ^ ! <=> !
-
+     A ^ !  <=> !
      A v T <=> T
 
    Boolean Dominance claims that the conjunction of a sentence and a
@@ -1621,8 +1563,7 @@ File: aris.info,  Node: sn,  Prev: bd,  Up: Boolean Rules
 ---------------------
 
      ~T <=> !
-
-     ~! <=> T
+     ~!  <=> T
 
    Symbol Negation claims that a tautology is the opposite of a
 contradiction.
@@ -1656,20 +1597,17 @@ correct form, or rather that they appear in the correct order.
    For example, if you already did a proof of the form:
 
      A <-> B
-
      A
-
-     -------
-
+     -----
      B
 
    And want to reuse it, then your reference sentences must be in the
-form `A' <-> `B', and `A'.  In general, they do not have to be in that
+form 'A' <-> 'B', and 'A'.  In general, they do not have to be in that
 order, however.  Then, your conclusion must be the second half of the
 biconditional.
 
-   This is where Isar interoperability comes in.  Instead of selecting
-a previous Aris proof, a .thy file can be used.  Aris will attempt to
+   This is where Isar interoperability comes in.  Instead of selecting a
+previous Aris proof, a .thy file can be used.  Aris will attempt to
 translate it into a form that it can use, using most of the keywords as
 references, and the lemmas and theorems as goals.  These are the
 sentences that can be proved.  For more information, see *note
@@ -1701,13 +1639,11 @@ File: aris.info,  Node: in,  Prev: sq,  Up: Miscellaneous Rules
 ---------------
 
      Vx(P(z(x)) ^ (P(x) -> P(s(x))))
-
-     -------
-
+     -----
      Vx(P(x))
 
-   This rule is how Aris implements mathematical induction.  `P(z(x))'
-is the base case, and the inductive step is `P(x)' -> `P(s(x))'.
+   This rule is how Aris implements mathematical induction.  'P(z(x))'
+is the base case, and the inductive step is 'P(x)' -> 'P(s(x))'.
 
 
 File: aris.info,  Node: Customization,  Next: Submission,  Prev: Rules Index,  Up: Top
@@ -1730,14 +1666,14 @@ File: aris.info,  Node: Dialog,  Next: Config File,  Up: Customization
 7.1 Customization Dialog
 ========================
 
-When the dialog appears, there are several tabs.  These are explained
-as follows:
+When the dialog appears, there are several tabs.  These are explained as
+follows:
 
 Main Keys
      This tab allows the user to customize the keyboard shortcuts that
      Aris uses with the proof and rules table menus.  Each entry
-     corresponds to a menu item.  The only option that can not be
-     edited is the 'Contents' menu keyboard shortcut.
+     corresponds to a menu item.  The only option that can not be edited
+     is the 'Contents' menu keyboard shortcut.
 
 Goal Keys
      This tab allows the user to customize the keyboard shortcuts that
@@ -1755,7 +1691,6 @@ Internal
      the only item in this tab is the IP Address of the Grade Server.
      (*note Submission::)
 
-
    For a description of the format of key commands, see *note Config
 File::.
 
@@ -1766,34 +1701,37 @@ File: aris.info,  Node: Config File,  Prev: Dialog,  Up: Customization
 ======================
 
 The config file uses s-expressions to store the customization file.  It
-is stored under the home directory, and called `.aris'.  There are
+is stored under the home directory, and called '.aris'.  There are
 several key words that it recognizes:
 
-`key-cmd'
-`(key-cmd 'cmd' 'key')'
-     Assigns menu `cmd' to keyboard shortcut `key'. The keyboard
-     shortcuts are all in the same format, which is either `s' or `c',
-     a plus sign, then a letter.  A `c' before the letter means `Hold
-     control, and press the key', and `s' means the same except with
-     the shift key.
+'key-cmd'
+'(key-cmd 'cmd' 'key')'
 
-`font-size'
-`(font-size 'type' size)'
-     Assigns `size' to font type `type'.  The `type' key word can be
-     either `Small', which means set the small font preset, `Medium',
-     which means set the medium font preset, `Large', which means set
-     the large font preset, or `Default', which means set the font size
+     Assigns menu 'cmd' to keyboard shortcut 'key'.  The keyboard
+     shortcuts are all in the same format, which is either 's' or 'c', a
+     plus sign, then a letter.  A 'c' before the letter means 'Hold
+     control, and press the key', and 's' means the same except with the
+     shift key.
+
+'font-size'
+'(font-size 'type' size)'
+
+     Assigns 'size' to font type 'type'.  The 'type' key word can be
+     either 'Small', which means set the small font preset, 'Medium',
+     which means set the medium font preset, 'Large', which means set
+     the large font preset, or 'Default', which means set the font size
      that Aris loads up with intially.
 
-`color-pref'
-`(color-pref 'type' color)'
-     Assigns `color' to color preference `type'.  The `color' key word
+'color-pref'
+'(color-pref 'type' color)'
+
+     Assigns 'color' to color preference 'type'.  The 'color' key word
      is in hexidecimal.
 
-`grade-ip'
-`(grade-ip 'addr')'
-     Sets the IP address of the grading server to `addr'.
+'grade-ip'
+'(grade-ip 'addr')'
 
+     Sets the IP address of the grading server to 'addr'.
 
 
 File: aris.info,  Node: Submission,  Next: Sequence Logic,  Prev: Customization,  Up: Top
@@ -1803,8 +1741,8 @@ File: aris.info,  Node: Submission,  Next: Sequence Logic,  Prev: Customization,
 
 GNU Aris allows users to submit their proofs to a grading server, which
 allows instructors to use Aris in their classes.  Aris submits proofs
-through FTP, and allows users to indicate an email for themselves and
-an optional email for their instructors.
+through FTP, and allows users to indicate an email for themselves and an
+optional email for their instructors.
 
    Submission submits all open proofs for submission.  It allows users
 to specify a problem designation for each open proof.
@@ -1815,10 +1753,13 @@ the correct proof.
 
    When the files are submitted, Aris submits them to the server, along
 with a directive file.  The directive file will be named
-`USER.directive', where `USER' is the base name of the email address
-specified.  The files submitted will be renamed to be `BASE-USER.tle',
-where `BASE' is the original basename of the file.  This prevents
-filename conflicts on the FTP server.
+'USER.directive', where 'USER' is the base name of the email address
+specified.  The files submitted will be renamed to be 'BASE-USER.tle',
+where 'BASE' is the original basename of the file.  This prevents
+filename conflicts on the FTP server.  The grading server will then run
+Aris in grade mode (*note Options::), and use the email provided to
+email the results back to the user.  If the user specified an
+instructor's email address, then Aris will CC the instructor.
 
 
 File: aris.info,  Node: Sequence Logic,  Next: Interoperability,  Prev: Submission,  Up: Top
@@ -1848,15 +1789,10 @@ Sequence Logic, often abbreviated 'seqlog', uses the following six
 axioms:
 
    * VxVy(~s(x) = z(y))
-
    * VxVy(s(x) = s(y) -> x = y)
-
    * Vx(v(S,x) = f_S(x))
-
    * Vx(v(n,z(x)) = 0)
-
    * Vx(~v(n,x) = \0)
-
    * VxVy(v(n,x) = v(n,y) -> x = y)
 
    The first axiom states that no sucessor is the zero object, or, to
@@ -1871,10 +1807,10 @@ determined by a function.  The rule 'sq' introduces such a sequence
 
    The fourth axiom defines zero, and introduces the natural numbers.
 It states that the first element in the natural numbers is zero.  The
-fifth axiom defines the null object, and states that the natural
-numbers are defined on all inputs.  The sixth axiom states that the
-natural numbers are one-to-one, or that if two numbers are equal, then
-the objects that they represent are equal.
+fifth axiom defines the null object, and states that the natural numbers
+are defined on all inputs.  The sixth axiom states that the natural
+numbers are one-to-one, or that if two numbers are equal, then the
+objects that they represent are equal.
 
 
 File: aris.info,  Node: Induction,  Prev: Axioms,  Up: Sequence Logic
@@ -1908,7 +1844,8 @@ File: aris.info,  Node: Isabelle/Isar,  Up: Interoperability
 ==========================
 
 Aris will scan an Isar proof, which is a proof done using Isabelle, and
-look for certain keywords.
+look for certain keywords.  This is still being tested, and doesn't work
+fully yet.
 
 * Menu:
 
@@ -1943,9 +1880,9 @@ File: aris.info,  Node: lemma/theorem,  Next: case,  Prev: type_synonym,  Up: Is
 10.1.3 lemma and theorem keywords
 ---------------------------------
 
-Lemmas and theorems are treated the same.  Lemmas end up as the goals
-of the proofs that Aris creates, and are the actual sentences that can
-be deduced.  It takes the 'if-then' form of each lemma.
+Lemmas and theorems are treated the same.  Lemmas end up as the goals of
+the proofs that Aris creates, and are the actual sentences that can be
+deduced.  It takes the 'if-then' form of each lemma.
 
 
 File: aris.info,  Node: case,  Next: primrec,  Prev: lemma/theorem,  Up: Isabelle/Isar
@@ -1992,76 +1929,76 @@ File: aris.info,  Node: other,  Prev: instance,  Up: Isabelle/Isar
 
 
 Tag Table:
-Node: Top25739
-Node: Introduction26990
-Node: Terms27522
-Node: Options35946
-Node: Basic Usage37432
-Node: Startup37780
-Node: Connectives38084
-Node: Adding38428
-Node: Selecting39233
-Node: Keyboard Shortcuts40197
-Node: Rules Index41971
-Node: Inference Rules42525
-Node: mp42915
-Node: ad43448
-Node: sm44020
-Node: cn44514
-Node: hs45204
-Node: ds45970
-Node: ex46383
-Node: cd46670
-Node: Equivalence Rules46917
-Node: im47465
-Node: dm47773
-Node: as48015
-Node: co48592
-Node: id49011
-Node: dt49303
-Node: eq49686
-Node: dn50120
-Node: ep50431
-Node: sb50581
-Node: Recursion50751
-Node: Predicate Rules51650
-Node: ug52116
-Node: ui52646
-Node: eg53002
-Node: ei53368
-Node: bv53890
-Node: nq54523
-Node: pr54929
-Node: ii55386
-Node: fv55623
-Node: Boolean Rules55947
-Node: bi56349
-Node: bn56725
-Node: bd57056
-Node: sn57448
-Node: Miscellaneous Rules57664
-Node: lm57872
-Node: sp59057
-Node: sq59279
-Node: in59586
-Node: Customization59890
-Node: Dialog60297
-Node: Config File61495
-Node: Submission62711
-Node: Sequence Logic63759
-Node: Axioms64320
-Node: Induction65602
-Node: Interoperability65928
-Node: Isabelle/Isar66233
-Node: fun66924
-Node: type_synonym67083
-Node: lemma/theorem67234
-Node: case67596
-Node: primrec67727
-Node: definition67861
-Node: datatype68005
-Node: class68143
-Node: instance68273
-Node: other68406
+Node: Top25644
+Node: Introduction26895
+Node: Terms27427
+Node: Options35910
+Node: Basic Usage37395
+Node: Startup37743
+Node: Connectives38047
+Node: Adding38391
+Node: Selecting39196
+Node: Keyboard Shortcuts40161
+Node: Rules Index42146
+Node: Inference Rules42700
+Node: mp43090
+Node: ad43614
+Node: sm44180
+Node: cn44669
+Node: hs45351
+Node: ds46106
+Node: ex46508
+Node: cd46791
+Node: Equivalence Rules47028
+Node: im47576
+Node: dm47884
+Node: as48123
+Node: co48699
+Node: id49117
+Node: dt49408
+Node: eq49790
+Node: dn50224
+Node: ep50535
+Node: sb50685
+Node: Recursion50854
+Node: Predicate Rules51748
+Node: ug52214
+Node: ui52741
+Node: eg53093
+Node: ei53455
+Node: bv53973
+Node: nq54605
+Node: pr55011
+Node: ii55465
+Node: fv55698
+Node: Boolean Rules56017
+Node: bi56537
+Node: bn56913
+Node: bd57243
+Node: sn57635
+Node: Miscellaneous Rules57851
+Node: lm58059
+Node: sp59239
+Node: sq59461
+Node: in59768
+Node: Customization60068
+Node: Dialog60475
+Node: Config File61672
+Node: Submission62892
+Node: Sequence Logic64166
+Node: Axioms64727
+Node: Induction66004
+Node: Interoperability66330
+Node: Isabelle/Isar66635
+Node: fun67383
+Node: type_synonym67542
+Node: lemma/theorem67693
+Node: case68055
+Node: primrec68186
+Node: definition68320
+Node: datatype68464
+Node: class68602
+Node: instance68732
+Node: other68865
 
 End Tag Table

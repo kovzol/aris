@@ -15,7 +15,7 @@
 @copying
 This manual is for GNU Aris, the logical proof program.
 
-Copyright (C) 2012 Ian Dunn
+Copyright (C) 2013 Ian Dunn
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -35,7 +35,7 @@ Texts.  A copy of the license is included in the section entitled
 
 @page
 @vskip 0pt plus 1filll
-@insertcopying{}
+@insertcopying
 @end titlepage
 
 @contents
@@ -79,7 +79,7 @@ This manual is for GNU Aris, a sequential proof program, designed to assist anyo
 A biconditional is a connective that connects two sentences, denoted by @samp{<->}.  A biconditional claims that @samp{sentence a if and only if sentence b} is a new sentence.  A biconditional can be inserted in Aris using the key combination @kbd{CTRL+5} (@pxref{Keyboard Shortcuts}).
 
 @item Conclusion
-A conclusion is a sentence that is derived from a combination of other sentences and a rule.  A focused conclusion will be highlighted in cyan.  A conclusion has a set of references associated with it, which are highlighted in violet.
+A conclusion is a sentence that is derived from a combination of other sentences and a rule.  A focused conclusion will be highlighted in cyan.  A conclusion has a set of references associated with it, which are highlighted in violet.  Both of these colors can be changed using customization (@pxref{Customization}).
 
 @item Conditional
 A conditional is a connective that connects two sentences, denoted by @samp{@arrow{}}.  A conditional claims that @samp{if sentence a, then sentence b} is a new sentence.  A conditional can be inserted in Aris using the key combination @kbd{CTRL+4} (@pxref{Keyboard Shortcuts}).
@@ -251,6 +251,8 @@ Holding @kbd{SHIFT} and left-clicking on a sentence will select the sentence.  T
 @node Keyboard Shortcuts
 @chapter Keyboard Shortcuts
 
+The keyboard shortcuts here (with the exception of the connectives) can be changed using customization @xref{Customization}.  The shortcuts listed here are the default shortcuts for Aris.
+
 @table @asis
 
 @item @kbd{CTRL+N}
@@ -302,7 +304,7 @@ Evaluate the current proof.
 Toggle the goal window for the current proof.
 
 @item @kbd{CTRL+M}
-Toggle boolean mode for the current proof.
+Toggle boolean mode for the current proof @xref{Boolean Rules}.
 
 @item @kbd{CTRL+R}
 Toggle the rules window.
@@ -838,7 +840,7 @@ Free Variable uses exactly two references.
 @node Boolean Rules
 @section Boolean Rules
 
-Aris can be set to use 'boolean mode', a mode used for boolean algebra.  In boolean mode, only equivalence rules and boolean rules can be used.
+Aris can be set to use 'boolean mode', a mode used for boolean algebra.  In boolean mode, only equivalence rules that handle negations, conjunctions, or disjunctions and boolean rules can be used.  In standard mode, the boolean rules can still be used, however.
 
 @menu
 * bi::  Boolean Identity
@@ -965,7 +967,6 @@ GNU Aris can be customized using the customization dialog, or manually through t
 @node Dialog
 @section Customization Dialog
 
-
 When the dialog appears, there are several tabs.  These are explained as follows:
 
 @table @asis
@@ -1024,7 +1025,7 @@ Submission submits all open proofs for submission.  It allows users to specify a
 
 Grading runs by checking the correctness of the entire proof.  It is the responsibility of the grading server to confirm that the proof is the correct proof.
 
-When the files are submitted, Aris submits them to the server, along with a directive file.  The directive file will be named @samp{USER.directive}, where @samp{USER} is the base name of the email address specified.  The files submitted will be renamed to be @samp{BASE-USER.tle}, where @samp{BASE} is the original basename of the file.  This prevents filename conflicts on the FTP server.
+When the files are submitted, Aris submits them to the server, along with a directive file.  The directive file will be named @samp{USER.directive}, where @samp{USER} is the base name of the email address specified.  The files submitted will be renamed to be @samp{BASE-USER.tle}, where @samp{BASE} is the original basename of the file.  This prevents filename conflicts on the FTP server.  The grading server will then run Aris in grade mode (@pxref{Options}), and use the email provided to email the results back to the user.  If the user specified an instructor's email address, then Aris will CC the instructor.
 
 @node Sequence Logic
 @chapter Sequence Logic
@@ -1084,7 +1085,7 @@ In addition to everything else Aris can do, Aris can also use other proofs from 
 @node Isabelle/Isar
 @section Isar Interoperability
 
-Aris will scan an Isar proof, which is a proof done using Isabelle, and look for certain keywords.
+Aris will scan an Isar proof, which is a proof done using Isabelle, and look for certain keywords.  This is still being tested, and doesn't work fully yet.
 
 @menu
 * fun::                 The 'fun' keyword.
