@@ -364,6 +364,7 @@ the_app_read_config_file (aris_app * app)
       perror (NULL);
       return -2;
     }
+  free (path);
 
   unsigned char * buffer;
   size_t size;
@@ -372,7 +373,11 @@ the_app_read_config_file (aris_app * app)
   buffer = (unsigned char *) calloc (size + 1, sizeof (char));
   CHECK_ALLOC (buffer, -1);
 
-  fread (buffer, 1, size, conf_file);
+  // Because Losedows hates it when we try to read the entire file at once.
+  int f_pos;
+  for (f_pos = 0; f_pos < size; f_pos+=512)
+    fread (buffer + f_pos, 1, 512, conf_file);
+  buffer[size] = '\0';
 
   fclose (conf_file);
 
@@ -387,8 +392,6 @@ the_app_read_config_file (aris_app * app)
       // Maybe notify the user that there is a problem.
       // Otherwise, it shouldn't matter.
     }
-
-  free (path);
 
   return 0;
 }
