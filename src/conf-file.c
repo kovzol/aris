@@ -32,30 +32,20 @@
 /* Reads from the configuration file.
  *  input:
  *   file - the configuration file to read from.
+ *   app - the app.
  *  output:
  *   0 on success, -1 on memory error, -2 on malformed config file.
  */
 int
-conf_file_read (FILE * file, aris_app * app)
+conf_file_read (const unsigned char * buffer, aris_app * app)
 {
-  size_t size;
-  unsigned char * buffer;
-
-  fseek (file, 0, SEEK_END);
-  size = ftell (file);
-  fseek (file, 0, SEEK_SET);
-
-  buffer = (unsigned char *) calloc (size, sizeof (char));
-  CHECK_ALLOC (buffer, -1);
-
-  fread (buffer, 1, size, file);
+  size_t size = strlen (buffer);
 
   int ret_chk, pos;
 
   ret_chk = check_parens (buffer);
   if (ret_chk == 0)
     {
-      free (buffer);
       return -2;
     }
 
@@ -78,7 +68,6 @@ conf_file_read (FILE * file, aris_app * app)
 
       if (tmp_pos < 0)
 	{
-	  free (buffer);
 	  return -2;
 	}
 
@@ -254,8 +243,6 @@ conf_file_read (FILE * file, aris_app * app)
 
       return -2;
     }
-
-  free (buffer);
 
   return 0;
 }

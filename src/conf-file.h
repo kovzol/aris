@@ -78,7 +78,7 @@ struct conf_object {
   char * stock_id;     // The stock item to display.
 };
 
-int conf_file_read (FILE * conf_file, aris_app * app);
+int conf_file_read (const unsigned char * buffer, aris_app * app);
 int conf_file_write (FILE * conf_file);
 
 void * conf_menu_value (conf_obj * obj, int get);
@@ -318,7 +318,7 @@ static const char * config_default ="\
 (key-cmd \'Insert Line\' \'c+i\')\n\
 (key-cmd \'Evaluate Line\' \'c+e\')\n\
 (key-cmd \'Evaluate Proof\' \'c+f\')\n\
-(key-cmd \'Goal...\' \'c+l\')\n\
+(key-cmd \'Toggle Goals...\' \'c+l\')\n\
 (key-cmd \'Toggle Boolean Mode\' \'c+m\')\n\
 (key-cmd \'Toggle Rules\' \'c+r\')\n\
 (key-cmd \'Small\' \'c+-\')\n\

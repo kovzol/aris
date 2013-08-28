@@ -312,26 +312,11 @@ the_app_get_font_by_name (aris_app * app, char * name)
 int
 the_app_read_default_config (aris_app * app)
 {
-  FILE * conf_file;
   int ret_chk;
-  size_t size;
 
-  size = strlen (config_default);
-
-  conf_file = tmpfile ();
-  if (!conf_file)
-    {
-      perror (NULL);
-      return -2;
-    }
-
-  ret_chk = fwrite (config_default, 1, size, conf_file);
-
-  ret_chk = conf_file_read (conf_file, app);
+  ret_chk = conf_file_read (config_default, app);
   if (ret_chk == -1)
     return -1;
-
-  fclose (conf_file);
 
   return 0;
 }
@@ -373,11 +358,22 @@ the_app_read_config_file (aris_app * app)
       return -2;
     }
 
-  ret_chk = conf_file_read (conf_file, app);
+  unsigned char * buffer;
+  size_t size;
+
+  GET_LEN (conf_file, size);
+  buffer = (unsigned char *) calloc (size + 1, sizeof (char));
+  CHECK_ALLOC (buffer, -1);
+
+  fread (buffer, 1, size, conf_file);
+
+  fclose (conf_file);
+
+  ret_chk = conf_file_read (buffer, app);
   if (ret_chk == -1)
     return -1;
 
-  fclose (conf_file);
+  free (buffer);
 
   if (ret_chk == -2)
     {
