@@ -79,7 +79,6 @@ struct conf_object {
 };
 
 int conf_file_read (const unsigned char * buffer, aris_app * app);
-int conf_file_write (FILE * conf_file);
 
 void * conf_menu_value (conf_obj * obj, int get);
 void * conf_font_value (conf_obj * obj, int get);
