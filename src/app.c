@@ -332,17 +332,24 @@ the_app_read_config_file (aris_app * app)
 {
   FILE * conf_file;
   char * path, * home_dir;
-  int alloc_size, exists, ret_chk;
+  int alloc_size, exists, ret_chk, path_pos = 0;
 
   home_dir = getenv ("HOME");
   if (!home_dir)
     home_dir = getenv ("HOMEPATH");
 
   alloc_size = strlen (home_dir) + strlen (CONF_FILE) + 1;
+#ifdef WIN32
+  alloc_size += strlen (getenv ("HOMEDRIVE")) + 1;
+#endif
   path = (char *) calloc (alloc_size + 1, sizeof (char));
   CHECK_ALLOC (path, -1);
 
-  sprintf (path, "%s/%s", home_dir, CONF_FILE);
+#ifdef WIN32
+  path_pos += sprintf (path, "%s\\", getenv ("HOMEDRIVE"));
+#endif
+ 
+  sprintf (path + path_pos, "%s/%s", home_dir, CONF_FILE);
   exists = access (path, F_OK);
   if (exists == -1)
     {

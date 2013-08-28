@@ -1116,22 +1116,29 @@ gui_customize_show (GtkWidget * window)
 
 	  FILE * conf_file;
 	  char * path, * home_dir;
-	  int alloc_size;
+	  int alloc_size, path_pos;
 
 	  home_dir = getenv ("HOME");
 	  if (!home_dir)
 	    home_dir = getenv ("HOMEPATH");
 
-	  alloc_size = strlen (home_dir) + strlen (CONF_FILE) + 1;
+#ifdef WIN32
+	  alloc_size += strlen (getenv ("HOMEDRIVE")) + 1;
+#endif
 	  path = (char *) calloc (alloc_size + 1, sizeof (char));
 	  CHECK_ALLOC (path, -1);
 
-	  sprintf (path, "%s/%s", home_dir, CONF_FILE);
+#ifdef WIN32
+	  path_pos += sprintf (path, "%s\\", getenv ("HOMEDRIVE"));
+#endif
+
+	  sprintf (path + path_pos, "%s/%s", home_dir, CONF_FILE);
 
 	  conf_file = fopen (path, "w");
 	  if (!conf_file)
 	    {
 	      perror (NULL);
+	      gtk_widget_destroy (dialog);
 	      return -2;
 	    }
 
@@ -1141,7 +1148,6 @@ gui_customize_show (GtkWidget * window)
 
 	      for (i = 0; i < sizes[j]; i++)
 		{
-
 		  GtkWidget * label;
 		  conf_obj cur_obj;
 		  char * print_str;
@@ -1166,8 +1172,6 @@ gui_customize_show (GtkWidget * window)
 	  problem = 0;
 	}
     }
-
-  gtk_widget_destroy (dialog);
 
   return 0;
 }
