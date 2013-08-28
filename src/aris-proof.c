@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "aris-proof.h"
 #include "sen-parent.h"
@@ -668,6 +669,30 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd)
     return NULL;
 
   sen = itm->value;
+
+  if (sd->rule == RULE_LM && sd->file)
+    {
+      int file_len, alloc_size;
+      GtkWidget * menu_item, * menu, * submenu;
+      GList * gl;
+      char * label;
+
+      file_len = strlen (sd->file);
+      alloc_size = file_len + 4 + 1 + (int) log10 (sen->line_num);
+      label = (char *) calloc (alloc_size, sizeof (char));
+      CHECK_ALLOC (label, NULL);
+
+      sprintf (label, "%i - %s",
+	       sen->line_num, sd->file);
+      menu_item = gtk_menu_item_new_with_label (label);
+
+      gl = gtk_container_get_children (GTK_CONTAINER (ap->menubar));
+      menu = g_list_nth_data (gl, RULES_MENU);
+      submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
+      gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menu_item);
+      gtk_widget_show (menu_item);
+    }
+
   
   return sen;
 }
@@ -1132,7 +1157,6 @@ aris_proof_import_proof (aris_proof * ap)
 
   refs = (int *) calloc (proof->everything->num_stuff, sizeof (int));
   CHECK_ALLOC (refs, -1);
-  //TODO: allocate refs to the correct number of premises.
 
   for (pf_itr = proof->everything->head; pf_itr;
        pf_itr = pf_itr->next)
