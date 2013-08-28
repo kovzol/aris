@@ -94,11 +94,12 @@ init_app (int boolean, int verbose)
   // 3.  If it checks out, load it.
   // 4.  Otherwise, don't do anything with it.
 
-  ret_chk = the_app_read_config_file (app);
+  ret_chk = the_app_read_default_config (app);
   if (ret_chk == -1)
     return NULL;
 
-  if (ret_chk == -2)
+  ret_chk = the_app_read_config_file (app);
+  if (ret_chk == -1)
     return NULL;
 
   app->icon = gdk_pixbuf_new_from_xpm_data (aris_icon_xpm);
@@ -304,6 +305,33 @@ the_app_get_font_by_name (aris_app * app, char * name)
   return ret;
 }
 
+int
+the_app_read_default_config (aris_app * app)
+{
+  FILE * conf_file;
+  int ret_chk;
+  size_t size;
+
+  size = strlen (config_default);
+
+  conf_file = tmpfile ();
+  if (!conf_file)
+    {
+      perror (NULL);
+      return -2;
+    }
+
+  ret_chk = fwrite (config_default, 1, size, conf_file);
+
+  ret_chk = conf_file_read (conf_file, app);
+  if (ret_chk == -1)
+    return -1;
+
+  fclose (conf_file);
+
+  return 0;
+}
+
 /* Constructs the config file path, then reads from it.
  *  input:
  *   none.
@@ -349,22 +377,8 @@ the_app_read_config_file (aris_app * app)
 
   if (ret_chk == -2)
     {
-      ret_chk = the_app_make_default_config_file (path);
-      if (ret_chk == -1)
-	return -1;
-
-      conf_file = fopen (path, "r+");
-      if (!conf_file)
-	{
-	  perror (NULL);
-	  return -2;
-	}
-
-      ret_chk = conf_file_read (conf_file, app);
-      if (ret_chk == -1)
-	return -1;
-
-      fclose (conf_file);
+      // Maybe notify the user that there is a problem.
+      // Otherwise, it shouldn't matter.
     }
 
   free (path);

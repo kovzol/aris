@@ -87,6 +87,7 @@ struct submit_ent {
 
 aris_app * init_app (int boolean, int verbose);
 int the_app_read_config_file (aris_app * app);
+int the_app_read_default_config (aris_app * app);
 int the_app_make_default_config_file (char * path);
 int the_app_set_focus (aris_proof * ag);
 int the_app_add_gui (aris_proof * ag);
