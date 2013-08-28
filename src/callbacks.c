@@ -1173,6 +1173,8 @@ gui_customize_show (GtkWidget * window)
 	}
     }
 
+  gtk_widget_destroy (dialog);
+
   return 0;
 }
 
