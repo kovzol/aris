@@ -62,12 +62,16 @@
   l = ftello (f);				\
   fseeko (f, 0, SEEK_SET);			\
   }
+#define SETNBLOCK(fd) fcntl (fd, F_SETFL, O_NONBLOCK);
+#define REMNBLOCK(fd) fcntl (fd, F_SETFL, 0);
 #else
 #define GET_LEN(f,l){				\
   fseek (f, 0, SEEK_END);			\
   l = ftell (f);				\
   fseek (f, 0, SEEK_SET);			\
   }
+#define SETNBLOCK(fd)
+#define REMNBLOCK(fd)
 #endif
 
 /* Initializes an app structure.
@@ -643,7 +647,7 @@ ftp_connect (char * ip_addr)
     }
 
   // Set non-blocking mode.
-  ret_chk = fcntl (sock, F_SETFL, O_NONBLOCK);
+  SETNBLOCK (sock);
 
   fd_set fds;
   struct timeval tv;
@@ -667,7 +671,7 @@ ftp_connect (char * ip_addr)
     }
 
   // Change back to blocking for reading and writing.
-  ret_chk = fcntl (sock, F_SETFL, 0);
+  REMNBLOCK (sock);
 
   ret = fdopen (sock, "w+");
   if (!ret)
