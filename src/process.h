@@ -232,6 +232,11 @@ int reverse_parse_parens (const unsigned char * in_str,
 			  const int init_pos,
 			  unsigned char ** out_str);
 
+int parse_tags (const unsigned char * in_str,
+		const int init_pos,
+		unsigned char ** out_str,
+		const char * o_tag, const char * c_tag);
+
 /* Check functions. */
 
 int check_parens (const unsigned char * chk_str);

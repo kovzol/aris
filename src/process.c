@@ -131,6 +131,14 @@ find_difference (unsigned char * sen_0, unsigned char * sen_1)
   return i;
 }
 
+/* Parses specific tags on a string.
+ *  input:
+ *    in_str - the string to parse.
+ *    init_pos - the position in in_str at which to begin parsing.
+ *    out_str - a pointer to a string in which to store the result.
+ *    o_tag - the opening tag.
+ *    c_tag - the closing tag.
+ */
 int
 parse_tags (const unsigned char * in_str, const int init_pos,
 	    unsigned char ** out_str, const char * o_tag,
