@@ -1114,6 +1114,12 @@ aris_proof_toggle_boolean_mode (aris_proof * ap)
   return 0;
 }
 
+/* Imports a proof into the current proof.
+ *  input:
+ *    ap - The current proof.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 aris_proof_import_proof (aris_proof * ap)
 {
