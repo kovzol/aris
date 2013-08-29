@@ -22,14 +22,6 @@
 #include <fcntl.h>
 #include "config.h"
 
-#ifndef WIN32
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#else
-#include <winsock2.h>
-#endif
-
 #include "process.h"
 #include "app.h"
 #include "rules-table.h"
@@ -62,17 +54,16 @@
   l = ftello (f);				\
   fseeko (f, 0, SEEK_SET);			\
   }
-#define SETNBLOCK(fd) fcntl (fd, F_SETFL, O_NONBLOCK);
-#define REMNBLOCK(fd) fcntl (fd, F_SETFL, 0);
 #else
 #define GET_LEN(f,l){				\
   fseek (f, 0, SEEK_END);			\
   l = ftell (f);				\
   fseek (f, 0, SEEK_SET);			\
   }
-#define SETNBLOCK(fd)
-#define REMNBLOCK(fd)
 #endif
+
+#define FTP_PORT 21
+#define FTP_QUIT(s) { ftp_send_cmd (s, "QUIT"); g_socket_close (s,NULL); }
 
 /* Initializes an app structure.
  *  input:
@@ -569,6 +560,25 @@ app_quit ()
 // Thanks to the developers of the inetutils package for this next part.
 // The ftp utility's source code was very helpful with this.
 
+/* Send a command to an ftp server.
+ *  input:
+ *    ftp_socket - the socket that connects to the ftp server.
+ *    cmd - the command to send to the ftp server.
+ *  output:
+      none
+ */
+void
+ftp_send_cmd (GSocket * ftp_sock, const char * cmd)
+{
+  char * buf;
+  int len;
+
+  buf = (char *) calloc (strlen (cmd) + 3, sizeof (char));
+  len = sprintf (buf, "%s\r\n", cmd);
+  g_socket_send (ftp_sock, buf, len, NULL, NULL);
+  free (buf);
+}
+
 /* Get a response from the ftp server.
  *  input:
  *    ftp_sock - the file handle of the server.
@@ -577,7 +587,7 @@ app_quit ()
  *    the response code.
  */
 int
-ftp_get_response (FILE * ftp_sock, int * port)
+ftp_get_response (GSocket * ftp_sock, int * port)
 {
   char c;
   char response_buffer[2048], * buf_str;
@@ -585,9 +595,10 @@ ftp_get_response (FILE * ftp_sock, int * port)
 
   buf_str = response_buffer;
 
-  while ((*buf_str = getc (ftp_sock)) != '\n')
+  while (1)
     {
-      if (*buf_str == EOF)
+      g_socket_receive (ftp_sock, buf_str, 1, NULL, NULL);
+      if (*buf_str == EOF || *buf_str == '\n')
 	break;
       buf_str++;
     }
@@ -610,116 +621,6 @@ ftp_get_response (FILE * ftp_sock, int * port)
   return ret_code;
 }
 
-#define FTP_PORT 21
-
-/* Taken from the info pages for libc sockets. */
-
-static void
-init_sockaddr (struct sockaddr_in *name,
-	       const char *hostname,
-	       int port)
-{
-  struct hostent *hostinfo;
-  name->sin_family = AF_INET;
-  name->sin_port = htons (port);
-  hostinfo = gethostbyname (hostname);
-  if (!hostinfo)
-    {
-      perror (NULL);
-      return;
-    }
-  name->sin_addr = *(struct in_addr *) hostinfo->h_addr;
-}
-
-/* Initiates the ftp connection.
- *  input:
- *    ip_addr - the IP Address of the ftp server.
- *  output:
- *    A handle to the ftp server on success, NULL on error.
- */
-FILE *
-ftp_connect (char * ip_addr)
-{
-  int ret_chk;
-  FILE * ret;
-
-  int sock;
-  struct sockaddr_in addr;
-  sock = socket (PF_INET, SOCK_STREAM, 0);
-  if (sock < 0)
-    {
-      perror (NULL);
-      return NULL;
-    }
-
-  // Set non-blocking mode.
-  SETNBLOCK (sock);
-
-  fd_set fds;
-  struct timeval tv;
-
-  FD_ZERO (&fds);
-  FD_SET (sock, &fds);
-
-  tv.tv_sec = 10;
-  tv.tv_usec = 0;
-
-  init_sockaddr (&addr, ip_addr, FTP_PORT);
-
-  // Use select to check on connection time.
-  ret_chk = connect (sock, (struct sockaddr *) &addr, sizeof (addr));
-  ret_chk = select (FD_SETSIZE, &fds, NULL, NULL, &tv);
-
-  if (ret_chk <= 0)
-    {
-      perror (NULL);
-      return NULL;
-    }
-
-  // Change back to blocking for reading and writing.
-  REMNBLOCK (sock);
-
-  ret = fdopen (sock, "w+");
-  if (!ret)
-    {
-      perror (NULL);
-      return NULL;
-    }
-
-  ret_chk = ftp_get_response (ret, NULL);
-
-  if (ret_chk != 220)
-    {
-      fprintf (ret, "QUIT\r\n");
-      fclose (ret);
-      return NULL;
-    }
-
-  fprintf (ret, "USER anonymous\r\n");
-  fflush (ret);
-  ret_chk = ftp_get_response (ret, NULL);
-
-  if (ret_chk != 331)
-    {
-      fprintf (ret, "QUIT\r\n");
-      fclose (ret);
-      return NULL;
-    }
-
-  fprintf (ret, "PASS stuff\r\n");
-  fflush (ret);
-  ret_chk = ftp_get_response (ret, NULL);
-
-  if (ret_chk != 230)
-    {
-      fprintf (ret, "QUIT\r\n");
-      fclose (ret);
-      return NULL;
-    }
-
-  return ret;
-}
-
 /* Sends a file to the ftp server.
  *  input:
  *    ftp_sock - a handle to the ftp server.
@@ -729,81 +630,134 @@ ftp_connect (char * ip_addr)
  *    0 on success, -1 on memory error, -2 on file error.
  */
 int
-ftp_send (FILE * ftp_sock, char * file_name, char * buffer)
+ftp_send (GSocket * ftp_sock, char * file_name, char * buffer)
 {
   int port;
   int len, c;
-  FILE * write_file;
   char * buf;
   int ret_chk;
 
   buf = buffer;
 
-  int sock;
-  sock = socket (PF_INET, SOCK_STREAM, 0);
-  if (sock < 0)
+  GSocket * sock;
+  sock = g_socket_new (G_SOCKET_FAMILY_IPV4,
+		       G_SOCKET_TYPE_STREAM,
+		       G_SOCKET_PROTOCOL_TCP,
+		       NULL);
+  if (!sock)
     {
-      perror (NULL);
       return -2;
     }
 
-  fprintf (ftp_sock, "PASV\r\n");
-  fflush (ftp_sock);
+  ftp_send_cmd (ftp_sock, "PASV");
   ret_chk = ftp_get_response (ftp_sock, &port);
   if (ret_chk != 227)
     {
-      fprintf (ftp_sock, "QUIT\r\n");
-      fclose (ftp_sock);
+      FTP_QUIT (ftp_sock);
       return -2;
     }
 
-  int rc;
-  struct sockaddr_in addr;
-  init_sockaddr (&addr, the_app->ip_addr, port);
-  rc = connect (sock, (struct sockaddr *) &addr, sizeof (addr));
-  if (rc < 0)
+  GSocketAddress * in_addr;
+  GInetAddress * addr;
+  addr = g_inet_address_new_from_string (the_app->ip_addr);
+  in_addr = g_inet_socket_address_new (addr, port);
+
+  gboolean ret_val;
+  ret_val = g_socket_connect (sock, in_addr, NULL, NULL);
+  if (!ret_val)
     {
-      perror (NULL);
       return -2;
     }
 
-  fprintf (ftp_sock, "STOR %s\r\n", file_name);
-  fflush (ftp_sock);
+  char * abuf;
+  size_t alen;
+
+  alen = strlen (file_name) + 5;
+  abuf = (char *) calloc (alen + 1, sizeof (char));
+  CHECK_ALLOC (abuf, -1);
+
+  sprintf (abuf, "STOR %s", file_name);
+  ftp_send_cmd (ftp_sock, abuf);
+  free (abuf);
   ret_chk = ftp_get_response (ftp_sock, NULL);
 
   if (ret_chk != 150)
     {
-      fprintf (ftp_sock, "QUIT\r\n");
-      fclose (ftp_sock);
-      return -2;
-    }
-
-  write_file = fdopen (sock, "w");
-  if (!write_file)
-    {
-      perror (NULL);
+      FTP_QUIT (ftp_sock);
       return -2;
     }
 
   while (*buf)
     {
       if (*buf == '\n')
-	putc ('\r', write_file);
-
-      putc (*buf, write_file);
+	g_socket_send (sock, "\r", 1, NULL, NULL);
+      g_socket_send (sock, buf, 1, NULL, NULL);
       buf++;
     }
 
-  fclose (write_file);
+  g_socket_close (sock, NULL);
+
   ret_chk = ftp_get_response (ftp_sock, NULL);
   if (ret_chk != 226)
     {
-      fprintf (ftp_sock, "QUIT\r\n");
-      fclose (ftp_sock);
+      FTP_QUIT (ftp_sock);
       return -2;
     }
 
   return 0;
+}
+
+/* Initiates the ftp connection.
+ *  input:
+ *    ip_addr - the IP Address of the ftp server.
+ *  output:
+ *    A handle to the ftp server on success, NULL on error.
+ */
+GSocket *
+ftp_connect (char * ip_addr)
+{
+  GSocket * ret;
+  ret = g_socket_new (G_SOCKET_FAMILY_IPV4,
+		      G_SOCKET_TYPE_STREAM,
+		      G_SOCKET_PROTOCOL_TCP,
+		      NULL);
+  if (!ret)
+    {
+      return NULL;
+    }
+
+  GSocketAddress * in_addr;
+  GInetAddress * addr;
+  addr = g_inet_address_new_from_string (ip_addr);
+  in_addr = g_inet_socket_address_new (addr, FTP_PORT);
+
+  gboolean ret_val;
+  ret_val = g_socket_connect (ret, in_addr, NULL, NULL);
+  if (!ret_val)
+    return NULL;
+
+  int rc, ret_chk;
+  rc = ftp_get_response (ret, NULL);
+
+  ftp_send_cmd (ret, "USER anonymous");
+  ret_chk = ftp_get_response (ret, NULL);
+
+  if (ret_chk != 331)
+    {
+      FTP_QUIT (ret);
+      return NULL;
+    }
+
+  ftp_send_cmd (ret, "PASS stuff");
+  ret_chk = ftp_get_response (ret, NULL);
+
+  if (ret_chk != 230)
+    {
+      FTP_QUIT (ret);
+      return NULL;
+    }
+
+  return ret;
 }
 
 /* Submits all open proofs for grading.
@@ -819,7 +773,7 @@ the_app_submit (const char * user_email, const char * instr_email,
 		struct submit_ent * entries)
 {
   int ret_chk;
-  FILE * ftp_file = NULL;
+  GSocket * ftp_file;
 
   ftp_file = ftp_connect (the_app->ip_addr);
   if (!ftp_file)
@@ -854,7 +808,7 @@ the_app_submit (const char * user_email, const char * instr_email,
 		      user_email, instr_email);
   int i;
 
-  for (i = 0; i < the_app->guis->num_stuff; i++)
+  for (i = 0; entries[i].hw; i++)
     {
       char * hw, * file_name;
 
@@ -870,7 +824,7 @@ the_app_submit (const char * user_email, const char * instr_email,
       CHECK_ALLOC (base, -1);
 
       sscanf (base_name, "%[^.].tle", base);
-      g_free (base_name);
+      free (base_name);
 
       ap_file_name = (char *) calloc (strlen (email_base)
 				      + strlen (base) + 6,
@@ -928,10 +882,7 @@ the_app_submit (const char * user_email, const char * instr_email,
   free (dir_file_name);
   free (dir_buffer);
 
-  fprintf (ftp_file, "QUIT\r\n");
-  fflush (ftp_file);
-
-  fclose (ftp_file);
+  FTP_QUIT (ftp_file);
 
   return 0;
 }
