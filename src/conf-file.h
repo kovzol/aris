@@ -30,7 +30,7 @@
 enum CONF_OBJ_TYPES {
   CONF_OBJ_MENU = 0,
   CONF_OBJ_FONT,
-  CONF_OBJ_IP,
+  CONF_OBJ_GRADE,
   CONF_OBJ_COLOR
 };
 
@@ -83,7 +83,7 @@ int conf_file_read (const unsigned char * buffer, aris_app * app);
 void * conf_menu_value (conf_obj * obj, int get);
 void * conf_font_value (conf_obj * obj, int get);
 void * conf_color_value (conf_obj * obj, int get);
-void * conf_ip_value (conf_obj * obj, int get);
+void * conf_grade_value (conf_obj * obj, int get);
 
 /* The configuration arrays */
 
@@ -208,10 +208,13 @@ static conf_obj goal_menu_conf[5] = {
 
 /* The internal configuration objects */
 
-static conf_obj internal_conf[1] = {
+static conf_obj grade_conf[2] = {
   {N_("Grade IP"),
    N_("The IP Address of the Grading Server to Submit proofs to."),
-   NULL, CONF_OBJ_IP, 0, conf_ip_value, NULL}
+   NULL, CONF_OBJ_GRADE, 0, conf_grade_value, NULL},
+  {N_("Grade Password"),
+   N_("The Password of the Grading Server."),
+   NULL, CONF_OBJ_GRADE, 1, conf_grade_value, NULL}
 };
 
 /* The display configuration objects */
@@ -338,6 +341,7 @@ static const char * config_default ="\
 (color-pref \'Bad\' 7f0000)\n\
 (color-pref \'Good\' 007f00)\n\
 (color-pref \'Selection\' ff0d00)\n\
-(grade-ip \'127.0.0.1\')\n";
+(grade \'ip\' \'127.0.0.1\')\n\
+(grade \'pass\' \'islegion\')\n";
 
 #endif /*  ARIS_CONF_FILE_H  */
