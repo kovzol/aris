@@ -1,11 +1,22 @@
 2013-08-29  Ian Dunn  <dunni@gnu.org>
 
+	* app.h: Added grade_pass member of app struct.
+
+	* conf-file.c (conf_file_read): Changed to implement
+	new grade password key.
+	(conf_grade_value): Changed to implement new grade
+	password key.
+
+	* conf-file.h: Added a grade password entry.
+
 	* aris.c (main): Removed w32 sockets initialization.
 
 	* callbacks.c (gui_submit_show): Uses number of entries
 	rather than the number of open proofs.
+	Changed number of grade entries to 2.
 
 	* app.c (ftp_connect): Changed to GIO Sockets.
+	Implemented grade server password.
 	(ftp_get_response): Same.
 	(ftp_send): Same.
 	(ftp_send_cmd): Added.
