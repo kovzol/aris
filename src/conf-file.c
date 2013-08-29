@@ -144,26 +144,49 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  continue;
 	}
 
-      if (!strcmp (cur_conf_key, "grade-ip"))
+      if (!strcmp (cur_conf_key, "grade"))
 	{
 	  free (cur_conf_key);
 	  int st_pos, end_pos;
-	  char * ip;
+	  char * cmd, * key, * old_str;
 
-	  ip = (char *) calloc (conf_len, sizeof (char));
-	  CHECK_ALLOC (ip, -1);
+	  cmd = (char *) calloc (conf_len, sizeof (char));
+	  CHECK_ALLOC (cmd, -1);
 
-	  sscanf (cur_conf, "(grade-ip \'%[^\']\')", ip);
+	  key = (char *) calloc (conf_len, sizeof (char));
+	  CHECK_ALLOC (key, -1);
 
-	  if (app->ip_addr)
+	  sscanf (cur_conf, "(grade \'%[^\']\' \'%[^\']\')",
+		  cmd, key);
+
+	  if (!strcmp (cmd, "ip"))
 	    {
-	      free (app->ip_addr);
-	      app->ip_addr = NULL;
+	      if (app->ip_addr)
+		{
+		  free (app->ip_addr);
+		  app->ip_addr = NULL;
+		}
+
+	      app->ip_addr = strdup (key);
+	    }
+	  else if (!strcmp (cmd, "pass"))
+	    {
+	      if (app->grade_pass)
+		{
+		  free (app->grade_pass);
+		  app->grade_pass = NULL;
+		}
+
+	      app->grade_pass = strdup (key);
 	    }
 
+	  free (cmd);
+	  free (key);
+
+	  /*
 	  app->ip_addr = strdup (ip);
 	  free (ip);
-
+	  */
 	  pos = tmp_pos + 2;
 	  free (cur_conf);
 	  continue;
@@ -328,13 +351,22 @@ conf_menu_value (conf_obj * obj, int get)
  *    or the string to print to the configuration file otherwise.
  */
 void *
-conf_ip_value (conf_obj * obj, int get)
+conf_grade_value (conf_obj * obj, int get)
 {
   if (get)
     {
       GtkEntryBuffer * buffer;
-      buffer = gtk_entry_buffer_new (the_app->ip_addr,
-				     strlen (the_app->ip_addr));
+
+      if (!strcmp (obj->label, "Grade IP"))
+	{
+	  buffer = gtk_entry_buffer_new (the_app->ip_addr,
+					 strlen (the_app->ip_addr));
+	}
+      else if (!strcmp (obj->label, "Grade Password"))
+	{
+	  buffer = gtk_entry_buffer_new (the_app->grade_pass,
+					 strlen (the_app->grade_pass));
+	}
 
       obj->widget = gtk_entry_new_with_buffer (buffer);
       return obj->widget;
@@ -344,12 +376,27 @@ conf_ip_value (conf_obj * obj, int get)
       char * ret;
       const char * text;
 
+      const char * key;
+
+      switch (obj->id)
+	{
+	case 0:
+	  key = "ip";
+	  break;
+	case 1:
+	  key = "pass";
+	  break;
+	default:
+	  return NULL;
+	}
+
       text = gtk_entry_get_text (GTK_ENTRY (obj->widget));
 
+      //FIXME 1024
       ret = (char *) calloc (1024, sizeof (char));
       CHECK_ALLOC (ret, NULL);
 
-      sprintf (ret, "(grade-ip \'%s\')\n", text);
+      sprintf (ret, "(grade \'%s\' \'%s\')\n", key, text);
       return ret;
     }
 }
