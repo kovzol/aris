@@ -70,6 +70,7 @@ struct aris_app {
   char * working_dir;    // The working directory when aris was called.
   char * help_file;      // The help file location.
   char * ip_addr;        // The IP Address of the grade server.
+  char * grade_pass;      // The password to the grade server.
 
   int boolean : 1;  // Whether boolean mode was specified.
   int verbose : 1;  // Whether verbose was specified.
