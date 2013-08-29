@@ -1,5 +1,5 @@
 AC_PREREQ(2.60)
-AC_INIT([GNU Aris], [2.0], [bug-aris@gnu.org])
+AC_INIT([GNU Aris], [2.1], [bug-aris@gnu.org])
 AC_CONFIG_HEADER(src/config.h)
 AC_CONFIG_SRCDIR(src/aris.c)
 AC_CONFIG_AUX_DIR(build-aux)
