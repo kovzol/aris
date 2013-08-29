@@ -1,4 +1,52 @@
+2013-08-29  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (main): Removed w32 sockets initialization.
+
+	* callbacks.c (gui_submit_show): Uses number of entries
+	rather than the number of open proofs.
+
+	* app.c (ftp_connect): Changed to GIO Sockets.
+	(ftp_get_response): Same.
+	(ftp_send): Same.
+	(ftp_send_cmd): Added.
+
+2013-08-28  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (gui_customize_show):  Fixed up w32 path.
+	Customize GUI is destroyed if an error occurs.
+
+	* conf-file.c (conf_file_read): Changed arguments to take
+	a string instead of a file.
+
+	* aris-proof.c (aris_proof_create_sentence): When adding a
+	new sentence with a rule, the rule will be added into the
+	menu bar.
+
+	* app.c (the_app_read_default_config): Added to parse the
+	default configuration.
+	Changed implementation of conf_file_read.
+	(init_app): Reads the default configuration first, then
+	the user's configuration.
+	(the_app_read_config_file): Doesn't bother to reread
+	the default configuration.
+	Changed implementation of conf_file_read.
+	(ftp_connect): Fixed up blocking calls within w32.
+
 2013-08-27  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.c (sen_values): Changed sentence values from text
+	to stock icons.
+	(sentence_gui_init): Same.
+	(sentence_set_font): Same.
+	(sentence_set_value): Same.
+
+	* conf-file.h: Changed 'Goal..' to 'Toggle Goals...'.
+
+	* conf-file.c (conf_font_value): Fixed allocation bug.
+
+	* callbacks.c (gui_submit_show): Displays an error message if
+	the server specified couldn't be connected to.
+	Only shows saved proofs, and disables 'OK' button if none exist.
 
 	* process-main.c (process): Cleaned up comments.
 
@@ -28,6 +76,7 @@
 	addresses.
 	(ftp_connect): Changed to use UNIX sockets instead of glib
 	sockets.
+	Uses non-blocking mode to prevent freezing.
 	(ftp_send): Same.
 
 2013-08-26  Ian Dunn  <dunni@gnu.org>
