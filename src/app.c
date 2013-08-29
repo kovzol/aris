@@ -752,7 +752,16 @@ ftp_connect (char * ip_addr)
       return NULL;
     }
 
-  ftp_send_cmd (ret, "PASS islegion");
+  char * pass_buf;
+
+  pass_buf = (char *) calloc (strlen (the_app->grade_pass) + 6,
+			      sizeof (char));
+  CHECK_ALLOC (pass_buf, NULL);
+
+  sprintf (pass_buf, "PASS %s\n", the_app->grade_pass);
+
+  ftp_send_cmd (ret, pass_buf);
+  free (pass_buf);
   ret_chk = ftp_get_response (ret, NULL);
 
   if (ret_chk != 230)
