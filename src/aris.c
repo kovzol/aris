@@ -912,16 +912,6 @@ main (int argc, char *argv[])
   rule = args.rule;
   rule_file = args.rule_file;
 
-#ifdef WIN32
-  WSADATA wsaData;
-  int wsa_res = WSAStartup (MAKEWORD (2, 2), &wsaData);
-  if (wsa_res != NO_ERROR)
-    {
-      fprintf (stderr, "Could not initialize windows sockets: %i\n", wsa_res);
-      return -2;
-    }
-#endif
-
   cur_file = cur_latex = -1;
 
   for (c = 0; c < 256; c++)
