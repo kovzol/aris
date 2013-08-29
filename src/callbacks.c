@@ -1281,7 +1281,7 @@ gui_submit_show (GtkWidget * window)
       user_email = gtk_entry_get_text (GTK_ENTRY (user_entry));
       instr_email = gtk_entry_get_text (GTK_ENTRY (instr_entry));
 
-      entries = (struct submit_ent *) calloc (the_app->guis->num_stuff,
+      entries = (struct submit_ent *) calloc (the_app->guis->num_stuff + 1,
 					       sizeof (struct submit_ent));
       CHECK_ALLOC (entries, -1);
 
@@ -1306,13 +1306,19 @@ gui_submit_show (GtkWidget * window)
 	  GtkWidget * ent;
 
 	  ent = gl->next->data;
+	  const char * entry_text = gtk_entry_get_text (GTK_ENTRY (ent));
 
-	  entries[i].hw = strdup (gtk_entry_get_text (GTK_ENTRY (ent)));
+
+	  entries[i].hw = strdup (entry_text);
 	  entries[i].file_name = strdup (gtk_label_get_label (GTK_LABEL (wid)));
 
 	  i++;
 	  gl = gl->next->next;
 	}
+
+      entries[i].hw = entries[i].file_name = NULL;
+
+      int num_ents = i;
 
       int rc;
       rc = the_app_submit (user_email, instr_email, entries);
@@ -1329,7 +1335,7 @@ gui_submit_show (GtkWidget * window)
 	  gtk_widget_destroy (error_dialog);
 	}
 
-      for (i = 0; i < the_app->guis->num_stuff; i++)
+      for (i = 0; i < num_ents; i++)
 	{
 	  free (entries[i].hw);
 	  free (entries[i].file_name);
