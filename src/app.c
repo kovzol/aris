@@ -731,8 +731,12 @@ ftp_connect (char * ip_addr)
   addr = g_inet_address_new_from_string (ip_addr);
   in_addr = g_inet_socket_address_new (addr, FTP_PORT);
 
+  // Set a timeout to prevent the socket from taking too long.
+  g_socket_set_timeout (ret, 5);
+  
   gboolean ret_val;
   ret_val = g_socket_connect (ret, in_addr, NULL, NULL);
+
   if (!ret_val)
     return NULL;
 
@@ -748,7 +752,7 @@ ftp_connect (char * ip_addr)
       return NULL;
     }
 
-  ftp_send_cmd (ret, "PASS stuff");
+  ftp_send_cmd (ret, "PASS islegion");
   ret_chk = ftp_get_response (ret, NULL);
 
   if (ret_chk != 230)
