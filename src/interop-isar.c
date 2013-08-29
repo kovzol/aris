@@ -2117,6 +2117,8 @@ parse_thy (char * filename, proof_t * proof)
   //DO NOT REQUIRE THE USER TO CREATE LINES FOR ALL OF THEM,
   //or at least not for everything in Main.
   //That would be INSANE.
+  // Isar itself has some nice functionality to check the specific requirements
+  //  of a given lemma.
 
   chk = get_std_seqs ();
   if (chk == -1)
