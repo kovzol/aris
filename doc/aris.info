@@ -518,7 +518,7 @@ This manual is for GNU Aris, the logical proof program.
 * Terms::                Terms used in this manual.
 * Options::              The command-line options used for Aris.
 * Basic Usage::          A quick walkthrough of Aris usage.
-* Keyboard Shortcuts::   The keyboard shortcuts used in Aris.
+* Menu Options::         The keyboard shortcuts used in Aris.
 * Rules Index::          The logical rules used in Aris.
 * Customization::        Customizing GNU Aris.
 * Submission::           Submitting proofs for grading.
@@ -549,27 +549,27 @@ Biconditional
      A biconditional is a connective that connects two sentences,
      denoted by '<->'.  A biconditional claims that 'sentence a if and
      only if sentence b' is a new sentence.  A biconditional can be
-     inserted in Aris using the key combination 'CTRL+5' (*note Keyboard
-     Shortcuts::).
+     inserted in Aris using the key combination 'CTRL+5' (*note Other
+     Key Shortcuts::).
 
 Conclusion
      A conclusion is a sentence that is derived from a combination of
      other sentences and a rule.  A focused conclusion will be
-     highlighted in cyan, although this color can be changed (*note
-     Customization::).  A conclusion has a set of references associated
-     with it, which are highlighted in violet.
+     highlighted in cyan.  A conclusion has a set of references
+     associated with it, which are highlighted in violet.  Both of these
+     colors can be changed using customization (*note Customization::).
 
 Conditional
      A conditional is a connective that connects two sentences, denoted
      by '->'.  A conditional claims that 'if sentence a, then sentence
      b' is a new sentence.  A conditional can be inserted in Aris using
-     the key combination 'CTRL+4' (*note Keyboard Shortcuts::).
+     the key combination 'CTRL+4' (*note Other Key Shortcuts::).
 
 Conjunction
      A conjunction is a connective that connects two or more sentences,
      denoted by '^'.  A conjunction claims that 'sentence a and sentence
      b' is a new sentence.  A conjunction can be inserted in Aris using
-     the key combination 'CTRL+7' (*note Keyboard Shortcuts::).
+     the key combination 'CTRL+7' (*note Other Key Shortcuts::).
 
 Connective
      A connective is a logical symbol that connects one or more
@@ -590,7 +590,7 @@ Disjunction
      A disjunction is a connective that connects two or more sentences,
      denoted by 'v'.  A disjunction claims that 'sentence a or sentence
      b' is a new sentence.  A disjunction can be inserted in Aris using
-     the key combination 'CTRL+\' (*note Keyboard Shortcuts::).
+     the key combination 'CTRL+\' (*note Other Key Shortcuts::).
 
 Evaluate
      To evaluate a sentence means different things depending on the type
@@ -600,21 +600,23 @@ Evaluate
      the given references and its rule.  Evaluating a goal means
      checking the corresponding proof for a sentence with this exact
      same text.  To evaluate a sentence use the key combination 'CTRL+E'
-     (*note Keyboard Shortcuts::).
+     (*note Proof Windows::).
 
 Evaluation Value
      An evaluation value is the value that appears to the right of a
-     sentence's text entry.  It can either be ' ', 'T', 'F', '*', '#',
-     or '?'.  ' ' means that the sentence is awaiting evaluation, except
-     in the case of premises, where this could also mean that there are
-     no errors with it.  'T' means that either the conclusion logically
+     sentence's text entry.  It can either be a square, a light green
+     check, an X, an X polygon, a pointer box, or a dark green check
+     icon.  The square means that the sentence is awaiting evaluation.
+     The light gren check means that either the conclusion logically
      follows from its references and rule, or that the goal has been
-     found in the corresponding proof.  'F' means that either the
-     conclusion does not logically follow from its references and rule,
-     or that the goal has not been found in the corresponding proof.
-     '*' means that there is a text error with this sentence.  '?' means
-     that one of the conclusion's references has a text error.  '#'
-     means that the conclusion is missing a rule.
+     found in the corresponding proof.  In the case of premises, this
+     means that the premise has no syntactic errors.  The red X means
+     that either the conclusion does not logically follow from its
+     references and rule, or that the goal has not been found in the
+     corresponding proof.  The X polygon means that there is a text
+     error with this sentence.  The green check means that one of the
+     conclusion's references has a text error.  The pointer box means
+     that the conclusion is missing a rule.
 
 Existential
      An existential is a quantifier that precedes the rest of sentence,
@@ -631,17 +633,16 @@ Function Symbol
 Goal
      A goal is a sentence that the user is looking to meet in a certain
      proof.  The goal window contains all of these sentences, and can be
-     toggled by the key combination 'CTRL+L' (*note Keyboard
-     Shortcuts::).  When a sentence in the proof matches a goal, the
-     proof sentence's line number is highlighted in red, while the
-     goal's line number is changed to match the proof sentence's line
-     number.
+     toggled by the key combination 'CTRL+L' (*note Proof Windows::).
+     When a sentence in the proof matches a goal, the proof sentence's
+     line number is highlighted in red, while the goal's line number is
+     changed to match the proof sentence's line number.
 
 Negation
      A negation is a connective that is inserted in front of a sentence,
      denoted by '~'.  A neagion claims that the opposite of the negation
      is true.  A negation can be inserted into Aris using the key
-     combination 'CTRL+`' (*note Keyboard Shortcuts::).
+     combination 'CTRL+`' (*note Other Key Shortcuts::).
 
 Null Object
      A null object is an object, denoted by 'nil'.  In Aris it resembles
@@ -685,8 +686,8 @@ Rules
      rules, and predicate rules that the user can use to derive
      sentences.  The rules window (also referred to as the rules tablet)
      is shared amongst all of the proofs in Aris.  It can be toggled by
-     the key combination 'CTRL+R' (*note Keyboard Shortcuts::) from any
-     proof window.  For the list of rules, *note Rules Index::.
+     the key combination 'CTRL+R' (*note Proof Windows::) from any proof
+     window.  For the list of rules, *note Rules Index::.
 
 Sentence
      A sentence is a line in Aris.  A sentence always consists of a text
@@ -791,7 +792,7 @@ File: aris.info,  Node: Options,  Next: Basic Usage,  Prev: Terms,  Up: Top
      Print a help message and exit.
 
 
-File: aris.info,  Node: Basic Usage,  Next: Keyboard Shortcuts,  Prev: Options,  Up: Top
+File: aris.info,  Node: Basic Usage,  Next: Menu Options,  Prev: Options,  Up: Top
 
 4 Basic Usage
 *************
@@ -804,6 +805,7 @@ This chapter describes the basic usage of GNU Aris.
 * Connectives:: Using connectives.
 * Adding::      Adding sentences to the proof.
 * Selecting::   Selecting sentences.
+* Syntax::      The syntax that Aris uses.
 
 
 File: aris.info,  Node: Startup,  Next: Connectives,  Up: Basic Usage
@@ -815,16 +817,26 @@ When Aris is loaded up, you will see a few things.  You will see the
 rules window and a proof window.  The rules window contains the
 different rules.  A rule will not be selected if a premise is in focus.
 
+   The initial layout of Aris is a single sentence.  From left to right,
+the items of a sentence are: its line number, its text entry, its
+evaluation value, and its rule.  The rule will not be initially visible,
+since no rule has been selected.  In addition, premises do not have
+rules, and thus the rule will not appear.
+
 
 File: aris.info,  Node: Connectives,  Next: Adding,  Prev: Startup,  Up: Basic Usage
 
 4.2 Connectives
 ===============
 
-Aris has several connectives (*note Connectives: Terms.).  When the
+Aris has several connectives (*note Connectives: Terms.) When the
 keyboard command for the desired connective is activated, the desired
 connective will be inserted at the current cursor point, overwriting
 selected text.
+
+   For example, pressing 'Ctrl+7' inserts a conjunction.  This is the
+character that looks like an upside-down 'v'.  This is also called a
+'logical and'.
 
 
 File: aris.info,  Node: Adding,  Next: Selecting,  Prev: Connectives,  Up: Basic Usage
@@ -835,16 +847,19 @@ File: aris.info,  Node: Adding,  Next: Selecting,  Prev: Connectives,  Up: Basic
 Hitting 'Ctrl+J' adds a conclusion to the proof.  A conlusion is always
 added after the current line, or, if the line is a premise, then the
 conclusion is added after the last premise.  If the current line is a
-conclusion, then it is highlighted in cyan.  Hitting 'Ctrl+P' adds a
-premise to the proof.  A premise will always be added after the last
-premise.  Pressing 'Ctrl+B' adds a subproof to the proof.  When in a
-subproof, a conclusion will always be added within the subproof.  The
-first line of a subproof does not require a rule, but instead acts as a
-premise.  Pressing 'Ctrl+D' ends the current subproof.  This creates a
-new conclusion just after the subproof.
+conclusion, then it is highlighted in cyan.
+
+   Hitting 'Ctrl+P' adds a premise to the proof.  A premise will always
+be added after the last premise.
+
+   Pressing 'Ctrl+B' adds a subproof to the proof.  When in a subproof,
+a conclusion will always be added within the subproof.  The first line
+of a subproof does not require a rule, but instead acts as a premise.
+Pressing 'Ctrl+D' ends the current subproof.  This creates a new
+conclusion just after the subproof.
 
 
-File: aris.info,  Node: Selecting,  Prev: Adding,  Up: Basic Usage
+File: aris.info,  Node: Selecting,  Next: Syntax,  Prev: Adding,  Up: Basic Usage
 
 4.4 Selecting Sentences
 =======================
@@ -865,80 +880,220 @@ taken, all of them will be de-selected.  Pressing 'CTRL+K' will kill
 no lines are selected, then the current line will be used.
 
 
-File: aris.info,  Node: Keyboard Shortcuts,  Next: Rules Index,  Prev: Basic Usage,  Up: Top
+File: aris.info,  Node: Syntax,  Prev: Selecting,  Up: Basic Usage
 
-5 Keyboard Shortcuts
-********************
+4.5 Aris Syntax
+===============
 
-The keyboard shortcuts here (with the exception of the connectives) can
-be changed using customization *Note Customization::.  The shortcuts
+Aris expects a certain form of syntax.  Most of the connectives are
+infix, which means that they are placed in between their arguments.  The
+negation is one exception to this.
+
+   Aris expects that all predicates start with an uppercase character.
+Aris also expects that all function symbols begin with a lower case
+character.  After this, Aris will except any combination of upper case
+letters, lower case letters, numbers, or '_'.
+
+
+File: aris.info,  Node: Menu Options,  Next: Rules Index,  Prev: Basic Usage,  Up: Top
+
+5 Menu Options
+**************
+
+The main GUIs for Aris all have menu bars.  Each of the three types of
+GUIs have different menu bars, and the options for each of these are
+described in this section.
+
+* Menu:
+
+* Proof Windows::        The window for proofs.
+* Rules Table::          The rules table that floats around.
+* Other Key Shortcuts::  Miscellaneous keyboard shortcuts
+
+   The keyboard shortcuts here (with the exception of the connectives)
+can be changed using customization *Note Customization::.  The shortcuts
 listed here are the default shortcuts for Aris.
 
-'CTRL+N'
-     Start a new proof.
+
+File: aris.info,  Node: Proof Windows,  Next: Rules Table,  Up: Menu Options
 
+5.1 Proof Windows
+=================
+
+These are the menu options for the main proof windows.  Each one can be
+assigned a key command.
+
+'New'
+'Ctrl+N'
+     Start a new proof.  A new window is opened for this proof.
+
+'Open'
 'CTRL+O'
-     Open an existing proof.
+     Open an existing proof in a new window.
 
+'Save'
 'CTRL+S'
      Save the current proof.
 
+'Save As'
 'CTRL+SHIFT+S'
      Save the current proof under a different name.
 
+'Close'
 'CTRL+W'
      Close the current proof.
 
+'Quit'
 'CTRL+Q'
-     Exit Aris.
+     Exit Aris.  But since logic is so much fun, I doubt you'll ever
+     want to use this one.
 
+'Add Premise'
 'CTRL+P'
-     Insert a new premise after the current line.
+     Insert a new premise at the end of the other premises.
 
+'Add Conclusion'
 'CTRL+J'
-     Insert a new conclusion after the current line.
+     Insert a new conclusion after the current line if it is a
+     conclusion, or at the start of the conclusions if it is a premise.
 
+'Add Subproof'
 'CTRL+B'
-     Begin a new subproof after the current line.
+     Begin a new subproof after the current line if it is a conclusion,
+     or at the start of the conclusions if it is a premise.  This is
+     unavailable in boolean mode, since subproofs can't be used.
 
+'End Subproof'
 'CTRL+D'
-     End the current subproof, if there is one.
+     End the current subproof, if there is one.  Otherwise, this doesn't
+     do anything.  This is unavailable in boolean mode, since subproofs
+     can't be used.
 
+'Copy Line'
 'CTRL+G'
      Copy the current line.
 
+'Kill Line'
 'CTRL+K'
-     Kill the current line.
+     Kill, or cut, the current line.
 
+'Insert Line'
 'CTRL+I'
      Insert the copied/killed line.
 
+'Evaluate Line'
 'CTRL+E'
-     Evaluate the current line.
+     Evaluate the logical validity of the current line.
 
+'Evaluate Proof'
 'CTRL+F'
-     Evaluate the current proof.
+     Evaluate the logical validity of the current proof.  This evaluates
+     each line of the proof.
 
+'Toggle Goals...'
 'CTRL+L'
      Toggle the goal window for the current proof.
 
+'Toggle Boolean Mode'
 'CTRL+M'
      Toggle boolean mode for the current proof *Note Boolean Rules::.
 
+'Import Proof'
+     Import another proof into this one.  This will merge the premises
+     of the other proof into the current one, and insert the goals of
+     the other proof as conclusions.  In addition, it sets the
+     conclusions' references as the premises, and sets them all to use
+     the lemma rule *note lm::.
+
+'Toggle Rules'
 'CTRL+R'
      Toggle the rules window.
 
+'Small'
 'CTRL+-'
      Change the font size to small (8pt).
 
+'Medium'
 'CTRL+0'
      Change the font size to medium (12pt).
 
+'Large'
 'CTRL+='
      Change the font size to large (16pt).
 
+'Custom'
+     Change the font size to a custom size.  This menu option opens a
+     dialog box with a numerical entry.
+
+'Contents'
 'F1'
-     Display Aris help.
+     Display Aris help.  This is the only key command that cannot be
+     modified.
+
+'About GNU Aris'
+     Displays information about GNU Aris.
+
+
+File: aris.info,  Node: Rules Table,  Next: Other Key Shortcuts,  Prev: Proof Windows,  Up: Menu Options
+
+5.2 Rules Table
+===============
+
+These are the commands for the rules window.  Many of them are the same
+as for the main proof window.
+
+'New'
+'Ctrl+N'
+     Start a new proof.  A new window is opened for this proof.
+
+'Open'
+'CTRL+O'
+     Open an existing proof in a new window.
+
+'Submit Proofs...'
+     Submits all open proofs for grading.  There is more on this in the
+     Submission session in this manual *Note Submission::.
+
+'Quit'
+'CTRL+Q'
+     Exit Aris.
+
+'Small'
+'CTRL+-'
+     Change the font size to small (8pt).
+
+'Medium'
+'CTRL+0'
+     Change the font size to medium (12pt).
+
+'Large'
+'CTRL+='
+     Change the font size to large (16pt).
+
+'Custom'
+     Change the font size to a custom size.  This menu option opens a
+     dialog box with a numerical entry.
+
+'Contents'
+'F1'
+     Display Aris help.  This is the only key command that cannot be
+     modified.
+
+'Customize...'
+     Opens the customization dialog.  For more information on this, see
+     *Note Customization::.
+
+'About GNU Aris'
+     Displays information about GNU Aris.
+
+
+File: aris.info,  Node: Other Key Shortcuts,  Prev: Rules Table,  Up: Menu Options
+
+5.3 Other Key Shortcuts
+=======================
+
+These are the keyboard shortcuts for each of the connectives.  Unlike
+most of the other keyboard shortcuts, these cannot be modified.
 
 'CTRL+7'
      Insert a conjunction ('^') into Aris.
@@ -974,7 +1129,7 @@ listed here are the default shortcuts for Aris.
      Insert a null object ('nil') into Aris.
 
 
-File: aris.info,  Node: Rules Index,  Next: Customization,  Prev: Keyboard Shortcuts,  Up: Top
+File: aris.info,  Node: Rules Index,  Next: Customization,  Prev: Menu Options,  Up: Top
 
 6 Rules Index
 *************
@@ -1298,6 +1453,9 @@ File: aris.info,  Node: ep,  Next: sb,  Prev: dn,  Up: Equivalence Rules
 
      (P ^ Q) -> R <=> P -> (Q -> R)
 
+   This is one of the few equivalence rules that deals with
+conditionals.
+
 
 File: aris.info,  Node: sb,  Next: Recursion,  Prev: ep,  Up: Equivalence Rules
 
@@ -1306,6 +1464,8 @@ File: aris.info,  Node: sb,  Next: Recursion,  Prev: ep,  Up: Equivalence Rules
 
      P ^ (P v Q) <=> P
      P v (P ^ Q) <=> P
+
+   Also called absorption.  This rule can be used in Boolean mode.
 
 
 File: aris.info,  Node: Recursion,  Prev: sb,  Up: Equivalence Rules
@@ -1620,7 +1780,8 @@ File: aris.info,  Node: sp,  Next: sq,  Prev: lm,  Up: Miscellaneous Rules
 --------------
 
 Given a subproof with premise 'P' and conclusion (the LAST sentence)
-'Q', one can infer from subproof 'P -> Q'.
+'Q', one can infer from subproof 'P -> Q'. In some circles, this is
+called conditional introduction.
 
 
 File: aris.info,  Node: sq,  Next: in,  Prev: sp,  Up: Miscellaneous Rules
@@ -1728,10 +1889,13 @@ several key words that it recognizes:
      Assigns 'color' to color preference 'type'.  The 'color' key word
      is in hexidecimal.
 
-'grade-ip'
-'(grade-ip 'addr')'
+'grade'
+'(grade 'key' 'value')'
 
-     Sets the IP address of the grading server to 'addr'.
+     This allows customization of the grade server's information (*note
+     Submission::).  The two options for 'key' are 'ip' and 'pass'.  The
+     'ip' key sets the grade server's IP address, and the 'pass' sets up
+     the password GNU Aris will use for authentication.
 
 
 File: aris.info,  Node: Submission,  Next: Sequence Logic,  Prev: Customization,  Up: Top
@@ -1744,8 +1908,11 @@ allows instructors to use Aris in their classes.  Aris submits proofs
 through FTP, and allows users to indicate an email for themselves and an
 optional email for their instructors.
 
-   Submission submits all open proofs for submission.  It allows users
-to specify a problem designation for each open proof.
+   Submission allows for all open proofs to be submitted.  This is done
+by specifying a problem designation ('11.10', 'nats', etc.).  Only those
+that have designations are submitted.  The designation is changed by
+editing the text box next to each file name in the submission dialog
+box.
 
    Grading runs by checking the correctness of the entire proof.  It is
 the responsibility of the grading server to confirm that the proof is
@@ -1761,6 +1928,11 @@ Aris in grade mode (*note Options::), and use the email provided to
 email the results back to the user.  If the user specified an
 instructor's email address, then Aris will CC the instructor.
 
+   Sample scripts are included with GNU Aris.  These are the files
+'doc/collect.sh' and 'doc/collect.el'.  The grade server would run
+'collect.sh', which will call GNU Emacs in batch mode while loading
+'collect.el'.  It is 'collect.el' that handles the emails.
+
 
 File: aris.info,  Node: Sequence Logic,  Next: Interoperability,  Prev: Submission,  Up: Top
 
@@ -1768,11 +1940,12 @@ File: aris.info,  Node: Sequence Logic,  Next: Interoperability,  Prev: Submissi
 ****************
 
 Sequence Logic, often abbreviated 'seqlog', is an alternative
-arithmetical representation system from the standard Peano Axioms.
+arithmetical representation system from the standard Peano Axioms in
+First-Order Logic.  Seqlog's original purpose was allowing more natural
+definition of recursive functions in FOL.
 
    Seqlog uses the symbols 's' (the sucessor function), 'z' (the zero
-function), 'n' (the sequence of natural numbers), 'v' (the value
-function), '0' (the number zero), and '\0' (null object).
+function), 'v' (the value function), and '\0' (null object).
 
 * Menu:
 
@@ -1791,9 +1964,7 @@ axioms:
    * VxVy(~s(x) = z(y))
    * VxVy(s(x) = s(y) -> x = y)
    * Vx(v(S,x) = f_S(x))
-   * Vx(v(n,z(x)) = 0)
-   * Vx(~v(n,x) = \0)
-   * VxVy(v(n,x) = v(n,y) -> x = y)
+   * Vx(v(\0,x) = \0)
 
    The first axiom states that no sucessor is the zero object, or, to
 put it differently, that the zero object is the first object.  The
@@ -1803,14 +1974,15 @@ defined, in a way similar to how the Peano Axioms define the natural
 numbers.  The third axiom is the definition of a sequence, stating that
 the value under a given sequence 'S' of every object 'x' can be
 determined by a function.  The rule 'sq' introduces such a sequence
-(*note sq::).
+(*note sq::).  The fourth axiom defines the nil object.  This is a lot
+like 'NULL' in C, or 'nil' in lisp.
 
-   The fourth axiom defines zero, and introduces the natural numbers.
-It states that the first element in the natural numbers is zero.  The
-fifth axiom defines the null object, and states that the natural numbers
-are defined on all inputs.  The sixth axiom states that the natural
-numbers are one-to-one, or that if two numbers are equal, then the
-objects that they represent are equal.
+   The natural numbers are defined as a sequence.  For example, Vx(x =
+nat -> VyVz(v(nat,y) = v(nat,z) -> y = z) ^ Vy(~v(nat,y) = \0)).  This
+will define an infinite sequence (2nd part), that is one-to-one (1st
+part).  Then, to define zero, one simply states Vx(v(nat,z(x)) = 0).
+This means that the zero'th element of the 'nat' sequence is the object
+'0'.
 
 
 File: aris.info,  Node: Induction,  Prev: Axioms,  Up: Sequence Logic
@@ -1819,8 +1991,8 @@ File: aris.info,  Node: Induction,  Prev: Axioms,  Up: Sequence Logic
 =============
 
 Mathematical induction requires a base case, and an inductive step.  In
-Aris, this is used in conjunction (ha *note cn::) with seqlog.  For
-seqlog, the induction scheme is:
+Aris, this is used in conjunction with seqlog.  For seqlog, the
+induction scheme is:
 
      Vx(P(z(x)) ^ (P(x) -> P(s(x)))) -> Vx(P(x))
 
@@ -1845,7 +2017,7 @@ File: aris.info,  Node: Isabelle/Isar,  Up: Interoperability
 
 Aris will scan an Isar proof, which is a proof done using Isabelle, and
 look for certain keywords.  This is still being tested, and doesn't work
-fully yet.
+fully yet.  This section will be updated as more of this is implemented.
 
 * Menu:
 
@@ -1932,73 +2104,77 @@ Tag Table:
 Node: Top25644
 Node: Introduction26895
 Node: Terms27427
-Node: Options35910
-Node: Basic Usage37395
-Node: Startup37743
-Node: Connectives38047
-Node: Adding38391
-Node: Selecting39196
-Node: Keyboard Shortcuts40161
-Node: Rules Index42146
-Node: Inference Rules42700
-Node: mp43090
-Node: ad43614
-Node: sm44180
-Node: cn44669
-Node: hs45351
-Node: ds46106
-Node: ex46508
-Node: cd46791
-Node: Equivalence Rules47028
-Node: im47576
-Node: dm47884
-Node: as48123
-Node: co48699
-Node: id49117
-Node: dt49408
-Node: eq49790
-Node: dn50224
-Node: ep50535
-Node: sb50685
-Node: Recursion50854
-Node: Predicate Rules51748
-Node: ug52214
-Node: ui52741
-Node: eg53093
-Node: ei53455
-Node: bv53973
-Node: nq54605
-Node: pr55011
-Node: ii55465
-Node: fv55698
-Node: Boolean Rules56017
-Node: bi56537
-Node: bn56913
-Node: bd57243
-Node: sn57635
-Node: Miscellaneous Rules57851
-Node: lm58059
-Node: sp59239
-Node: sq59461
-Node: in59768
-Node: Customization60068
-Node: Dialog60475
-Node: Config File61672
-Node: Submission62892
-Node: Sequence Logic64166
-Node: Axioms64727
-Node: Induction66004
-Node: Interoperability66330
-Node: Isabelle/Isar66635
-Node: fun67383
-Node: type_synonym67542
-Node: lemma/theorem67693
-Node: case68055
-Node: primrec68186
-Node: definition68320
-Node: datatype68464
-Node: class68602
-Node: instance68732
-Node: other68865
+Node: Options36037
+Node: Basic Usage37522
+Node: Startup37907
+Node: Connectives38534
+Node: Adding39031
+Node: Selecting39841
+Node: Syntax40821
+Node: Menu Options41358
+Node: Proof Windows42017
+Node: Rules Table44729
+Node: Other Key Shortcuts45880
+Node: Rules Index46742
+Node: Inference Rules47290
+Node: mp47680
+Node: ad48204
+Node: sm48770
+Node: cn49259
+Node: hs49941
+Node: ds50696
+Node: ex51098
+Node: cd51381
+Node: Equivalence Rules51618
+Node: im52166
+Node: dm52474
+Node: as52713
+Node: co53289
+Node: id53707
+Node: dt53998
+Node: eq54380
+Node: dn54814
+Node: ep55125
+Node: sb55350
+Node: Recursion55587
+Node: Predicate Rules56481
+Node: ug56947
+Node: ui57474
+Node: eg57826
+Node: ei58188
+Node: bv58706
+Node: nq59338
+Node: pr59744
+Node: ii60198
+Node: fv60431
+Node: Boolean Rules60750
+Node: bi61270
+Node: bn61646
+Node: bd61976
+Node: sn62368
+Node: Miscellaneous Rules62584
+Node: lm62792
+Node: sp63972
+Node: sq64252
+Node: in64559
+Node: Customization64859
+Node: Dialog65266
+Node: Config File66463
+Node: Submission67900
+Node: Sequence Logic69599
+Node: Axioms70214
+Node: Induction71495
+Node: Interoperability71805
+Node: Isabelle/Isar72110
+Node: fun72920
+Node: type_synonym73079
+Node: lemma/theorem73230
+Node: case73592
+Node: primrec73723
+Node: definition73857
+Node: datatype74001
+Node: class74139
+Node: instance74269
+Node: other74402
 
 End Tag Table

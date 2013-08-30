@@ -1,59 +1,87 @@
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GNU Aris, the logical proof program.
+
+Copyright (C) 2013 Ian Dunn
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled
+"GNU Free Documentation License". -->
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
 <head>
-<title>Boolean Rules - GNU Aris Manual</title>
-<meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="GNU Aris Manual">
-<meta name="generator" content="makeinfo 4.13">
-<link title="Top" rel="start" href="index.html#Top">
-<link rel="up" href="Rules-Index.html#Rules-Index" title="Rules Index">
-<link rel="prev" href="Predicate-Rules.html#Predicate-Rules" title="Predicate Rules">
-<link rel="next" href="Miscellaneous-Rules.html#Miscellaneous-Rules" title="Miscellaneous Rules">
-<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<title>GNU Aris Manual: Boolean Rules</title>
+
+<meta name="description" content="GNU Aris Manual: Boolean Rules">
+<meta name="keywords" content="GNU Aris Manual: Boolean Rules">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Rules-Index.html#Rules-Index" rel="up" title="Rules Index">
+<link href="bi.html#bi" rel="next" title="bi">
+<link href="fv.html#fv" rel="previous" title="fv">
+<style type="text/css">
 <!--
-This manual is for GNU Aris, the logical proof program.
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
 
-Copyright (C) 2012 Ian Dunn
 
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover Texts,
-     and with no Back-Cover Texts.  A copy of the license is included
-     in the section entitled ``GNU Free Documentation License''.
-   -->
-<meta http-equiv="Content-Style-Type" content="text/css">
-<style type="text/css"><!--
-  pre.display { font-family:inherit }
-  pre.format  { font-family:inherit }
-  pre.smalldisplay { font-family:inherit; font-size:smaller }
-  pre.smallformat  { font-family:inherit; font-size:smaller }
-  pre.smallexample { font-size:smaller }
-  pre.smalllisp    { font-size:smaller }
-  span.sc    { font-variant:small-caps }
-  span.roman { font-family:serif; font-weight:normal; } 
-  span.sansserif { font-family:sans-serif; font-weight:normal; } 
---></style>
 </head>
-<body>
-<div class="node">
-<a name="Boolean-Rules"></a>
-<p>
-Next:&nbsp;<a rel="next" accesskey="n" href="Miscellaneous-Rules.html#Miscellaneous-Rules">Miscellaneous Rules</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="Predicate-Rules.html#Predicate-Rules">Predicate Rules</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="Rules-Index.html#Rules-Index">Rules Index</a>
-<hr>
-</div>
 
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Boolean-Rules"></a>
+<div class="header">
+<p>
+Next: <a href="Miscellaneous-Rules.html#Miscellaneous-Rules" accesskey="n" rel="next">Miscellaneous Rules</a>, Previous: <a href="Predicate-Rules.html#Predicate-Rules" accesskey="p" rel="previous">Predicate Rules</a>, Up: <a href="Rules-Index.html#Rules-Index" accesskey="u" rel="up">Rules Index</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+</div>
+<hr>
+<a name="Boolean-Rules-1"></a>
 <h3 class="section">6.4 Boolean Rules</h3>
 
-<p>Aris can be set to use 'boolean mode', a mode used for boolean algebra.  In boolean mode, only equivalence rules and boolean rules can be used.
+<p>Aris can be set to use &rsquo;boolean mode&rsquo;, a mode used for boolean algebra.  In boolean mode, only equivalence rules that handle negations, conjunctions, or disjunctions and boolean rules can be used.  In standard mode, the boolean rules can still be used, however.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="bi.html#bi" accesskey="1">bi</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Boolean Identity
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="bn.html#bn" accesskey="2">bn</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Boolean Negation
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="bd.html#bd" accesskey="3">bd</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Boolean Dominance
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="sn.html#sn" accesskey="4">sn</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Symbol Negation
+</td></tr>
+</table>
 
-<ul class="menu">
-<li><a accesskey="1" href="bi.html#bi">bi</a>:   Boolean Identity
-<li><a accesskey="2" href="bn.html#bn">bn</a>:   Boolean Negation
-<li><a accesskey="3" href="bd.html#bd">bd</a>:   Boolean Dominance
-<li><a accesskey="4" href="sn.html#sn">sn</a>:   Symbol Negation
-</ul>
 
-   </body></html>
 
+
+</body>
+</html>

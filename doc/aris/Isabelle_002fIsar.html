@@ -1,62 +1,99 @@
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GNU Aris, the logical proof program.
+
+Copyright (C) 2013 Ian Dunn
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled
+"GNU Free Documentation License". -->
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
 <head>
-<title>Isabelle/Isar - GNU Aris Manual</title>
-<meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="GNU Aris Manual">
-<meta name="generator" content="makeinfo 4.13">
-<link title="Top" rel="start" href="index.html#Top">
-<link rel="up" href="Interoperability.html#Interoperability" title="Interoperability">
-<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<title>GNU Aris Manual: Isabelle/Isar</title>
+
+<meta name="description" content="GNU Aris Manual: Isabelle/Isar">
+<meta name="keywords" content="GNU Aris Manual: Isabelle/Isar">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Interoperability.html#Interoperability" rel="up" title="Interoperability">
+<link href="fun.html#fun" rel="next" title="fun">
+<link href="Interoperability.html#Interoperability" rel="previous" title="Interoperability">
+<style type="text/css">
 <!--
-This manual is for GNU Aris, the logical proof program.
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
 
-Copyright (C) 2012 Ian Dunn
 
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover Texts,
-     and with no Back-Cover Texts.  A copy of the license is included
-     in the section entitled ``GNU Free Documentation License''.
-   -->
-<meta http-equiv="Content-Style-Type" content="text/css">
-<style type="text/css"><!--
-  pre.display { font-family:inherit }
-  pre.format  { font-family:inherit }
-  pre.smalldisplay { font-family:inherit; font-size:smaller }
-  pre.smallformat  { font-family:inherit; font-size:smaller }
-  pre.smallexample { font-size:smaller }
-  pre.smalllisp    { font-size:smaller }
-  span.sc    { font-variant:small-caps }
-  span.roman { font-family:serif; font-weight:normal; } 
-  span.sansserif { font-family:sans-serif; font-weight:normal; } 
---></style>
 </head>
-<body>
-<div class="node">
-<a name="Isabelle%2fIsar"></a>
-<a name="Isabelle_002fIsar"></a>
-<p>
-Up:&nbsp;<a rel="up" accesskey="u" href="Interoperability.html#Interoperability">Interoperability</a>
-<hr>
-</div>
 
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Isabelle_002fIsar"></a>
+<div class="header">
+<p>
+Up: <a href="Interoperability.html#Interoperability" accesskey="u" rel="up">Interoperability</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+</div>
+<hr>
+<a name="Isar-Interoperability"></a>
 <h3 class="section">10.1 Isar Interoperability</h3>
 
-<p>Aris will scan an Isar proof, which is a proof done using Isabelle, and look for certain keywords.
+<p>Aris will scan an Isar proof, which is a proof done using Isabelle, and look for certain keywords.  This is still being tested, and doesn&rsquo;t work fully yet.  This section will be updated as more of this is implemented.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="fun.html#fun" accesskey="1">fun</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;fun&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="type_005fsynonym.html#type_005fsynonym" accesskey="2">type_synonym</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;type_synonym&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="lemma_002ftheorem.html#lemma_002ftheorem" accesskey="3">lemma/theorem</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;lemma&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="case.html#case" accesskey="4">case</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;case&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="primrec.html#primrec" accesskey="5">primrec</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;primrec&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="definition.html#definition" accesskey="6">definition</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;definiton&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="datatype.html#datatype" accesskey="7">datatype</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;datatype&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="class.html#class" accesskey="8">class</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;class&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="instance.html#instance" accesskey="9">instance</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">The &rsquo;instance&rsquo; keyword.
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="other.html#other">other</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Everything else.
+</td></tr>
+</table>
 
-<ul class="menu">
-<li><a accesskey="1" href="fun.html#fun">fun</a>:                  The 'fun' keyword. 
-<li><a accesskey="2" href="type_005fsynonym.html#type_005fsynonym">type_synonym</a>:         The 'type_synonym' keyword. 
-<li><a accesskey="3" href="lemma_002ftheorem.html#lemma_002ftheorem">lemma/theorem</a>:        The 'lemma' keyword. 
-<li><a accesskey="4" href="case.html#case">case</a>:                 The 'case' keyword. 
-<li><a accesskey="5" href="primrec.html#primrec">primrec</a>:              The 'primrec' keyword. 
-<li><a accesskey="6" href="definition.html#definition">definition</a>:           The 'definiton' keyword. 
-<li><a accesskey="7" href="datatype.html#datatype">datatype</a>:             The 'datatype' keyword. 
-<li><a accesskey="8" href="class.html#class">class</a>:                The 'class' keyword. 
-<li><a accesskey="9" href="instance.html#instance">instance</a>:             The 'instance' keyword. 
-<li><a href="other.html#other">other</a>:                Everything else. 
-</ul>
 
-   </body></html>
 
+
+</body>
+</html>

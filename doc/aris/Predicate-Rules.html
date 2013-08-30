@@ -1,64 +1,97 @@
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GNU Aris, the logical proof program.
+
+Copyright (C) 2013 Ian Dunn
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled
+"GNU Free Documentation License". -->
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
 <head>
-<title>Predicate Rules - GNU Aris Manual</title>
-<meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="GNU Aris Manual">
-<meta name="generator" content="makeinfo 4.13">
-<link title="Top" rel="start" href="index.html#Top">
-<link rel="up" href="Rules-Index.html#Rules-Index" title="Rules Index">
-<link rel="prev" href="Equivalence-Rules.html#Equivalence-Rules" title="Equivalence Rules">
-<link rel="next" href="Boolean-Rules.html#Boolean-Rules" title="Boolean Rules">
-<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<title>GNU Aris Manual: Predicate Rules</title>
+
+<meta name="description" content="GNU Aris Manual: Predicate Rules">
+<meta name="keywords" content="GNU Aris Manual: Predicate Rules">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Rules-Index.html#Rules-Index" rel="up" title="Rules Index">
+<link href="ug.html#ug" rel="next" title="ug">
+<link href="Recursion.html#Recursion" rel="previous" title="Recursion">
+<style type="text/css">
 <!--
-This manual is for GNU Aris, the logical proof program.
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
 
-Copyright (C) 2012 Ian Dunn
 
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover Texts,
-     and with no Back-Cover Texts.  A copy of the license is included
-     in the section entitled ``GNU Free Documentation License''.
-   -->
-<meta http-equiv="Content-Style-Type" content="text/css">
-<style type="text/css"><!--
-  pre.display { font-family:inherit }
-  pre.format  { font-family:inherit }
-  pre.smalldisplay { font-family:inherit; font-size:smaller }
-  pre.smallformat  { font-family:inherit; font-size:smaller }
-  pre.smallexample { font-size:smaller }
-  pre.smalllisp    { font-size:smaller }
-  span.sc    { font-variant:small-caps }
-  span.roman { font-family:serif; font-weight:normal; } 
-  span.sansserif { font-family:sans-serif; font-weight:normal; } 
---></style>
 </head>
-<body>
-<div class="node">
-<a name="Predicate-Rules"></a>
-<p>
-Next:&nbsp;<a rel="next" accesskey="n" href="Boolean-Rules.html#Boolean-Rules">Boolean Rules</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="Equivalence-Rules.html#Equivalence-Rules">Equivalence Rules</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="Rules-Index.html#Rules-Index">Rules Index</a>
-<hr>
-</div>
 
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Predicate-Rules"></a>
+<div class="header">
+<p>
+Next: <a href="Boolean-Rules.html#Boolean-Rules" accesskey="n" rel="next">Boolean Rules</a>, Previous: <a href="Equivalence-Rules.html#Equivalence-Rules" accesskey="p" rel="previous">Equivalence Rules</a>, Up: <a href="Rules-Index.html#Rules-Index" accesskey="u" rel="up">Rules Index</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+</div>
+<hr>
+<a name="Predicate-Rules-1"></a>
 <h3 class="section">6.3 Predicate Rules</h3>
 
 <p>The predicate rules are the rules that work specifically with predicate logic.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="ug.html#ug" accesskey="1">ug</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Universal Generalization
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="ui.html#ui" accesskey="2">ui</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Universal Instantiation
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="eg.html#eg" accesskey="3">eg</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Existential Generalization
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="ei.html#ei" accesskey="4">ei</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Existential Instantiation
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="bv.html#bv" accesskey="5">bv</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Bound Variable
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="nq.html#nq" accesskey="6">nq</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Null Quantifier
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="pr.html#pr" accesskey="7">pr</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Prenex
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="ii.html#ii" accesskey="8">ii</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Identity
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="fv.html#fv" accesskey="9">fv</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Free Variable
+</td></tr>
+</table>
 
-<ul class="menu">
-<li><a accesskey="1" href="ug.html#ug">ug</a>:  Universal Generalization
-<li><a accesskey="2" href="ui.html#ui">ui</a>:  Universal Instantiation
-<li><a accesskey="3" href="eg.html#eg">eg</a>:  Existential Generalization
-<li><a accesskey="4" href="ei.html#ei">ei</a>:  Existential Instantiation
-<li><a accesskey="5" href="bv.html#bv">bv</a>:  Bound Variable
-<li><a accesskey="6" href="nq.html#nq">nq</a>:  Null Quantifier
-<li><a accesskey="7" href="pr.html#pr">pr</a>:  Prenex
-<li><a accesskey="8" href="ii.html#ii">ii</a>:  Identity
-<li><a accesskey="9" href="fv.html#fv">fv</a>:  Free Variable
-</ul>
 
-   </body></html>
 
+
+</body>
+</html>

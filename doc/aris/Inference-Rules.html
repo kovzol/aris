@@ -1,61 +1,95 @@
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- This manual is for GNU Aris, the logical proof program.
+
+Copyright (C) 2013 Ian Dunn
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the section entitled
+"GNU Free Documentation License". -->
+<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
 <head>
-<title>Inference Rules - GNU Aris Manual</title>
-<meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="GNU Aris Manual">
-<meta name="generator" content="makeinfo 4.13">
-<link title="Top" rel="start" href="index.html#Top">
-<link rel="up" href="Rules-Index.html#Rules-Index" title="Rules Index">
-<link rel="next" href="Equivalence-Rules.html#Equivalence-Rules" title="Equivalence Rules">
-<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<title>GNU Aris Manual: Inference Rules</title>
+
+<meta name="description" content="GNU Aris Manual: Inference Rules">
+<meta name="keywords" content="GNU Aris Manual: Inference Rules">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="makeinfo">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="index.html#Top" rel="start" title="Top">
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="Rules-Index.html#Rules-Index" rel="up" title="Rules Index">
+<link href="mp.html#mp" rel="next" title="mp">
+<link href="Rules-Index.html#Rules-Index" rel="previous" title="Rules Index">
+<style type="text/css">
 <!--
-This manual is for GNU Aris, the logical proof program.
+a.summary-letter {text-decoration: none}
+blockquote.smallquotation {font-size: smaller}
+div.display {margin-left: 3.2em}
+div.example {margin-left: 3.2em}
+div.indentedblock {margin-left: 3.2em}
+div.lisp {margin-left: 3.2em}
+div.smalldisplay {margin-left: 3.2em}
+div.smallexample {margin-left: 3.2em}
+div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
+div.smalllisp {margin-left: 3.2em}
+kbd {font-style:oblique}
+pre.display {font-family: inherit}
+pre.format {font-family: inherit}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: inherit; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: inherit; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.nocodebreak {white-space:nowrap}
+span.nolinebreak {white-space:nowrap}
+span.roman {font-family:serif; font-weight:normal}
+span.sansserif {font-family:sans-serif; font-weight:normal}
+ul.no-bullet {list-style: none}
+-->
+</style>
 
-Copyright (C) 2012 Ian Dunn
 
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover Texts,
-     and with no Back-Cover Texts.  A copy of the license is included
-     in the section entitled ``GNU Free Documentation License''.
-   -->
-<meta http-equiv="Content-Style-Type" content="text/css">
-<style type="text/css"><!--
-  pre.display { font-family:inherit }
-  pre.format  { font-family:inherit }
-  pre.smalldisplay { font-family:inherit; font-size:smaller }
-  pre.smallformat  { font-family:inherit; font-size:smaller }
-  pre.smallexample { font-size:smaller }
-  pre.smalllisp    { font-size:smaller }
-  span.sc    { font-variant:small-caps }
-  span.roman { font-family:serif; font-weight:normal; } 
-  span.sansserif { font-family:sans-serif; font-weight:normal; } 
---></style>
 </head>
-<body>
-<div class="node">
-<a name="Inference-Rules"></a>
-<p>
-Next:&nbsp;<a rel="next" accesskey="n" href="Equivalence-Rules.html#Equivalence-Rules">Equivalence Rules</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="Rules-Index.html#Rules-Index">Rules Index</a>
-<hr>
-</div>
 
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<a name="Inference-Rules"></a>
+<div class="header">
+<p>
+Next: <a href="Equivalence-Rules.html#Equivalence-Rules" accesskey="n" rel="next">Equivalence Rules</a>, Up: <a href="Rules-Index.html#Rules-Index" accesskey="u" rel="up">Rules Index</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+</div>
+<hr>
+<a name="Inference-Rules-1"></a>
 <h3 class="section">6.1 Inference Rules</h3>
 
 <p>The premises of any of these rules can be in any order.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="mp.html#mp" accesskey="1">mp</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Modus Ponens
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="ad.html#ad" accesskey="2">ad</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Addition
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="sm.html#sm" accesskey="3">sm</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Simplification
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="cn.html#cn" accesskey="4">cn</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Conjunction
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="hs.html#hs" accesskey="5">hs</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Hypothetical Syllogism
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="ds.html#ds" accesskey="6">ds</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Disjunctive Syllogism
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="ex.html#ex" accesskey="7">ex</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Excluded Middle
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="cd.html#cd" accesskey="8">cd</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Constructive Dilemma
+</td></tr>
+</table>
 
-<ul class="menu">
-<li><a accesskey="1" href="mp.html#mp">mp</a>:   Modus Ponens
-<li><a accesskey="2" href="ad.html#ad">ad</a>:   Addition
-<li><a accesskey="3" href="sm.html#sm">sm</a>:   Simplification
-<li><a accesskey="4" href="cn.html#cn">cn</a>:   Conjunction
-<li><a accesskey="5" href="hs.html#hs">hs</a>:   Hypothetical Syllogism
-<li><a accesskey="6" href="ds.html#ds">ds</a>:   Disjunctive Syllogism
-<li><a accesskey="7" href="ex.html#ex">ex</a>:   Excluded Middle
-<li><a accesskey="8" href="cd.html#cd">cd</a>:   Constructive Dilemma
-</ul>
 
-   </body></html>
 
+
+</body>
+</html>
