@@ -33,10 +33,6 @@
 #include "interop-isar.h"
 #include "menu.h"
 
-#ifdef WIN32
-#include <winsock2.h>
-#endif
-
 #ifdef ARIS_GUI
 #include <gtk/gtk.h>
 #include "app.h"
@@ -475,6 +471,11 @@ convert_proof_latex (proof_t * proof, FILE * file)
 }
 
 /* Grades a single proof.
+ *  input:
+ *    c_file - the proof to grade.
+ *  output:
+ *    0 if it failed, 1 if the proof passsed.
+ *    -1 on memory error.
  */
 int
 grade_file (proof_t * c_file)
