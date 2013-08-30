@@ -1847,9 +1847,10 @@ Display
      Aris will be in when loaded; and the color preferences, which will
      change the colors that Aris hilights different objects in.
 
-Internal
-     This tab allows the user to set internal preferences.  Right now,
-     the only item in this tab is the IP Address of the Grade Server.
+Grade Server
+     This tab allows the user to set preferences specific to the grade
+     server.  The two options here are for the IP address of the grading
+     server, and the password used to authenticate into the server.
      (*note Submission::)
 
    For a description of the format of key commands, see *note Config
@@ -2159,22 +2160,22 @@ Node: sq64252
 Node: in64559
 Node: Customization64859
 Node: Dialog65266
-Node: Config File66463
-Node: Submission67900
-Node: Sequence Logic69599
-Node: Axioms70214
-Node: Induction71495
-Node: Interoperability71805
-Node: Isabelle/Isar72110
-Node: fun72920
-Node: type_synonym73079
-Node: lemma/theorem73230
-Node: case73592
-Node: primrec73723
-Node: definition73857
-Node: datatype74001
-Node: class74139
-Node: instance74269
-Node: other74402
+Node: Config File66538
+Node: Submission67975
+Node: Sequence Logic69674
+Node: Axioms70289
+Node: Induction71570
+Node: Interoperability71880
+Node: Isabelle/Isar72185
+Node: fun72995
+Node: type_synonym73154
+Node: lemma/theorem73305
+Node: case73667
+Node: primrec73798
+Node: definition73932
+Node: datatype74076
+Node: class74214
+Node: instance74344
+Node: other74477
 
 End Tag Table
