@@ -1144,7 +1144,10 @@ aris_proof_import_proof (aris_proof * ap)
 
   ret = gtk_dialog_run (GTK_DIALOG (file_chooser));
   if (ret != GTK_RESPONSE_ACCEPT)
-    return 0;
+    {
+      gtk_widget_destroy (file_chooser);
+      return 0;
+    }
 
   filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
   gtk_widget_destroy (file_chooser);
