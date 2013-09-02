@@ -255,6 +255,8 @@ sexpr_find_top_connective (unsigned char * in_str, unsigned char * conn,
   int gg;
   vec_t * vec;
 
+  *lsen = *rsen = NULL;
+
   vec = init_vec (sizeof (char *));
   if (!vec)
     return -1;
