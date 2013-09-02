@@ -1107,6 +1107,9 @@ check_symbols (unsigned char * in_str, int pred)
 	      if (in_str[cur_pos] == ',')
 		cur_pos++;
 	      break;
+
+	    case '\0':
+	      return -2;
 	    }
 
 	  if (ISSEP (in_str[cur_pos]) && in_str[cur_pos] != ')')
