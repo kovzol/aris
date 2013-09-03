@@ -661,6 +661,15 @@ proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, v
   if (chk == -1)
     return NULL;
 
+  if (chk == 0)
+    {
+      destroy_vec (var_offs);
+      if (c_scope[0] != '\0')  free (c_scope);
+      if (c_var)  free (c_var);
+
+      return _("The new variable did not appear in the conclusion.");
+    }
+
   unsigned char * z_scope, * z_var;
 
   z_var = (unsigned char *) calloc (v_len + 5, sizeof (char));
