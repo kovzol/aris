@@ -373,14 +373,18 @@ conf_grade_value (conf_obj * obj, int get)
 	case 1:
 	  key = "pass";
 	  break;
+	case 2:
+	  key = "dir";
 	default:
 	  return NULL;
 	}
 
       text = gtk_entry_get_text (GTK_ENTRY (obj->widget));
 
-      //FIXME 1024
-      ret = (char *) calloc (1024, sizeof (char));
+      int alloc_size;
+      alloc_size = strlen (key) + strlen (text) + 14;
+
+      ret = (char *) calloc (alloc_size + 1, sizeof (char));
       CHECK_ALLOC (ret, NULL);
 
       sprintf (ret, "(grade \'%s\' \'%s\')\n", key, text);
