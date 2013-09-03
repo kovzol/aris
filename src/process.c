@@ -228,6 +228,9 @@ int
 parse_parens (const unsigned char * in_str, const int init_pos,
 	      unsigned char ** out_str)
 {
+  if (!in_str)
+    return -1;
+
   //If the character at the given position is not an opening parentheses,
   //return -1 and set out_str to NULL.
   if (in_str[init_pos] != '(')

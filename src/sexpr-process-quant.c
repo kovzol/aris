@@ -302,6 +302,13 @@ proc_bv (unsigned char * prem, unsigned char * conc)
   if (tmp_c == -2)
     return NULL;
 
+  if (!c_str || !p_str)
+    {
+      if (c_str) free (c_str);
+      if (p_str) free (p_str);
+      return _("Bound Variable constructed incorrectly.");
+    }
+
   if (strcmp (prem + tmp_p, conc + tmp_c))
     {
       free (p_str);
@@ -387,6 +394,9 @@ proc_nq (unsigned char * prem, unsigned char * conc)
   p_len = strlen (prem);
   c_len = strlen (conc);
 
+  fprintf (stderr, "prem == '%s'\n", prem);
+  fprintf (stderr, "conc == '%s'\n", conc);
+
   if (p_len > c_len)
     {
       ln_sen = prem;  l_len = p_len;
@@ -434,6 +444,11 @@ proc_nq (unsigned char * prem, unsigned char * conc)
   tmp_pos = parse_parens (ln_sen, li, &tmp_str);
   if (tmp_pos == -2)
     return NULL;
+
+  if (!tmp_str)
+    {
+      return _("Null Quantifier constructed incorrectly.");
+    }
 
   unsigned char * scope, * var, quant[S_CL + 1];
   scope = sexpr_elim_quant (tmp_str, quant, &var);
@@ -528,6 +543,9 @@ proc_pr (unsigned char * prem, unsigned char * conc)
   tmp_pos = parse_parens (sh_sen, i - 1, &tmp_str);
   if (tmp_pos == -2)
     return NULL;
+
+  if (!tmp_str)
+    return _("Prenex constructed incorrectly.");
 
   unsigned char * scope, * var, quant[S_CL + 1];
   int v_len;
