@@ -353,14 +353,15 @@ sen_data *
 sentence_copy_to_data (sentence * sen)
 {
   sen_data * sd;
-  int * refs, i;
+  int i;
   item_t * ref_itr, * var_itr;
+  short * refs;
 
   i = 0;
 
   if (sen->refs)
     {
-      refs = (int *) calloc (sen->refs->num_stuff + 1, sizeof (int));
+      refs = (short *) calloc (sen->refs->num_stuff + 1, sizeof (int));
       CHECK_ALLOC (refs, NULL);
 
       ref_itr = sen->refs->head;
@@ -371,12 +372,12 @@ sentence_copy_to_data (sentence * sen)
 
 	  sen = ref_itr->value;
 	  line_num = sen->line_num;
-	  refs[i++] = line_num;
+	  refs[i++] = (short) line_num;
 	}
     }
   else
     {
-      refs = (int *) calloc (1, sizeof (int));
+      refs = (short *) calloc (1, sizeof (int));
       CHECK_ALLOC (refs, NULL);
     }
 

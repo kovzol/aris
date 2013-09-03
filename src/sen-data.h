@@ -50,7 +50,7 @@ struct sen_data {
   int depth;         // The depth of this sentence.  0 for all top levels.
   int * indices;     // The line numbers of the subproofs that contain this sentence.
 
-  int * refs;            // A list of sentences that are references.
+  short * refs;            // A list of sentences that are references.
 
   unsigned char * file;   // The file name if lemma is used on this sentence.
 };
@@ -60,7 +60,7 @@ struct sen_data {
 #define DEPTH_DEFAULT -2
 
 sen_data * sen_data_init (int line_num, int rule, unsigned char * text,
-			  int * refs, int premise, unsigned char * file,
+			  short * refs, int premise, unsigned char * file,
 			  int subproof, int depth, unsigned char * sexpr);
 void sen_data_destroy (sen_data * sd);
 

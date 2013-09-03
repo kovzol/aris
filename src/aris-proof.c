@@ -1162,9 +1162,10 @@ aris_proof_import_proof (aris_proof * ap)
     }
 
   item_t * ev_itr, * pf_itr, * ev_conc = NULL;
-  int * refs = NULL, ref_num = 0;
+  int ref_num = 0;
+  short * refs;
 
-  refs = (int *) calloc (proof->everything->num_stuff, sizeof (int));
+  refs = (short *) calloc (proof->everything->num_stuff, sizeof (int));
   CHECK_ALLOC (refs, -1);
 
   for (pf_itr = proof->everything->head; pf_itr;
@@ -1196,7 +1197,7 @@ aris_proof_import_proof (aris_proof * ap)
 
 	  if (!strcmp (ev_text, pf_text))
 	    {
-	      refs[ref_num++] = ev_sen->line_num;
+	      refs[ref_num++] = (short) ev_sen->line_num;
 	      break;
 	    }
 	}
@@ -1207,7 +1208,7 @@ aris_proof_import_proof (aris_proof * ap)
 	  sen_chk = aris_proof_create_sentence (ap, sd);
 	  if (!sen_chk)
 	    return -1;
-	  refs[ref_num++] = sen_chk->line_num;
+	  refs[ref_num++] = (short) sen_chk->line_num;
 	}
     }
 

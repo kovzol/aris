@@ -22,6 +22,7 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+#include <malloc.h>
 #include <libxml/xmlwriter.h>
 #include <libxml/xmlreader.h>
 
@@ -34,7 +35,9 @@
 #include "process.h"
 
 #define XML_ERR(r) {fprintf (stderr, "XML Error\n"); return r;}
-#define PRINT_LINE() {printf ("%i\n", __LINE__);}
+#define IF_FREE(p) if (p) free (p); p = NULL;
+//#define PRINT_ALLOC() {struct mallinfo mal = mallinfo (); fprintf (stderr, "%i: blks == %i\n", __LINE__, mal.uordblks); }
+#define PRINT_ALLOC()
 
 /* Gets the first attribute from an xml stream.
  *  input:
@@ -366,6 +369,8 @@ aio_open (const char * file_name)
   if (!proof)
     return NULL;
 
+  PRINT_ALLOC ();
+
   xml = xmlReaderForFile (file_name, NULL, 0);
   if (!xml)
     {
@@ -384,6 +389,8 @@ aio_open (const char * file_name)
       XML_ERR (NULL);
     }
 
+  PRINT_ALLOC ();
+
   buffer = xmlTextReaderName (xml);
   if (!buffer)
     {
@@ -397,6 +404,8 @@ aio_open (const char * file_name)
 
   free (buffer);
 
+  PRINT_ALLOC ();
+
   buffer = aio_get_first_attribute (xml, &name);
   if (buffer)
     {
@@ -407,7 +416,10 @@ aio_open (const char * file_name)
 	}
     }
 
-  if (name)  free (name);
+  IF_FREE (name);
+  IF_FREE (buffer);
+
+  PRINT_ALLOC ();
 
   // Get the <goals> tag.
   ret = xmlTextReaderRead (xml);
@@ -422,6 +434,8 @@ aio_open (const char * file_name)
       XML_ERR (NULL);
     }
 
+  PRINT_ALLOC ();
+
   buffer = xmlTextReaderName (xml);
   if (!buffer)
     {
@@ -435,6 +449,8 @@ aio_open (const char * file_name)
 
   free (buffer);
 
+  PRINT_ALLOC ();
+
   ret = xmlTextReaderRead (xml);
   if (ret < 0)
     {
@@ -446,6 +462,8 @@ aio_open (const char * file_name)
     {
       XML_ERR (NULL);
     }
+
+  PRINT_ALLOC ();
 
   // Read the goals.
 
@@ -468,6 +486,7 @@ aio_open (const char * file_name)
 
 	  if (!strcmp ((const char *) buffer, GOAL_ENTRY))
 	    {
+	      free (buffer);
 	      buffer = aio_get_first_attribute (xml, &name);
 	      if (!buffer
 		  || (strcmp (name, TEXT_DATA) && strcmp (name, ALT_TEXT_DATA)))
@@ -475,7 +494,7 @@ aio_open (const char * file_name)
 		  XML_ERR (NULL);
 		}
 
-	      if (name)  free (name);
+	      IF_FREE (name);
 
 	      item_t * ret_itm;
 	      ret_itm = ls_push_obj (proof->goals, buffer);
@@ -489,6 +508,7 @@ aio_open (const char * file_name)
 		{
 		  XML_ERR (NULL);
 		}
+	      free (buffer);
 	      break;
 	    }
 	  else
@@ -503,6 +523,8 @@ aio_open (const char * file_name)
 	    }
 	}
     }
+
+  PRINT_ALLOC ();
 
   int line = 1;
 
@@ -524,6 +546,8 @@ aio_open (const char * file_name)
     }
 
   free (buffer);
+
+  PRINT_ALLOC ();
 
   ret = xmlTextReaderRead (xml);
   if (ret < 0)
@@ -549,6 +573,8 @@ aio_open (const char * file_name)
 	{
 	  sen_data * sd;
 	  int line_num;
+
+	  free (buffer);
 
 	  buffer = aio_get_first_attribute (xml, &name);
 	  if (!buffer
@@ -581,6 +607,8 @@ aio_open (const char * file_name)
 	  if (!sd)
 	    return NULL;
 
+	  free (buffer);
+
 	  item_t * itm;
 	  itm = ls_push_obj (proof->everything, sd);
 	  if (!itm)
@@ -593,6 +621,7 @@ aio_open (const char * file_name)
 	    {
 	      XML_ERR (NULL);
 	    }
+	  free (buffer);
 	  break;
 	}
       else
@@ -605,6 +634,8 @@ aio_open (const char * file_name)
 	  XML_ERR (NULL);
 	}
     }
+
+  PRINT_ALLOC ();
 
   ret = xmlTextReaderRead (xml);
   if (ret < 0)
@@ -625,6 +656,8 @@ aio_open (const char * file_name)
 
   free (buffer);
 
+  PRINT_ALLOC ();
+
   ret = xmlTextReaderRead (xml);
   if (ret < 0)
     {
@@ -636,6 +669,8 @@ aio_open (const char * file_name)
     {
       XML_ERR (NULL);
     }
+
+  PRINT_ALLOC ();
 
   if (depth == 2)
     {
@@ -656,183 +691,214 @@ aio_open (const char * file_name)
 	  if (!strcmp ((const char *) buffer, CONCLUSION_TAG))
 	    {
 	      //printf ("Got Closing conclusion tag\n");
+	      free (buffer);
 	      break;
 	    }
 
-	  if (!strcmp ((const char *) buffer, SENTENCE_ENTRY))
+	  int str_cmp = strcmp ((const char *) buffer, SENTENCE_ENTRY);
+	  free (buffer);
+
+	  if (str_cmp)
+	    continue;
+
+	  int attrs;
+	  sen_data * sd;
+	  int line_num, rule, i, ref_len, num_refs, sen_depth;
+	  short * refs;
+	  unsigned char * file, * text;
+
+	  rule = -1;
+	  sen_depth = 0;
+	  file = text = NULL;
+
+	  attrs = xmlTextReaderAttributeCount (xml);
+	  if (attrs < 0)
 	    {
-	      int attrs;
-	      sen_data * sd;
-	      int line_num, rule, * refs, i, ref_len, num_refs, sen_depth;
-	      unsigned char * file, * text;
+	      XML_ERR (NULL);
+	    }
 
-	      rule = -1;
-	      sen_depth = 0;
-	      file = text = NULL;
+	  // Get the line number.
 
-	      attrs = xmlTextReaderAttributeCount (xml);
-	      if (attrs < 0)
+	  buffer = aio_get_first_attribute (xml, &name);
+	  if (!buffer
+	      || (strcmp (name, LINE_DATA) && strcmp (name, ALT_LINE_DATA)))
+	    {
+	      XML_ERR (NULL);
+	    }
+
+	  IF_FREE (name);
+
+	  ret = sscanf ((const char *) buffer, "%i", &line_num);
+	  if (ret != 1)
+	    {
+	      XML_ERR (NULL);
+	    }
+
+	  PRINT_ALLOC ();
+	  IF_FREE (buffer);
+
+	  // Get the rule index.
+
+	  int j;
+	  int got_rule, got_text, got_refs, got_file, got_depth;
+
+	  got_rule = got_text = got_refs = got_file = got_depth = 0;
+
+	  PRINT_ALLOC ();
+
+	  while (xmlTextReaderMoveToNextAttribute (xml))
+	    {
+	      IF_FREE (name);
+	      IF_FREE (buffer);
+
+	      PRINT_ALLOC ();
+
+	      name = xmlTextReaderName (xml);
+	      if (!name)
+		XML_ERR (NULL);
+
+	      buffer = xmlTextReaderValue (xml);
+	      if (!buffer)
+		XML_ERR (NULL);
+
+	      if (!strcmp (name, RULE_DATA) || !strcmp (name, ALT_RULE_DATA))
 		{
-		  XML_ERR (NULL);
-		}
-
-	      // Get the line number.
-
-	      buffer = aio_get_first_attribute (xml, &name);
-	      if (!buffer
-		  || (strcmp (name, LINE_DATA) && strcmp (name, ALT_LINE_DATA)))
-		{
-		  XML_ERR (NULL);
-		}
-
-	      if (name)  free (name);
-	      name = NULL;
-
-	      ret = sscanf ((const char *) buffer, "%i", &line_num);
-	      if (ret != 1)
-		{
-		  XML_ERR (NULL);
-		}
-
-	      // Get the rule index.
-
-	      int j;
-	      int got_rule, got_text, got_refs, got_file, got_depth;
-
-	      got_rule = got_text = got_refs = got_file = got_depth = 0;
-
-	      while (xmlTextReaderMoveToNextAttribute (xml))
-		{
-		  if (name)  free (name);
-		  name = NULL;
-
-		  name = xmlTextReaderName (xml);
-		  if (!name)
+		  if (got_rule)
 		    XML_ERR (NULL);
 
-		  buffer = xmlTextReaderValue (xml);
-		  if (!buffer)
+		  ret = sscanf ((const char *) buffer, "%i", &rule);
+		  if (ret != 1)
 		    XML_ERR (NULL);
 
-		  if (!strcmp (name, RULE_DATA) || !strcmp (name, ALT_RULE_DATA))
+		  got_rule = 1;
+		  PRINT_ALLOC ();
+		  continue;
+		}
+
+	      if (!strcmp (name, REF_DATA) || !strcmp (name, ALT_REF_DATA))
+		{
+		  if (got_refs)
+		    XML_ERR (NULL);
+
+		  i = num_refs = 0;
+		  //ref_len = strlen ((const char *) buffer);
+
+		  for (; buffer[i]; i++)
+		    if (buffer[i] == ',')
+		      num_refs ++;
+
+		  num_refs++;
+		  refs = (short *) calloc (num_refs + 1, sizeof (int));
+		  CHECK_ALLOC (refs, NULL);
+
+		  int old_i = -1, k = 0;
+
+		  for (i = 0; buffer[i]; i++)
 		    {
-		      if (got_rule)
-			XML_ERR (NULL);
+		      if (buffer[i] == ',')
+			{
+			  ret = sscanf ((const char *) buffer + old_i + 1, "%i",
+					&(refs[k]));
+			  if (ret != 1)
+			    {
+			      XML_ERR (NULL);
+			    }
 
-		      ret = sscanf ((const char *) buffer, "%i", &rule);
-		      if (ret != 1)
-			XML_ERR (NULL);
-
-		      got_rule = 1;
-		      continue;
+			  k++;
+			  old_i = i;
+			}
 		    }
 
-		  if (!strcmp (name, REF_DATA) || !strcmp (name, ALT_REF_DATA))
+		  if (old_i >= 0 || num_refs == 1)
 		    {
-		      if (got_refs)
-			XML_ERR (NULL);
-
-		      i = num_refs = 0;
-		      ref_len = strlen ((const char *) buffer);
-
-		      for (; i < ref_len; i++)
-			if (buffer[i] == ',')
-			  num_refs ++;
-
-		      num_refs++;
-		      refs = (int *) calloc (num_refs, sizeof (int));
-		      CHECK_ALLOC (refs, NULL);
-
-		      int old_i = -1, k = 0;
-
-		      for (i = 0; i < ref_len; i++)
-			{
-			  if (buffer[i] == ',')
-			    {
-			      ret = sscanf ((const char *) buffer + old_i + 1, "%i",
-					    &(refs[k]));
-			      if (ret != 1)
-				{
-				  XML_ERR (NULL);
-				}
-
-			      k++;
-			      old_i = i;
-			    }
-			}
-
 		      ret = sscanf ((const char *) buffer + old_i + 1,
 				    "%i", &(refs[k]));
 		      if (ret < 0 && ret != EOF)
 			{
 			  XML_ERR (NULL);
 			}
-
-		      refs[k+1] = -1;
-
-		      got_refs = 1;
-		      continue;
+		      k++;
 		    }
 
-		  if (!strcmp (name, DEPTH_DATA))
-		    {
-		      if (got_depth)
-			XML_ERR (NULL);
+		  refs[k] = -1;
 
-		      ret = sscanf (buffer, "%i", &sen_depth);
-		      if (ret != 1)
-			XML_ERR (NULL);
-
-		      got_depth = 1;
-		      continue;
-		    }
-
-		  if (!strcmp (name, FILE_DATA) || !strcmp (name, ALT_FILE_DATA))
-		    {
-		      if (got_file)
-			XML_ERR (NULL);
-
-		      if (buffer[0] == '\0')
-			file = NULL;
-		      else
-			file = buffer;
-
-		      got_file = 1;
-		      continue;
-		    }
-
-		  if (!strcmp (name, TEXT_DATA) || !strcmp (name, ALT_TEXT_DATA))
-		    {
-		      if (got_text)
-			XML_ERR (NULL);
-
-		      text = buffer;
-
-		      got_text = 1;
-		      continue;
-		    }
+		  got_refs = 1;
+		  continue;
 		}
 
-	      if (name)  free (name);
-	      name = NULL;
+	      if (!strcmp (name, DEPTH_DATA))
+		{
+		  if (got_depth)
+		    XML_ERR (NULL);
 
-	      int sub = 0, old_depth;
-	      old_depth = ((sen_data *) proof->everything->tail->value)->depth;
-	      if (sen_depth > old_depth)
-		sub = 1;
+		  ret = sscanf (buffer, "%i", &sen_depth);
+		  if (ret != 1)
+		    XML_ERR (NULL);
 
-	      sd = sen_data_init (line++, rule, text, refs, 0,
-				  file, sub, sen_depth, NULL);
-	      if (!sd)
-		XML_ERR (NULL);
+		  got_depth = 1;
+		  PRINT_ALLOC ();
+		  continue;
+		}
 
-	      item_t * itm;
-	      itm = ls_push_obj (proof->everything, sd);
-	      if (!itm)
-		return NULL;
+	      if (!strcmp (name, FILE_DATA) || !strcmp (name, ALT_FILE_DATA))
+		{
+		  if (got_file)
+		    XML_ERR (NULL);
+
+		  if (buffer[0] == '\0')
+		    {
+		      file = NULL;
+		    }
+		  else
+		    {
+		      file = strdup (buffer);
+		      CHECK_ALLOC (file, NULL);
+		    }
+
+		  got_file = 1;
+		  continue;
+		}
+
+	      if (!strcmp (name, TEXT_DATA) || !strcmp (name, ALT_TEXT_DATA))
+		{
+		  if (got_text)
+		    XML_ERR (NULL);
+
+		  text = strdup (buffer);
+		  CHECK_ALLOC (text, NULL);
+
+		  got_text = 1;
+		  continue;
+		}
 	    }
+
+	  PRINT_ALLOC ();
+
+	  IF_FREE (name);
+
+	  int sub = 0, old_depth;
+	  old_depth = ((sen_data *) proof->everything->tail->value)->depth;
+	  if (sen_depth > old_depth)
+	    sub = 1;
+
+	  sd = sen_data_init (line++, rule, text, refs, 0,
+			      file, sub, sen_depth, NULL);
+	  if (!sd)
+	    XML_ERR (NULL);
+
+	  IF_FREE (text);
+	  IF_FREE (file);
+
+	  item_t * itm;
+	  itm = ls_push_obj (proof->everything, sd);
+	  if (!itm)
+	    return NULL;
+
+	  PRINT_ALLOC ();
 	}
     }
+
+  PRINT_ALLOC ();
 
   xmlFreeTextReader (xml);
 

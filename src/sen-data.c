@@ -45,7 +45,7 @@
  */
 sen_data *
 sen_data_init (int line_num, int rule, unsigned char * text,
-	       int * refs, int premise, unsigned char * file,
+	       short * refs, int premise, unsigned char * file,
 	       int subproof, int depth, unsigned char * sexpr)
 {
   sen_data * sd;
@@ -60,30 +60,40 @@ sen_data_init (int line_num, int rule, unsigned char * text,
 
   if (text)
     {
+      sd->text = strdup (text);
+      CHECK_ALLOC (sd->text, NULL);
+      /*
       int text_len;
       text_len = strlen (text);
       sd->text = (unsigned char *) calloc (text_len + 1,
 					   sizeof (char));
-      CHECK_ALLOC (sd->text, NULL);
       strcpy (sd->text, text);
+      */
     }
 
   if (file)
     {
+      sd->file = strdup (file);
+      CHECK_ALLOC (sd->file, NULL);
+      /*
       int file_len;
       file_len = strlen (file);
 
       sd->file = (unsigned char *) calloc (file_len + 1,
 					   sizeof (char));
-      CHECK_ALLOC (sd->file, NULL);
+
       strcpy (sd->file, file);
+      */
     }
 
   if (sexpr)
     {
-      sd->sexpr = (unsigned char *) calloc (strlen (sexpr) + 1, sizeof (char));
+      sd->sexpr = strdup (sexpr);
       CHECK_ALLOC (sd->sexpr, NULL);
+      /*
+      sd->sexpr = (unsigned char *) calloc (strlen (sexpr) + 1, sizeof (char));
       strcpy (sd->sexpr, sexpr);
+      */
     }
 
   sd->refs = refs;
