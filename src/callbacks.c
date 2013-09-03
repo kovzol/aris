@@ -1002,7 +1002,7 @@ gui_customize_show (GtkWidget * window)
   conf_obj * confs[] = {main_menu_conf, goal_menu_conf,
 			 display_conf, grade_conf};
 
-  int sizes[] = {25, 5, 10, 2};
+  int sizes[] = {NUM_CONF_MENUS-1, NUM_GOAL_MENUS, NUM_DISPLAY_CONFS, NUM_GRADE_CONFS};
   char * labels[] = {_("Main Keys"), _("Goal Keys"), _("Display"), _("Grade Server")};
 
   // Run it for all of the configuration tables.

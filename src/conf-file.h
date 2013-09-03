@@ -65,6 +65,16 @@ enum CONF_MENU_ID {
   NUM_CONF_MENUS
 };
 
+enum CONF_GRADE_ID {
+  CONF_GRADE_IP = 0,
+  CONF_GRADE_PASS,
+  CONF_GRADE_DIR,
+  NUM_GRADE_CONFS
+};
+
+#define NUM_GOAL_MENUS 5
+#define NUM_DISPLAY_CONFS 10
+
 /* The structure for a configuration object. */
 struct conf_object {
   char * label;        // The label of the object.
@@ -188,7 +198,7 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
 
 /* The goal menu configuration objects */
 
-static conf_obj goal_menu_conf[5] = {
+static conf_obj goal_menu_conf[NUM_GOAL_MENUS] = {
   {"Add Goal", "Add a new goal for this proof.", NULL, CONF_OBJ_MENU,
    MENU_ADD_PREM, conf_menu_value, GTK_STOCK_ADD},
 
@@ -208,18 +218,21 @@ static conf_obj goal_menu_conf[5] = {
 
 /* The internal configuration objects */
 
-static conf_obj grade_conf[2] = {
+static conf_obj grade_conf[NUM_GRADE_CONFS] = {
   {N_("Grade IP"),
    N_("The IP Address of the Grading Server to Submit proofs to."),
-   NULL, CONF_OBJ_GRADE, 0, conf_grade_value, NULL},
+   NULL, CONF_OBJ_GRADE, CONF_GRADE_IP, conf_grade_value, NULL},
   {N_("Grade Password"),
    N_("The Password of the Grading Server."),
-   NULL, CONF_OBJ_GRADE, 1, conf_grade_value, NULL}
+   NULL, CONF_OBJ_GRADE, CONF_GRADE_PASS, conf_grade_value, NULL},
+  {N_("Grade Directory"),
+   N_("The directory of the Grading Server."),
+   NULL, CONF_OBJ_GRADE, CONF_GRADE_DIR, conf_grade_value, NULL}
 };
 
 /* The display configuration objects */
 
-static conf_obj display_conf[10] = {
+static conf_obj display_conf[NUM_DISPLAY_CONFS] = {
   {N_("Font Small Preset"),
    N_("The preset font size of the small option."), NULL,
    CONF_OBJ_FONT, FONT_TYPE_SMALL, conf_font_value, NULL},
@@ -342,6 +355,7 @@ static const char * config_default ="\
 (color-pref \'Good\' 007f00)\n\
 (color-pref \'Selection\' ff0d00)\n\
 (grade \'ip\' \'127.0.0.1\')\n\
-(grade \'pass\' \'islegion\')\n";
+(grade \'pass\' \'islegion\')\n\
+(grade \'dir\' \'.\')\n";
 
 #endif /*  ARIS_CONF_FILE_H  */

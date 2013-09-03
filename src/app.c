@@ -770,6 +770,22 @@ ftp_connect (char * ip_addr)
       return NULL;
     }
 
+  char * dir_buf;
+  dir_buf = (char * ) calloc (strlen (the_app->grade_dir) + 6,
+			      sizeof (char));
+  CHECK_ALLOC (dir_buf, NULL);
+
+  sprintf (dir_buf, "CWD %s\n", the_app->grade_dir);
+
+  ftp_send_cmd (ret, dir_buf);
+  free (dir_buf);
+  ret_chk = ftp_get_response (ret, NULL);
+  if (ret_chk != 250)
+    {
+      FTP_QUIT (ret);
+      return NULL;
+    }
+
   return ret;
 }
 

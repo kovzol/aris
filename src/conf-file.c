@@ -29,6 +29,8 @@
 #include "app.h"
 
 
+#define READ_GRADE_ENT(c,s,k,a) if (!strcmp (c,s)) { if (a) { free (a); a = NULL; } a = strdup (k); }
+
 /* Reads from the configuration file.
  *  input:
  *   file - the configuration file to read from.
@@ -159,34 +161,13 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  sscanf (cur_conf, "(grade \'%[^\']\' \'%[^\']\')",
 		  cmd, key);
 
-	  if (!strcmp (cmd, "ip"))
-	    {
-	      if (app->ip_addr)
-		{
-		  free (app->ip_addr);
-		  app->ip_addr = NULL;
-		}
-
-	      app->ip_addr = strdup (key);
-	    }
-	  else if (!strcmp (cmd, "pass"))
-	    {
-	      if (app->grade_pass)
-		{
-		  free (app->grade_pass);
-		  app->grade_pass = NULL;
-		}
-
-	      app->grade_pass = strdup (key);
-	    }
+	  READ_GRADE_ENT (cmd, "ip", key, app->ip_addr);
+	  READ_GRADE_ENT (cmd, "pass", key, app->grade_pass);
+	  READ_GRADE_ENT (cmd, "dir", key, app->grade_dir);
 
 	  free (cmd);
 	  free (key);
 
-	  /*
-	  app->ip_addr = strdup (ip);
-	  free (ip);
-	  */
 	  pos = tmp_pos + 2;
 	  free (cur_conf);
 	  continue;
@@ -357,15 +338,21 @@ conf_grade_value (conf_obj * obj, int get)
     {
       GtkEntryBuffer * buffer;
 
-      if (!strcmp (obj->label, "Grade IP"))
+      switch (obj->id)
 	{
+	case CONF_GRADE_IP:
 	  buffer = gtk_entry_buffer_new (the_app->ip_addr,
 					 strlen (the_app->ip_addr));
-	}
-      else if (!strcmp (obj->label, "Grade Password"))
-	{
+	  break;
+	case CONF_GRADE_PASS:
 	  buffer = gtk_entry_buffer_new (the_app->grade_pass,
 					 strlen (the_app->grade_pass));
+	  break;
+
+	case CONF_GRADE_DIR:
+	  buffer = gtk_entry_buffer_new (the_app->grade_dir,
+					 strlen (the_app->grade_dir));
+	  break;
 	}
 
       obj->widget = gtk_entry_new_with_buffer (buffer);
