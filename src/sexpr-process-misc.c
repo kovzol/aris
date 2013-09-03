@@ -70,10 +70,12 @@ process_misc (unsigned char * conc, vec_t * prems, const char * rule, vec_t * va
 
   if (!strcmp (rule, "in"))
     {
-      if (prems->num_stuff != 1)
-	return _("Induction requires one (1) reference.");
+      if (prems->num_stuff != 2)
+	return _("Induction requires two (2) references.");
 
-      ret = proc_in (vec_str_nth (prems, 0), conc);
+      ret = proc_in (vec_str_nth (prems, 0),
+		     vec_str_nth (prems, 1),
+		     conc, vars);
       if (!ret)
 	return NULL;
     }
@@ -613,9 +615,26 @@ proc_sq (unsigned char * conc, vec_t * vars)
 }
 
 char *
-proc_in (unsigned char * prem, unsigned char * conc)
+proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, vec_t * vars)
 {
   unsigned char * c_scope, * c_var, c_quant[S_CL + 1];
+
+  unsigned char * sh_sen, * ln_sen;
+  int p0_len, p1_len;
+
+  p0_len = strlen (prem_0);
+  p1_len = strlen (prem_1);
+
+  if (p0_len < p1_len)
+    {
+      sh_sen = prem_0;
+      ln_sen = prem_1;
+    }
+  else
+    {
+      sh_sen = prem_1;
+      ln_sen = prem_0;
+    }
 
   c_scope = sexpr_elim_quant (conc, c_quant, &c_var);
   if (!c_scope)
@@ -682,8 +701,19 @@ proc_in (unsigned char * prem, unsigned char * conc)
   free (z_scope);
   free (c_var);
 
-  chk = !strcmp (in_str, prem);
+  unsigned char * oth_str;
+  alloc_size = p0_len + p1_len + 4 + S_CL;
+  oth_str = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+  CHECK_ALLOC (oth_str, NULL);
+
+  sprintf (oth_str, "(%s %s %s)", S_AND, sh_sen, ln_sen);
+
+  char * ret_str = proc_ug (oth_str, in_str, vars);
+
+  free (oth_str);
   free (in_str);
+
+  chk = (ret_str == CORRECT);
 
   if (chk)
     return CORRECT;

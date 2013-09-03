@@ -159,5 +159,5 @@ char * proc_sp (unsigned char * prem_0, unsigned char * prem_1, unsigned char * 
 
 char * proc_sq (unsigned char * conc, vec_t * vars);
 
-char * proc_in (unsigned char * prem, unsigned char * conc);
+char * proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, vec_t * vars);
 #endif  /*  ARIS_SEXPR_PROCESS_H  */
