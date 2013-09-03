@@ -758,7 +758,7 @@ ftp_connect (char * ip_addr)
 			      sizeof (char));
   CHECK_ALLOC (pass_buf, NULL);
 
-  sprintf (pass_buf, "PASS %s\n", the_app->grade_pass);
+  sprintf (pass_buf, "PASS %s", the_app->grade_pass);
 
   ftp_send_cmd (ret, pass_buf);
   free (pass_buf);
@@ -775,11 +775,12 @@ ftp_connect (char * ip_addr)
 			      sizeof (char));
   CHECK_ALLOC (dir_buf, NULL);
 
-  sprintf (dir_buf, "CWD %s\n", the_app->grade_dir);
+  sprintf (dir_buf, "CWD %s", the_app->grade_dir);
 
   ftp_send_cmd (ret, dir_buf);
   free (dir_buf);
   ret_chk = ftp_get_response (ret, NULL);
+
   if (ret_chk != 250)
     {
       FTP_QUIT (ret);
