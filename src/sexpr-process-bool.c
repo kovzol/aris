@@ -80,21 +80,10 @@ proc_bi (unsigned char * prem, unsigned char * conc)
   // Standard long-short sentence setup.
 
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len, l_len;
+  int l_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len > c_len)
-    {
-      ln_sen = prem;  l_len = p_len;
-      sh_sen = conc;
-    }
-  else
-    {
-      ln_sen = conc;  l_len = c_len;
-      sh_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+  l_len = strlen (ln_sen);
 
   int i;
   i = find_difference (ln_sen, sh_sen);
@@ -255,21 +244,10 @@ char *
 proc_bd (unsigned char * prem, unsigned char * conc)
 {
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len, l_len;
+  int l_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len > c_len)
-    {
-      ln_sen = prem;  l_len = p_len;
-      sh_sen = conc;
-    }
-  else
-    {
-      ln_sen = conc;  l_len = c_len;
-      sh_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+  l_len = strlen (ln_sen);
 
   int i;
   i = find_difference (ln_sen, sh_sen);
@@ -368,21 +346,10 @@ char *
 proc_bn (unsigned char * prem, unsigned char * conc)
 {
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len, l_len;
+  int l_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len > c_len)
-    {
-      ln_sen = prem;  l_len = p_len;
-      sh_sen = conc;
-    }
-  else
-    {
-      ln_sen = conc;  l_len = c_len;
-      sh_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+  l_len = strlen (ln_sen);
 
   int i;
   i = find_difference (ln_sen, sh_sen);
@@ -466,21 +433,10 @@ char *
 proc_sn (unsigned char * prem, unsigned char * conc)
 {
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len, l_len;
+  int l_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len > c_len)
-    {
-      ln_sen = prem;  l_len = p_len;
-      sh_sen = conc;
-    }
-  else
-    {
-      ln_sen = conc;  l_len = c_len;
-      sh_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+  l_len = strlen (ln_sen);
 
   int i;
   i = find_difference (ln_sen, sh_sen);
