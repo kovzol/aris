@@ -22,11 +22,21 @@
 #include "var.h"
 #include "list.h"
 
+/* Gets a sentence part from a sexpr.
+ *  input:
+ *   in_str - the input string.
+ *   init_pos - the initial position within in_str.
+ *   out_str - the string that receives the new sentence part, if any.
+ *  output:
+ *   the position in in_str of the end of the part, or -1 on memory error.
+ */
 int
 sexpr_get_part (unsigned char * in_str, unsigned int init_pos, unsigned char ** out_str)
 {
-  int fin_pos = 0;
+  int fin_pos = init_pos;
   int tmp_pos;
+
+  *out_str = NULL;
 
   switch (in_str[init_pos])
     {
@@ -88,7 +98,32 @@ sexpr_cdr (unsigned char * in_str)
 
   return out_str;
 }
-  
+
+/* Places sentences based on their lengths.
+ *  input:
+ *  output:
+ */
+void
+sen_put_len (unsigned char * in0,
+	     unsigned char * in1,
+	     unsigned char ** sh_sen,
+	     unsigned char ** ln_sen)
+{
+  int len0, len1;
+  len0 = strlen (in0);
+  len1 = strlen (in1);
+
+  if (len0 > len1)
+    {
+      *sh_sen = in1;
+      *ln_sen = in0;
+    }
+  else
+    {
+      *sh_sen = in0;
+      *ln_sen = in1;
+    }
+}
 
 /* Checks for a negation on a sexpr string.
  *  input:
@@ -199,41 +234,17 @@ sexpr_get_generalities (unsigned char * in_str, unsigned char * conn, vec_t * ve
       int tmp_pos;
       unsigned char * tmp_str;
 
-      switch (in_str[pos])
+      tmp_pos = sexpr_get_part (in_str, pos, &tmp_str);
+      if (tmp_pos == -1)
+	return -1;
+
+      if (tmp_str)
 	{
-	case '(':
-	  tmp_pos = parse_parens (in_str, pos, &tmp_str);
-	  if (tmp_pos == -2)
-	    return -1;
-
 	  ret_chk = vec_str_add_obj (vec, tmp_str);
-	  if (ret_chk < 0)
+	  if (ret_chk == -1)
 	    return -1;
-
-	  pos = tmp_pos + 1;
-	  break;
-
-	case ' ':
-	  pos++;
-	  break;
-
-	default:
-	  tmp_pos = pos;
-	  while (in_str[tmp_pos] != ' ' && in_str[tmp_pos] != ')')
-	    tmp_pos++;
-
-	  tmp_str = (unsigned char *) calloc (tmp_pos - pos + 1, sizeof (char));
-	  CHECK_ALLOC (tmp_str, -1);
-	  strncpy (tmp_str, in_str + pos, tmp_pos - pos);
-	  tmp_str[tmp_pos - pos] = '\0';
-
-	  ret_chk = vec_str_add_obj (vec, tmp_str);
-	  if (ret_chk < 0)
-	    return -1;
-
-	  pos = tmp_pos;
-	  break;
 	}
+      pos = tmp_pos;
     }
 
   return vec->num_stuff;
@@ -487,6 +498,11 @@ sexpr_elim_quant (unsigned char * in_str, unsigned char * quant,
   tmp_pos = parse_parens (in_str, 1, &tmp_str);
   if (tmp_pos == -2)
     return NULL;
+  if (!tmp_str || tmp_pos < 0)
+    {
+      if (tmp_str) free (tmp_str);
+      return "\0";
+    }
   free (tmp_str);
 
   strncpy (quant, in_str + 2, S_CL);

@@ -44,6 +44,9 @@ unsigned char * sexpr_car (unsigned char * in_str);
 
 unsigned char * sexpr_cdr (unsigned char * in_str);
 
+void sen_put_len (unsigned char * in0, unsigned char * in1,
+		  unsigned char ** sh_sen, unsigned char ** ln_sen);
+
 int sexpr_not_check (unsigned char * in_str);
 
 unsigned char * sexpr_add_not (unsigned char * in_str);
