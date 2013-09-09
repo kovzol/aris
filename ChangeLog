@@ -1,3 +1,57 @@
+2013-09-09  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-bool.c (proc_bi): Implemented sen_put_len.
+	(proc_bd): Same.
+	(proc_bn): Same.
+	(proc_sn): Same.
+
+	* sexpr-process-equiv.c (proc_im): Implemented sen_put_len.
+	(proc_as): Same.
+	(proc_dt): Same.
+	(proc_eq): Same.
+	(proc_dn): Same.
+	(proc_sb): Same.
+
+	* sexpr-process.c (sen_put_len): Added to put sentences by
+	length.
+
+2013-09-05  Ian Dunn <dunni@gnu.org>
+
+	* callbacks.c (evaluate_line): Implements sen_convert_sexpr.
+
+	* aris-proof.c: Fixed up some memory leaks.
+
+	* sentence.c: Fixed up some memory leaks.
+
+	* sen-data.c (sen_convert_sexpr): Added sen_convert_sexpr.
+
+2013-09-03  Ian Dunn  <dunni@gnu.org>
+
+	* conf-file.c (conf_file_read): Checks for grade dir.
+	(conf_grade_value): Same.
+
+	* conf-file.h: Added enums for each conf type.
+
+	* callbacks.c (gui_customize_show): Changed to check enums
+	for number of entries.
+
+	* app.c (ftp_connect): Uses grade_dir entry.
+
+	* app.h: Added grade_dir member of app struct.
+
+	* aris-proof.c (aris_proof_import_proof): Changed to use
+	short pointer for refs.
+
+	* sentence.c (sentence_copy_to_data): Changed to use short
+	pointer.
+
+	* sen-data.h: Changed sd->refs to short pointer.
+
+	* sen-data.c (sen_data_init): Takes refs as a short pointer.
+
+	* aio.c (aio_open): Changed refs to a short pointer.
+	Fixed up several memory leaks.
+
 2013-08-29  Ian Dunn  <dunni@gnu.org>
 
 	* app.h: Added grade_pass member of app struct.
