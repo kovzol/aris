@@ -37,6 +37,34 @@
 
 #include "sexpr-process.h"
 #include "vec.h"
+#include <stdarg.h>
+
+unsigned char *
+construct_other (unsigned char * main_str,
+		 int init_pos,
+		 int fin_pos,
+		 int alloc_size,
+		 char * template,
+		 ...)
+{
+  unsigned char * oth_sen;
+  int oth_pos = init_pos;
+  va_list args;
+
+  va_start (args, template);
+
+  oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+  CHECK_ALLOC (oth_sen, NULL);
+  strncpy (oth_sen, main_str, oth_pos);
+
+  oth_pos += vsprintf (oth_sen + oth_pos, template, args);
+
+  strcpy (oth_sen + oth_pos, main_str + fin_pos);
+
+  va_end (args);
+
+  return oth_sen;
+}
 
 int
 recurse_co (unsigned char * sen_0, unsigned char * sen_1)
@@ -582,17 +610,13 @@ proc_im (unsigned char * prem, unsigned char * conc)
   // Construct what should be the other sentence.
 
   unsigned char * oth_sen;
-  int oth_pos;
+  oth_sen = construct_other (dis_sen, i - 1, tmp_pos, d_len - 3 - S_NL,
+			     "%s %s %s", S_CON, n_lsen, rsen);
+  if (!oth_sen)
+    return NULL;
 
-  oth_sen = (unsigned char * ) calloc (d_len - 2 - S_NL, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, dis_sen, i - 1);
-  oth_pos = i - 1;
-
-  oth_pos += sprintf (oth_sen + oth_pos, "%s %s %s", S_CON, n_lsen, rsen);
   free (n_lsen);
   free (rsen);
-  strcpy (oth_sen + oth_pos, dis_sen + tmp_pos);
 
   char * ret_str;
   if (dis_sen == conc)
@@ -901,7 +925,8 @@ proc_as (unsigned char * prem, unsigned char * conc)
 
   ti = find_unmatched_o_paren (ln_sen, ti);
 
-  if (strncmp (ln_sen + ti + 1, S_AND, S_CL) && strncmp (ln_sen + ti + 1, S_OR, S_CL)
+  if (strncmp (ln_sen + ti + 1, S_AND, S_CL)
+      && strncmp (ln_sen + ti + 1, S_OR, S_CL)
       && strncmp (ln_sen + ti + 1, ln_sen + li + 1, S_CL))
     {
       return _("Association must be done on a conjunction or disjunction.");
@@ -1269,20 +1294,18 @@ proc_eq (unsigned char * prem, unsigned char * conc)
     }
 
   unsigned char * cons_sen;
-  int cons_pos, alloc_size;
+  int alloc_size;
 
   alloc_size = b_len + (tmp_pos - (i - 2) + 1) + S_CL + 4;
-  cons_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
-  CHECK_ALLOC (cons_sen, NULL);
-  strncpy (cons_sen, bic_sen, i - 1);
-  cons_pos = i - 1;
+  cons_sen = construct_other (bic_sen, i - 1, tmp_pos, alloc_size,
+			      "%s (%s %s %s) (%s %s %s)",
+			      S_AND, S_CON, lsen, rsen, S_CON, rsen, lsen);
 
-  cons_pos += sprintf (cons_sen, "(%s (%s %s %s) (%s %s %s))",
-		       S_AND, S_CON, lsen, rsen, S_CON, rsen, lsen);
+  if (!cons_sen)
+    return NULL;
+
   free (lsen);
   free (rsen);
-
-  strcpy (cons_sen + cons_pos, bic_sen + tmp_pos);
 
   char * ret_str;
 
