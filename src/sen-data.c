@@ -62,38 +62,18 @@ sen_data_init (int line_num, int rule, unsigned char * text,
     {
       sd->text = strdup (text);
       CHECK_ALLOC (sd->text, NULL);
-      /*
-      int text_len;
-      text_len = strlen (text);
-      sd->text = (unsigned char *) calloc (text_len + 1,
-					   sizeof (char));
-      strcpy (sd->text, text);
-      */
     }
 
   if (file)
     {
       sd->file = strdup (file);
       CHECK_ALLOC (sd->file, NULL);
-      /*
-      int file_len;
-      file_len = strlen (file);
-
-      sd->file = (unsigned char *) calloc (file_len + 1,
-					   sizeof (char));
-
-      strcpy (sd->file, file);
-      */
     }
 
   if (sexpr)
     {
       sd->sexpr = strdup (sexpr);
       CHECK_ALLOC (sd->sexpr, NULL);
-      /*
-      sd->sexpr = (unsigned char *) calloc (strlen (sexpr) + 1, sizeof (char));
-      strcpy (sd->sexpr, sexpr);
-      */
     }
 
   sd->refs = refs;
@@ -144,6 +124,38 @@ sen_data_destroy (sen_data * sd)
   sd->indices = NULL;
 
   free (sd);
+}
+
+int
+sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
+{
+  int ret;
+
+  if (text[0] == '\0')
+    return -2;
+
+  if (!(*sexpr))
+    {
+      ret = check_text (text);
+      if (ret == -1)
+	return -1;
+
+      if (ret != 0)
+	return -2;
+
+      unsigned char * tmp_str, * sexpr_sen;
+      tmp_str = die_spaces_die (text);
+      if (!tmp_str)
+	return -1;
+
+      sexpr_sen = convert_sexpr (tmp_str);
+      if (!sexpr_sen)
+	return -1;
+      free (tmp_str);
+      *sexpr = sexpr_sen;
+    }
+
+  return 0;
 }
 
 /* Evaluates a sentence given its data.
@@ -201,7 +213,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
       return CORRECT;
     }
 
-  if (sd->rule == -1)
+  if (sd->rule == -1 || sd->rule >= NUM_RULES)
     {
       *ret_val = VALUE_TYPE_RULE;
       return _("The sentence is missing a rule.");
@@ -300,19 +312,11 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 	return NULL;
     }
 
-  char * eval_text, * fin_text;
-  if (!sd->sexpr)
-    {
-      eval_text = die_spaces_die (sd->text);
-      if (!eval_text)
-	return NULL;
+  char * fin_text;
+  ret = sen_convert_sexpr (sd->text, &(sd->sexpr));
+  if (ret == -1)
+    return NULL;
 
-      fin_text = convert_sexpr (eval_text);
-      if (!fin_text)
-	return NULL;
-      free (eval_text);
-      sd->sexpr = fin_text;
-    }
   fin_text = sd->sexpr;
 
   // Check for a file.

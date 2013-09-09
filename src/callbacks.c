@@ -664,36 +664,22 @@ evaluate_line (aris_proof * ap, sentence * sen)
        ev_itr != SEN_PARENT (ap)->focused; ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
-      if (ev_sen->text[0] == '\0')
+      ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
+      if (ret == -1)
+	return -1;
+
+      if (ret == -2)
 	continue;
 
-      if (!ev_sen->sexpr)
-	{
-	  ret = check_text (ev_sen->text);
-	  if (ret == -1)
-	    return -1;
-
-	  if (ret != 0)
-	    continue;
-
-	  unsigned char * tmp_str, * sexpr_sen;
-	  tmp_str = die_spaces_die (ev_sen->text);
-	  if (!tmp_str)
-	    return -1;
-
-	  sexpr_sen = convert_sexpr (tmp_str);
-	  if (!sexpr_sen)
-	    return -1;
-	  free (tmp_str);
-	  ev_sen->sexpr = sexpr_sen;
-	}
-
       ret = sentence_can_select_as_ref (sen, ev_sen);
-
       if (ret == ev_sen->line_num)
 	{
-	  int arb = (ev_sen->premise || ev_sen->rule == RULE_EI || ev_sen->subproof) ?
-	    0 : 1;
+	  // This means that the variables apply to the current line.
+	  int arb = (ev_sen->premise
+		     || ev_sen->rule == RULE_EI
+		     || ev_sen->subproof
+		     || ev_sen->rule == RULE_SQ)
+	    ? 0 : 1;
 	  ret = sexpr_collect_vars_to_proof (ap->vars, ev_sen->sexpr, arb);
 	  if (ret == -1)
 	    return -1;
@@ -766,30 +752,12 @@ evaluate_proof (aris_proof * ap)
   for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
+      ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
+      if (ret == -1)
+	return -1;
 
-      if (!ev_sen->sexpr)
-	{
-	  if (ev_sen->text[0] == '\0')
-	    continue;
-
-	  ret = check_text (ev_sen->text);
-	  if (ret == -1)
-	    return -1;
-
-	  if (ret != 0)
-	    continue;
-
-	  unsigned char * tmp_str, * sexpr;
-	  tmp_str = die_spaces_die (ev_sen->text);
-	  if (!tmp_str)
-	    return -1;
-
-	  sexpr = convert_sexpr (tmp_str);
-	  if (!sexpr)
-	    return -1;
-	  free (tmp_str);
-	  ev_sen->sexpr = sexpr;
-	}
+      if (ret == -2)
+	continue;
     }
 
   for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
@@ -1492,12 +1460,6 @@ menu_activated (aris_proof * ap, int menu_id)
     case MENU_GOAL:
       gui_goal_check (ap);
       break;
-
-      /*
-    case MENU_SUBMIT:
-      gui_submit_show (ap);
-      break;
-      */
 
     case MENU_BOOLEAN:
       aris_proof_toggle_boolean_mode (ap);

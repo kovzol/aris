@@ -144,6 +144,9 @@ parse_tags (const unsigned char * in_str, const int init_pos,
 	    unsigned char ** out_str, const char * o_tag,
 	    const char * c_tag)
 {
+  if (!in_str)
+    return -2;
+
   //The lengths of the tags will be needed.
   int o_len, c_len;
 
@@ -669,14 +672,6 @@ int
 get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
 {
   int ret;
-
-  // First, clear the vector.
-
-  /*
-  ret = vec_clear (vec);
-  if (ret == -1)
-    return -3;
-  */
 
   unsigned char * lsen;
   unsigned char * rgt_str;

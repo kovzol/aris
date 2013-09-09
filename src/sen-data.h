@@ -64,6 +64,8 @@ sen_data * sen_data_init (int line_num, int rule, unsigned char * text,
 			  int subproof, int depth, unsigned char * sexpr);
 void sen_data_destroy (sen_data * sd);
 
+int sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr);
+
 char * sen_data_evaluate (sen_data * sd, int * ret_val,
 			  list_t * vars, list_t * lines);
 int sen_data_can_select_as_ref (sen_data * sen, sen_data * ref);

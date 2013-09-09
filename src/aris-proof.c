@@ -500,6 +500,9 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
       sentence * ev_sen;
 
       ev_sen = ev_itr->value;
+      if (!ev_sen)
+	exit (EXIT_FAILURE);
+
       new_line_no = ev_sen->line_num + line_mod;
       ret = sentence_set_line_no (ev_sen, new_line_no);
       if (ret == -1)
@@ -534,10 +537,12 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
       const char * label =
 	gtk_menu_item_get_label (GTK_MENU_ITEM (gl->data));
 
-      int chk, line_num;
+      int chk, line_num, lbl_len;
       char * file_name;
 
-      file_name = (char *) calloc (strlen (label), sizeof (char));
+      lbl_len = strlen (label);
+
+      file_name = (char *) calloc (lbl_len, sizeof (char));
       CHECK_ALLOC (file_name, -1);
 
       chk = sscanf (label, "%i - %s", &line_num, file_name);
@@ -550,8 +555,10 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
       line_num += line_mod;
 
       char * new_label;
+      int alloc_size;
 
-      new_label = (char *) calloc (strlen (label) + 1, sizeof (char));
+      alloc_size = log10 (line_num) + strlen (file_name) + 4;
+      new_label = (char *) calloc (alloc_size + 1, sizeof (char));
       CHECK_ALLOC (new_label, -1);
 
       sprintf (new_label, "%i - %s", line_num, file_name);
@@ -638,6 +645,12 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd)
 
   fcs = (SENTENCE (SEN_PARENT (ap)->focused->value)->premise) ? foc_1 : foc_2;
 
+  if (!fcs)
+    {
+      fprintf (stderr, "Data corruption.\n");
+      exit (EXIT_FAILURE);
+    }
+
   new_order = SENTENCE (fcs->value)->line_num;
   if (!sd->premise)  new_order++;
 
@@ -692,7 +705,6 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd)
       gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menu_item);
       gtk_widget_show (menu_item);
     }
-
   
   return sen;
 }
