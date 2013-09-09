@@ -606,11 +606,11 @@ sentence_in (sentence * sen)
 
   sp->focused = e_itr;
 
+  // Set the background color to cyan.
+  sentence_set_bg (sen, BG_COLOR_CONC);
+
   if (!sen->premise)
     {
-      // Set the background color to cyan.
-      sentence_set_bg (sen, BG_COLOR_CONC);
-
       // Toggle the rule, if one exists.
       if (sen->rule != -1)
 	{
@@ -672,12 +672,12 @@ sentence_out (sentence * sen)
   gtk_text_buffer_remove_tag_by_name (buffer, "hilight", &start, &end);
   gtk_text_buffer_remove_tag_by_name (buffer, "negative", &start, &end);
 
+  // Reset the background color.
+  // Reset the background color of the references.
+  sentence_set_bg (sen, BG_COLOR_DEFAULT);
 
   if (!sen->premise)
     {
-      // Reset the background color.
-      // Reset the background color of the references.
-      sentence_set_bg (sen, BG_COLOR_DEFAULT);
 
       item_t * ref_itr = sen->refs->head;
       for (; ref_itr; ref_itr = ref_itr->next)
@@ -1263,6 +1263,7 @@ sentence_copy_text (sentence * sen)
   ret_str[i] = '\0';
 
   // Handle comments.
+  // Will need to fix this up, since this means that sentences aren't saved.
 
   unsigned char * semi_str, * fin_str;
   semi_str = strchr (ret_str, ';');
