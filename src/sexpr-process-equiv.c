@@ -26,7 +26,7 @@
 /* All equivalence functions (except proc_co and proc_id) have a similar structure:
  *  First, determine some values based on the premise and conclusion (usually strlen).
  *  Use these values to determine which sentence is which.
- *  Find difference, returning NO_DIFFERENCE if i == -1.
+ *  Find difference (i set to this difference), returning NO_DIFFERENCE if i == -1.
  *  Calculate the desired offset.
  *  Parse parens to get the working scope.
  *  From this, get the necessary parts.
@@ -522,21 +522,10 @@ char *
 proc_im (unsigned char * prem, unsigned char * conc)
 {
   unsigned char * dis_sen, * con_sen;
-  int p_len, c_len, d_len;
+  int d_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len > c_len)
-    {
-      dis_sen = prem;  d_len = p_len;
-      con_sen = conc;
-    }
-  else
-    {
-      dis_sen = conc;  d_len = c_len;
-      con_sen = prem;
-    }
+  sen_put_len (prem, conc, &con_sen, &dis_sen);
+  d_len = strlen (dis_sen);
 
   int i;
 
@@ -858,21 +847,10 @@ proc_as (unsigned char * prem, unsigned char * conc)
   // strip the connective and recurse.
 
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len, l_len;
+  int l_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len > c_len)
-    {
-      ln_sen = prem;  l_len = p_len;
-      sh_sen = conc;
-    }
-  else
-    {
-      ln_sen = conc;  l_len = c_len;
-      sh_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+  l_len = strlen (ln_sen);
 
   int i;
   i = find_difference (ln_sen, sh_sen);
@@ -909,6 +887,11 @@ proc_as (unsigned char * prem, unsigned char * conc)
   tmp_pos = parse_parens (ln_sen, li, &tmp_str);
   if (tmp_pos == -2)
     return NULL;
+  if (!tmp_str || tmp_pos < 0)
+    {
+      if (tmp_str) free (tmp_str);
+      return _("Association constructed incorrectly.");
+    }
   free (tmp_str);
 
   int ti;
@@ -1012,21 +995,11 @@ char *
 proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 {
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len, s_len;
+  int s_len, l_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len < c_len)
-    {
-      sh_sen = prem;  s_len = p_len;
-      ln_sen = conc;
-    }
-  else
-    {
-      sh_sen = conc;  s_len = c_len;
-      ln_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+  s_len = strlen (sh_sen);
+  l_len = strlen (ln_sen);
 
   int mode, i;
 
@@ -1034,7 +1007,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
   if (i == -1)
     return NO_DIFFERENCE;
 
-  if (p_len == c_len)
+  if (l_len == s_len)
     return _("The two sentences must be of different lengths.");
 
   if (mode_guess == -1)
@@ -1170,6 +1143,8 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
       tmp_pos = parse_parens (sh_sen, i - 1, &tmp_str);
       if (tmp_pos == -2)
 	return NULL;
+      if (!tmp_str)
+	return _("Distribution constructed incorrectly.");
 
       unsigned char * scope, * var, quant[S_CL + 1];
       int v_len;
@@ -1255,21 +1230,10 @@ char *
 proc_eq (unsigned char * prem, unsigned char * conc)
 {
   unsigned char * bic_sen, * oth_sen;
-  int p_len, c_len, b_len;
+  int b_len;
 
-  c_len = strlen (conc);
-  p_len = strlen (prem);
-
-  if (c_len < p_len)
-    {
-      bic_sen = conc;  b_len = c_len;
-      oth_sen = prem;
-    }
-  else
-    {
-      bic_sen = prem;  b_len = p_len;
-      oth_sen = conc;
-    }
+  sen_put_len (prem, conc, &bic_sen, &oth_sen);
+  b_len = strlen (bic_sen);
 
   int i;
   i = find_difference (bic_sen, oth_sen);
@@ -1341,21 +1305,10 @@ proc_dn (unsigned char * prem, unsigned char * conc)
   // Standard long-short setup.
 
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len, l_len;
+  int l_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len > c_len)
-    {
-      ln_sen = prem;  l_len = p_len;
-      sh_sen = conc;
-    }
-  else
-    {
-      ln_sen = conc;  l_len = c_len;
-      sh_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+  l_len = strlen (ln_sen);
 
   int i;
   i = find_difference (ln_sen, sh_sen);
@@ -1429,6 +1382,8 @@ proc_dn (unsigned char * prem, unsigned char * conc)
 char *
 proc_ep (unsigned char * prem, unsigned char * conc)
 {
+  /* First, determine which sentence is which. */
+
   unsigned char * and_sen, * con_sen;
   int p_len, c_len, a_len;
 
@@ -1459,9 +1414,13 @@ proc_ep (unsigned char * prem, unsigned char * conc)
       con_sen = prem;
     }
 
+  /* Then, find the difference. */
+
   i = find_difference (and_sen, con_sen);
   if (i == -1)
     return NO_DIFFERENCE;
+
+  /* Roll back to the start of the difference. */
 
   int ai, ci;
 
@@ -1497,6 +1456,8 @@ proc_ep (unsigned char * prem, unsigned char * conc)
   ai = find_unmatched_o_paren (and_sen, ai);
   if (ai == -1)
     return _("Exportation constructed incorrectly.");
+
+  /* Get the sentence parts. */
   
   int tmp_pos;
   unsigned char * tmp_str;
@@ -1539,6 +1500,8 @@ proc_ep (unsigned char * prem, unsigned char * conc)
       free (rsen);
       return _("There must be a conjunctions in the conjunction sentence.");
     }
+
+  /* Construct what should be the other sentence. */
 
   unsigned char * oth_sen;
   int oth_pos, alloc_size;
@@ -1585,21 +1548,10 @@ proc_sb (unsigned char * prem, unsigned char * conc)
   // Standard long-short setup.
 
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len, l_len;
+  int l_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len > c_len)
-    {
-      ln_sen = prem;  l_len = p_len;
-      sh_sen = conc;
-    }
-  else
-    {
-      ln_sen = conc;  l_len = c_len;
-      sh_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+  l_len = strlen (ln_sen);
 
   int i;
   i = find_difference (ln_sen, sh_sen);
@@ -1726,6 +1678,8 @@ proc_sb (unsigned char * prem, unsigned char * conc)
       return _("Both of the left sentences must be the same.");
     }
   free (lsen);
+
+  /* Construct what should be the other sentence. */
 
   unsigned char * oth_sen;
   int oth_pos;
