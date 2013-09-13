@@ -883,6 +883,7 @@ aris_proof_set_filename (aris_proof * ap, const char * filename)
   GFile * file = g_file_new_for_path (filename);
   base_name = g_file_get_basename (file);
   sprintf (new_title, "GNU Aris - %s", base_name);
+  free (base_name);
 
   gtk_window_set_title (GTK_WINDOW (SEN_PARENT (ap)->window), new_title);
 
