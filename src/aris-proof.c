@@ -1121,7 +1121,8 @@ aris_proof_toggle_boolean_mode (aris_proof * ap)
   else
     aris_proof_set_sb (ap, _("Boolean mode disabled."));
 
-  aris_proof_set_changed (ap, 0);
+  if (!ap->edited)
+    aris_proof_set_changed (ap, 0);
 
   return 0;
 }
