@@ -73,6 +73,7 @@ sexpr_get_part (unsigned char * in_str, unsigned int init_pos, unsigned char ** 
 unsigned char *
 sexpr_car (unsigned char * in_str)
 {
+  int init_pos = (in_str[0] == '(') ? 1 : 0;
   unsigned char * out_str;
   int pos;
   pos = sexpr_get_part (in_str, 1, &out_str);
@@ -98,6 +99,39 @@ sexpr_cdr (unsigned char * in_str)
   sprintf (out_str, "(%s", in_str + pos + 1);
 
   return out_str;
+}
+
+int
+sexpr_car_cdr (unsigned char * in_str,
+	       unsigned char ** car,
+	       vec_t * cdr)
+{
+  int pos, ret_chk;
+  pos = sexpr_get_part (in_str, 1, car);
+  if (pos == -1)
+    return -1;
+
+  pos++;
+
+  while (in_str[pos] != '\0')
+    {
+      int tmp_pos;
+      unsigned char * tmp_str = NULL;
+
+      tmp_pos = sexpr_get_part (in_str, pos, &tmp_str);
+      if (tmp_pos == -1)
+	return -1;
+
+      if (tmp_str)
+	{
+	  ret_chk = vec_str_add_obj (cdr, tmp_str);
+	  if (ret_chk == -1)
+	    return -1;
+	}
+      pos = tmp_pos + 1;
+    }
+
+  return cdr->num_stuff;
 }
 
 /* Places sentences based on their lengths.
@@ -229,57 +263,30 @@ int
 sexpr_get_generalities (unsigned char * in_str, unsigned char * conn, vec_t * vec)
 {
   int ret_chk;
-  int in_len;
+  unsigned char * tmp_conn;
 
-  if (in_str[0] != '(' || in_str[1] == '(')
-    {
-      ret_chk = vec_str_add_obj (vec, in_str);
-      if (ret_chk < 0)
-	return -1;
+  ret_chk = sexpr_car_cdr (in_str, &tmp_conn, vec);
+  if (ret_chk == -1)
+    return -1;
 
-      return 1;
-    }
-
-  int pos = 1;
+  if (tmp_conn[0] == '(' || ret_chk == 0)
+    return 1;
 
   if (conn[0] == '\0')
     {
-      strncpy (conn, in_str + pos, S_CL);
+      strncpy (conn, tmp_conn, S_CL);
       conn[S_CL] = '\0';
     }
   else
     {
-      if (strncmp (conn, in_str + pos, S_CL))
+      if (strncmp (conn, tmp_conn, S_CL))
 	{
-	  ret_chk = vec_str_add_obj (vec, in_str);
-	  if (ret_chk < 0)
-	    return -1;
-
+	  free (tmp_conn);
 	  return 1;
 	}
     }
 
-  pos += S_CL + 1;
-
-  in_len = strlen (in_str);
-  while (in_str[pos] != ')')
-    {
-      int tmp_pos;
-      unsigned char * tmp_str;
-
-      tmp_pos = sexpr_get_part (in_str, pos, &tmp_str);
-      if (tmp_pos == -1)
-	return -1;
-
-      if (tmp_str)
-	{
-	  ret_chk = vec_str_add_obj (vec, tmp_str);
-	  if (ret_chk == -1)
-	    return -1;
-	}
-      pos = tmp_pos;
-    }
-
+  free (tmp_conn);
   return vec->num_stuff;
 }
 
@@ -433,48 +440,21 @@ int
 sexpr_get_pred_args (unsigned char * in_str, unsigned char ** pred, vec_t * vec)
 {
   int ret_chk;
+  unsigned char * tmp_pred;
 
-  if (in_str[0] != '(' || in_str[1] == '(')
+  ret_chk = sexpr_car_cdr (in_str, &tmp_pred, vec);
+  if (ret_chk == -1)
+    return -1;
+
+  if (tmp_pred[0] == '(' || ret_chk == 0)
     return 0;
-
-  int pos, oth_pos;
-
-  pos = oth_pos = 1;
-  while (in_str[oth_pos] != ' ')
-    oth_pos++;
 
   if (pred)
     {
-      *pred = (unsigned char *) calloc (oth_pos - pos + 1, sizeof (char));
-      CHECK_ALLOC (*pred, -1);
-
-      strncpy (*pred, in_str + pos, oth_pos - pos);
-      (*pred)[oth_pos - pos] = '\0';
-    }
-
-  unsigned char * elm_str;
-  elm_str = elim_par (in_str);
-  if (!elm_str)
-    return -1;
-
-  pos = oth_pos - 1;
-
-  while (elm_str[pos] != '\0')
-    {
-      int tmp_pos;
-      unsigned char * tmp_str;
-
-      tmp_pos = sexpr_get_part (elm_str, pos, &tmp_str);
-      if (tmp_pos == -1)
+      *pred = strdup (tmp_pred);
+      if (!(*pred))
 	return -1;
-
-      if (tmp_str)
-	{
-	  ret_chk = vec_str_add_obj (vec, tmp_str);
-	  if (ret_chk == -1)
-	    return -1;
-	}
-      pos = tmp_pos;
+      free (tmp_pred);
     }
 
   return vec->num_stuff;
@@ -492,40 +472,38 @@ unsigned char *
 sexpr_elim_quant (unsigned char * in_str, unsigned char * quant,
 		  unsigned char ** var)
 {
-  int tmp_pos;
+  int tmp_pos, ret_chk;
   unsigned char * tmp_str;
 
-  tmp_pos = parse_parens (in_str, 0, &tmp_str);
-  if (tmp_pos == -2)
-    return NULL;
-  free (tmp_str);
+  *var = NULL;
 
-  if (in_str[tmp_pos + 1] != '\0')
+  tmp_pos = sexpr_get_part (in_str, 1, &tmp_str);
+  if (tmp_pos == -1)
+    return NULL;
+
+  int alloc_size = strlen (tmp_str) - 3 - S_CL;
+  *var = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+  CHECK_ALLOC (var, NULL);
+
+  ret_chk = sscanf (tmp_str, "(%s %[^)])", quant, *var);
+  if (ret_chk != 2
+      || (strcmp (quant, S_UNV) && strcmp (quant, S_EXL)))
     return "\0";
 
-  tmp_pos = parse_parens (in_str, 1, &tmp_str);
+  free (tmp_str);
+  tmp_str = NULL;
+
+  tmp_pos += 1;
+
+  tmp_pos = parse_parens (in_str, tmp_pos, &tmp_str);
   if (tmp_pos == -2)
     return NULL;
-  if (!tmp_str || tmp_pos < 0)
+
+  if (tmp_pos < 0)
     {
       if (tmp_str) free (tmp_str);
       return "\0";
     }
-  free (tmp_str);
-
-  strncpy (quant, in_str + 2, S_CL);
-  quant[S_CL] = '\0';
-
-  *var = (unsigned char *) calloc (tmp_pos - (2 + S_CL), sizeof (char));
-  CHECK_ALLOC (*var, NULL);
-  strncpy (*var, in_str + 3 + S_CL, tmp_pos - (3 + S_CL));
-
-  if (in_str[tmp_pos + 2] != '(')
-    return "\0";
-
-  tmp_pos = parse_parens (in_str, tmp_pos + 2, &tmp_str);
-  if (tmp_pos == -2)
-    return NULL;
 
   return tmp_str;
 }
