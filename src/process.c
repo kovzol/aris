@@ -571,19 +571,30 @@ check_sides_quant (const unsigned char * chk_str, const unsigned int init_pos)
   if (CL >= chk_len)
     return 0;
 
-  //Copy enough memory for a connective from after this one.
-  strncpy (tmp_str, chk_str + CL, CL + 1);
+  /*
+   * Determine the next quantifier or o-paren
+   * Check that the variable is valid (should match [:lower:]([:lower:]|[:digit:])*)
+   * Then proceed to check what ever is next to it.
+   */
 
-  //The next character after a quantifier must be a lower case letter.
-  if (!islower (tmp_str[0]))
-    return 0;
-
-  //The character after the first one must be a parentheses, a negation, or another quantifier.
-  if (!(tmp_str[1] == '(' || !strncmp (tmp_str + 1, NOT, NL))
-      && (strncmp (tmp_str + 1, UNV, CL) && strncmp (tmp_str + 1, EXL, CL)))
+  int i;
+  for (i = 0; chk_str[i]; i++)
     {
-      return 0;
+      if (chk_str[i] == '('
+	  || !strncmp (chk_str + i, EXL, CL)
+	  || !strncmp (chk_str + i, UNV, CL)
+	  || !strncmp (chk_str + i, NOT, NL))
+	break;
+
+      if (i == 0 && !islower (chk_str[i]))
+	return 0;
+
+      if (!islower (chk_str[i]) && !isdigit (chk_str[i]))
+	return 0;
     }
+
+  if (!chk_str[i])
+    return 0;
 
   return 1;
 }
