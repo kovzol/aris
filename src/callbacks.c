@@ -770,6 +770,10 @@ evaluate_proof (aris_proof * ap)
       ls_clear (ap->vars);
     }
 
+  ret = goal_check_all (ap->goal);
+  if (ret == -1)
+    return -1;
+
   return 0;
 }
 
