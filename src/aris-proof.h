@@ -65,7 +65,7 @@ struct aris_proof {
 aris_proof * aris_proof_init ();
 int aris_proof_post_init (aris_proof * ap);
 aris_proof * aris_proof_init_from_proof (proof_t * proof);
-void aris_proof_destroy ();
+void aris_proof_destroy (aris_proof * ap);
 
 void aris_proof_create_menu (sen_parent * ap);
 
