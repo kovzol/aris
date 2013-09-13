@@ -44,6 +44,14 @@ unsigned char * sexpr_car (unsigned char * in_str);
 
 unsigned char * sexpr_cdr (unsigned char * in_str);
 
+int sexpr_car_cdr (unsigned char * in_str,
+		   unsigned char ** car,
+		   vec_t * cdr);
+
+int sexpr_str_car_cdr (unsigned char * in_str,
+		       unsigned char ** car,
+		       unsigned char ** cdr);
+
 void sen_put_len (unsigned char * in0, unsigned char * in1,
 		  unsigned char ** sh_sen, unsigned char ** ln_sen);
 
