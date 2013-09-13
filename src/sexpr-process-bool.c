@@ -199,8 +199,8 @@ proc_bi (unsigned char * prem, unsigned char * conc)
       return _("There must be a tautology or a contradiction in the generalities.");
     }
 
-  if ((!strcmp (conn, S_AND) && strcmp (good_side, S_TAU))
-      && (!strcmp (conn, S_OR) && strcmp (good_side, S_CTR)))
+  if ((strcmp (conn, S_AND) || strcmp (good_side, S_TAU))
+      && (strcmp (conn, S_OR) || strcmp (good_side, S_CTR)))
     {
       free (lsen);
       free (rsen);
