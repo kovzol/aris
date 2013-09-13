@@ -211,17 +211,12 @@ with a disjunction.");
   free (good_side);
 
   unsigned char * oth_sen;
-  int oth_pos;
+  int alloc_size;
 
-  oth_sen = (unsigned char *) calloc (l_len - 2 * S_CL - 3, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, ln_sen, li);
-  oth_pos = li;
-
-  oth_pos += sprintf (oth_sen + oth_pos, "%s", bad_side);
-  free (bad_side);
-
-  strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
+  alloc_size = l_len - 2 * S_CL - 4;
+  oth_sen = construct_other (ln_sen, li, tmp_pos + 1, alloc_size, "%s", bad_side);
+  if (!oth_sen)
+    return NULL;
 
   char * ret_str;
 
@@ -291,6 +286,7 @@ proc_bd (unsigned char * prem, unsigned char * conc)
       return _("There must be a conjunction or a disjunction at the difference.");
     }
 
+  unsigned char sym[S_CL + 1];
   int j;
 
   for (j = 0; j < gens->num_stuff; j++)
@@ -299,10 +295,18 @@ proc_bd (unsigned char * prem, unsigned char * conc)
       cur_gen = vec_nth (gens, j);
 
       if (!strcmp (*cur_gen, S_CTR) && !strcmp (conn, S_AND))
-	    break;
+	{
+	  strncpy (sym, S_CTR, S_CL);
+	  sym[S_CL] = '\0';
+	  break;
+	}
 
       if (!strcmp (*cur_gen, S_TAU) && !strcmp (conn, S_OR))
-	    break;
+	{
+	  strncpy (sym, S_TAU, S_CL);
+	  sym[S_CL] = '\0';
+	  break;
+	}
     }
 
   destroy_str_vec (gens);
@@ -311,19 +315,12 @@ proc_bd (unsigned char * prem, unsigned char * conc)
     return _("There must be a tautology or a contradiction within the difference.");
 
   unsigned char * oth_sen;
-  int oth_pos;
+  int alloc_size;
+  alloc_size = l_len - t_len + S_CL;
 
-  oth_sen = (unsigned char *) calloc (l_len - t_len + S_CL + 1, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, ln_sen, i);
-  oth_pos = i;
-
-  if (!strcmp (conn, S_AND))
-    oth_pos += sprintf (oth_sen + oth_pos, "%s", S_CTR);
-  else
-    oth_pos += sprintf (oth_sen + oth_pos, "%s", S_TAU);
-
-  strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
+  oth_sen = construct_other (ln_sen, i, tmp_pos + 1, alloc_size, "%s", sym);
+  if (!oth_sen)
+    return NULL;
 
   char * ret_str;
 
@@ -393,24 +390,24 @@ proc_bn (unsigned char * prem, unsigned char * conc)
       return _("The second part must be the negation of the first.");
     }
 
-  unsigned char * oth_sen;
-  int oth_pos;
+  unsigned char sym[S_CL + 1];
+  if (!strcmp (conn, S_AND))
+    strncpy (sym, S_CTR, S_CL);
+  else
+    strncpy (sym, S_TAU, S_CL);
+  sym[S_CL] = '\0';
 
-  oth_sen = (unsigned char *) calloc (l_len - 2 * strlen (lsen) - S_NL - 6,
-				      sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  free (lsen);
   free (rsen);
 
-  strncpy (oth_sen, ln_sen, i);
-  oth_pos = i;
+  unsigned char * oth_sen;
+  int alloc_size;
 
-  if (!strcmp (conn, S_AND))
-    oth_pos += sprintf (oth_sen + oth_pos, "%s", S_CTR);
-  else
-    oth_pos += sprintf (oth_sen + oth_pos, "%s", S_TAU);
+  alloc_size = l_len - 2 * strlen (lsen) - S_NL - 7;
+  free (lsen);
 
-  strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
+  oth_sen = construct_other (ln_sen, i, tmp_pos + 1, alloc_size, "%s", sym);
+  if (!oth_sen)
+    return NULL;
 
   char * ret_str;
 
@@ -464,21 +461,21 @@ proc_sn (unsigned char * prem, unsigned char * conc)
       return _("There must be a negated symbol at the difference.");
     }
 
-  unsigned char * oth_sen;
-  int oth_pos;
-
-  oth_sen = (unsigned char *) calloc (l_len - S_NL - 2, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, ln_sen, i);
-  oth_pos = i;
-
+  unsigned char sym[S_CL + 1];
   if (!strcmp (elm_str, S_CTR))
-    oth_pos += sprintf (oth_sen + oth_pos, "%s", S_TAU);
+    strncpy (sym, S_TAU, S_CL);
   else
-    oth_pos += sprintf (oth_sen + oth_pos, "%s", S_CTR);
-
+    strncpy (sym, S_CTR, S_CL);
+  sym[S_CL] = '\0';
   free (elm_str);
-  strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
+
+  unsigned char * oth_sen;
+  int alloc_size;
+
+  alloc_size = l_len - S_NL - 3;
+  oth_sen = construct_other (ln_sen, i, tmp_pos + 1, alloc_size, "%s", sym);
+  if (!oth_sen)
+    return NULL;
 
   char * ret_str;
 
