@@ -1,4 +1,57 @@
+2013-09-13  Ian Dunn  <dunni@gnu.org>
+
+	* process.c (check_sides_quant): Allows for variables of
+	length > 1.
+
+	* sexpr-process-infer.c (proc_mp): Cleaned up code.
+
+	* sexpr-process-bool.c (proc_bi): Implemented construct_other.
+	Fixed processing bug.
+	(proc_bd): Implemented construct_other.
+	(proc_bn): Same.
+	(proc_sn): Same.
+	Cleaned up error messages.
+
+	* sexpr-process-equiv.c (recurse_mode): Added to replace
+	recurse_co and recurse_id.
+	Implemented sexpr_str_car_cdr to clean up code.
+	(proc_id): Implemented recurse_mode.
+	(proc_co): Same.
+	(proc_dt): Fixed processing bugs.
+	(proc_sb): Same.
+	(proc_im): Cleaned up code.
+	(proc_dm): Same.
+	(proc_dn): Same.
+
+	* sexpr-process.c (construct_other): Moved from
+	sexpr-process-equiv.c.
+	(sexpr_car_cdr): Added to clean up and shorten code.
+	(sexpr_str_car_cdr): Added to clean up and shorten code.
+	(sexpr_get_generalities): Implemented sexpr_car_cdr.
+	(sexpr_get_pred_args): Same.
+	(sexpr_elim_quant): Implemented sexpr_str_car_cdr.
+
+	* goal.c (goal_rem_line): Resets the line number highlight
+	of the corresponding sentence.
+
+	* callbacks.c (gui_open): Destroys current proof if only
+	proof is blank.
+	(evaluate_proof): Checks the goals as well.
+
+	* rules-table.c (rules_table_set_boolean_mode): Disables sq
+	and in rules in boolean mode.
+
+	* aris-proof.h (aris_proof_destroy): Fixed declaration.
+
+	* aris-proof.c (aris_proof_toggle_boolean_mode): Checks for
+	edit before setting edit to 0.
+	(aris_proof_set_changed): Frees new title.
+	(aris_proof_set_filename): Same.
+	Frees basename.
+
 2013-09-09  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-equiv.c (construct_other): Added for proc_im and proc_eq.
 
 	* sexpr-process-bool.c (proc_bi): Implemented sen_put_len.
 	(proc_bd): Same.
