@@ -47,6 +47,14 @@ unsigned char * sexpr_cdr (unsigned char * in_str);
 void sen_put_len (unsigned char * in0, unsigned char * in1,
 		  unsigned char ** sh_sen, unsigned char ** ln_sen);
 
+unsigned char *
+construct_other (unsigned char * main_str,
+		 int init_pos,
+		 int fin_pos,
+		 int alloc_size,
+		 char * template,
+		 ...);
+
 int sexpr_not_check (unsigned char * in_str);
 
 unsigned char * sexpr_add_not (unsigned char * in_str);

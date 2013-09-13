@@ -21,6 +21,7 @@
 #include "vec.h"
 #include "var.h"
 #include "list.h"
+#include <stdarg.h>
 
 /* Gets a sentence part from a sexpr.
  *  input:
@@ -123,6 +124,33 @@ sen_put_len (unsigned char * in0,
       *sh_sen = in0;
       *ln_sen = in1;
     }
+}
+
+unsigned char *
+construct_other (unsigned char * main_str,
+		 int init_pos,
+		 int fin_pos,
+		 int alloc_size,
+		 char * template,
+		 ...)
+{
+  unsigned char * oth_sen;
+  int oth_pos = init_pos;
+  va_list args;
+
+  va_start (args, template);
+
+  oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+  CHECK_ALLOC (oth_sen, NULL);
+  strncpy (oth_sen, main_str, oth_pos);
+
+  oth_pos += vsprintf (oth_sen + oth_pos, template, args);
+
+  strcpy (oth_sen + oth_pos, main_str + fin_pos);
+
+  va_end (args);
+
+  return oth_sen;
 }
 
 /* Checks for a negation on a sexpr string.
