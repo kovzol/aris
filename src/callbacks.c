@@ -527,6 +527,7 @@ gui_open (GtkWidget * window)
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser), FALSE);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
 
+  // There's a bug around here.
   // First time, it happened in here.
   // It tried loading the dialog, but didn't get far enough.
   // free(): invalid pointer 874f10
@@ -535,9 +536,19 @@ gui_open (GtkWidget * window)
   if (gtk_dialog_run (GTK_DIALOG (file_chooser)) == GTK_RESPONSE_ACCEPT)
     {
       char * filename;
-      aris_proof * new_ap;
+      aris_proof * new_ap, * cur_ap;
       proof_t * proof;
       int ret;
+      int have_blank_proof = 0;
+
+      if (the_app->guis->num_stuff == 1)
+	{
+	  cur_ap = (aris_proof *) the_app->guis->head->value;
+	  if (cur_ap->everything->num_stuff == 1
+	      && !cur_ap->edited
+	      && *((sentence *) cur_ap->everything->head->value)->text == '\0')
+	    have_blank_proof = 1;
+	}
 
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
 
@@ -571,6 +582,9 @@ gui_open (GtkWidget * window)
 
       gui_save (new_ap, 0);
       new_ap->edited = 0;
+
+      if (have_blank_proof)
+	gui_destroy (cur_ap);
     }
 
   gtk_widget_destroy (file_chooser);
