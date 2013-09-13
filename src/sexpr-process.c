@@ -134,6 +134,31 @@ sexpr_car_cdr (unsigned char * in_str,
   return cdr->num_stuff;
 }
 
+int
+sexpr_str_car_cdr (unsigned char * in_str,
+		   unsigned char ** car,
+		   unsigned char ** cdr)
+{
+  int tmp_pos, ret_chk;
+
+  *car = *cdr = NULL;
+
+  tmp_pos = sexpr_get_part (in_str, 1, car);
+  if (tmp_pos == -1)
+    return -1;
+
+  tmp_pos += 1;
+
+  tmp_pos = parse_parens (in_str, tmp_pos, cdr);
+  if (tmp_pos == -2)
+    return -1;
+
+  if (tmp_pos < 0)
+    return -2;
+
+  return 0;
+}
+
 /* Places sentences based on their lengths.
  *  input:
  *    in0 - the first sentence to place.
@@ -472,38 +497,33 @@ unsigned char *
 sexpr_elim_quant (unsigned char * in_str, unsigned char * quant,
 		  unsigned char ** var)
 {
+
   int tmp_pos, ret_chk;
-  unsigned char * tmp_str;
+  unsigned char * tmp_str, * car;
 
-  *var = NULL;
-
-  tmp_pos = sexpr_get_part (in_str, 1, &tmp_str);
+  tmp_pos = sexpr_str_car_cdr (in_str, &car, &tmp_str);
   if (tmp_pos == -1)
     return NULL;
 
-  int alloc_size = strlen (tmp_str) - 3 - S_CL;
+  if (tmp_pos == -2)
+    {
+      if (car) free (car);
+      if (tmp_str) free (tmp_str);
+      return "\0";
+    }
+
+  *var = NULL;
+
+  int alloc_size = strlen (car) - 3 - S_CL;
   *var = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
   CHECK_ALLOC (var, NULL);
 
-  ret_chk = sscanf (tmp_str, "(%s %[^)])", quant, *var);
+  ret_chk = sscanf (car, "(%s %[^)])", quant, *var);
   if (ret_chk != 2
       || (strcmp (quant, S_UNV) && strcmp (quant, S_EXL)))
     return "\0";
 
-  free (tmp_str);
-  tmp_str = NULL;
-
-  tmp_pos += 1;
-
-  tmp_pos = parse_parens (in_str, tmp_pos, &tmp_str);
-  if (tmp_pos == -2)
-    return NULL;
-
-  if (tmp_pos < 0)
-    {
-      if (tmp_str) free (tmp_str);
-      return "\0";
-    }
+  free (car);
 
   return tmp_str;
 }
