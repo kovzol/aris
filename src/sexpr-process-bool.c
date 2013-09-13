@@ -441,7 +441,7 @@ proc_sn (unsigned char * prem, unsigned char * conc)
     return NO_DIFFERENCE;
 
   if (ln_sen[i] != '(' || strncmp (ln_sen + i + 1, S_NOT, S_NL))
-    return _("There must be a negation at the difference.");
+    return _("There must be a negation in one sentence.");
 
   int tmp_pos;
   unsigned char * tmp_str, * elm_str;
@@ -458,7 +458,7 @@ proc_sn (unsigned char * prem, unsigned char * conc)
   if (strcmp (elm_str, S_CTR) && strcmp (elm_str, S_TAU))
     {
       free (elm_str);
-      return _("There must be a negated symbol at the difference.");
+      return _("There must be a negated symbol in one sentence.");
     }
 
   unsigned char sym[S_CL + 1];
