@@ -224,6 +224,7 @@ goal_check_line (goal_t * goal, sentence * sen)
 				 ", however there are errors leading up to it.");
 	    }
 	  sen_parent_set_sb ((sen_parent *) goal, sb_text);
+	  free (sb_text);
 	  free (ev_cmp_text);
 	  free (cmp_text);
 	  return 0;
