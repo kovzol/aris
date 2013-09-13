@@ -95,84 +95,62 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 
       // If only one generality, there is either a negation or quantifier.
 
-      // Check for a negation.
-      if (sexpr_not_check (sen_0) || sexpr_not_check (sen_1))
-	{
-	  if (!sexpr_not_check (sen_0) || !sexpr_not_check (sen_1))
-	    return -2;
+      if (sen_0[0] != '(' || sen_1[0] != '(')
+	return -2;
 
+      int pos0, pos1;
+      unsigned char * car_0, * car_1, * cdr_0, * cdr_1;
+
+      pos0 = sexpr_str_car_cdr (sen_0, &car_0, &cdr_0);
+      if (pos0 == -1)
+	return -1;
+
+      pos1 = sexpr_str_car_cdr (sen_1, &car_1, &cdr_1);
+      if (pos1 == -1)
+	return -1;
+
+      // Check for a negation.
+      if (!strcmp (car_0, S_NOT) && !strcmp (car_1, S_NOT))
+	{
+	  free (car_0); free (car_1);
 	  // Eliminate the negation, and continue.
 
 	  int ret;
-	  unsigned char * not_sen_0, * not_sen_1;
-
-	  not_sen_0 = sexpr_elim_not (sen_0);
-	  if (!not_sen_0)
-	    return -1;
-
-	  not_sen_1 = sexpr_elim_not (sen_1);
-	  if (!not_sen_1)
-	    return -1;
-
-	  ret = recurse_mode (not_sen_0, not_sen_1, mode);
+	  ret = recurse_mode (cdr_0, cdr_1, mode);
 	  if (ret == -1)
 	    return -1;
 
-	  free (not_sen_0);
-	  free (not_sen_1);
+	  free (cdr_0); free(cdr_1);
+
 	  return ret;
 	}
 
       // Check for a quantifier.
-
-      if ((sen_0[0] == '(' && sen_1[0] == '(')
-	  && ((!strncmp (sen_0 + 2, S_UNV, S_CL)
-	       || !strncmp (sen_0 + 2, S_EXL, S_CL))
-	      || (!strncmp (sen_1 + 2, S_UNV, S_CL)
-		  || !strncmp (sen_1 + 2, S_EXL, S_CL))))
+      if (!strcmp (car_0, car_1))
 	{
-	  if (!(strncmp (sen_0 + 2, S_UNV, S_CL)
-		&& strncmp (sen_0 + 2, S_EXL, S_CL))
-	      && !(strncmp (sen_1 + 2, S_UNV, S_CL)
-		   && strncmp (sen_1 + 2, S_EXL, S_CL)))
+	  // Eliminate the quantifier and continue.
+	  if (strncmp (car_0 + 1, S_UNV, S_CL)
+	      && strncmp (car_0 + 1, S_EXL, S_CL))
 	    {
+	      free (car_0); free (car_1);
+	      free (cdr_0); free(cdr_1);
 	      return -2;
 	    }
 
-	  // Eliminate the quantifier and continue.
-
-	  unsigned char * scope_0, * scope_1, * var_0, * var_1;
-	  unsigned char quant_0[S_CL + 1], quant_1[S_CL + 1];
-
-	  scope_0 = sexpr_elim_quant (sen_0, quant_0, &var_0);
-	  if (!scope_0)
-	    return -1;
-
-	  scope_1 = sexpr_elim_quant (sen_1, quant_1, &var_1);
-	  if (!scope_1)
-	    return -1;
+	  free (car_0); free (car_1);
 
 	  int cmp;
-	  cmp = !strcmp (var_0, var_1);
-
-	  free (var_0);
-	  free (var_1);
-
-	  if (!cmp || strcmp (quant_0, quant_1))
-	    {
-	      free (scope_0);
-	      free (scope_1);
-	      return -2;
-	    }
-
-	  cmp = recurse_mode (scope_0, scope_1, mode);
+	  cmp = recurse_mode (cdr_0, cdr_1, mode);
 	  if (cmp == -1)
 	    return -1;
 
-	  free (scope_0);
-	  free (scope_1);
+	  free (cdr_0); free(cdr_1);
+
 	  return cmp;
 	}
+
+      free (car_0); free(car_1);
+      free (cdr_0); free(cdr_1);
 
       return -2;
     }
