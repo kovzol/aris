@@ -102,7 +102,12 @@ sexpr_cdr (unsigned char * in_str)
 
 /* Places sentences based on their lengths.
  *  input:
+ *    in0 - the first sentence to place.
+ *    in1 - the second sentence to place.
+ *    sh_sen - a pointer to the shorter sentence.
+ *    ln_sen - a pointer to the longer sentence.
  *  output:
+ *    none
  */
 void
 sen_put_len (unsigned char * in0,
@@ -459,42 +464,17 @@ sexpr_get_pred_args (unsigned char * in_str, unsigned char ** pred, vec_t * vec)
       int tmp_pos;
       unsigned char * tmp_str;
 
-      switch (elm_str[pos])
+      tmp_pos = sexpr_get_part (elm_str, pos, &tmp_str);
+      if (tmp_pos == -1)
+	return -1;
+
+      if (tmp_str)
 	{
-	case '(':
-	  tmp_pos = parse_parens (elm_str, pos, &tmp_str);
-	  if (tmp_pos == -2)
-	    return -1;
-
 	  ret_chk = vec_str_add_obj (vec, tmp_str);
-	  if (ret_chk < 0)
+	  if (ret_chk == -1)
 	    return -1;
-	  free (tmp_str);
-
-	  pos = tmp_pos + 1;
-	  break;
-
-	case ' ':
-	  pos++;
-	  break;
-
-	default:
-	  tmp_pos = pos;
-	  while (elm_str[tmp_pos] != ' ' && elm_str[tmp_pos] != '\0')
-	    tmp_pos++;
-
-	  tmp_str = (unsigned char *) calloc (tmp_pos - pos + 1, sizeof (char));
-	  CHECK_ALLOC (tmp_str, -1);
-	  strncpy (tmp_str, elm_str + pos, tmp_pos - pos);
-	  tmp_str[tmp_pos - pos] = '\0';
-
-	  ret_chk = vec_str_add_obj (vec, tmp_str);
-	  if (ret_chk < 0)
-	    return -1;
-	  free (tmp_str);
-	  pos = tmp_pos;
-	  break;
 	}
+      pos = tmp_pos;
     }
 
   return vec->num_stuff;
