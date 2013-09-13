@@ -73,8 +73,7 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
     {
       if (gg_0 != gg_1)
 	{
-	  destroy_str_vec (gens_0);
-	  destroy_str_vec (gens_1);
+	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 	  return -2;
 	}
     }
@@ -82,16 +81,14 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
     {
       if (gg_0 < gg_1)
 	{
-	  destroy_str_vec (gens_0);
-	  destroy_str_vec (gens_1);
+	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 	  return -2;
 	}
     }
 
   if (gg_0 == 1)
     {
-      destroy_str_vec (gens_0);
-      destroy_str_vec (gens_1);
+      destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 
       // If only one generality, there is either a negation or quantifier.
 
@@ -165,8 +162,7 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 
   if ((con_0 && !con_1) || (!con_0 && con_1))
     {
-      destroy_str_vec (gens_0);
-      destroy_str_vec (gens_1);
+      destroy_str_vec (gens_0); destroy_str_vec (gens_1);
       return -2;
     }
 
@@ -183,14 +179,12 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 
       if (cmp == 0)
 	{
-	  destroy_str_vec (gens_0);
-	  destroy_str_vec (gens_1);
+	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 	  return 0;
 	}
       else if (mode == 1 && gg_0 != gg_1)
 	{
-	  destroy_str_vec (gens_0);
-	  destroy_str_vec (gens_1);
+	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 	}
     }
 
@@ -212,14 +206,12 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 
       if (ret != 0)
 	{
-	  destroy_str_vec (gens_0);
-	  destroy_str_vec (gens_1);
+	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 	  return ret;
 	}
     }
 
-  destroy_str_vec (gens_0);
-  destroy_str_vec (gens_1);
+  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 
   return 0;
 }
@@ -384,8 +376,7 @@ proc_im (unsigned char * prem, unsigned char * conc)
 
   if (!sexpr_not_check (lsen))
     {
-      free (lsen);
-      free (rsen);
+      free (lsen); free (rsen);
       return _("The left disjunct must have a negation.");
     }
 
@@ -618,18 +609,14 @@ proc_dm (unsigned char * prem, unsigned char * conc, int mode_guess)
       // Construct what should be the other sentence.
 
       unsigned char * cons_sen;
-      int cons_pos;
+      int alloc_size;
 
-      cons_sen = (unsigned char *) calloc (n_len, sizeof (char));
-      CHECK_ALLOC (cons_sen, NULL);
-      strncpy (cons_sen, not_sen, i - 1);
-      cons_pos = i - 1;
-      cons_pos += sprintf (cons_sen + cons_pos, "((%s %s) (%s %s))",
-			   oth_quant, var, S_NOT, cmp_str);
+      alloc_size = n_len;
+      cons_sen = construct_other (not_sen, i - 1, tmp_pos + 1, alloc_size,
+				  "((%s %s) (%s %s))",
+				  oth_quant, var, S_NOT, cmp_str);
       free (cmp_str);
       free (var);
-
-      strcpy (cons_sen + cons_pos, not_sen + tmp_pos + 1);
 
       char * ret_str;
 
@@ -810,16 +797,9 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
     return _("The two sentences must be of different lengths.");
 
   if (mode_guess == -1)
-    {
-      if (sh_sen[i] == '(')
-	mode = 1;
-      else
-	mode = 0;
-    }
+    mode = (sh_sen[i] == '(') ? 1 : 0;
   else
-    {
-      mode = mode_guess;
-    }
+    mode = mode_guess;
 
   if (mode == 0)
     {
@@ -859,8 +839,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 
       if (strcmp (mc, S_AND) && strcmp (mc, S_OR))
 	{
-	  free (lsen);
-	  free (rsen);
+	  free (lsen); free (rsen);
 
 	  return _("Distribution must be done around a conjunction or a disjunction.");
 	}
@@ -973,20 +952,20 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
       if (gg == 1)
 	{
 	  destroy_str_vec (gg_vec);
-	  return _("There must be generalities.");
+	  return _("Distribution constructed incorrectly.");
 	}
 
-      if ((!strcmp (quant, S_UNV) && strcmp (conn, S_AND))
-	  || (!strcmp (quant, S_EXL) && strcmp (conn, S_OR)))
+      if ((strcmp (quant, S_UNV) || strcmp (conn, S_AND))
+	  && (!strcmp (quant, S_EXL) || strcmp (conn, S_OR)))
 	{
 	  destroy_str_vec (gg_vec);
-	  return _("The connective must be a conjunction or disjunction.");
+	  return _("A universal is distributed over a conjnction, and an existential is distributed over a disjunction.");
 	}
 
       unsigned char * oth_sen;
       int oth_pos, j, alloc_size;
 
-      alloc_size = s_len + (gg_vec->num_stuff * (6 + S_CL + strlen (var)));
+      alloc_size = s_len + (gg_vec->num_stuff * (6 + S_CL + v_len));
       oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
       CHECK_ALLOC (oth_sen, NULL);
       strncpy (oth_sen, sh_sen, i - 1);
@@ -996,7 +975,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 
       for (j = 0; j < gg_vec->num_stuff; j++)
 	{
-	  unsigned char * cur_gen, * str;
+	  unsigned char * cur_gen;
 	  cur_gen = vec_str_nth (gg_vec, j);
 	  oth_pos += sprintf (oth_sen + oth_pos, " ((%s %s) %s)",
 			      quant, var, cur_gen);
@@ -1116,7 +1095,7 @@ proc_dn (unsigned char * prem, unsigned char * conc)
   if (ln_sen[i] != '(' && strncmp (ln_sen + i, S_NOT, S_NL)
       && (i > 0 && l_len > S_NL && strncmp (ln_sen + i - 1, S_NOT, S_NL)))
     {
-      return _("The difference must be at a negation.");
+      return _("Double Negation must be used to eliminate negations.");
     }
 
   if (ln_sen[i] != '(')
@@ -1142,7 +1121,7 @@ proc_dn (unsigned char * prem, unsigned char * conc)
   if (!sexpr_not_check (tmp_str) || strncmp (tmp_str + S_NL + 3, S_NOT, S_NL))
     {
       free (tmp_str);
-      return _("There must be at least two negations at the difference.");
+      return _("Double Negation removes negations in pairs.");
     }
 
   free (tmp_str);
@@ -1404,7 +1383,7 @@ proc_sb (unsigned char * prem, unsigned char * conc)
     }
 
   if (ln_sen[li] != '(')
-    return _("There must be connectives on both sentences.");
+    return _("There must be a connective in one sentence.");
 
   int tmp_pos;
   unsigned char * tmp_str;
@@ -1436,8 +1415,7 @@ proc_sb (unsigned char * prem, unsigned char * conc)
 
   if (strcmp (tconn, S_AND) && strcmp (tconn, S_OR))
     {
-      free (t_lsen);
-      free (t_rsen);
+      free (t_lsen); free (t_rsen);
 
       return _("Subsumption must be done around a disjunction or a conjunction.");
     }
@@ -1462,8 +1440,8 @@ proc_sb (unsigned char * prem, unsigned char * conc)
       return _("Subsumption must be done around two connectives.");
     }
 
-  if ((!strcmp (tconn, S_AND) && strcmp (conn, S_OR))
-      || (!strcmp (tconn, S_OR) && strcmp (conn, S_AND)))
+  if ((strcmp (tconn, S_AND) || strcmp (conn, S_OR))
+      && (!strcmp (tconn, S_OR) || strcmp (conn, S_AND)))
     {
       free (t_lsen);
       free (lsen);
