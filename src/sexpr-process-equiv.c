@@ -37,37 +37,9 @@
 
 #include "sexpr-process.h"
 #include "vec.h"
-#include <stdarg.h>
-
-unsigned char *
-construct_other (unsigned char * main_str,
-		 int init_pos,
-		 int fin_pos,
-		 int alloc_size,
-		 char * template,
-		 ...)
-{
-  unsigned char * oth_sen;
-  int oth_pos = init_pos;
-  va_list args;
-
-  va_start (args, template);
-
-  oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, main_str, oth_pos);
-
-  oth_pos += vsprintf (oth_sen + oth_pos, template, args);
-
-  strcpy (oth_sen + oth_pos, main_str + fin_pos);
-
-  va_end (args);
-
-  return oth_sen;
-}
 
 int
-recurse_co (unsigned char * sen_0, unsigned char * sen_1)
+recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 {
   if (!strcmp (sen_0, sen_1))
     return -3;
@@ -97,11 +69,23 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
   if (gg_1 == -1)
     return -1;
 
-  if (gg_0 != gg_1)
+  if (mode == 0)
     {
-      destroy_str_vec (gens_0);
-      destroy_str_vec (gens_1);
-      return -2;
+      if (gg_0 != gg_1)
+	{
+	  destroy_str_vec (gens_0);
+	  destroy_str_vec (gens_1);
+	  return -2;
+	}
+    }
+  else
+    {
+      if (gg_0 < gg_1)
+	{
+	  destroy_str_vec (gens_0);
+	  destroy_str_vec (gens_1);
+	  return -2;
+	}
     }
 
   if (gg_0 == 1)
@@ -130,7 +114,7 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
 	  if (!not_sen_1)
 	    return -1;
 
-	  ret = recurse_co (not_sen_0, not_sen_1);
+	  ret = recurse_mode (not_sen_0, not_sen_1, mode);
 	  if (ret == -1)
 	    return -1;
 
@@ -181,7 +165,7 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
 	      return -2;
 	    }
 
-	  cmp = recurse_co (scope_0, scope_1);
+	  cmp = recurse_mode (scope_0, scope_1, mode);
 	  if (cmp == -1)
 	    return -1;
 
@@ -211,7 +195,11 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
   if (con_0 && con_1)
     {
       int cmp;
-      cmp = vec_str_cmp (gens_0, gens_1);
+      if (mode == 0)
+	cmp = vec_str_cmp (gens_0, gens_1);
+      else
+	cmp = vec_str_sub (gens_1, gens_0);
+
       if (cmp == -1)
 	return -1;
 
@@ -220,6 +208,11 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
 	  destroy_str_vec (gens_0);
 	  destroy_str_vec (gens_1);
 	  return 0;
+	}
+      else if (mode == 1 && gg_0 != gg_1)
+	{
+	  destroy_str_vec (gens_0);
+	  destroy_str_vec (gens_1);
 	}
     }
 
@@ -235,190 +228,7 @@ recurse_co (unsigned char * sen_0, unsigned char * sen_1)
       if (!strcmp (cur_0, cur_1))
 	continue;
 
-      ret = recurse_co (cur_0, cur_1);
-      if (ret == -1)
-	return -1;
-
-      if (ret != 0)
-	{
-	  destroy_str_vec (gens_0);
-	  destroy_str_vec (gens_1);
-	  return ret;
-	}
-    }
-
-  destroy_str_vec (gens_0);
-  destroy_str_vec (gens_1);
-
-  return 0;
-}
-
-int
-recurse_id (unsigned char * sen_0, unsigned char * sen_1)
-{
-  // sen_0 will be the larger sentence.
-
-  if (!strcmp (sen_0, sen_1))
-    return -3;
-
-  int gg_0, gg_1;
-  vec_t * gens_0, * gens_1;
-  int con_0, con_1;
-
-  gens_0 = init_vec (sizeof (char *));
-  if (!gens_0)
-    return -1;
-
-  gens_1 = init_vec (sizeof (char *));
-  if (!gens_1)
-    return -1;
-
-  unsigned char conn_0[S_CL + 1], conn_1[S_CL + 1];
-
-  conn_0[0] = '\0';
-  conn_1[0] = '\0';
-
-  gg_0 = sexpr_get_generalities (sen_0, conn_0, gens_0);
-  if (gg_0 == -1)
-    return -1;
-
-  gg_1 = sexpr_get_generalities (sen_1, conn_1, gens_1);
-  if (gg_1 == -1)
-    return -1;
-
-  if (gg_0 < gg_1)
-    {
-      destroy_str_vec (gens_0);
-      destroy_str_vec (gens_1);
-      return -2;
-    }
-
-  if (gg_0 == 1)
-    {
-      destroy_str_vec (gens_0);
-      destroy_str_vec (gens_1);
-
-      if (sexpr_not_check (sen_0) || sexpr_not_check (sen_1))
-	{
-	  if (!sexpr_not_check (sen_0) || !sexpr_not_check (sen_1))
-	    return -2;
-
-	  int ret;
-	  unsigned char * not_sen_0, * not_sen_1;
-
-	  not_sen_0 = sexpr_elim_not (sen_0);
-	  if (!not_sen_0)
-	    return -1;
-
-	  not_sen_1 = sexpr_elim_not (sen_1);
-	  if (!not_sen_1)
-	    return -1;
-
-	  ret = recurse_id (not_sen_0, not_sen_1);
-	  if (ret == -1)
-	    return -1;
-
-	  free (not_sen_0);
-	  free (not_sen_1);
-	  return ret;
-	}
-
-      if ((sen_0[0] == '(' && sen_1[0] == '(')
-	  && ((!strncmp (sen_0 + 2, S_UNV, S_CL)
-	       || !strncmp (sen_0 + 2, S_EXL, S_CL))
-	      || (!strncmp (sen_1 + 2, S_UNV, S_CL)
-		  || !strncmp (sen_1 + 2, S_EXL, S_CL))))
-	{
-	  if (!(strncmp (sen_0 + 2, S_UNV, S_CL) && strncmp (sen_0 + 2, S_EXL, S_CL))
-	      && !(strncmp (sen_1 + 2, S_UNV, S_CL)
-		   && strncmp (sen_1 + 2, S_EXL, S_CL)))
-	    return -2;
-
-	  unsigned char * scope_0, * scope_1, * var_0, * var_1;
-	  unsigned char quant_0[S_CL + 1], quant_1[S_CL + 1];
-
-	  scope_0 = sexpr_elim_quant (sen_0, quant_0, &var_0);
-	  if (!scope_0)
-	    return -1;
-
-	  scope_1 = sexpr_elim_quant (sen_1, quant_1, &var_1);
-	  if (!scope_1)
-	    return -1;
-
-	  int cmp;
-	  cmp = !strcmp (var_0, var_1);
-
-	  free (var_0);
-	  free (var_1);
-
-	  if (!cmp || strcmp (quant_0, quant_1))
-	    {
-	      free (scope_0);
-	      free (scope_1);
-	      return -2;
-	    }
-
-	  cmp = recurse_id (scope_0, scope_1);
-	  if (cmp == -1)
-	    return -1;
-
-	  free (scope_0);
-	  free (scope_1);
-	  return cmp;
-	}
-
-      return -2;
-    }
-
-  con_0 = 1;
-  if (strcmp (conn_0, S_AND) && strcmp (conn_0, S_OR))
-    con_0 = 0;
-
-  con_1 = 1;
-  if (gg_1 != 1 && (strcmp (conn_1, S_AND) && strcmp (conn_1, S_OR)))
-    con_1 = 0;
-
-  if ((con_0 && !con_1) || (!con_0 && con_1))
-    {
-      destroy_str_vec (gens_0);
-      destroy_str_vec (gens_1);
-      return -2;
-    }
-
-  if (con_0 && con_1)
-    {
-      int cmp;
-      cmp = vec_str_sub (gens_1, gens_0);
-      if (cmp == -1)
-	return -1;
-
-      if (cmp == 0)
-	{
-	  destroy_str_vec (gens_0);
-	  destroy_str_vec (gens_1);
-	  return 0;
-	}
-      else if (gg_0 != gg_1)
-	{
-	  destroy_str_vec (gens_0);
-	  destroy_str_vec (gens_1);
-	  return -2;
-	}
-    }
-
-  int ret, i;
-
-  for (i = 0; i < gens_0->num_stuff; i++)
-    {
-      unsigned char * cur_0, * cur_1;
-
-      cur_0 = vec_str_nth (gens_0, i);
-      cur_1 = vec_str_nth (gens_1, i);
-
-      if (!strcmp (cur_0, cur_1))
-	continue;
-
-      ret = recurse_id (cur_0, cur_1);
+      ret = recurse_mode (cur_0, cur_1, mode);
       if (ret == -1)
 	return -1;
 
@@ -566,7 +376,7 @@ proc_im (unsigned char * prem, unsigned char * conc)
   // Only occurs if there is no top connective on one, or a quantifier.
 
   if (i < 2)
-    return _("Incorrect usage of implication.");
+    return _("Implication constructed incorrectly.");
 
   int tmp_pos;
   unsigned char * tmp_str;
@@ -965,7 +775,7 @@ char *
 proc_co (unsigned char * prem, unsigned char * conc)
 {
   int ret_chk;
-  ret_chk = recurse_co (prem, conc);
+  ret_chk = recurse_mode (prem, conc, 0);
   if (ret_chk == -1)
     return NULL;
 
@@ -984,24 +794,10 @@ char *
 proc_id (unsigned char * prem, unsigned char * conc)
 {
   unsigned char * ln_sen, * sh_sen;
-  int p_len, c_len;
-
-  p_len = strlen (prem);
-  c_len = strlen (conc);
-
-  if (p_len < c_len)
-    {
-      sh_sen = prem;
-      ln_sen = conc;
-    }
-  else
-    {
-      sh_sen = conc;
-      ln_sen = prem;
-    }
+  sen_put_len (prem, conc, &sh_sen, &ln_sen);
 
   int ret_chk;
-  ret_chk = recurse_id (ln_sen, sh_sen);
+  ret_chk = recurse_mode (ln_sen, sh_sen, 1);
   if (ret_chk == -1)
     return NULL;
 
@@ -1284,6 +1080,7 @@ proc_eq (unsigned char * prem, unsigned char * conc)
   ftc = sexpr_find_top_connective (tmp_str, S_BIC, &lsen, &rsen);
   if (ftc == -1)
     return NULL;
+  free (tmp_str);
 
   if (ftc < 0)
     {
@@ -1361,7 +1158,6 @@ proc_dn (unsigned char * prem, unsigned char * conc)
     return _("Double Negation constructed incorrectly.");
 
   int pos, num_negs;
-  unsigned char * oth_sen;
   int oth_pos;
 
   pos = i;
@@ -1375,7 +1171,11 @@ proc_dn (unsigned char * prem, unsigned char * conc)
   pos = i + 4 + 2 * S_NL;
   // Begin removing pairs of negations, until there are no more pairs.
 
-  oth_sen = (unsigned char *) calloc (l_len - S_NL * 2 - 5, sizeof (char));
+  unsigned char * oth_sen;
+  int alloc_size;
+
+  alloc_size = l_len - S_NL * 2 - 6;
+  oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
   CHECK_ALLOC (oth_sen, NULL);
   strncpy (oth_sen, ln_sen, i);
   oth_pos = i;
@@ -1705,9 +1505,11 @@ proc_sb (unsigned char * prem, unsigned char * conc)
   /* Construct what should be the other sentence. */
 
   unsigned char * oth_sen;
-  int oth_pos;
+  int oth_pos, alloc_size;
 
-  oth_sen = (unsigned char *) calloc (l_len - r_len - S_CL - 3, sizeof (char));
+  alloc_size = l_len - r_len - S_CL - 4;
+
+  oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
   CHECK_ALLOC (oth_sen, NULL);
   strncpy (oth_sen, ln_sen, li);
   oth_pos = li;
