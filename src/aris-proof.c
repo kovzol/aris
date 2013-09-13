@@ -474,6 +474,7 @@ aris_proof_set_changed (aris_proof * ap, int changed)
       ap->edited = 0;
     }
   gtk_window_set_title (GTK_WINDOW (SEN_PARENT (ap)->window), (const char *) new_title);
+  free (new_title);
   return 0;
 }
 
@@ -886,6 +887,7 @@ aris_proof_set_filename (aris_proof * ap, const char * filename)
   free (base_name);
 
   gtk_window_set_title (GTK_WINDOW (SEN_PARENT (ap)->window), new_title);
+  free (new_title);
 
   int ret;
   ret = goal_update_title (ap->goal);
