@@ -606,7 +606,7 @@ rules_table_set_boolean_mode (rules_table * rt, int boolean)
   for (i = 0; i < NUM_RULES; i++)
     {
       if (i < RULE_DM || i == RULE_EQ || i == RULE_EP
-	  || (i >= RULE_UG && i <= RULE_SP))
+	  || (i >= RULE_UG && i <= RULE_IN))
 	gtk_widget_set_sensitive (rt->rules[i], oth_sens);
     }
 
