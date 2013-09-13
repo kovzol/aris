@@ -124,23 +124,8 @@ process_inference (unsigned char * conc, vec_t * prems, const char * rule)
 char *
 proc_mp (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc)
 {
-  int p0_len, p1_len;
-
-  p0_len = strlen (prem_0);
-  p1_len = strlen (prem_1);
-
   unsigned char * con_sen, * oth_sen;
-
-  if (p0_len > p1_len)
-    {
-      con_sen = prem_0;
-      oth_sen = prem_1;
-    }
-  else
-    {
-      con_sen = prem_1;
-      oth_sen = prem_0;
-    }
+  sen_put_len (prem_0, prem_1, &oth_sen, &con_sen);
 
   int ftc;
   unsigned char * lsen, * rsen;
@@ -627,6 +612,15 @@ proc_cd (vec_t * prems, unsigned char * conc)
   ref_gg = sexpr_get_generalities (dis_ref, S_OR, ref_gg_vec);
   if (ref_gg == -1)
     return NULL;
+
+  if (ref_gg == 1)
+    {
+      destroy_str_vec (ref_gg_vec);
+      destroy_str_vec (conc_gg_vec);
+      destroy_str_vec (ants);
+      destroy_str_vec (cons);
+      return _("Constructive Dilemma constructed incorrectly.");
+    }
 
   int ants_ret_chk, cons_ret_chk;
 
