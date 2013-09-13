@@ -315,7 +315,17 @@ goal_add_line (goal_t * goal, sen_data * sd)
 int
 goal_rem_line (goal_t * goal)
 {
-  int ret;
+  int ret, line_num;
+
+  line_num = ((sentence *) goal->focused->value)->line_num;
+  if (line_num > 0)
+    {
+      sentence * sen;
+      item_t * itm;
+      itm = ls_nth (goal->parent->everything, line_num - 1);
+      sen = (sentence *) itm->value;
+      gtk_widget_modify_bg (sen->eventbox, GTK_STATE_NORMAL, NULL);
+    }
 
   sen_parent_rem_sentence ((sen_parent *) goal, goal->focused->value);
 
@@ -344,6 +354,7 @@ goal_update_title (goal_t * goal)
   file = g_file_new_for_path (goal->parent->cur_file);
   base_name = g_file_get_basename (file);
   sprintf (new_title, "GNU Aris - %s - Goals", base_name);
+  free (base_name);
 
   gtk_window_set_title (GTK_WINDOW (SEN_PARENT (goal)->window), new_title);
 
