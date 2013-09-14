@@ -1,5 +1,11 @@
 2013-09-14  Ian Dunn  <dunni@gnu.org>
 
+	* configure.ac: Updated to version 2.1.1.
+
+	* src/Makefile.am: Added XPM files to build files.
+
+	* Makefile.am: Added license.
+
 	* sexpr-process-equiv.c (proc_sb): Fixed processing bug.
 	(proc_dt): Same.
 
