@@ -55,7 +55,9 @@ sexpr_get_part (unsigned char * in_str, unsigned int init_pos, unsigned char ** 
 
     default:
       tmp_pos = init_pos;
-      while (in_str[tmp_pos] != ' ' && in_str[tmp_pos] != ')')
+      while (in_str[tmp_pos] != ' '
+	     && in_str[tmp_pos] != ')'
+	     && in_str[tmp_pos] != '\0')
 	tmp_pos++;
 
       (*out_str) = (unsigned char *) calloc (tmp_pos - init_pos + 1, sizeof (char));
@@ -106,8 +108,9 @@ sexpr_car_cdr (unsigned char * in_str,
 	       unsigned char ** car,
 	       vec_t * cdr)
 {
+  int init_pos = (in_str[0] == '(') ? 1 : 0;
   int pos, ret_chk;
-  pos = sexpr_get_part (in_str, 1, car);
+  pos = sexpr_get_part (in_str, init_pos, car);
   if (pos == -1)
     return -1;
 
@@ -294,8 +297,16 @@ sexpr_get_generalities (unsigned char * in_str, unsigned char * conn, vec_t * ve
   if (ret_chk == -1)
     return -1;
 
-  if (tmp_conn[0] == '(' || ret_chk == 0)
-    return 1;
+  if (ret_chk == 0)
+    {
+      vec_str_add_obj (vec, tmp_conn);
+      return 1;
+    }
+
+  if (tmp_conn[0] == '(')
+    {
+      return 1;
+    }
 
   if (conn[0] == '\0')
     {
