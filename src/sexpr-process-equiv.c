@@ -158,7 +158,10 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 
   con_1 = 1;
   if (strcmp (conn_1, S_AND) && strcmp (conn_1, S_OR))
-    con_1 = 0;
+    {
+      if (!(mode == 1 && conn_1[0] == '\0'))
+	con_1 = 0;
+    }
 
   if ((con_0 && !con_1) || (!con_0 && con_1))
     {
