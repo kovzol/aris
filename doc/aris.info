@@ -510,7 +510,7 @@ This manual is for GNU Aris, the logical proof program.
 
    This manual is for GNU Aris, the logical proof program.
 
-   This is edition 1.2, for 'aris' version 2.1
+   This is edition 1.2, for 'aris' version 2.1.1
 
 * Menu:
 
@@ -1799,7 +1799,8 @@ File: aris.info,  Node: in,  Prev: sq,  Up: Miscellaneous Rules
 6.5.4 Induction
 ---------------
 
-     Vx(P(z(x)) ^ (P(x) -> P(s(x))))
+     P(z(a))
+     P(x) -> P(s(x))
      -----
      Vx(P(x))
 
@@ -2103,79 +2104,79 @@ File: aris.info,  Node: other,  Prev: instance,  Up: Isabelle/Isar
 
 Tag Table:
 Node: Top25644
-Node: Introduction26895
-Node: Terms27427
-Node: Options36037
-Node: Basic Usage37522
-Node: Startup37907
-Node: Connectives38534
-Node: Adding39031
-Node: Selecting39841
-Node: Syntax40821
-Node: Menu Options41358
-Node: Proof Windows42017
-Node: Rules Table44729
-Node: Other Key Shortcuts45880
-Node: Rules Index46742
-Node: Inference Rules47290
-Node: mp47680
-Node: ad48204
-Node: sm48770
-Node: cn49259
-Node: hs49941
-Node: ds50696
-Node: ex51098
-Node: cd51381
-Node: Equivalence Rules51618
-Node: im52166
-Node: dm52474
-Node: as52713
-Node: co53289
-Node: id53707
-Node: dt53998
-Node: eq54380
-Node: dn54814
-Node: ep55125
-Node: sb55350
-Node: Recursion55587
-Node: Predicate Rules56481
-Node: ug56947
-Node: ui57474
-Node: eg57826
-Node: ei58188
-Node: bv58706
-Node: nq59338
-Node: pr59744
-Node: ii60198
-Node: fv60431
-Node: Boolean Rules60750
-Node: bi61270
-Node: bn61646
-Node: bd61976
-Node: sn62368
-Node: Miscellaneous Rules62584
-Node: lm62792
-Node: sp63972
-Node: sq64252
-Node: in64559
-Node: Customization64859
-Node: Dialog65266
-Node: Config File66538
-Node: Submission67975
-Node: Sequence Logic69674
-Node: Axioms70289
-Node: Induction71570
-Node: Interoperability71880
-Node: Isabelle/Isar72185
-Node: fun72995
-Node: type_synonym73154
-Node: lemma/theorem73305
-Node: case73667
-Node: primrec73798
-Node: definition73932
-Node: datatype74076
-Node: class74214
-Node: instance74344
-Node: other74477
+Node: Introduction26897
+Node: Terms27429
+Node: Options36039
+Node: Basic Usage37524
+Node: Startup37909
+Node: Connectives38536
+Node: Adding39033
+Node: Selecting39843
+Node: Syntax40823
+Node: Menu Options41360
+Node: Proof Windows42019
+Node: Rules Table44731
+Node: Other Key Shortcuts45882
+Node: Rules Index46744
+Node: Inference Rules47292
+Node: mp47682
+Node: ad48206
+Node: sm48772
+Node: cn49261
+Node: hs49943
+Node: ds50698
+Node: ex51100
+Node: cd51383
+Node: Equivalence Rules51620
+Node: im52168
+Node: dm52476
+Node: as52715
+Node: co53291
+Node: id53709
+Node: dt54000
+Node: eq54382
+Node: dn54816
+Node: ep55127
+Node: sb55352
+Node: Recursion55589
+Node: Predicate Rules56483
+Node: ug56949
+Node: ui57476
+Node: eg57828
+Node: ei58190
+Node: bv58708
+Node: nq59340
+Node: pr59746
+Node: ii60200
+Node: fv60433
+Node: Boolean Rules60752
+Node: bi61272
+Node: bn61648
+Node: bd61978
+Node: sn62370
+Node: Miscellaneous Rules62586
+Node: lm62794
+Node: sp63974
+Node: sq64254
+Node: in64561
+Node: Customization64858
+Node: Dialog65265
+Node: Config File66537
+Node: Submission67974
+Node: Sequence Logic69673
+Node: Axioms70288
+Node: Induction71569
+Node: Interoperability71879
+Node: Isabelle/Isar72184
+Node: fun72994
+Node: type_synonym73153
+Node: lemma/theorem73304
+Node: case73666
+Node: primrec73797
+Node: definition73931
+Node: datatype74075
+Node: class74213
+Node: instance74343
+Node: other74476
 
 End Tag Table
