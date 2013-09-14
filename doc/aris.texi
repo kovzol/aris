@@ -1067,7 +1067,9 @@ This introduces a new sequence given a function.  The sequence introduced this w
 
 @itemize @w{}
 @item
-Vx(P(z(x)) ^ (P(x) @arrow{} P(s(x))))
+P(z(a))
+@item
+P(x) @arrow{} P(s(x))
 @item
 --------
 @item
