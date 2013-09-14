@@ -1,3 +1,8 @@
+2013-09-14  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-equiv.c (proc_sb): Fixed processing bug.
+	(proc_dt): Same.
+
 2013-09-13  Ian Dunn  <dunni@gnu.org>
 
 	* process.c (check_sides_quant): Allows for variables of
