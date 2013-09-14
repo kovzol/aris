@@ -956,7 +956,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 	}
 
       if ((strcmp (quant, S_UNV) || strcmp (conn, S_AND))
-	  && (!strcmp (quant, S_EXL) || strcmp (conn, S_OR)))
+	  && (strcmp (quant, S_EXL) || strcmp (conn, S_OR)))
 	{
 	  destroy_str_vec (gg_vec);
 	  return _("A universal is distributed over a conjnction, and an existential is distributed over a disjunction.");
