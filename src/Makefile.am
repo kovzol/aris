@@ -30,12 +30,23 @@ AM_CFLAGS += \
 
 AM_LDFLAGS += \
         -Wl,-subsystem,windows
-
-## Yes, this is necessary.
-LDADD = -lws2_32
 endif
 
-aris_SOURCES =
+XPM_SOURCES = \
+	and-conn.xpm	\
+	bic-conn.xpm	\
+	con-conn.xpm	\
+	ctr-conn.xpm	\
+	elm-conn.xpm	\
+	exl-conn.xpm	\
+	icon.xpm	\
+	nil-conn.xpm	\
+	not-conn.xpm	\
+	or-conn.xpm	\
+	tau-conn.xpm	\
+	unv-conn.xpm
+
+aris_SOURCES = $(XPM_SOURCES)
 
 aris_SOURCES +=		\
 	aio.h		\
@@ -56,6 +67,7 @@ aris_SOURCES +=		\
 	list.c		\
 	menu.h		\
 	menu.c		\
+	pound.h		\
 	process.h	\
 	process.c	\
 	process-main.c	\
@@ -77,12 +89,13 @@ aris_SOURCES +=		\
 	sexpr-process-infer.c	\
 	sexpr-process-misc.c  \
 	sexpr-process-quant.c	\
+	typedef.h	\
 	var.h 		\
 	var.c		\
 	vec.h		\
 	vec.c
 
-test_SOURCES = 
+test_SOURCES = $(XPM_SOURCES)
 
 test_SOURCES +=		\
 	aio.h		\
