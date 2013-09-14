@@ -6,6 +6,22 @@ This NEWS file records important changes.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+2.1.1
+
+  * Fixed up bugs in processing.
+
+  * Fixed up bugs in bi, dt, and sb.
+
+  * Cleaned up code.
+
+  * Induction now requires two premises.
+
+  * Customization allows for a grading server directory.
+
+  * Fixed up some memory leaks.
+
+  * Fixed up some bugs with the goal menu.
+
 2.1
 
   * Fixed up bugs in the customization dialog.
