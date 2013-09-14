@@ -1,5 +1,9 @@
 2013-09-14  Ian Dunn  <dunni@gnu.org>
 
+	* sexpr-process.c (sexpr_car_cdr): Fixed bug.
+	(sexpr_get_part): Same.
+	(sexpr_get_generalities): Same.
+
 	* configure.ac: Updated to version 2.1.1.
 
 	* src/Makefile.am: Added XPM files to build files.
@@ -8,6 +12,7 @@
 
 	* sexpr-process-equiv.c (proc_sb): Fixed processing bug.
 	(proc_dt): Same.
+	(recurse_mode): Same.
 
 2013-09-13  Ian Dunn  <dunni@gnu.org>
 
