@@ -1441,7 +1441,7 @@ proc_sb (unsigned char * prem, unsigned char * conc)
     }
 
   if ((strcmp (tconn, S_AND) || strcmp (conn, S_OR))
-      && (!strcmp (tconn, S_OR) || strcmp (conn, S_AND)))
+      && (strcmp (tconn, S_OR) || strcmp (conn, S_AND)))
     {
       free (t_lsen);
       free (lsen);
