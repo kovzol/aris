@@ -21,8 +21,10 @@
 # proof files.  This is due to the fact that the password will be
 # freely available, and thus might allow others to misuse this directory.
 
+IFS=""
 
 ARIS_DIR=""
+LOG="$ARIS_DIR/doc/collect.log"
 COLLECT_EL="$ARIS_DIR/doc/collect.el"
 LAST_TIME=$(date +"%s")
 CUR_TIME="$LAST_TIME"
@@ -45,6 +47,11 @@ if [ -z "$FTP_HOME" ] || [ -z "$ARIS_DIR" ]
 then
     echo "You forgot to set FTP_HOME and ARIS_DIR."
     exit 99
+fi
+
+if [ ! -f "$LOG" ]
+then
+    touch "$LOG"
 fi
 
 function compare_files
@@ -88,10 +95,26 @@ function compare_files
     return 0
 }
 
+function rm_non
+{
+    for i in $(ls -A)
+    do
+        EXT=$(echo "$i" | cut -f 2 -d '.')
+	if [ "$EXT" != "directive" ] && [ "$EXT" != "tle" ]
+        then
+            $RM "$i"
+        fi
+    done
+}
+
 while [ true ]
 do
     CUR_TIME=$(date +"%s")
     DIF_TIME=$(echo "$CUR_TIME - $LAST_TIME" | bc)
+    if [ $(( $DIF_TIME % 30 )) -eq 0 ]
+    then
+	rm_non
+    fi
     if [ "$DIF_TIME" -ge 300 ]
     then
 	for f in $(ls *.directive)
@@ -103,6 +126,9 @@ do
 
 	    EMAIL=$(grep "user" "$DIRECTIVE_NAME" | cut -f 2 -d ':' | cut -b 2-)
 	    INSTRUCTOR=$(grep "instr" "$DIRECTIVE_NAME" | cut -f 2 -d ':' | cut -b 2-)
+
+	    LOG_TIME=$(date +"%F %T")
+	    echo "<$LOG_TIME> Found $f." >> "$LOG"
 
 	    NUM_WORKS=$(echo "$(wc -l "$DIRECTIVE_NAME" | cut -f 1 -d' ') - 2" | bc)
 
@@ -174,11 +200,6 @@ do
 	    $RM "$DIRECTIVE_NAME"
 	done
 
-	# And clean up any tricky files.
-	for i in $(ls -A)
-	do
-	    $RM "$i"
-	done
 	LAST_TIME="$CUR_TIME"
     fi
 done
