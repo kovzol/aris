@@ -521,12 +521,25 @@ check_conns (const unsigned char * chk_str)
 
   for (j = 0; j < chk_len - CL + 1; j++)
     {
-      if (!strncmp (chk_str + j, AND, CL) || !strncmp (chk_str + j, OR, CL)
-	  || !strncmp (chk_str + j, CON, CL) || !strncmp (chk_str + j, BIC, CL))
+      if (IS_BIN_CONN (chk_str + j))
 	{
 	  chk_sides = check_sides (chk_str, j);
 
 	  if (!chk_sides)
+	    return 0;
+	}
+
+      if (!strncmp (chk_str + j, NOT, NL))
+	{
+	  // Left side.
+	  if (!(j == 0
+		|| chk_str[j-1] == '('
+		|| (j >= NL && !strncmp (chk_str + j - NL, NOT, NL))
+		|| (j >= CL && IS_BIN_CONN (chk_str + j - CL))))
+	    return 0;
+
+	  // Right side
+	  if (j == chk_len - NL)
 	    return 0;
 	}
     }
