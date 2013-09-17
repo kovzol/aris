@@ -42,6 +42,11 @@
 			   || !strncmp (s, t.elm, t.cl)		\
 			   || !strncmp (s, t.nil, t.cl))
 
+#define IS_BIN_CONN(s) (!strncmp (s,AND,CL)	\
+			|| !strncmp (s,OR,CL)	\
+			|| !strncmp (s,CON,CL)	\
+			|| !strncmp (s,BIC,CL))
+
 #define ISCONN(s) IS_TYPE_CONN (s, main_conns)
 
 #define ISGOOD(s) (!strncmp (s, UNV, CL)     \
