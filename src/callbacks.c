@@ -1295,7 +1295,10 @@ gui_submit_show (GtkWidget * window)
 	  const char * entry_text = gtk_entry_get_text (GTK_ENTRY (ent));
 
 	  if (entry_text[0] == '\0')
-	    continue;
+	    {
+	      gl = gl->next->next;
+	      continue;
+	    }
 
 	  entries[i].hw = strdup (entry_text);
 	  entries[i].file_name = strdup (gtk_label_get_label (GTK_LABEL (wid)));
