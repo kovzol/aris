@@ -27,6 +27,239 @@
 #include "sen-data.h"
 #include "var.h"
 
+int
+sexpr_id_chk (unsigned char * cur_ref, int * pf_id, vec_t * cur_sen_ids)
+{
+  int i, k, l, m;
+  int valid, ret_chk;
+  unsigned char * new_sen;
+  int cur_len = cur_sen_ids->num_stuff;
+
+  i = k = l = m = 0;
+  valid = 1;
+
+  while (pf_id[k] != SEN_ID_END)
+    {
+      switch (pf_id[k])
+	{
+	case SEN_ID_OPAREN:
+	  if (cur_ref[l] != '(')
+	    valid = 0;
+	  l++;
+	  break;
+
+	case SEN_ID_CPAREN:
+	  if (cur_ref[l] != ')')
+	    valid = 0;
+	  l++;
+	  break;
+
+	case SEN_ID_SPACE:
+	  if (cur_ref[l] != ' ')
+	    valid = 0;
+	  l++;
+	  break;
+
+	case SEN_ID_NOT:
+	  if (strncmp (cur_ref + l, S_NOT, S_NL))
+	    valid = 0;
+	  l += S_NL;
+	  break;
+
+	case SEN_ID_AND:
+	  if (strncmp (cur_ref + l, S_AND, S_CL))
+	    valid = 0;
+	  l += S_CL;
+	  break;
+
+	case SEN_ID_OR:
+	  if (strncmp (cur_ref + l, S_OR, S_CL))
+	    valid = 0;
+	  l += S_CL;
+	  break;
+
+	case SEN_ID_CON:
+	  if (strncmp (cur_ref + l, S_CON, S_CL))
+	    valid = 0;
+	  l += S_CL;
+	  break;
+
+	case SEN_ID_BIC:
+	  if (strncmp (cur_ref + l, S_BIC, S_CL))
+	    valid = 0;
+	  l += S_CL;
+	  break;
+
+	case SEN_ID_UNV:
+	  if (strncmp (cur_ref + l, S_UNV, S_CL))
+	    valid = 0;
+	  l += S_CL;
+	  break;
+
+	case SEN_ID_EXL:
+	  if (strncmp (cur_ref + l, S_EXL, S_CL))
+	    valid = 0;
+	  l += S_CL;
+	  break;
+
+	case SEN_ID_EQ:
+	  if (cur_ref[l] != '=')
+	    valid = 0;
+	  l++;
+	  break;
+
+	case SEN_ID_LT:
+	  if (cur_ref[l] != '<')
+	    valid = 0;
+	  l++;
+	  break;
+
+	case SEN_ID_ELM:
+	  if (strncmp (cur_ref + l, S_ELM, S_CL))
+	    valid = 0;
+	  l += S_CL;
+	  break;
+
+	case SEN_ID_NIL:
+	  if (strncmp (cur_ref + l, S_NIL, S_CL))
+	    valid = 0;
+	  l += S_CL;
+	  break;
+
+	default:
+	  ret_chk = sexpr_get_part (cur_ref, l, &new_sen);
+	  if (ret_chk == -1)
+	    return -1;
+
+	  l = ret_chk;
+	  int got_it = 0;
+
+	  for (m = 0;  m < cur_sen_ids->num_stuff; m++)
+	    {
+	      sen_id * cur_sen_id;
+	      cur_sen_id = vec_nth (cur_sen_ids, m);
+
+	      if (!strcmp (cur_sen_id->sen, new_sen))
+		break;
+
+	      if (cur_sen_id->id == pf_id[k])
+		got_it = 1;
+	    }
+
+	  if (m != cur_sen_ids->num_stuff)
+	    {
+	      sen_id * m_sen_id;
+	      m_sen_id = vec_nth (cur_sen_ids, m);
+
+	      if (pf_id[k] != m_sen_id->id)
+		valid = 0;
+	    }
+	  else if (!got_it)
+	    {
+	      // This sentence id was not found elsewhere.
+
+	      sen_id new_sen_id;
+	      new_sen_id.sen = strdup (new_sen);
+	      CHECK_ALLOC (new_sen_id.sen, -1);
+	      new_sen_id.id = pf_id[k];
+
+	      ret_chk = vec_add_obj (cur_sen_ids, &new_sen_id);
+	      if (ret_chk < 0)
+		return -1;
+	    }
+	  else
+	    {
+	      valid = 0;
+	    }
+
+	  free (new_sen);
+	  new_sen = NULL;
+
+	  break;
+	}
+
+      if (!valid)
+	{
+	  // Remove the new sentence ids.
+
+	  while (cur_sen_ids->num_stuff > cur_len)
+	    {
+	      sen_id * cur_sen_id;
+	      cur_sen_id = vec_nth (cur_sen_ids, cur_sen_ids->num_stuff - 1);
+
+	      free (cur_sen_id->sen);
+	      vec_pop_obj (cur_sen_ids);
+	    }
+
+	  break;
+	}
+      k++;
+    }
+
+  l = (valid) ? l : 0;
+  return l;
+}
+
+/* Determines whether or not an equivalence follows from the lemma.
+ *  input:
+ *    prem - the premise of the argument.
+ *    conc - the conclusion of the argument.
+ *    pf_ids - the sentence ids from the lemma.
+ *  output:
+ *    0 - success
+ *    -1 - memory error.
+ *    -2 - failure.
+ */
+int
+equiv_lemma (unsigned char * prem,
+	     unsigned char * conc,
+	     int ** pf_ids)
+{
+  int i, rc, j;
+  int init_pos, end_pos;
+  vec_t * sen_ids;
+
+  for (i = 0; prem[i]; i++)
+    {
+      sen_ids = init_vec (sizeof (sen_id));
+
+      rc = sexpr_id_chk (prem + i, pf_ids[0], sen_ids);
+      if (rc == -1)
+	return -1;
+
+      if (!rc)
+	continue;
+
+      init_pos = i;
+      end_pos = rc;
+
+      rc = sexpr_id_chk (conc + i, pf_ids[1], sen_ids);
+      if (rc == -1)
+	return -1;
+
+      if (!rc)
+	{
+	  for (j = 0; j < sen_ids->num_stuff; j++)
+	    {
+	      sen_id * cur_sen_id;
+	      cur_sen_id = vec_nth (sen_ids, j);
+	      free (cur_sen_id->sen);
+	    }
+	  destroy_vec (sen_ids);
+
+	  continue;
+	}
+      break;
+    }
+
+  rc = i;
+
+  if (!prem[rc])
+    return -2;
+
+  return 0;
+}
+
 char *
 process_misc (unsigned char * conc, vec_t * prems, const char * rule, vec_t * vars,
 	      proof_t * proof)
@@ -100,23 +333,15 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
   for (itr = proof->everything->head; itr; itr = itr->next)
     {
       sen_data * sd;
-      unsigned char * sp_text, * sexpr;
+      unsigned char * sexpr = NULL;
 
       sd = itr->value;
-      if (!sd->premise)
+      if (!sd->premise || sd->text[0] == '\0')
 	break;
 
-      if (sd->text[0] == '\0')
-	break;
-
-      sp_text = die_spaces_die (sd->text);
-      if (!sp_text)
+      ret_chk = sen_convert_sexpr (sd->text, &sexpr);
+      if (ret_chk == -1)
 	return NULL;
-
-      sexpr = convert_sexpr (sp_text);
-      if (!sexpr)
-	return NULL;
-      free (sp_text);
 
       ret_chk = vec_str_add_obj (pf_sens, sexpr);
       if (ret_chk < 0)
@@ -134,18 +359,12 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
 
   for (itr = proof->goals->head; itr; itr = itr->next)
     {
-      unsigned char * sd;
-      unsigned char * sp_text, * sexpr;
+      unsigned char * sd, * sexpr = NULL;
 
       sd = itr->value;
-      sp_text = die_spaces_die (sd);
-      if (!sp_text)
+      ret_chk = sen_convert_sexpr (sd, &sexpr);
+      if (ret_chk == -1)
 	return NULL;
-
-      sexpr = convert_sexpr (sp_text);
-      if (!sexpr)
-	return NULL;
-      free (sp_text);
 
       ret_chk = vec_str_add_obj (pf_sens, sexpr);
       if (ret_chk < 0)
@@ -156,6 +375,7 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
   int ** pf_ids;
   pf_ids = (int **) calloc (pf_sens->num_stuff, sizeof (int *));
   CHECK_ALLOC (pf_ids, NULL);
+
   vec_t * pf_sen_ids, * cur_sen_ids;
   pf_sen_ids = init_vec (sizeof (sen_id));
   if (!pf_sen_ids)
@@ -167,6 +387,17 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
       ret_chk = sexpr_get_ids (vec_str_nth (pf_sens, i), &pf_ids[i], pf_sen_ids);
       if (ret_chk == -1)
 	return NULL;
+    }
+
+  if (proof->boolean)
+    {
+      ret_chk = equiv_lemma (vec_str_nth (prems, 0), conc, pf_ids);
+      if (ret_chk == -1)
+	return NULL;
+
+      if (!ret_chk)
+	return CORRECT;
+      return _("Incorrect usage of lemma.");
     }
 
   int k, l, m, valid, cur_len, pf_len;
@@ -202,182 +433,7 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
 	  unsigned char * cur_ref, * new_sen;
 	  cur_ref = (j < prems->num_stuff) ? vec_str_nth (prems, j) : conc;
 
-	  k = l = 0;
-	  valid = 1;
-
-	  while (pf_ids[i][k] != SEN_ID_END)
-	    {
-	      switch (pf_ids[i][k])
-		{
-		case SEN_ID_OPAREN:
-		  if (cur_ref[l] != '(')
-		    valid = 0;
-		  l++;
-		  break;
-
-		case SEN_ID_CPAREN:
-		  if (cur_ref[l] != ')')
-		    valid = 0;
-		  l++;
-		  break;
-
-		case SEN_ID_SPACE:
-		  if (cur_ref[l] != ' ')
-		    valid = 0;
-		  l++;
-		  break;
-
-		case SEN_ID_NOT:
-		  if (strncmp (cur_ref + l, S_NOT, S_NL))
-		    valid = 0;
-		  l += S_NL;
-		  break;
-
-		case SEN_ID_AND:
-		  if (strncmp (cur_ref + l, S_AND, S_CL))
-		    valid = 0;
-		  l += S_CL;
-		  break;
-
-		case SEN_ID_OR:
-		  if (strncmp (cur_ref + l, S_OR, S_CL))
-		    valid = 0;
-		  l += S_CL;
-		  break;
-
-		case SEN_ID_CON:
-		  if (strncmp (cur_ref + l, S_CON, S_CL))
-		    valid = 0;
-		  l += S_CL;
-		  break;
-
-		case SEN_ID_BIC:
-		  if (strncmp (cur_ref + l, S_BIC, S_CL))
-		    valid = 0;
-		  l += S_CL;
-		  break;
-
-		case SEN_ID_UNV:
-		  if (strncmp (cur_ref + l, S_UNV, S_CL))
-		    valid = 0;
-		  l += S_CL;
-		  break;
-
-		case SEN_ID_EXL:
-		  if (strncmp (cur_ref + l, S_EXL, S_CL))
-		    valid = 0;
-		  l += S_CL;
-		  break;
-
-		case SEN_ID_EQ:
-		  if (cur_ref[l] != '=')
-		    valid = 0;
-		  l++;
-		  break;
-
-		case SEN_ID_LT:
-		  if (cur_ref[l] != '<')
-		    valid = 0;
-		  l++;
-		  break;
-
-		case SEN_ID_ELM:
-		  if (strncmp (cur_ref + l, S_ELM, S_CL))
-		    valid = 0;
-		  l += S_CL;
-		  break;
-
-		case SEN_ID_NIL:
-		  if (strncmp (cur_ref + l, S_NIL, S_CL))
-		    valid = 0;
-		  l += S_CL;
-		  break;
-
-		default:
-		  if (cur_ref[l] == '(')
-		    {
-		      ret_chk = parse_parens (cur_ref, l, &new_sen);
-		      if (ret_chk == -2)
-			return NULL;
-		      ret_chk++;
-		    }
-		  else
-		    {
-		      ret_chk = l;
-		      while (cur_ref[ret_chk] != ' ' && cur_ref[ret_chk] != ')')
-			ret_chk++;
-
-		      new_sen = (unsigned char *) calloc (ret_chk - l + 1,
-							  sizeof (char));
-		      CHECK_ALLOC (new_sen, NULL);
-		      strncpy (new_sen, cur_ref + l, ret_chk - l);
-		      new_sen[ret_chk - l] = '\0';
-		    }
-
-		  l = ret_chk;
-		  int got_it = 0;
-
-		  for (m = 0;  m < cur_sen_ids->num_stuff; m++)
-		    {
-		      sen_id * cur_sen_id;
-		      cur_sen_id = vec_nth (cur_sen_ids, m);
-
-		      if (!strcmp (cur_sen_id->sen, new_sen))
-			break;
-
-		      if (cur_sen_id->id == pf_ids[i][k])
-			got_it = 1;
-		    }
-
-		  if (m != cur_sen_ids->num_stuff)
-		    {
-		      sen_id * m_sen_id;
-		      m_sen_id = vec_nth (cur_sen_ids, m);
-
-		      if (pf_ids[i][k] != m_sen_id->id)
-			valid = 0;
-		    }
-		  else if (!got_it)
-		    {
-		      sen_id new_sen_id;
-		      new_sen_id.sen = (unsigned char *) calloc (strlen (new_sen) + 1,
-								 sizeof (char));
-		      CHECK_ALLOC (new_sen_id.sen, NULL);
-		      strcpy (new_sen_id.sen, new_sen);
-		      new_sen_id.id = pf_ids[i][k];
-
-		      ret_chk = vec_add_obj (cur_sen_ids, &new_sen_id);
-		      if (ret_chk < 0)
-			return NULL;
-		    }
-		  else
-		    {
-		      valid = 0;
-		    }
-
-		  free (new_sen);
-		  new_sen = NULL;
-
-		  break;
-		}
-
-	      if (!valid)
-		{
-		  while (cur_sen_ids->num_stuff > cur_len)
-		    {
-		      sen_id * cur_sen_id;
-		      cur_sen_id = vec_nth (cur_sen_ids, cur_sen_ids->num_stuff - 1);
-
-		      free (cur_sen_id->sen);
-		      vec_pop_obj (cur_sen_ids);
-		    }
-
-		  break;
-		}
-
-	      k++;
-	    }
-
+	  valid = sexpr_id_chk (cur_ref, pf_ids[i], cur_sen_ids);
 	  if (valid)
 	    {
 	      cur_len = cur_sen_ids->num_stuff;
@@ -386,6 +442,8 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
 	    }
 	}
     }
+
+  // Clean Up
 
   for (i = 0; i < cur_sen_ids->num_stuff; i++)
     {
