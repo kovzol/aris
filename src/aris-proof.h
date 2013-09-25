@@ -25,6 +25,19 @@
 
 #define ARIS_PROOF(o) ((aris_proof *) o)
 
+enum UNDO_INFO_TYPE {
+  UIT_ADD_SEN = 0,
+  UIT_REM_SEN,
+  UIT_ADD_GOAL,
+  UIT_REM_GOAL,
+  UIT_MOD_TEXT
+};
+
+struct undo_info {
+  int type;
+  sen_data * sd;
+  void * data;
+};
 
 // The main proof/gui structure.
 
@@ -60,6 +73,9 @@ struct aris_proof {
 
   char * sb_text;  // The statusbar text - may not be needed.
   int boolean : 1;
+
+  vec_t * undo_stack;
+  int undo_pt;
 };
 
 aris_proof * aris_proof_init ();

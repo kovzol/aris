@@ -37,6 +37,7 @@ typedef struct sen_id sen_id;
 typedef struct rules_group rules_group;
 typedef struct conf_object conf_obj;
 typedef struct menu_item_data mid_t;
+typedef struct undo_info undo_info;
 
 typedef void * (* conf_obj_value_func) (conf_obj * obj, int get);
 

@@ -104,6 +104,11 @@ aris_proof_init ()
   if (!ap->selected)
     return NULL;
 
+  ap->undo_stack = init_vec (sizeof (undo_info));
+  if (!ap->undo_stack)
+    return NULL;
+  ap->undo_pt = -1;
+
   aris_proof_set_sb (ap, _("Ready"));
 
   int ret;
