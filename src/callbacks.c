@@ -958,6 +958,8 @@ gui_help ()
   return 0;
 }
 
+#define CUSTOM_ROWS 13
+
 /* Runs the customization dialog.
  *  input:
  *   window - The parent window of the dialog.
@@ -997,7 +999,7 @@ gui_customize_show (GtkWidget * window)
   // Run it for all of the configuration tables.
   for (j = 0; j < 4; j++)
     {
-      tables[j] = gtk_table_new (13, 4, FALSE);
+      tables[j] = gtk_table_new (CUSTOM_ROWS, 4, FALSE);
       for (i = 0; i < sizes[j]; i++)
 	{
 	  GtkWidget * label;
@@ -1013,16 +1015,16 @@ gui_customize_show (GtkWidget * window)
 				       confs[j][i].tooltip);
 
 	  int col;
-	  col = i / 13;
+	  col = i / CUSTOM_ROWS;
 	  col *= 2;
 
 	  gtk_table_attach_defaults (GTK_TABLE (tables[j]), label,
 				     col, col + 1,
-				     i % 13, i % 13 + 1);
+				     i % CUSTOM_ROWS, i % CUSTOM_ROWS + 1);
 
 	  gtk_table_attach_defaults (GTK_TABLE (tables[j]), confs[j][i].widget,
 				     col + 1, col + 2,
-				     i % 13, i % 13 + 1);
+				     i % CUSTOM_ROWS, i % CUSTOM_ROWS + 1);
 	}
 
       GtkWidget * tbl_label;
@@ -1134,7 +1136,7 @@ gui_customize_show (GtkWidget * window)
 
 	  for (j = 0; j < 4; j++)
 	    {
-	      tables[j] = gtk_table_new (13, 4, FALSE);
+	      tables[j] = gtk_table_new (CUSTOM_ROWS, 4, FALSE);
 
 	      for (i = 0; i < sizes[j]; i++)
 		{
