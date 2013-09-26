@@ -47,9 +47,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 
   ret_chk = check_parens (buffer);
   if (ret_chk == 0)
-    {
-      return -2;
-    }
+    return -2;
 
   pos = 0;
 
@@ -69,9 +67,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	return -1;
 
       if (tmp_pos < 0)
-	{
-	  return -2;
-	}
+	return -2;
 
       conf_len = strlen (cur_conf);
 
@@ -375,6 +371,7 @@ conf_grade_value (conf_obj * obj, int get)
 	  break;
 	case 2:
 	  key = "dir";
+	  break;
 	default:
 	  return NULL;
 	}
