@@ -45,6 +45,8 @@ enum CONF_MENU_ID {
   CONF_MENU_ADD_CONC,
   CONF_MENU_ADD_SUB,
   CONF_MENU_END_SUB,
+  CONF_MENU_UNDO,
+  CONF_MENU_REDO,
   CONF_MENU_COPY,
   CONF_MENU_KILL,
   CONF_MENU_INSERT,
@@ -134,6 +136,12 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
   {N_("End Subproof"), N_("End the current subproof."), NULL,
    CONF_OBJ_MENU, MENU_END_SUB, conf_menu_value,
    GTK_STOCK_MEDIA_PREVIOUS},
+
+  {N_("Undo"), N_("Undo the last command."), NULL,
+   CONF_OBJ_MENU, MENU_UNDO, conf_menu_value, GTK_STOCK_UNDO},
+
+  {N_("Redo"), N_("Redo the last command."), NULL,
+   CONF_OBJ_MENU, MENU_REDO, conf_menu_value, GTK_STOCK_REDO},
 
   {N_("Copy Line"), N_("Copy the current line in the current proof."),
    NULL, CONF_OBJ_MENU, MENU_COPY, conf_menu_value, GTK_STOCK_COPY},
@@ -281,7 +289,7 @@ enum MENU_ORDER {
 
 enum MENU_SIZE {
   FILE_MENU_SIZE = 8,
-  EDIT_MENU_SIZE = 8,
+  EDIT_MENU_SIZE = 10,
   PROOF_MENU_SIZE = 6,
   RULES_MENU_SIZE = 2,
   FONT_MENU_SIZE = 4,
@@ -328,6 +336,8 @@ static const char * config_default ="\
 (key-cmd \'Add Conclusion\' \'c+j\')\n\
 (key-cmd \'Add Subproof\' \'c+b\')\n\
 (key-cmd \'End Subproof\' \'c+d\')\n\
+(key-cmd \'Undo\' \'c+z\')\n\
+(key-cmd \'Redo\' \'c+y\')\n\
 (key-cmd \'Copy Line\' \'c+g\')\n\
 (key-cmd \'Kill Line\' \'c+k\')\n\
 (key-cmd \'Insert Line\' \'c+i\')\n\

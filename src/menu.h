@@ -39,6 +39,8 @@ enum MENU_ID {
   MENU_ADD_SUB,
   MENU_END_SUB,
   MENU_LINE_SEP_0,
+  MENU_UNDO,
+  MENU_REDO,
   MENU_COPY,
   MENU_KILL,
   MENU_INSERT,
@@ -60,11 +62,7 @@ enum MENU_ID {
   MENU_ABOUT
 };
 
-// Menu type enum, fairly self-explanatory.
-
 #define WIN_PATH "ARIS-WINDOW"
-
-// The actual menu item data type.
 
 GtkWidget * construct_menu_item (conf_obj data, GCallback func,
 				 GtkWidget * parent, int * got_radio);

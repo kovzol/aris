@@ -390,6 +390,8 @@ aris_proof_create_menu (sen_parent * ap)
     main_menu_conf[CONF_MENU_ADD_SUB],
     main_menu_conf[CONF_MENU_END_SUB],
     menu_separator,
+    main_menu_conf[CONF_MENU_UNDO],
+    main_menu_conf[CONF_MENU_REDO],
     main_menu_conf[CONF_MENU_COPY],
     main_menu_conf[CONF_MENU_KILL],
     main_menu_conf[CONF_MENU_INSERT]
