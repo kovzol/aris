@@ -299,8 +299,11 @@ goal_add_line (goal_t * goal, sen_data * sd)
 		      FALSE, FALSE, 0);
   gtk_widget_show_all (sen->panel);
 
+  undo_info ui;
+  ui = undo_info_init (goal->parent, sen, UIT_ADD_GOAL);
+
   int ret;
-  ret = aris_proof_set_changed (goal->parent, 1);
+  ret = aris_proof_set_changed (goal->parent, 1, ui);
   if (ret < 0)
     return -1;
 
@@ -328,9 +331,12 @@ goal_rem_line (goal_t * goal)
       gtk_widget_modify_bg (sen->eventbox, GTK_STATE_NORMAL, NULL);
     }
 
+  undo_info ui;
+  ui = undo_info_init (goal->parent, (sentence *) goal->focused->value, UIT_REM_GOAL);
+
   sen_parent_rem_sentence ((sen_parent *) goal, goal->focused->value);
 
-  ret = aris_proof_set_changed (goal->parent, 1);
+  ret = aris_proof_set_changed (goal->parent, 1, ui);
   if (ret < 0)
     return -1;
 

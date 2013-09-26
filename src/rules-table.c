@@ -277,8 +277,10 @@ rule_toggled (int index)
 	      sen->rule = -1;
 	      gtk_label_set_text (GTK_LABEL (sen->rule_box), NULL);
 
+	      undo_info ui;
+	      ui.type = -1;
 	      int ret = 0;
-	      ret = aris_proof_set_changed (the_app->focused, 1);
+	      ret = aris_proof_set_changed (the_app->focused, 1, ui);
 	      if (ret < 0)
 		return;
 
@@ -356,7 +358,9 @@ rule_toggled (int index)
       sen->rule = index;
       gtk_label_set_text (GTK_LABEL (sen->rule_box), rules_list[index]);
 
-      int ret = aris_proof_set_changed (the_app->focused, 1);
+      undo_info ui;
+      ui.type = -1;
+      int ret = aris_proof_set_changed (the_app->focused, 1, ui);
       if (ret < 0)
 	return;
 

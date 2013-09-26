@@ -36,7 +36,6 @@ enum UNDO_INFO_TYPE {
 struct undo_info {
   int type;
   sen_data * sd;
-  void * data;
 };
 
 // The main proof/gui structure.
@@ -85,7 +84,7 @@ void aris_proof_destroy (aris_proof * ap);
 
 void aris_proof_create_menu (sen_parent * ap);
 
-int aris_proof_set_changed (aris_proof * ap, int changed);
+int aris_proof_set_changed (aris_proof * ap, int changed, undo_info ui);
 int aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod);
 
 proof_t * aris_proof_to_proof (aris_proof * ap);
@@ -113,5 +112,12 @@ int aris_proof_submit (aris_proof * ap, const char * hw,
 		       const char * instr_email);
 
 int aris_proof_import_proof (aris_proof * ap);
+
+int aris_proof_undo_stack_push (aris_proof * ap, undo_info ui);
+int aris_proof_undo_stack_pop (aris_proof * ap);
+
+undo_info undo_info_init (aris_proof * ap, sentence * sen, int type);
+void undo_info_destroy (undo_info ui);
+
 
 #endif /*  ARIS_PROOF_H  */

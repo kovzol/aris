@@ -39,6 +39,7 @@
 #include "sexpr-process.h"
 #include "conf-file.h"
 #include "aio.h"
+#include "vec.h"
 
 #define SUBPROOFS_DISABLED 0
 
@@ -190,6 +191,11 @@ aris_proof_post_init (aris_proof * ap)
 
   gtk_box_pack_start (GTK_BOX (SEN_PARENT (ap)->container),
 		      SEN_PARENT (ap)->separator, FALSE, FALSE, 0);
+
+  // Clear the undo stack.
+  ap->undo_pt = -1;
+  while (ap->undo_stack->num_stuff > ap->undo_pt + 1)
+    aris_proof_undo_stack_pop (ap);
 
   return 0;
 }
@@ -457,7 +463,7 @@ aris_proof_create_menu (sen_parent * ap)
  *    0 on success, -1 on error.
  */
 int
-aris_proof_set_changed (aris_proof * ap, int changed)
+aris_proof_set_changed (aris_proof * ap, int changed, undo_info ui)
 {
   char * new_title;
   const char * title = gtk_window_get_title (GTK_WINDOW (SEN_PARENT (ap)->window));
@@ -683,7 +689,10 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd)
   if (ret < 0)
     return NULL;
 
-  ret = aris_proof_set_changed (ap, 1);
+  undo_info ui;
+  ui = undo_info_init (ap, sen, UIT_ADD_SEN);
+
+  ret = aris_proof_set_changed (ap, 1, ui);
   if (ret < 0)
     return NULL;
 
@@ -1021,6 +1030,9 @@ aris_proof_kill (aris_proof * ap)
 	return 1;
     }
 
+  undo_info ui;
+  //ui = undo_info_init (ap, sen, UIT_REM_SEN);
+
   for (; sel_itr; sel_itr = sel_itr->next)
     {
       sentence * sen;
@@ -1040,7 +1052,7 @@ aris_proof_kill (aris_proof * ap)
     }
 
   int ret;
-  ret = aris_proof_set_changed (ap, 1);
+  ret = aris_proof_set_changed (ap, 1, ui);
   if (ret < 0)
     return -1;
 
@@ -1071,7 +1083,9 @@ aris_proof_yank (aris_proof * ap)
 	return -1;
     }
 
-  ret = aris_proof_set_changed (ap, 1);
+  undo_info ui;
+
+  ret = aris_proof_set_changed (ap, 1, ui);
   if (ret < 0)
     return -1;
 
@@ -1129,8 +1143,10 @@ aris_proof_toggle_boolean_mode (aris_proof * ap)
   else
     aris_proof_set_sb (ap, _("Boolean mode disabled."));
 
+  /*
   if (!ap->edited)
     aris_proof_set_changed (ap, 0);
+  */
 
   return 0;
 }
@@ -1286,5 +1302,52 @@ aris_proof_import_proof (aris_proof * ap)
 
   free (refs);
   proof_destroy (proof);
+  return 0;
+}
+
+undo_info
+undo_info_init (aris_proof * ap, sentence * sen, int type)
+{
+  undo_info ret;
+  ret.sd = sentence_copy_to_data (sen);
+
+  ret.type = type;
+
+  return ret;
+}
+
+void
+undo_info_destroy (undo_info ui)
+{
+  sen_data_destroy (ui.sd);
+}
+
+int
+aris_proof_undo_stack_push (aris_proof * ap, undo_info ui)
+{
+  int i, rc;
+  while (ap->undo_stack->num_stuff > ap->undo_pt + 1)
+    rc = aris_proof_undo_stack_pop (ap);
+
+  rc = vec_add_obj (ap->undo_stack, &ui);
+  if (rc == -1)
+    return -1;
+
+  return 0;
+}
+
+int
+aris_proof_undo_stack_pop (aris_proof * ap)
+{
+  if (ap->undo_stack->num_stuff == 0)
+    return 0;
+
+  undo_info * ui;
+  ui = vec_nth (ap->undo_stack, ap->undo_stack->num_stuff - 1);
+
+  undo_info_destroy (*ui);
+
+  vec_pop_obj (ap->undo_stack);
+
   return 0;
 }

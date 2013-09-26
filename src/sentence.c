@@ -769,7 +769,9 @@ select_reference (sentence * sen)
 
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {
-      ret = aris_proof_set_changed ((aris_proof *) sp, 1);
+      undo_info ui;
+      ui.type = -1;
+      ret = aris_proof_set_changed ((aris_proof *) sp, 1, ui);
       if (ret < 0)
 	return -2;
     }
@@ -1446,10 +1448,14 @@ sentence_text_changed (sentence * sen)
 	}
     }
 
+  undo_info ui;
+  ui = undo_info_init (NULL, sen, UIT_MOD_TEXT);
+
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {
       int ret;
-      ret = aris_proof_set_changed (ARIS_PROOF (sp), 1);
+
+      ret = aris_proof_set_changed (ARIS_PROOF (sp), 1, ui);
       if (ret < 0)
 	return -1;
 
@@ -1474,7 +1480,8 @@ sentence_text_changed (sentence * sen)
     {
       // Otherwise, it's a goal.
       int ret;
-      ret = aris_proof_set_changed (GOAL (sp)->parent, 1);
+
+      ret = aris_proof_set_changed (GOAL (sp)->parent, 1, ui);
       if (ret < 0)
 	return -1;
 

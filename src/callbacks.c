@@ -643,7 +643,10 @@ gui_save (aris_proof * ap, int save_as)
       if (ret < 0)
 	return -1;
 
-      ret = aris_proof_set_changed (ap, 0);
+      undo_info ui;
+      ui.type = -1;
+
+      ret = aris_proof_set_changed (ap, 0, ui);
       if (ret < 0)
 	return -1;
 
