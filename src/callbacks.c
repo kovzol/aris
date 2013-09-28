@@ -1417,6 +1417,7 @@ menu_activated (aris_proof * ap, int menu_id)
       if (the_app->verbose)
 	printf ("Inserting premise\n");
 
+      // There's an error around here...
       // The second time, it happened in here.
       // double free or corruption
       // pango_glyph_string_free
@@ -1450,6 +1451,14 @@ menu_activated (aris_proof * ap, int menu_id)
 	return -1;
 
       aris_proof_set_sb (ap, _("Subproof Ended."));
+      break;
+
+    case MENU_UNDO:
+      ret = aris_proof_undo (ap);
+      if (ret < 0)
+	return -1;
+
+      aris_proof_set_sb (ap, _("Undo!"));
       break;
 
     case MENU_COPY:

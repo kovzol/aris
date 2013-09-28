@@ -111,6 +111,7 @@ sen_parent_init (sen_parent * sp, const char * title,
   sp->focused = NULL;
 
   sp->type = type;
+  sp->undo = 0;
 }
 
 int

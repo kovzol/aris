@@ -49,6 +49,7 @@ struct sen_parent {
   struct item * focused;     // The currently focused sentence.
   int font;                  // The index of the font in the_app->fonts.
   int type;                  // The type of sentence parent.
+  int undo;
 };
 
 void sen_parent_init (sen_parent * sp, const char * title,

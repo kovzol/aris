@@ -44,6 +44,7 @@ struct goal {
   struct item * focused;  // The currently focused sentence.
   int font;               // The index of the font in the_app->fonts.
   int type;               // The type of sentence parent.
+  int undo;
   // sen_parent ends here.
 
   aris_proof * parent;  // The parent of this goal.

@@ -1363,7 +1363,7 @@ sentence_paste_text (sentence * sen)
 int
 sentence_text_changed (sentence * sen)
 {
-  if (sen->font_resizing)
+  if (sen->font_resizing || sen->parent->undo)
     return 0;
 
   sen_parent * sp = sen->parent;

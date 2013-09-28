@@ -488,6 +488,10 @@ aris_proof_set_changed (aris_proof * ap, int changed, undo_info ui)
     }
   gtk_window_set_title (GTK_WINDOW (SEN_PARENT (ap)->window), (const char *) new_title);
   free (new_title);
+
+  if (ui.type != -1)
+    aris_proof_undo_stack_push (ap, ui);
+
   return 0;
 }
 
@@ -691,14 +695,14 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd)
   if (ret < 0)
     return NULL;
 
+  sen = itm->value;
+
   undo_info ui;
   ui = undo_info_init (ap, sen, UIT_ADD_SEN);
 
   ret = aris_proof_set_changed (ap, 1, ui);
   if (ret < 0)
     return NULL;
-
-  sen = itm->value;
 
   if (sd->rule == RULE_LM && sd->file)
     {
@@ -1311,9 +1315,21 @@ undo_info
 undo_info_init (aris_proof * ap, sentence * sen, int type)
 {
   undo_info ret;
+  ret.type = -1;
+
+  unsigned char * text;
+  text = strdup (sen->text);
+  if (!text)
+    return ret;
+
   ret.sd = sentence_copy_to_data (sen);
+  if (!ret.sd)
+    return ret;
+
+  ret.sd->text = text;
 
   ret.type = type;
+  ret.stamp = time (NULL);
 
   return ret;
 }
@@ -1327,13 +1343,30 @@ undo_info_destroy (undo_info ui)
 int
 aris_proof_undo_stack_push (aris_proof * ap, undo_info ui)
 {
-  int i, rc;
+  if (ui.type == UIT_MOD_TEXT
+      && ap->undo_stack->num_stuff > 0
+      && ap->undo_pt >= 0)
+    {
+      undo_info * last;
+      last = vec_nth (ap->undo_stack, ap->undo_pt);
+      if (ui.stamp - last->stamp <= UNDO_INT
+	  && last->sd->line_num == ui.sd->line_num)
+	{
+	  last->stamp = ui.stamp;
+	  undo_info_destroy (ui);
+	  return 0;
+	}
+    }
+
+  int rc;
   while (ap->undo_stack->num_stuff > ap->undo_pt + 1)
     rc = aris_proof_undo_stack_pop (ap);
 
   rc = vec_add_obj (ap->undo_stack, &ui);
   if (rc == -1)
     return -1;
+
+  ap->undo_pt++;
 
   return 0;
 }
@@ -1350,6 +1383,57 @@ aris_proof_undo_stack_pop (aris_proof * ap)
   undo_info_destroy (*ui);
 
   vec_pop_obj (ap->undo_stack);
+
+  return 0;
+}
+
+int
+aris_proof_undo (aris_proof * ap)
+{
+  undo_info * ui;
+
+  fprintf (stderr, "%i\n", ap->undo_pt);
+  ui = vec_nth (ap->undo_stack, ap->undo_pt--);
+
+  int ln;
+  item_t * itm;
+  sentence * sen;
+  GtkTextBuffer * buffer;
+
+  for (itm = ap->everything->head; itm; itm = itm->next)
+    {
+      sen = (sentence *) itm->value;
+      if (sen->line_num == ui->sd->line_num)
+	break;
+    }
+
+  switch (ui->type)
+    {
+    case UIT_MOD_TEXT:
+      // Goto line ui->sd->line_num;
+      // Set text to ui->sd->text;
+
+      ap->undo = 1;
+      if (sen->text)
+	free (sen->text);
+      sen->text = strdup (ui->sd->text);
+      buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
+      gtk_text_buffer_set_text (buffer, "", -1);
+      sentence_paste_text (sen);
+      ap->undo = 0;
+
+      break;
+
+    case UIT_ADD_SEN:
+      // Remove the sentence.
+      ap->focused = itm;
+      aris_proof_kill (ap);
+      break;
+
+    case UIT_REM_SEN:
+      // Add the sentence back in.
+      break;
+    }
 
   return 0;
 }

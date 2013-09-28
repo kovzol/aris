@@ -22,6 +22,7 @@
 
 #include "pound.h"
 #include "typedef.h"
+#include <time.h>
 
 #define ARIS_PROOF(o) ((aris_proof *) o)
 
@@ -33,8 +34,11 @@ enum UNDO_INFO_TYPE {
   UIT_MOD_TEXT
 };
 
+#define UNDO_INT 1
+
 struct undo_info {
   int type;
+  time_t stamp;
   sen_data * sd;
 };
 
@@ -58,6 +62,7 @@ struct aris_proof {
   struct item * focused;     // The currently focused sentence.
   int font;                  // The index of the font in the_app->fonts.
   int type;                  // The type of sentence parent.
+  int undo;
   // sen_parent ends here.
 
   list_t * vars;  // The list of variables for this proof.
@@ -115,6 +120,8 @@ int aris_proof_import_proof (aris_proof * ap);
 
 int aris_proof_undo_stack_push (aris_proof * ap, undo_info ui);
 int aris_proof_undo_stack_pop (aris_proof * ap);
+
+int aris_proof_undo (aris_proof * ap);
 
 undo_info undo_info_init (aris_proof * ap, sentence * sen, int type);
 void undo_info_destroy (undo_info ui);
