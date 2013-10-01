@@ -1449,7 +1449,9 @@ sentence_text_changed (sentence * sen)
     }
 
   undo_info ui;
-  ui = undo_info_init (NULL, sen, UIT_MOD_TEXT);
+  ui = undo_info_init_one (NULL, sen, UIT_MOD_TEXT);
+  if (ui.type == -1)
+    return -1;
 
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {

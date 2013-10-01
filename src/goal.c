@@ -300,7 +300,7 @@ goal_add_line (goal_t * goal, sen_data * sd)
   gtk_widget_show_all (sen->panel);
 
   undo_info ui;
-  ui = undo_info_init (goal->parent, sen, UIT_ADD_GOAL);
+  ui = undo_info_init_one (goal->parent, sen, UIT_ADD_GOAL);
 
   int ret;
   ret = aris_proof_set_changed (goal->parent, 1, ui);
@@ -332,7 +332,7 @@ goal_rem_line (goal_t * goal)
     }
 
   undo_info ui;
-  ui = undo_info_init (goal->parent, (sentence *) goal->focused->value, UIT_REM_GOAL);
+  ui = undo_info_init_one (goal->parent, (sentence *) goal->focused->value, UIT_REM_GOAL);
 
   sen_parent_rem_sentence ((sen_parent *) goal, goal->focused->value);
 

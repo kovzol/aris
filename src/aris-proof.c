@@ -256,6 +256,11 @@ aris_proof_init_from_proof (proof_t * proof)
   g_signal_connect (G_OBJECT (SEN_PARENT (ap)->window), "focus-in-event",
 		    G_CALLBACK (window_focus_in), (gpointer) ap);
 
+  ap->undo_stack = init_vec (sizeof (undo_info));
+  if (!ap->undo_stack)
+    return NULL;
+  ap->undo_pt = -1;
+
   item_t * ev_itr;
   int first = 1;
 
@@ -282,7 +287,7 @@ aris_proof_init_from_proof (proof_t * proof)
 	}
       else
 	{
-	  sen = aris_proof_create_sentence (ap, sd);
+	  sen = aris_proof_create_sentence (ap, sd, 0);
 	  if (!sen)
 	    return NULL;
 
@@ -637,11 +642,12 @@ aris_proof_to_proof (aris_proof * ap)
  *  input:
  *    ap - the aris proof to create a sentence for.
  *    sd - the sentence data to initialize the new sentence from.
+ *    undo - whether or not to create undo information
  *  output:
  *    the newly created sentence, or NULL on error.
  */
 sentence *
-aris_proof_create_sentence (aris_proof * ap, sen_data * sd)
+aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
 {
   sentence * sen;
   item_t * itm, * fcs;
@@ -698,7 +704,9 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd)
   sen = itm->value;
 
   undo_info ui;
-  ui = undo_info_init (ap, sen, UIT_ADD_SEN);
+  ui.type = -1;
+  if (undo)
+    ui = undo_info_init_one (ap, sen, UIT_ADD_SEN);
 
   ret = aris_proof_set_changed (ap, 1, ui);
   if (ret < 0)
@@ -746,7 +754,7 @@ aris_proof_create_new_prem (aris_proof * ap)
   if (!sd)
     return NULL;
 
-  sen = aris_proof_create_sentence (ap, sd);
+  sen = aris_proof_create_sentence (ap, sd, 1);
   if (!sen)
     return NULL;
 
@@ -771,7 +779,7 @@ aris_proof_create_new_conc (aris_proof * ap)
   if (!sd)
     return NULL;
 
-  sen = aris_proof_create_sentence (ap, sd);
+  sen = aris_proof_create_sentence (ap, sd, 1);
   if (!sen)
     return NULL;
 
@@ -796,7 +804,7 @@ aris_proof_create_new_sub (aris_proof * ap)
   if (!sd)
     return NULL;
 
-  sen =  aris_proof_create_sentence (ap, sd);
+  sen =  aris_proof_create_sentence (ap, sd, 1);
   if (!sen)
     return NULL;
 
@@ -824,7 +832,7 @@ aris_proof_end_sub (aris_proof * ap)
   if (!sd)
     return NULL;
 
-  sen =  aris_proof_create_sentence (ap, sd);
+  sen =  aris_proof_create_sentence (ap, sd, 1);
   if (!sen)
     return NULL;
 
@@ -1007,6 +1015,7 @@ aris_proof_kill (aris_proof * ap)
   if (ret_chk == -1)
     return -1;
 
+  list_t * sens;
   item_t * sel_itr, * start_itr;
   int is_subproof = 0;
   int org_depth = -1;
@@ -1037,12 +1046,19 @@ aris_proof_kill (aris_proof * ap)
     }
 
   undo_info ui;
-  //ui = undo_info_init (ap, sen, UIT_REM_SEN);
+  list_t * ls;
+  ls = init_list ();
+  if (!ls)
+    return -1;
 
   for (; sel_itr; sel_itr = sel_itr->next)
     {
       sentence * sen;
       int sen_depth;
+
+      sen_data * sd;
+      sd = sentence_copy_to_data (sen);
+      ls_push_obj (ls, sd);
 
       sen = sel_itr->value;
       sen_depth = sen->depth;
@@ -1056,6 +1072,10 @@ aris_proof_kill (aris_proof * ap)
       if (ap->selected->num_stuff == 0 && (!is_subproof || (sen_depth < org_depth)))
 	break;
     }
+
+  ui = undo_info_init (ap, ls, UIT_REM_SEN);
+  if (ui.type == -1)
+    return -1;
 
   int ret;
   ret = aris_proof_set_changed (ap, 1, ui);
@@ -1077,6 +1097,7 @@ aris_proof_yank (aris_proof * ap)
   if (!ap->yanked)
     return 0;
 
+  list_t * ls;
   item_t * yank_itr;
   int ret;
   for (yank_itr = ap->yanked->head; yank_itr; yank_itr = yank_itr->next)
@@ -1084,12 +1105,17 @@ aris_proof_yank (aris_proof * ap)
       sentence * sen;
       sen_data * sd;
       sd = yank_itr->value;
-      sen = aris_proof_create_sentence (ap, sd);
+      ls_push_obj (ls, sd);
+
+      sen = aris_proof_create_sentence (ap, sd, 0);
       if (!sen)
 	return -1;
     }
 
   undo_info ui;
+  ui = undo_info_init (ap, ls, UIT_ADD_SEN);
+  if (ui.type == -1)
+    return -1;
 
   ret = aris_proof_set_changed (ap, 1, ui);
   if (ret < 0)
@@ -1248,7 +1274,7 @@ aris_proof_import_proof (aris_proof * ap)
       if (!ev_itr || !((sentence *) ev_itr->value)->premise)
 	{
 	  sentence * sen_chk;
-	  sen_chk = aris_proof_create_sentence (ap, sd);
+	  sen_chk = aris_proof_create_sentence (ap, sd, 1);
 	  if (!sen_chk)
 	    return -1;
 	  refs[ref_num++] = (short) sen_chk->line_num;
@@ -1300,7 +1326,7 @@ aris_proof_import_proof (aris_proof * ap)
 	  if (!sd)
 	    return -1;
 
-	  sen_chk = aris_proof_create_sentence (ap, sd);
+	  sen_chk = aris_proof_create_sentence (ap, sd, 1);
 	  if (!sen_chk)
 	    return -1;
 	}
@@ -1312,21 +1338,41 @@ aris_proof_import_proof (aris_proof * ap)
 }
 
 undo_info
-undo_info_init (aris_proof * ap, sentence * sen, int type)
+undo_info_init (aris_proof * ap, list_t * sens, int type)
 {
   undo_info ret;
   ret.type = -1;
 
-  unsigned char * text;
-  text = strdup (sen->text);
-  if (!text)
-    return ret;
+  /*
+  item_t * it, * next;
 
-  ret.sd = sentence_copy_to_data (sen);
-  if (!ret.sd)
-    return ret;
+  ret.ls = init_list ();
+  
+  for (it = sens->head; it;)
+    {
+      sen_data * sd = (sen_data *) it->value;
+      next = it->next;
 
-  ret.sd->text = text;
+      ls_push_obj (ret.ls, sd);
+
+      free (it);
+      it = next;
+    }
+
+  free (sens);
+  */
+  item_t * it, * nit;
+  ret.ls = init_list ();
+  for (it = sens->head; it;)
+    {
+      nit = it->next;
+      sen_data * sd = it->value;
+      ls_push_obj (ret.ls, sd);
+      free (it);
+      it = nit;
+    }
+  free (sens);
+  //ret.ls = sens;
 
   ret.type = type;
   ret.stamp = time (NULL);
@@ -1334,10 +1380,57 @@ undo_info_init (aris_proof * ap, sentence * sen, int type)
   return ret;
 }
 
+undo_info
+undo_info_init_one (aris_proof * ap, sentence * sen, int type)
+{
+  undo_info ret;
+  ret.type = -1;
+
+  list_t * sens;
+
+  sens = init_list ();
+
+  sen_data * sd;
+  unsigned char * text;
+  text = strdup (sen->text);
+  if (!text)
+    return ret;
+
+  sd = sentence_copy_to_data (sen);
+  if (!sd)
+    return ret;
+
+  if (sd->text)
+    free (sd->text);
+
+  sd->text = text;
+
+  ls_push_obj (sens, sd);
+
+  ret = undo_info_init (ap, sens, type);
+
+  return ret;
+}
+
 void
 undo_info_destroy (undo_info ui)
 {
-  sen_data_destroy (ui.sd);
+  item_t * it;
+  sen_data * sd;
+  if (ui.ls)
+    {
+      for (it = ui.ls->head; it;)
+	{
+	  item_t * next = it->next;
+	  sd = (sen_data *) it->value;
+	  sen_data_destroy (sd);
+	  free (it);
+	  it = next;
+	}
+
+      free (ui.ls);
+    }
+  ui.ls = NULL;
 }
 
 int
@@ -1349,12 +1442,17 @@ aris_proof_undo_stack_push (aris_proof * ap, undo_info ui)
     {
       undo_info * last;
       last = vec_nth (ap->undo_stack, ap->undo_pt);
-      if (ui.stamp - last->stamp <= UNDO_INT
-	  && last->sd->line_num == ui.sd->line_num)
+      if (last->type == UIT_MOD_TEXT)
 	{
-	  last->stamp = ui.stamp;
-	  undo_info_destroy (ui);
-	  return 0;
+	  sen_data * lsd = (sen_data *) last->ls->head->value;
+	  sen_data * usd = (sen_data *) ui.ls->head->value;
+	  if (ui.stamp - last->stamp <= UNDO_INT
+	      && lsd->line_num == usd->line_num)
+	    {
+	      last->stamp = ui.stamp;
+	      undo_info_destroy (ui);
+	      return 0;
+	    }
 	}
     }
 
@@ -1387,53 +1485,118 @@ aris_proof_undo_stack_pop (aris_proof * ap)
   return 0;
 }
 
+// The following two functions are almost identical.
+// It may be a good idea to simply create one function for both,
+// that checks whether or not an undo or redo is occurring.
+
 int
 aris_proof_undo (aris_proof * ap)
 {
+  if (ap->undo_pt < 0)
+    return 1;
+
   undo_info * ui;
 
-  fprintf (stderr, "%i\n", ap->undo_pt);
   ui = vec_nth (ap->undo_stack, ap->undo_pt--);
 
-  int ln;
-  item_t * itm;
+  if (ui->type == UIT_ADD_GOAL
+      || ui->type == UIT_REM_GOAL)
+    return 1;
+
+  item_t * it;
+
+  for (it = ui->ls->head; it; it = it->next)
+    {
+      sen_data * sd = (sen_data *) it->value;
+      int ln;
+      item_t * itm;
+      sentence * sen;
+      GtkTextBuffer * buffer;
+
+      for (itm = ap->everything->head; itm; itm = itm->next)
+	{
+	  sen = (sentence *) itm->value;
+	  if (sen->line_num >= sd->line_num)
+	    break;
+	}
+
+      switch (ui->type)
+	{
+	case UIT_MOD_TEXT:
+	  // Goto line ui->sd->line_num;
+	  // Set text to ui->sd->text;
+
+	  ap->undo = 1;
+	  if (sen->text)
+	    free (sen->text);
+	  sen->text = strdup (sd->text);
+
+	  if (!sen->text)
+	    return -1;
+
+	  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
+	  gtk_text_buffer_set_text (buffer, "", -1);
+	  sentence_paste_text (sen);
+	  ap->undo = 0;
+
+	  break;
+
+	case UIT_ADD_SEN:
+	  // Remove the sentence.
+	  ap->focused = itm;
+	  aris_proof_remove_sentence (ap, sen);
+	  break;
+
+	case UIT_REM_SEN:
+	  // Add the sentence back in.
+	  // Move itm to the sentence just before the one to insert.
+	  // In other words, the sentence with line_num == sd->line_num - 1;
+	  if (itm)
+	    itm = itm->prev;
+	  else
+	    itm = ap->everything->tail;
+	  ap->focused = itm;
+	  aris_proof_create_sentence (ap, sd, 0);
+	  break;
+	}
+    }
+
+  return 0;
+}
+
+int
+aris_proof_redo (aris_proof * ap)
+{
+  /*
+  ap->undo_pt++;
+  if (ap->undo_pt >= ap->undo_stack->num_stuff)
+    {
+      ap->undo_pt--;
+      return 1;
+    }
+
+  undo_info * ui;
+  ui = vec_nth (ap->undo_stack, ap->undo_pt);
+
   sentence * sen;
-  GtkTextBuffer * buffer;
+  item_t * itm;
 
   for (itm = ap->everything->head; itm; itm = itm->next)
     {
       sen = (sentence *) itm->value;
-      if (sen->line_num == ui->sd->line_num)
+      if (sen->line_num >= ui->sd->line_num)
 	break;
     }
 
   switch (ui->type)
     {
     case UIT_MOD_TEXT:
-      // Goto line ui->sd->line_num;
-      // Set text to ui->sd->text;
-
       ap->undo = 1;
-      if (sen->text)
-	free (sen->text);
-      sen->text = strdup (ui->sd->text);
-      buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
-      gtk_text_buffer_set_text (buffer, "", -1);
-      sentence_paste_text (sen);
+      
       ap->undo = 0;
-
-      break;
-
-    case UIT_ADD_SEN:
-      // Remove the sentence.
-      ap->focused = itm;
-      aris_proof_kill (ap);
-      break;
-
-    case UIT_REM_SEN:
-      // Add the sentence back in.
       break;
     }
+  */
 
   return 0;
 }

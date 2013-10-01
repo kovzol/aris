@@ -1458,7 +1458,10 @@ menu_activated (aris_proof * ap, int menu_id)
       if (ret < 0)
 	return -1;
 
-      aris_proof_set_sb (ap, _("Undo!"));
+      if (ret == 0)
+	aris_proof_set_sb (ap, _("Undo!"));
+      else
+	aris_proof_set_sb (ap, _("Nothing to undo."));
       break;
 
     case MENU_COPY:
