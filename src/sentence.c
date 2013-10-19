@@ -359,7 +359,7 @@ sentence_copy_to_data (sentence * sen)
 
   i = 0;
 
-  if (sen->refs)
+  if (sen->refs && sen->refs->num_stuff > 0)
     {
       refs = (short *) calloc (sen->refs->num_stuff + 1, sizeof (int));
       CHECK_ALLOC (refs, NULL);
@@ -367,11 +367,11 @@ sentence_copy_to_data (sentence * sen)
       ref_itr = sen->refs->head;
       for (; ref_itr != NULL; ref_itr = ref_itr->next)
 	{
-	  sentence * sen;
+	  sentence * sen_itr;
 	  int line_num;
 
-	  sen = ref_itr->value;
-	  line_num = sen->line_num;
+	  sen_itr = ref_itr->value;
+	  line_num = sen_itr->line_num;
 	  refs[i++] = (short) line_num;
 	}
     }
