@@ -1034,8 +1034,6 @@ aris_proof_kill (aris_proof * ap)
       sel_itr = ap->selected->head;
     }
 
-  start_itr = sel_itr;
-
   for (start_itr = sel_itr; start_itr; start_itr = start_itr->next)
     {
       sentence * sen;
@@ -1055,12 +1053,12 @@ aris_proof_kill (aris_proof * ap)
     {
       sentence * sen;
       int sen_depth;
-
       sen_data * sd;
+
+      sen = sel_itr->value;
       sd = sentence_copy_to_data (sen);
       ls_push_obj (ls, sd);
 
-      sen = sel_itr->value;
       sen_depth = sen->depth;
       if (sen_depth < org_depth)
 	break;
@@ -1343,24 +1341,6 @@ undo_info_init (aris_proof * ap, list_t * sens, int type)
   undo_info ret;
   ret.type = -1;
 
-  /*
-  item_t * it, * next;
-
-  ret.ls = init_list ();
-  
-  for (it = sens->head; it;)
-    {
-      sen_data * sd = (sen_data *) it->value;
-      next = it->next;
-
-      ls_push_obj (ret.ls, sd);
-
-      free (it);
-      it = next;
-    }
-
-  free (sens);
-  */
   item_t * it, * nit;
   ret.ls = init_list ();
   for (it = sens->head; it;)
@@ -1372,7 +1352,6 @@ undo_info_init (aris_proof * ap, list_t * sens, int type)
       it = nit;
     }
   free (sens);
-  //ret.ls = sens;
 
   ret.type = type;
   ret.stamp = time (NULL);
