@@ -49,7 +49,7 @@ goal_init (aris_proof * ap)
   sen_parent_init ((sen_parent *) goal, "GNU Aris - Untitled - Goals", 360, 100,
 		   goal_gui_create_menu, SEN_PARENT_TYPE_GOAL);
 
-  gtk_window_set_transient_for (GTK_WINDOW (goal->window),
+  gtk_window_set_transient_for (GTK_WINDOW (SEN_PARENT (goal)->window),
 				GTK_WINDOW (SEN_PARENT (ap)->window));
 
   if (ap->cur_file)
@@ -60,13 +60,13 @@ goal_init (aris_proof * ap)
 	return NULL;
     }
     
-  goal->goals = init_list ();
-  if (!goal->goals)
+  SEN_PARENT (goal)->everything = init_list ();
+  if (!SEN_PARENT (goal)->everything)
     return NULL;
 
-  g_signal_connect (goal->window, "delete-event",
+  g_signal_connect (SEN_PARENT (goal)->window, "delete-event",
 		    G_CALLBACK (goal_delete), (gpointer) goal);
-  g_signal_connect (goal->window, "focus-in-event",
+  g_signal_connect (SEN_PARENT (goal)->window, "focus-in-event",
 		    G_CALLBACK (goal_focus_in), (gpointer) goal);
 
   return goal;
@@ -264,7 +264,8 @@ goal_check_all (goal_t * goal)
   item_t * gl_itr;
   int ret_check;
 
-  for (gl_itr = goal->goals->head; gl_itr != NULL; gl_itr = gl_itr->next)
+  for (gl_itr = SEN_PARENT (goal)->everything->head;
+       gl_itr != NULL; gl_itr = gl_itr->next)
     {
       ret_check = goal_check_line (goal, gl_itr->value);
       if (ret_check == -1)
@@ -286,16 +287,16 @@ goal_add_line (goal_t * goal, sen_data * sd)
 {
   sentence * sen;
   sen = sentence_init (sd, (sen_parent *) goal,
-		       goal->goals->tail);
+		       SEN_PARENT (goal)->everything->tail);
   if (!sen)
     return -1;
 
   item_t * itm;
-  itm = ls_push_obj (goal->goals, sen);
+  itm = ls_push_obj (SEN_PARENT (goal)->everything, sen);
   if (!itm)
     return -1;
 
-  gtk_box_pack_start (GTK_BOX (goal->container), sen->panel,
+  gtk_box_pack_start (GTK_BOX (SEN_PARENT (goal)->container), sen->panel,
 		      FALSE, FALSE, 0);
   gtk_widget_show_all (sen->panel);
 
@@ -321,20 +322,22 @@ goal_rem_line (goal_t * goal)
 {
   int ret, line_num;
 
-  line_num = ((sentence *) goal->focused->value)->line_num;
+  line_num = ((sentence *) SEN_PARENT (goal)->focused->value)->line_num;
   if (line_num > 0)
     {
       sentence * sen;
       item_t * itm;
-      itm = ls_nth (goal->parent->everything, line_num - 1);
+      itm = ls_nth (SEN_PARENT (goal->parent)->everything, line_num - 1);
       sen = (sentence *) itm->value;
       gtk_widget_modify_bg (sen->eventbox, GTK_STATE_NORMAL, NULL);
     }
 
   undo_info ui;
-  ui = undo_info_init_one (goal->parent, (sentence *) goal->focused->value, UIT_REM_GOAL);
+  ui = undo_info_init_one (goal->parent,
+			   (sentence *) SEN_PARENT (goal)->focused->value,
+			   UIT_REM_GOAL);
 
-  sen_parent_rem_sentence ((sen_parent *) goal, goal->focused->value);
+  sen_parent_rem_sentence ((sen_parent *) goal, SEN_PARENT (goal)->focused->value);
 
   ret = aris_proof_set_changed (goal->parent, 1, ui);
   if (ret < 0)

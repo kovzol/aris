@@ -478,7 +478,7 @@ the_app_add_gui (aris_proof * ap)
     return -1;
 
   gtk_window_set_icon (GTK_WINDOW (SEN_PARENT (ap)->window), the_app->icon);
-  gtk_window_set_icon (GTK_WINDOW (ap->goal->window), the_app->icon);
+  gtk_window_set_icon (GTK_WINDOW (SEN_PARENT (ap->goal)->window), the_app->icon);
 
   int ret;
   ret = the_app_set_focus (ap);

@@ -262,14 +262,14 @@ goal_menu_activate (GtkMenuItem * item, gpointer data)
       goal_rem_line (goal);
       break;
     case MENU_EVAL_LINE:
-      if (goal->focused)
-	goal_check_line (goal, goal->focused->value);
+      if (SEN_PARENT(goal)->focused)
+	goal_check_line (goal, SEN_PARENT(goal)->focused->value);
       break;
     case MENU_EVAL_PROOF:
       goal_check_all (goal);
       break;
     case MENU_GOAL:
-      gtk_widget_hide (goal->window);
+      gtk_widget_hide (SEN_PARENT (goal)->window);
       aris_proof_set_sb (goal->parent, _("Goal Window Hidden."));
       break;
     }
@@ -283,7 +283,7 @@ G_MODULE_EXPORT gboolean
 goal_delete (GtkWidget * widget, GdkEvent * event, gpointer data)
 {
   goal_t * goal = (goal_t *) data;
-  gtk_widget_hide (goal->window);
+  gtk_widget_hide (SEN_PARENT (goal)->window);
   return TRUE;
 }
 
@@ -434,7 +434,7 @@ rules_table_state (GtkWidget * widget, GdkEvent * event, gpointer data)
 	  aris_proof * ap;
 	  ap = app_itr->value;
 
-	  gtk_window_iconify (GTK_WINDOW (ap->window));
+	  gtk_window_iconify (GTK_WINDOW (SEN_PARENT(ap)->window));
 	}
     }
 
@@ -544,9 +544,9 @@ gui_open (GtkWidget * window)
       if (the_app->guis->num_stuff == 1)
 	{
 	  cur_ap = (aris_proof *) the_app->guis->head->value;
-	  if (cur_ap->everything->num_stuff == 1
+	  if (SEN_PARENT (cur_ap)->everything->num_stuff == 1
 	      && !cur_ap->edited
-	      && *((sentence *) cur_ap->everything->head->value)->text == '\0')
+	      && *((sentence *) SEN_PARENT (cur_ap)->everything->head->value)->text == '\0')
 	    have_blank_proof = 1;
 	}
 
@@ -803,15 +803,15 @@ evaluate_proof (aris_proof * ap)
 int
 gui_goal_check (aris_proof * ap)
 {
-  int vis = gtk_widget_get_visible (ap->goal->window);
+  int vis = gtk_widget_get_visible (SEN_PARENT (ap->goal)->window);
   if (!vis)
     {
-      gtk_widget_show_all (ap->goal->window);
+      gtk_widget_show_all (SEN_PARENT (ap->goal)->window);
       aris_proof_set_sb (ap, _("Goal Window Shown."));
     }
   else
     {
-      gtk_widget_hide (ap->goal->window);
+      gtk_widget_hide (SEN_PARENT (ap->goal)->window);
       aris_proof_set_sb (ap, _("Goal Window Hidden."));
     }
   return 0;

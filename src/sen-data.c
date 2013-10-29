@@ -126,6 +126,8 @@ sen_data_destroy (sen_data * sd)
   free (sd);
 }
 
+/*
+ */
 int
 sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
 {

@@ -545,7 +545,7 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
   GtkWidget * menu_item, * menu, * submenu;
   GList * gl;
 
-  gl = gtk_container_get_children (GTK_CONTAINER (ap->menubar));
+  gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (ap)->menubar));
   menu = g_list_nth_data (gl, RULES_MENU);
   submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
 
@@ -611,7 +611,7 @@ aris_proof_to_proof (aris_proof * ap)
   if (!proof)
     return NULL;
 
-  for (g_itr = ap->goal->goals->head; g_itr; g_itr = g_itr->next)
+  for (g_itr = SEN_PARENT (ap->goal)->everything->head; g_itr; g_itr = g_itr->next)
     {
       sen = g_itr->value;
       unsigned char * entry_text = sen->text;
@@ -728,7 +728,7 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
 	       sen->line_num, sd->file);
       menu_item = gtk_menu_item_new_with_label (label);
 
-      gl = gtk_container_get_children (GTK_CONTAINER (ap->menubar));
+      gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (ap)->menubar));
       menu = g_list_nth_data (gl, RULES_MENU);
       submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
       gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menu_item);
@@ -1198,7 +1198,7 @@ aris_proof_import_proof (aris_proof * ap)
   GtkWidget * file_chooser;
   file_chooser =
     gtk_file_chooser_dialog_new (_("Select a file to Open..."),
-				 GTK_WINDOW (ap->window),
+				 GTK_WINDOW (SEN_PARENT (ap)->window),
 				 GTK_FILE_CHOOSER_ACTION_OPEN,
 				 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				 GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -1247,7 +1247,7 @@ aris_proof_import_proof (aris_proof * ap)
 
       pf_text = sd->text;
 
-      for (ev_itr = ap->everything->head; ev_itr; ev_itr = ev_itr->next)
+      for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
 	{
 	  char * ev_text;
 	  sentence * ev_sen;
@@ -1283,7 +1283,7 @@ aris_proof_import_proof (aris_proof * ap)
 
   if (!ev_conc)
     {
-      for (ev_itr = ap->everything->head; ev_itr;
+      for (ev_itr = SEN_PARENT(ap)->everything->head; ev_itr;
 	   ev_itr = ev_itr->next)
 	{
 	  sentence * ev_sen;
@@ -1464,6 +1464,17 @@ aris_proof_undo_stack_pop (aris_proof * ap)
   return 0;
 }
 
+#define UNDO_SEN(u,a,i,s,d) if (u) {			\
+    SEN_PARENT(a)->focused = i;				\
+    aris_proof_remove_sentence (a,s);			\
+  }							\
+  else {						\
+    if (i) { i = i->prev;}				\
+    else { i = SEN_PARENT (a)->everything->tail; }	\
+    SEN_PARENT (a)->focused = i;			\
+    aris_proof_create_sentence (a, d, 0);		\
+  }
+
 // The following two functions are almost identical.
 // It may be a good idea to simply create one function for both,
 // that checks whether or not an undo or redo is occurring.
@@ -1471,12 +1482,27 @@ aris_proof_undo_stack_pop (aris_proof * ap)
 int
 aris_proof_undo (aris_proof * ap)
 {
-  if (ap->undo_pt < 0)
-    return 1;
+  int undo = 1;
+
+  if (undo)
+    {
+      if (ap->undo_pt < 0)
+	return 1;
+      ap->undo_pt--;
+    }
+  else
+    {
+      ap->undo_pt++;
+      if (ap->undo_pt >= ap->undo_stack->num_stuff)
+	{
+	  ap->undo_pt--;
+	  return 1;
+	}
+    }
 
   undo_info * ui;
 
-  ui = vec_nth (ap->undo_stack, ap->undo_pt--);
+  ui = vec_nth (ap->undo_stack, ap->undo_pt);
 
   if (ui->type == UIT_ADD_GOAL
       || ui->type == UIT_REM_GOAL)
@@ -1492,7 +1518,7 @@ aris_proof_undo (aris_proof * ap)
       sentence * sen;
       GtkTextBuffer * buffer;
 
-      for (itm = ap->everything->head; itm; itm = itm->next)
+      for (itm = SEN_PARENT(ap)->everything->head; itm; itm = itm->next)
 	{
 	  sen = (sentence *) itm->value;
 	  if (sen->line_num >= sd->line_num)
@@ -1505,7 +1531,7 @@ aris_proof_undo (aris_proof * ap)
 	  // Goto line ui->sd->line_num;
 	  // Set text to ui->sd->text;
 
-	  ap->undo = 1;
+	  SEN_PARENT(ap)->undo = 1;
 	  if (sen->text)
 	    free (sen->text);
 	  sen->text = strdup (sd->text);
@@ -1516,26 +1542,20 @@ aris_proof_undo (aris_proof * ap)
 	  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
 	  gtk_text_buffer_set_text (buffer, "", -1);
 	  sentence_paste_text (sen);
-	  ap->undo = 0;
+	  SEN_PARENT(ap)->undo = 0;
 
 	  break;
 
 	case UIT_ADD_SEN:
 	  // Remove the sentence.
-	  ap->focused = itm;
-	  aris_proof_remove_sentence (ap, sen);
+	  UNDO_SEN (undo, ap, itm, sen, sd);
 	  break;
 
 	case UIT_REM_SEN:
+	  UNDO_SEN (!undo, ap, itm, sen, sd);
 	  // Add the sentence back in.
 	  // Move itm to the sentence just before the one to insert.
 	  // In other words, the sentence with line_num == sd->line_num - 1;
-	  if (itm)
-	    itm = itm->prev;
-	  else
-	    itm = ap->everything->tail;
-	  ap->focused = itm;
-	  aris_proof_create_sentence (ap, sd, 0);
 	  break;
 	}
     }
@@ -1560,7 +1580,7 @@ aris_proof_redo (aris_proof * ap)
   sentence * sen;
   item_t * itm;
 
-  for (itm = ap->everything->head; itm; itm = itm->next)
+  for (itm = SEN_PARENT(ap)->everything->head; itm; itm = itm->next)
     {
       sen = (sentence *) itm->value;
       if (sen->line_num >= ui->sd->line_num)

@@ -289,7 +289,7 @@ rule_toggled (int index)
 		{
 		  GtkWidget * menu_item, * menu, * submenu;
 		  GList * gl, * gl_itr;
-		  gl = gtk_container_get_children (GTK_CONTAINER (the_app->focused->menubar));
+		  gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
 		  menu = g_list_nth_data (gl, RULES_MENU);
 		  submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
 
@@ -422,7 +422,7 @@ rule_toggled (int index)
 			   sen->line_num, sen->file);
 		  menu_item = gtk_menu_item_new_with_label (label);
 
-		  gl = gtk_container_get_children (GTK_CONTAINER (the_app->focused->menubar));
+		  gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
 		  menu = g_list_nth_data (gl, RULES_MENU);
 		  submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
 		  gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menu_item);
@@ -536,7 +536,7 @@ rules_table_align (rules_table * rt, aris_proof * ap)
       int new_x;
 
       gtk_window_get_position (GTK_WINDOW (SEN_PARENT (ap)->window), &x, &y);
-      gtk_window_get_size (GTK_WINDOW (ap->window), &ap_width, NULL);
+      gtk_window_get_size (GTK_WINDOW (SEN_PARENT (ap)->window), &ap_width, NULL);
       gtk_window_get_size (GTK_WINDOW (rt->window), &width, NULL);
 
       new_x = (x - (width + 16) < 0)

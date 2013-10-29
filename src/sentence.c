@@ -1463,10 +1463,10 @@ sentence_text_changed (sentence * sen)
 
       gtk_widget_modify_bg (sen->eventbox, GTK_STATE_NORMAL, NULL);
 
-      if (ARIS_PROOF (sp)->goal->goals->num_stuff > 0)
+      if (SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->num_stuff > 0)
 	{
 	  item_t * mod_itm;
-	  mod_itm = ARIS_PROOF (sp)->goal->goals->head;
+	  mod_itm = SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->head;
 	  for (; mod_itm; mod_itm = mod_itm->next)
 	    {
 	      if (SENTENCE (mod_itm->value)->line_num == sen->line_num)

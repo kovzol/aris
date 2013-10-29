@@ -22,6 +22,7 @@
 
 #include "pound.h"
 #include "typedef.h"
+#include "sen-parent.h"
 #include <time.h>
 
 #define ARIS_PROOF(o) ((aris_proof *) o)
@@ -45,6 +46,7 @@ struct undo_info {
 // The main proof/gui structure.
 
 struct aris_proof {
+  /*
   // Starting here, the order of these elements must match those in sen_parent.
   GtkWidget * window;          // The main window.
   GtkWidget * vbox;            // The container for the menu, statusbar, and
@@ -64,6 +66,8 @@ struct aris_proof {
   int type;                  // The type of sentence parent.
   int undo;
   // sen_parent ends here.
+  */
+  struct sen_parent sp;
 
   list_t * vars;  // The list of variables for this proof.
   goal_t * goal;  // The goal structure for this proof.

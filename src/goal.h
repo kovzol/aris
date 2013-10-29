@@ -21,32 +21,14 @@
 
 #include <gtk/gtk.h>
 #include "typedef.h"
+#include "sen-parent.h"
 
 #define GOAL(o) ((goal_t *) o)
 
 // The goal list structure.
 
 struct goal {
-  // Starting here, the order of these elements must match those in sen_parent.
-  GtkWidget * window;          // The main window.
-  GtkWidget * vbox;            // The container for the menu, statusbar, and
-                               //   scrolledwindow.
-  GtkWidget * menubar;         // The menu bar for this gui.
-  GtkWidget * statusbar;       // The statusbar that displays status messages.
-  GtkWidget * scrolledwindow;  // The scrolledwindow that contains the viewport.
-  GtkWidget * viewport;        // The vewport that allows scrolling through sentences.
-  GtkWidget * container;       // The container of the sentences.
-  GtkWidget * separator;       // The separator that separates prems from concs.
-  GtkAccelGroup * accel;       // The accelerator for the keybindings.
-
-  GdkPixbuf * conn_pixbufs[11];
-  struct list * goals;    // The list of sentences.
-  struct item * focused;  // The currently focused sentence.
-  int font;               // The index of the font in the_app->fonts.
-  int type;               // The type of sentence parent.
-  int undo;
-  // sen_parent ends here.
-
+  sen_parent sp;
   aris_proof * parent;  // The parent of this goal.
 };
 
