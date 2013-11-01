@@ -371,102 +371,57 @@ aris_proof_create_menu (sen_parent * ap)
   int i, j;
   int got_radio = 0;
 
-  // I'm sure that there is an easier way to do this.
-
   i = 0;
 
-  conf_obj * main_file_array, * main_edit_array, * main_proof_array,
-    * main_rule_array, * main_font_array, * main_help_array;
-  main_file_array = (conf_obj[]) {
-    main_menu_conf[CONF_MENU_NEW],
-    main_menu_conf[CONF_MENU_OPEN],
-    menu_separator,
-    main_menu_conf[CONF_MENU_SAVE],
-    main_menu_conf[CONF_MENU_SAVE_AS],
-    menu_separator,
-    main_menu_conf[CONF_MENU_CLOSE],
-    main_menu_conf[CONF_MENU_QUIT]
+  conf_obj * main_menus_menu[] = {
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_NEW],
+      main_menu_conf[CONF_MENU_OPEN],
+      menu_separator,
+      main_menu_conf[CONF_MENU_SAVE],
+      main_menu_conf[CONF_MENU_SAVE_AS],
+      menu_separator,
+      main_menu_conf[CONF_MENU_CLOSE],
+      main_menu_conf[CONF_MENU_QUIT]
+    },
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_ADD_PREM],
+      main_menu_conf[CONF_MENU_ADD_CONC],
+      main_menu_conf[CONF_MENU_ADD_SUB],
+      main_menu_conf[CONF_MENU_END_SUB],
+      menu_separator,
+      main_menu_conf[CONF_MENU_UNDO],
+      main_menu_conf[CONF_MENU_REDO],
+      menu_separator,
+      main_menu_conf[CONF_MENU_COPY],
+      main_menu_conf[CONF_MENU_KILL],
+      main_menu_conf[CONF_MENU_INSERT]
+    },
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_EVAL_LINE],
+      main_menu_conf[CONF_MENU_EVAL_PROOF],
+      menu_separator,
+      main_menu_conf[CONF_MENU_GOAL],
+      main_menu_conf[CONF_MENU_BOOLEAN],
+      main_menu_conf[CONF_MENU_IMPORT]
+    },
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_TOGGLE_RULES],
+      menu_separator
+    },
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_SMALL],
+      main_menu_conf[CONF_MENU_MEDIUM],
+      main_menu_conf[CONF_MENU_LARGE],
+      main_menu_conf[CONF_MENU_CUSTOM],
+    },
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_CONTENTS],
+      main_menu_conf[CONF_MENU_ABOUT],
+    }
   };
-
-  /*
-  memcpy (main_file_menu, main_file_array,
-	  FILE_MENU_SIZE * sizeof (conf_obj));
-  */
-
-  main_edit_array = (conf_obj[]) {
-    main_menu_conf[CONF_MENU_ADD_PREM],
-    main_menu_conf[CONF_MENU_ADD_CONC],
-    main_menu_conf[CONF_MENU_ADD_SUB],
-    main_menu_conf[CONF_MENU_END_SUB],
-    menu_separator,
-    main_menu_conf[CONF_MENU_UNDO],
-    main_menu_conf[CONF_MENU_REDO],
-    main_menu_conf[CONF_MENU_COPY],
-    main_menu_conf[CONF_MENU_KILL],
-    main_menu_conf[CONF_MENU_INSERT]
-  };
-
-  /*
-  memcpy (main_edit_menu, main_edit_array,
-	  EDIT_MENU_SIZE * sizeof (conf_obj));
-  */
-
-  main_proof_array = (conf_obj[]) {
-    main_menu_conf[CONF_MENU_EVAL_LINE],
-    main_menu_conf[CONF_MENU_EVAL_PROOF],
-    menu_separator,
-    main_menu_conf[CONF_MENU_GOAL],
-    main_menu_conf[CONF_MENU_BOOLEAN],
-    main_menu_conf[CONF_MENU_IMPORT]
-  };
-
-  /*
-  memcpy (main_proof_menu, main_proof_array,
-	  PROOF_MENU_SIZE * sizeof (conf_obj));
-  */
-
-  main_rule_array = (conf_obj[]) {
-    main_menu_conf[CONF_MENU_TOGGLE_RULES],
-    menu_separator
-  };
-
-  /*
-  memcpy (main_rules_menu, main_rule_array,
-	  RULES_MENU_SIZE * sizeof (conf_obj));
-  */
-
-  main_font_array = (conf_obj[]) {
-    main_menu_conf[CONF_MENU_SMALL],
-    main_menu_conf[CONF_MENU_MEDIUM],
-    main_menu_conf[CONF_MENU_LARGE],
-    main_menu_conf[CONF_MENU_CUSTOM],
-  };
-
-  /*
-  memcpy (main_font_menu, main_font_array,
-	  FONT_MENU_SIZE * sizeof (conf_obj));
-  */
-
-  main_help_array = (conf_obj[]) {
-    main_menu_conf[CONF_MENU_CONTENTS],
-    main_menu_conf[CONF_MENU_ABOUT],
-  };
-
-  /*
-  memcpy (main_help_menu, main_help_array,
-	  HELP_MENU_SIZE * sizeof (conf_obj));
-  */
 
   ap->menubar = gtk_menu_bar_new ();
-
-  conf_obj * main_menus_menu[] = {
-    main_file_array,
-    main_edit_array,
-    main_proof_array,
-    main_rule_array,
-    main_font_array,
-    main_help_array
-  };
 
   for (i = 0; i < NUM_MENUS; i++)
     {

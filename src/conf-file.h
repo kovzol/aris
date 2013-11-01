@@ -79,15 +79,16 @@ enum CONF_GRADE_ID {
 
 /* The structure for a configuration object. */
 struct conf_object {
-  char * label;        // The label of the object.
-  char * tooltip;      // The tooltip for the label and widget.
-  GtkWidget * widget;  // The widget to display alongside the label.
-  int type;            // The type of configuration object this is.
-  int id;              // The identification of this object.
+  char * label;				// The label of the object.
+  char * tooltip;			// The tooltip for the label and widget.
+  GtkWidget * widget;			// The widget to display alongside the label.
+  int type;				// The type of configuration object this is.
+  int id;				// The identification of this object.
 
-  conf_obj_value_func value_func; // The value function.
+  conf_obj_value_func value_func;	// The value function.
 
-  char * stock_id;     // The stock item to display.
+  char * stock_id;			// The stock item to display.
+  char * default_value;			// The default value of this object.
 };
 
 int conf_file_read (const unsigned char * buffer, aris_app * app);
@@ -103,125 +104,125 @@ void * conf_grade_value (conf_obj * obj, int get);
 
 static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
   {N_("New"), N_("Begin a new proof."), NULL, CONF_OBJ_MENU,
-   CONF_MENU_NEW, conf_menu_value, GTK_STOCK_NEW},
+   CONF_MENU_NEW, conf_menu_value, GTK_STOCK_NEW, "c+n"},
 
   {N_("Open"), N_("Open a proof."), NULL, CONF_OBJ_MENU, CONF_MENU_OPEN,
-   conf_menu_value, GTK_STOCK_OPEN},
+   conf_menu_value, GTK_STOCK_OPEN, "c+o"},
 
   {N_("Save"), N_("Save the current proof."), NULL, CONF_OBJ_MENU,
-   CONF_MENU_SAVE, conf_menu_value,  GTK_STOCK_SAVE},
+   CONF_MENU_SAVE, conf_menu_value,  GTK_STOCK_SAVE, "c+s"},
 
   {N_("Save As"), N_("Save this proof under a different name."),
    NULL, CONF_OBJ_MENU, CONF_MENU_SAVE_AS, conf_menu_value,
-   GTK_STOCK_SAVE_AS},
+   GTK_STOCK_SAVE_AS, "c+s+s"},
 
   {N_("Close"), N_("Close the current proof."), NULL, CONF_OBJ_MENU,
-   CONF_MENU_CLOSE, conf_menu_value, GTK_STOCK_CLOSE},
+   CONF_MENU_CLOSE, conf_menu_value, GTK_STOCK_CLOSE, "c+w"},
 
   {N_("Quit"), N_("Quit GNU Aris."), NULL, CONF_OBJ_MENU, CONF_MENU_QUIT,
-   conf_menu_value, GTK_STOCK_QUIT},
+   conf_menu_value, GTK_STOCK_QUIT, "c+q"},
 
   {N_("Add Premise"), N_("Add a new premise to the current proof."),
    NULL, CONF_OBJ_MENU, CONF_MENU_ADD_PREM, conf_menu_value,
-   GTK_STOCK_YES},
+   GTK_STOCK_YES, "c+p"},
 
   {N_("Add Conclusion"),
    N_("Add a new conclusion to the current proof."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_ADD_CONC, conf_menu_value, GTK_STOCK_NO},
+   CONF_OBJ_MENU, CONF_MENU_ADD_CONC, conf_menu_value, GTK_STOCK_NO, "c+j"},
 
   {N_("Add Subproof"), N_("Add a new subproof to the current proof."),
    NULL, CONF_OBJ_MENU, CONF_MENU_ADD_SUB, conf_menu_value,
-   GTK_STOCK_MEDIA_NEXT},
+   GTK_STOCK_MEDIA_NEXT, "c+b"},
 
   {N_("End Subproof"), N_("End the current subproof."), NULL,
    CONF_OBJ_MENU, CONF_MENU_END_SUB, conf_menu_value,
-   GTK_STOCK_MEDIA_PREVIOUS},
+   GTK_STOCK_MEDIA_PREVIOUS, "c+d"},
 
   {N_("Undo"), N_("Undo the last command."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_UNDO, conf_menu_value, GTK_STOCK_UNDO},
+   CONF_OBJ_MENU, CONF_MENU_UNDO, conf_menu_value, GTK_STOCK_UNDO, "c+z"},
 
   {N_("Redo"), N_("Redo the last command."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_REDO, conf_menu_value, GTK_STOCK_REDO},
+   CONF_OBJ_MENU, CONF_MENU_REDO, conf_menu_value, GTK_STOCK_REDO, "c+y"},
 
   {N_("Copy Line"), N_("Copy the current line in the current proof."),
-   NULL, CONF_OBJ_MENU, CONF_MENU_COPY, conf_menu_value, GTK_STOCK_COPY},
+   NULL, CONF_OBJ_MENU, CONF_MENU_COPY, conf_menu_value, GTK_STOCK_COPY, "c+g"},
 
   {N_("Kill Line"),
    N_("Kill (Cut) the current line in the current proof."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_KILL, conf_menu_value, GTK_STOCK_CUT},
+   CONF_OBJ_MENU, CONF_MENU_KILL, conf_menu_value, GTK_STOCK_CUT, "c+k"},
 
   {N_("Insert Line"), N_("Insert a copied/killed line after the\
  current line in the current proof."), NULL, CONF_OBJ_MENU,
-   CONF_MENU_INSERT, conf_menu_value, GTK_STOCK_PASTE},
+   CONF_MENU_INSERT, conf_menu_value, GTK_STOCK_PASTE, "c+i"},
 
   {N_("Evaluate Line"),
    N_("Evaluate the current line in the current proof."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_EVAL_LINE, conf_menu_value, GTK_STOCK_EXECUTE},
+   CONF_OBJ_MENU, CONF_MENU_EVAL_LINE, conf_menu_value, GTK_STOCK_EXECUTE, "c+e"},
 
   {N_("Evaluate Proof"), N_("Evaluate the current proof."), NULL,
    CONF_OBJ_MENU, CONF_MENU_EVAL_PROOF, conf_menu_value,
-   GTK_STOCK_SELECT_ALL},
+   GTK_STOCK_SELECT_ALL, "c+f"},
 
   {N_("Toggle Goals..."),
    N_("Check/Modify the current goal(s) for the current proof."),
-   NULL, CONF_OBJ_MENU, CONF_MENU_GOAL, conf_menu_value, GTK_STOCK_INDEX},
+   NULL, CONF_OBJ_MENU, CONF_MENU_GOAL, conf_menu_value, GTK_STOCK_INDEX, "c+l"},
 
   {N_("Toggle Boolean Mode"),
    N_("Toggle Boolean mode for the current proof."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_BOOLEAN, conf_menu_value, GTK_STOCK_CONVERT},
+   CONF_OBJ_MENU, CONF_MENU_BOOLEAN, conf_menu_value, GTK_STOCK_CONVERT, "c+m"},
 
   {N_("Import Proof..."),
    N_("Import the premises and conclusions of a proof."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_IMPORT, conf_menu_value, GTK_STOCK_HARDDISK},
+   CONF_OBJ_MENU, CONF_MENU_IMPORT, conf_menu_value, GTK_STOCK_HARDDISK, NULL},
 
   {N_("Toggle Rules"), N_("Show/Hide the rules tablet."), NULL,
    CONF_OBJ_MENU, CONF_MENU_TOGGLE_RULES, conf_menu_value,
-   GTK_STOCK_REFRESH},
+   GTK_STOCK_REFRESH, "c+r"},
 
   {N_("Small"), N_("Set the font size to small."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_SMALL, conf_menu_value, GTK_STOCK_ZOOM_OUT},
+   CONF_OBJ_MENU, CONF_MENU_SMALL, conf_menu_value, GTK_STOCK_ZOOM_OUT, "c+-"},
 
   {N_("Medium"), N_("Set the font size to medium."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_MEDIUM, conf_menu_value, GTK_STOCK_ZOOM_100},
+   CONF_OBJ_MENU, CONF_MENU_MEDIUM, conf_menu_value, GTK_STOCK_ZOOM_100, "c+0"},
 
   {N_("Large"), N_("Set the font size to large."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_LARGE, conf_menu_value, GTK_STOCK_ZOOM_IN},
+   CONF_OBJ_MENU, CONF_MENU_LARGE, conf_menu_value, GTK_STOCK_ZOOM_IN, "c+="},
 
   {N_("Custom..."), N_("Set the font size manually."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_CUSTOM, conf_menu_value, GTK_STOCK_ZOOM_FIT},
+   CONF_OBJ_MENU, CONF_MENU_CUSTOM, conf_menu_value, GTK_STOCK_ZOOM_FIT, NULL},
 
   {N_("About GNU Aris"), N_("Display information about GNU Aris."),
-   NULL, CONF_OBJ_MENU, CONF_MENU_ABOUT, conf_menu_value, GTK_STOCK_ABOUT},
+   NULL, CONF_OBJ_MENU, CONF_MENU_ABOUT, conf_menu_value, GTK_STOCK_ABOUT, NULL},
 
   {N_("Submit Proofs..."), N_("Submit all open proofs for grading."),
    NULL, CONF_OBJ_MENU, CONF_MENU_SUBMIT, conf_menu_value,
-   GTK_STOCK_NETWORK},
+   GTK_STOCK_NETWORK, NULL},
 
   {N_("Customize"), N_("Customize GNU Aris."), NULL, CONF_OBJ_MENU,
-   CONF_MENU_CUSTOMIZE, conf_menu_value, GTK_STOCK_SELECT_COLOR},
+   CONF_MENU_CUSTOMIZE, conf_menu_value, GTK_STOCK_SELECT_COLOR, NULL},
 
   {N_("Contents"), N_("Display help for GNU Aris."), NULL,
-   CONF_OBJ_MENU, CONF_MENU_CONTENTS, conf_menu_value, GTK_STOCK_HELP},
+   CONF_OBJ_MENU, CONF_MENU_CONTENTS, conf_menu_value, GTK_STOCK_HELP, "f1"},
 };
 
 /* The goal menu configuration objects */
 
 static conf_obj goal_menu_conf[NUM_GOAL_MENUS] = {
   {"Add Goal", "Add a new goal for this proof.", NULL, CONF_OBJ_MENU,
-   CONF_MENU_ADD_PREM, conf_menu_value, GTK_STOCK_ADD},
+   CONF_MENU_ADD_PREM, conf_menu_value, GTK_STOCK_ADD, "c+j"},
 
   {"Remove Goal", "Remove the current goal for this proof.", NULL,
-   CONF_OBJ_MENU, CONF_MENU_KILL, conf_menu_value, GTK_STOCK_REMOVE},
+   CONF_OBJ_MENU, CONF_MENU_KILL, conf_menu_value, GTK_STOCK_REMOVE, "c+k"},
 
   {"Check Line", "Check if the current goal has been met.", NULL,
-   CONF_OBJ_MENU, CONF_MENU_EVAL_LINE, conf_menu_value, GTK_STOCK_INDEX},
+   CONF_OBJ_MENU, CONF_MENU_EVAL_LINE, conf_menu_value, GTK_STOCK_INDEX, "c+e"},
 
   {"Check All", "Check if all goals have been met.", NULL,
    CONF_OBJ_MENU, CONF_MENU_EVAL_PROOF, conf_menu_value,
-   GTK_STOCK_SELECT_ALL},
+   GTK_STOCK_SELECT_ALL, "c+f"},
 
   {"Hide Goals", "Hide the goals window for this proof.", NULL,
-   CONF_OBJ_MENU, CONF_MENU_GOAL, conf_menu_value, GTK_STOCK_REFRESH}
+   CONF_OBJ_MENU, CONF_MENU_GOAL, conf_menu_value, GTK_STOCK_REFRESH, "c+l"}
 };
 
 /* The internal configuration objects */
@@ -229,13 +230,13 @@ static conf_obj goal_menu_conf[NUM_GOAL_MENUS] = {
 static conf_obj grade_conf[NUM_GRADE_CONFS] = {
   {N_("Grade IP"),
    N_("The IP Address of the Grading Server to Submit proofs to."),
-   NULL, CONF_OBJ_GRADE, CONF_GRADE_IP, conf_grade_value, NULL},
+   NULL, CONF_OBJ_GRADE, CONF_GRADE_IP, conf_grade_value, NULL, "127.0.0.1"},
   {N_("Grade Password"),
    N_("The Password of the Grading Server."),
-   NULL, CONF_OBJ_GRADE, CONF_GRADE_PASS, conf_grade_value, NULL},
+   NULL, CONF_OBJ_GRADE, CONF_GRADE_PASS, conf_grade_value, NULL, "islegion"},
   {N_("Grade Directory"),
    N_("The directory of the Grading Server."),
-   NULL, CONF_OBJ_GRADE, CONF_GRADE_DIR, conf_grade_value, NULL}
+   NULL, CONF_OBJ_GRADE, CONF_GRADE_DIR, conf_grade_value, NULL, "."}
 };
 
 /* The display configuration objects */
@@ -243,37 +244,46 @@ static conf_obj grade_conf[NUM_GRADE_CONFS] = {
 static conf_obj display_conf[NUM_DISPLAY_CONFS] = {
   {N_("Font Small Preset"),
    N_("The preset font size of the small option."), NULL,
-   CONF_OBJ_FONT, FONT_TYPE_SMALL, conf_font_value, NULL},
+   CONF_OBJ_FONT, FONT_TYPE_SMALL, conf_font_value, NULL, "8"},
+
   {N_("Font Medium Preset"),
    N_("The preset font size of the medium option."), NULL,
-   CONF_OBJ_FONT, FONT_TYPE_MEDIUM, conf_font_value, NULL},
+   CONF_OBJ_FONT, FONT_TYPE_MEDIUM, conf_font_value, NULL, "16"},
+
   {N_("Font Large Preset"),
    N_("The preset font size of the large option."), NULL,
-   CONF_OBJ_FONT, FONT_TYPE_LARGE, conf_font_value, NULL},
+   CONF_OBJ_FONT, FONT_TYPE_LARGE, conf_font_value, NULL, "24"},
+
   {N_("Default Font Size"),
    N_("The default font size to initialize GNU Aris with."),
-   NULL, CONF_OBJ_FONT, FONT_TYPE_CUSTOM, conf_font_value, NULL},
+   NULL, CONF_OBJ_FONT, FONT_TYPE_CUSTOM, conf_font_value, NULL, "8"},
+
   {N_("Default Color"), N_("The background color of normal lines."),
-   NULL, CONF_OBJ_COLOR, BG_COLOR_DEFAULT, conf_color_value, NULL},
+   NULL, CONF_OBJ_COLOR, BG_COLOR_DEFAULT, conf_color_value, NULL, "ffffff"},
+
   {N_("Conclusion Color"), N_("The background color in which to\
  hilight the selected conclusion."), NULL, CONF_OBJ_COLOR,
-   BG_COLOR_CONC, conf_color_value, NULL},
+   BG_COLOR_CONC, conf_color_value, NULL, "7fffff"} ,
+
   {N_("Reference Color"), N_("The background color in which to\
  hilight the selected references."), NULL, CONF_OBJ_COLOR,
-   BG_COLOR_REF, conf_color_value, NULL},
+   BG_COLOR_REF, conf_color_value, NULL, "ff7fff"},
+
   {N_("Bad Color"), N_("The background color in which to hilight\
  mismatched parentheses and invalid goal lines."), NULL,
-   CONF_OBJ_COLOR, BG_COLOR_BAD, conf_color_value, NULL},
+   CONF_OBJ_COLOR, BG_COLOR_BAD, conf_color_value, NULL, "7f0000"},
+
   {N_("Good Color"), N_("The background color in which to hilight\
  matched parentheses and valid goal lines."), NULL, CONF_OBJ_COLOR,
-   BG_COLOR_GOOD, conf_color_value, NULL},
+   BG_COLOR_GOOD, conf_color_value, NULL, "ff0d00"},
+
   {N_("Selection Color"), N_("The background color in which to\
  hilight selected sentences."), NULL, CONF_OBJ_COLOR, BG_COLOR_SEL,\
-   conf_color_value, NULL}
+   conf_color_value, NULL, "ff0d00"}
 };
 
 static const conf_obj menu_separator = {NULL, NULL, NULL,
-					-1, -1, NULL, NULL};
+					-1, -1, NULL, NULL, NULL};
 
 /* Menu stuff. */
 
@@ -289,30 +299,12 @@ enum MENU_ORDER {
 
 enum MENU_SIZE {
   FILE_MENU_SIZE = 8,
-  EDIT_MENU_SIZE = 10,
+  EDIT_MENU_SIZE = 11,
   PROOF_MENU_SIZE = 6,
   RULES_MENU_SIZE = 2,
   FONT_MENU_SIZE = 4,
   HELP_MENU_SIZE = 2
 };
-
-/*
-static conf_obj main_file_menu[FILE_MENU_SIZE];
-static conf_obj main_edit_menu[EDIT_MENU_SIZE];
-static conf_obj main_proof_menu[PROOF_MENU_SIZE];
-static conf_obj main_rules_menu[RULES_MENU_SIZE];
-static conf_obj main_font_menu[FONT_MENU_SIZE];
-static conf_obj main_help_menu[HELP_MENU_SIZE];
-
-static conf_obj * main_menus_menu[NUM_MENUS] = {
-  main_file_menu,
-  main_edit_menu,
-  main_proof_menu,
-  main_rules_menu,
-  main_font_menu,
-  main_help_menu
-};
-*/
 
 static conf_obj rule_file_menu[6];
 static conf_obj rule_font_menu[4];
