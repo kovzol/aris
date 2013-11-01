@@ -459,31 +459,27 @@ rules_table_create_menu (rules_table * rt)
   rtm_file_sub = gtk_menu_new ();
   rtm_file = gtk_menu_item_new_with_label ("File");
 
-
-  memcpy (rule_file_menu,
-	  (conf_obj[]) {
-	    main_menu_conf[CONF_MENU_NEW],
-	      main_menu_conf[CONF_MENU_OPEN],
-	      menu_separator,
-	      main_menu_conf[CONF_MENU_SUBMIT],
-	      menu_separator,
-	      main_menu_conf[CONF_MENU_QUIT]
-	      },
-	  6 * sizeof (conf_obj));
-	  
-
-  memcpy (rule_font_menu,
-	  (conf_obj[]) {
-	    main_menu_conf[CONF_MENU_SMALL],
-	      main_menu_conf[CONF_MENU_MEDIUM],
-	      main_menu_conf[CONF_MENU_LARGE],
-	      main_menu_conf[CONF_MENU_CUSTOM]},
-	  4 * sizeof (conf_obj));
-
-  memcpy (rule_help_menu, (conf_obj[]) { main_menu_conf[CONF_MENU_CONTENTS],
-	main_menu_conf[CONF_MENU_CUSTOMIZE], main_menu_conf[CONF_MENU_ABOUT] },
-    3 * sizeof (conf_obj));
-
+  conf_obj * rule_menus_menu[] = {
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_NEW],
+      main_menu_conf[CONF_MENU_OPEN],
+      menu_separator,
+      main_menu_conf[CONF_MENU_SUBMIT],
+      menu_separator,
+      main_menu_conf[CONF_MENU_QUIT]
+    },
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_SMALL],
+      main_menu_conf[CONF_MENU_MEDIUM],
+      main_menu_conf[CONF_MENU_LARGE],
+      main_menu_conf[CONF_MENU_CUSTOM]
+    },
+    (conf_obj[]) {
+      main_menu_conf[CONF_MENU_CONTENTS],
+      main_menu_conf[CONF_MENU_CUSTOMIZE],
+      main_menu_conf[CONF_MENU_ABOUT]
+    },
+  };
 
   for (i = 0; i < 3; i++)
     {

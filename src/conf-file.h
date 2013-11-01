@@ -306,15 +306,6 @@ enum MENU_SIZE {
   HELP_MENU_SIZE = 2
 };
 
-static conf_obj rule_file_menu[6];
-static conf_obj rule_font_menu[4];
-static conf_obj rule_help_menu[3];
-static conf_obj * rule_menus_menu[3] = {
-  rule_file_menu,
-  rule_font_menu,
-  rule_help_menu
-};
-
 static conf_obj * goal_menus;
 
 /* The default configuration */
