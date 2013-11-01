@@ -34,15 +34,6 @@
 #include "conf-file.h"
 
 /* Begin menu arrays */
-
-/*
-mid_t menu_heads[3] =
-  {
-    {"File", NULL, NULL, PARENT, -1},
-    {"Font", NULL, NULL, PARENT, -1},
-    {"Help", NULL, NULL, PARENT, -1}
-  };
-*/
 static const char * menu_heads[] =
   {
     N_("File"), N_("Font"), N_("Help")
@@ -79,6 +70,35 @@ rules_group_init (int num_rules, char * label, rules_table * parent)
   return rg;
 }
 
+/* Initializes the rules for each rules group.
+ *  input:
+ *    rt - the rules table that is being initialized.
+ *    modif - the offset from the start of the rules list at which to start.
+ *    table - the table that belongs to the current rules group.
+ *    limit - the amount of rules in this rules group.
+ *    sens - whether or not to set the rules to be insensitive.
+ *  output:
+ *    none.
+ */
+void
+rules_table_help_init (rules_table * rt, int modif,
+		       GtkWidget * table, int limit, int sens)
+{
+  int i, mod;
+  for (i = 0; i < limit; i++)
+    {
+      mod = i + modif;
+      rt->rules[mod] = gtk_toggle_button_new_with_label (rules_list[mod]);
+      gtk_table_attach_defaults (GTK_TABLE (table), rt->rules[mod],
+				 (i % 4), (i % 4) + 1, i / 4, (i / 4) + 1);
+      g_signal_connect (G_OBJECT (rt->rules[mod]), "toggled",
+			G_CALLBACK (toggled), GINT_TO_POINTER (mod));
+      gtk_widget_set_tooltip_text (rt->rules[mod], rules_names[mod]);
+      if (sens)
+	gtk_widget_set_sensitive (rt->rules[mod], FALSE);
+    }
+}
+
 /* Initializes a rules table.
  *  input:
  *    boolean - whether or not this is in boolean mode.
@@ -89,7 +109,7 @@ rules_table *
 rules_table_init (int boolean)
 {
   rules_table * rt;
-  int i;
+  int i, mod;
 
   rt = (rules_table *) calloc (1, sizeof (rules_table));
   if (!rt)
@@ -137,79 +157,19 @@ rules_table_init (int boolean)
   if (!rt->boole)
     return NULL;
 
-  for (i = 0; i < 8; i++)
+  rules_table_help_init (rt, 0, rt->infer->table, 8, boolean);
+  rules_table_help_init (rt, 8, rt->equiv->table, 10, 0);
+  rules_table_help_init (rt, 18, rt->pred->table, 9, boolean);
+  rules_table_help_init (rt, 27, rt->misc->table, 4, boolean);
+  rules_table_help_init (rt, 31, rt->boole->table, 4, 0);
+
+  if (boolean)
     {
-      rt->rules[i] = gtk_toggle_button_new_with_label (rules_list[i]);
-      gtk_table_attach_defaults (GTK_TABLE (rt->infer->table), rt->rules[i],
-				 (i % 4), (i % 4) + 1, i / 4, (i / 4) + 1);
-      g_signal_connect (G_OBJECT (rt->rules[i]), "toggled",
-			G_CALLBACK (toggled), GINT_TO_POINTER (i));
-      gtk_widget_set_tooltip_text (rt->rules[i], rules_names[i]);
-      if (boolean)
-	gtk_widget_set_sensitive (rt->rules[i], FALSE);
+      gtk_widget_set_sensitive (rt->rules[RULE_IM], FALSE);
+      gtk_widget_set_sensitive (rt->rules[RULE_EQ], FALSE);
+      gtk_widget_set_sensitive (rt->rules[RULE_EP], FALSE);
     }
 
-  for (i = 0; i < 10; i++)
-    {
-      int mod = i + 8;
-      rt->rules[mod] = gtk_toggle_button_new_with_label (rules_list[mod]);
-      gtk_table_attach_defaults (GTK_TABLE (rt->equiv->table),
-				 rt->rules[mod], (i % 4),
-				 (i % 4) + 1, i / 4, (i / 4) + 1);
-      g_signal_connect (G_OBJECT (rt->rules[mod]), "toggled",
-			G_CALLBACK (toggled), GINT_TO_POINTER (mod));
-      gtk_widget_set_tooltip_text (rt->rules[mod], rules_names[mod]);
-      if (boolean && (mod == RULE_IM || mod == RULE_EQ || mod == RULE_EP))
-	gtk_widget_set_sensitive (rt->rules[mod], FALSE);
-    }
-
-  for (i = 0; i < 9; i++)
-    {
-      rt->rules[i + 18] = gtk_toggle_button_new_with_label (rules_list[i + 18]);
-      gtk_table_attach_defaults (GTK_TABLE (rt->pred->table),
-				 rt->rules[i + 18], (i % 4),
-				 (i % 4) + 1, i / 4, (i / 4) + 1);
-
-      g_signal_connect (G_OBJECT (rt->rules[i + 18]), "toggled",
-			G_CALLBACK (toggled), GINT_TO_POINTER (i + 18));
-      gtk_widget_set_tooltip_text (rt->rules[i + 18], rules_names[i + 18]);
-      if (boolean)
-	gtk_widget_set_sensitive (rt->rules[i + 18], FALSE);
-    }
-
-  /* Create the two misc. rules. */
-
-  for (i = 0; i < 4; i++)
-    {
-      int mod = i + 27;
-      rt->rules[mod] = gtk_toggle_button_new_with_label (rules_list[mod]);
-      gtk_table_attach_defaults (GTK_TABLE (rt->misc->table),
-				 rt->rules[mod], i % 4, (i % 4) + 1,
-				 i / 4, (i / 4) + 1);
-
-      g_signal_connect (G_OBJECT (rt->rules[mod]), "toggled",
-			G_CALLBACK (toggled), GINT_TO_POINTER (mod));
-      gtk_widget_set_tooltip_text (rt->rules[mod], rules_names[mod]);
-      if (boolean)
-	gtk_widget_set_sensitive (rt->rules[mod], FALSE);
-    }
-
-  /* Create the boolean rules. */
-
-  for (i = 0; i < 4; i++)
-    {
-      int mod = i + 31;
-      rt->rules[mod] = gtk_toggle_button_new_with_label (rules_list[mod]);
-      gtk_table_attach_defaults (GTK_TABLE (rt->boole->table),
-				 rt->rules[mod], i % 4, (i % 4) + 1,
-				 i / 4, (i / 4) + 1);
-
-      g_signal_connect (G_OBJECT (rt->rules[mod]), "toggled",
-			G_CALLBACK (toggled), GINT_TO_POINTER (mod));
-      gtk_widget_set_tooltip_text (rt->rules[mod], rules_names[mod]);
-      if (0)
-	gtk_widget_set_sensitive (rt->rules[mod], FALSE);
-    }
 
   g_signal_connect (rt->window, "delete-event",
 		    G_CALLBACK (rules_table_deleted), NULL);
@@ -455,9 +415,6 @@ rules_table_create_menu (rules_table * rt)
 {
   GtkWidget * rtm_file, * rtm_file_sub;
   int toss_me = 0, i, j;
-
-  rtm_file_sub = gtk_menu_new ();
-  rtm_file = gtk_menu_item_new_with_label ("File");
 
   conf_obj * rule_menus_menu[] = {
     (conf_obj[]) {
