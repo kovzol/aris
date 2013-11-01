@@ -103,125 +103,125 @@ void * conf_grade_value (conf_obj * obj, int get);
 
 static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
   {N_("New"), N_("Begin a new proof."), NULL, CONF_OBJ_MENU,
-   MENU_NEW, conf_menu_value, GTK_STOCK_NEW},
+   CONF_MENU_NEW, conf_menu_value, GTK_STOCK_NEW},
 
-  {N_("Open"), N_("Open a proof."), NULL, CONF_OBJ_MENU, MENU_OPEN,
+  {N_("Open"), N_("Open a proof."), NULL, CONF_OBJ_MENU, CONF_MENU_OPEN,
    conf_menu_value, GTK_STOCK_OPEN},
 
   {N_("Save"), N_("Save the current proof."), NULL, CONF_OBJ_MENU,
-   MENU_SAVE, conf_menu_value,  GTK_STOCK_SAVE},
+   CONF_MENU_SAVE, conf_menu_value,  GTK_STOCK_SAVE},
 
   {N_("Save As"), N_("Save this proof under a different name."),
-   NULL, CONF_OBJ_MENU, MENU_SAVE_AS, conf_menu_value,
+   NULL, CONF_OBJ_MENU, CONF_MENU_SAVE_AS, conf_menu_value,
    GTK_STOCK_SAVE_AS},
 
   {N_("Close"), N_("Close the current proof."), NULL, CONF_OBJ_MENU,
-   MENU_CLOSE, conf_menu_value, GTK_STOCK_CLOSE},
+   CONF_MENU_CLOSE, conf_menu_value, GTK_STOCK_CLOSE},
 
-  {N_("Quit"), N_("Quit GNU Aris."), NULL, CONF_OBJ_MENU, MENU_QUIT,
+  {N_("Quit"), N_("Quit GNU Aris."), NULL, CONF_OBJ_MENU, CONF_MENU_QUIT,
    conf_menu_value, GTK_STOCK_QUIT},
 
   {N_("Add Premise"), N_("Add a new premise to the current proof."),
-   NULL, CONF_OBJ_MENU, MENU_ADD_PREM, conf_menu_value,
+   NULL, CONF_OBJ_MENU, CONF_MENU_ADD_PREM, conf_menu_value,
    GTK_STOCK_YES},
 
   {N_("Add Conclusion"),
    N_("Add a new conclusion to the current proof."), NULL,
-   CONF_OBJ_MENU, MENU_ADD_CONC, conf_menu_value, GTK_STOCK_NO},
+   CONF_OBJ_MENU, CONF_MENU_ADD_CONC, conf_menu_value, GTK_STOCK_NO},
 
   {N_("Add Subproof"), N_("Add a new subproof to the current proof."),
-   NULL, CONF_OBJ_MENU, MENU_ADD_SUB, conf_menu_value,
+   NULL, CONF_OBJ_MENU, CONF_MENU_ADD_SUB, conf_menu_value,
    GTK_STOCK_MEDIA_NEXT},
 
   {N_("End Subproof"), N_("End the current subproof."), NULL,
-   CONF_OBJ_MENU, MENU_END_SUB, conf_menu_value,
+   CONF_OBJ_MENU, CONF_MENU_END_SUB, conf_menu_value,
    GTK_STOCK_MEDIA_PREVIOUS},
 
   {N_("Undo"), N_("Undo the last command."), NULL,
-   CONF_OBJ_MENU, MENU_UNDO, conf_menu_value, GTK_STOCK_UNDO},
+   CONF_OBJ_MENU, CONF_MENU_UNDO, conf_menu_value, GTK_STOCK_UNDO},
 
   {N_("Redo"), N_("Redo the last command."), NULL,
-   CONF_OBJ_MENU, MENU_REDO, conf_menu_value, GTK_STOCK_REDO},
+   CONF_OBJ_MENU, CONF_MENU_REDO, conf_menu_value, GTK_STOCK_REDO},
 
   {N_("Copy Line"), N_("Copy the current line in the current proof."),
-   NULL, CONF_OBJ_MENU, MENU_COPY, conf_menu_value, GTK_STOCK_COPY},
+   NULL, CONF_OBJ_MENU, CONF_MENU_COPY, conf_menu_value, GTK_STOCK_COPY},
 
   {N_("Kill Line"),
    N_("Kill (Cut) the current line in the current proof."), NULL,
-   CONF_OBJ_MENU, MENU_KILL, conf_menu_value, GTK_STOCK_CUT},
+   CONF_OBJ_MENU, CONF_MENU_KILL, conf_menu_value, GTK_STOCK_CUT},
 
   {N_("Insert Line"), N_("Insert a copied/killed line after the\
  current line in the current proof."), NULL, CONF_OBJ_MENU,
-   MENU_INSERT, conf_menu_value, GTK_STOCK_PASTE},
+   CONF_MENU_INSERT, conf_menu_value, GTK_STOCK_PASTE},
 
   {N_("Evaluate Line"),
    N_("Evaluate the current line in the current proof."), NULL,
-   CONF_OBJ_MENU, MENU_EVAL_LINE, conf_menu_value, GTK_STOCK_EXECUTE},
+   CONF_OBJ_MENU, CONF_MENU_EVAL_LINE, conf_menu_value, GTK_STOCK_EXECUTE},
 
   {N_("Evaluate Proof"), N_("Evaluate the current proof."), NULL,
-   CONF_OBJ_MENU, MENU_EVAL_PROOF, conf_menu_value,
+   CONF_OBJ_MENU, CONF_MENU_EVAL_PROOF, conf_menu_value,
    GTK_STOCK_SELECT_ALL},
 
   {N_("Toggle Goals..."),
    N_("Check/Modify the current goal(s) for the current proof."),
-   NULL, CONF_OBJ_MENU, MENU_GOAL, conf_menu_value, GTK_STOCK_INDEX},
+   NULL, CONF_OBJ_MENU, CONF_MENU_GOAL, conf_menu_value, GTK_STOCK_INDEX},
 
   {N_("Toggle Boolean Mode"),
    N_("Toggle Boolean mode for the current proof."), NULL,
-   CONF_OBJ_MENU, MENU_BOOLEAN, conf_menu_value, GTK_STOCK_CONVERT},
+   CONF_OBJ_MENU, CONF_MENU_BOOLEAN, conf_menu_value, GTK_STOCK_CONVERT},
 
   {N_("Import Proof..."),
    N_("Import the premises and conclusions of a proof."), NULL,
-   CONF_OBJ_MENU, MENU_IMPORT, conf_menu_value, GTK_STOCK_HARDDISK},
+   CONF_OBJ_MENU, CONF_MENU_IMPORT, conf_menu_value, GTK_STOCK_HARDDISK},
 
   {N_("Toggle Rules"), N_("Show/Hide the rules tablet."), NULL,
-   CONF_OBJ_MENU, MENU_TOGGLE_RULES, conf_menu_value,
+   CONF_OBJ_MENU, CONF_MENU_TOGGLE_RULES, conf_menu_value,
    GTK_STOCK_REFRESH},
 
   {N_("Small"), N_("Set the font size to small."), NULL,
-   CONF_OBJ_MENU, MENU_SMALL, conf_menu_value, GTK_STOCK_ZOOM_OUT},
+   CONF_OBJ_MENU, CONF_MENU_SMALL, conf_menu_value, GTK_STOCK_ZOOM_OUT},
 
   {N_("Medium"), N_("Set the font size to medium."), NULL,
-   CONF_OBJ_MENU, MENU_MEDIUM, conf_menu_value, GTK_STOCK_ZOOM_100},
+   CONF_OBJ_MENU, CONF_MENU_MEDIUM, conf_menu_value, GTK_STOCK_ZOOM_100},
 
   {N_("Large"), N_("Set the font size to large."), NULL,
-   CONF_OBJ_MENU, MENU_LARGE, conf_menu_value, GTK_STOCK_ZOOM_IN},
+   CONF_OBJ_MENU, CONF_MENU_LARGE, conf_menu_value, GTK_STOCK_ZOOM_IN},
 
   {N_("Custom..."), N_("Set the font size manually."), NULL,
-   CONF_OBJ_MENU, MENU_CUSTOM, conf_menu_value, GTK_STOCK_ZOOM_FIT},
+   CONF_OBJ_MENU, CONF_MENU_CUSTOM, conf_menu_value, GTK_STOCK_ZOOM_FIT},
 
   {N_("About GNU Aris"), N_("Display information about GNU Aris."),
-   NULL, CONF_OBJ_MENU, MENU_ABOUT, conf_menu_value, GTK_STOCK_ABOUT},
+   NULL, CONF_OBJ_MENU, CONF_MENU_ABOUT, conf_menu_value, GTK_STOCK_ABOUT},
 
   {N_("Submit Proofs..."), N_("Submit all open proofs for grading."),
-   NULL, CONF_OBJ_MENU, MENU_SUBMIT, conf_menu_value,
+   NULL, CONF_OBJ_MENU, CONF_MENU_SUBMIT, conf_menu_value,
    GTK_STOCK_NETWORK},
 
   {N_("Customize"), N_("Customize GNU Aris."), NULL, CONF_OBJ_MENU,
-   MENU_CUSTOMIZE, conf_menu_value, GTK_STOCK_SELECT_COLOR},
+   CONF_MENU_CUSTOMIZE, conf_menu_value, GTK_STOCK_SELECT_COLOR},
 
   {N_("Contents"), N_("Display help for GNU Aris."), NULL,
-   CONF_OBJ_MENU, MENU_CONTENTS, conf_menu_value, GTK_STOCK_HELP},
+   CONF_OBJ_MENU, CONF_MENU_CONTENTS, conf_menu_value, GTK_STOCK_HELP},
 };
 
 /* The goal menu configuration objects */
 
 static conf_obj goal_menu_conf[NUM_GOAL_MENUS] = {
   {"Add Goal", "Add a new goal for this proof.", NULL, CONF_OBJ_MENU,
-   MENU_ADD_PREM, conf_menu_value, GTK_STOCK_ADD},
+   CONF_MENU_ADD_PREM, conf_menu_value, GTK_STOCK_ADD},
 
   {"Remove Goal", "Remove the current goal for this proof.", NULL,
-   CONF_OBJ_MENU, MENU_KILL, conf_menu_value, GTK_STOCK_REMOVE},
+   CONF_OBJ_MENU, CONF_MENU_KILL, conf_menu_value, GTK_STOCK_REMOVE},
 
   {"Check Line", "Check if the current goal has been met.", NULL,
-   CONF_OBJ_MENU, MENU_EVAL_LINE, conf_menu_value, GTK_STOCK_INDEX},
+   CONF_OBJ_MENU, CONF_MENU_EVAL_LINE, conf_menu_value, GTK_STOCK_INDEX},
 
   {"Check All", "Check if all goals have been met.", NULL,
-   CONF_OBJ_MENU, MENU_EVAL_PROOF, conf_menu_value,
+   CONF_OBJ_MENU, CONF_MENU_EVAL_PROOF, conf_menu_value,
    GTK_STOCK_SELECT_ALL},
 
   {"Hide Goals", "Hide the goals window for this proof.", NULL,
-   CONF_OBJ_MENU, MENU_GOAL, conf_menu_value, GTK_STOCK_REFRESH}
+   CONF_OBJ_MENU, CONF_MENU_GOAL, conf_menu_value, GTK_STOCK_REFRESH}
 };
 
 /* The internal configuration objects */
@@ -296,6 +296,7 @@ enum MENU_SIZE {
   HELP_MENU_SIZE = 2
 };
 
+/*
 static conf_obj main_file_menu[FILE_MENU_SIZE];
 static conf_obj main_edit_menu[EDIT_MENU_SIZE];
 static conf_obj main_proof_menu[PROOF_MENU_SIZE];
@@ -311,6 +312,7 @@ static conf_obj * main_menus_menu[NUM_MENUS] = {
   main_font_menu,
   main_help_menu
 };
+*/
 
 static conf_obj rule_file_menu[6];
 static conf_obj rule_font_menu[4];

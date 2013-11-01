@@ -255,20 +255,20 @@ goal_menu_activate (GtkMenuItem * item, gpointer data)
 
   switch (menu_id)
     {
-    case MENU_ADD_PREM:
+    case CONF_MENU_ADD_PREM:
       goal_add_line (goal, sd);
       break;
-    case MENU_KILL:
+    case CONF_MENU_KILL:
       goal_rem_line (goal);
       break;
-    case MENU_EVAL_LINE:
+    case CONF_MENU_EVAL_LINE:
       if (SEN_PARENT(goal)->focused)
 	goal_check_line (goal, SEN_PARENT(goal)->focused->value);
       break;
-    case MENU_EVAL_PROOF:
+    case CONF_MENU_EVAL_PROOF:
       goal_check_all (goal);
       break;
-    case MENU_GOAL:
+    case CONF_MENU_GOAL:
       gtk_widget_hide (SEN_PARENT (goal)->window);
       aris_proof_set_sb (goal->parent, _("Goal Window Hidden."));
       break;
@@ -315,7 +315,7 @@ rule_menu_activated (GtkMenuItem * menuitem, gpointer data)
   rules_table * rt = the_app->rt;
   int new_font, cur_font;
 
-  if (menu_id >= MENU_SMALL && menu_id <= MENU_CUSTOM)
+  if (menu_id >= CONF_MENU_SMALL && menu_id <= CONF_MENU_CUSTOM)
     {
       gl = gtk_container_get_children (GTK_CONTAINER (rt->menubar));
       font_menu = (GtkWidget *) g_list_nth_data (gl, 1);
@@ -331,22 +331,22 @@ rule_menu_activated (GtkMenuItem * menuitem, gpointer data)
 
   switch (menu_id)
     {
-    case MENU_NEW:
+    case CONF_MENU_NEW:
       gui_new ();
       break;
 
-    case MENU_OPEN:
+    case CONF_MENU_OPEN:
       gui_open (the_app->rt->window);
       break;
 
-    case MENU_SUBMIT:
+    case CONF_MENU_SUBMIT:
       gui_submit_show (the_app->rt->window);
       break;
 
-    case MENU_QUIT:
+    case CONF_MENU_QUIT:
       app_quit ();
       break;
-    case MENU_SMALL:
+    case CONF_MENU_SMALL:
       if (rt->font != FONT_TYPE_SMALL)
 	{
 	  gtk_widget_set_sensitive (font_sel, TRUE);
@@ -354,7 +354,7 @@ rule_menu_activated (GtkMenuItem * menuitem, gpointer data)
 	  gtk_widget_set_sensitive (font_small, FALSE);
 	}
       break;
-    case MENU_MEDIUM:
+    case CONF_MENU_MEDIUM:
       if (rt->font != FONT_TYPE_MEDIUM)
 	{
 	  gtk_widget_set_sensitive (font_sel, TRUE);
@@ -362,7 +362,7 @@ rule_menu_activated (GtkMenuItem * menuitem, gpointer data)
 	  gtk_widget_set_sensitive (font_medium, FALSE);
 	}
       break;
-    case MENU_LARGE:
+    case CONF_MENU_LARGE:
       if (rt->font != FONT_TYPE_LARGE)
 	{
 	  gtk_widget_set_sensitive (font_sel, TRUE);
@@ -370,7 +370,7 @@ rule_menu_activated (GtkMenuItem * menuitem, gpointer data)
 	  gtk_widget_set_sensitive (font_large, FALSE);
 	}
       break;
-    case MENU_CUSTOM:
+    case CONF_MENU_CUSTOM:
       if (gtk_widget_get_sensitive (font_sel))
 	{
 	  FONT_GET_SIZE (the_app->fonts[FONT_TYPE_CUSTOM], cur_font);
@@ -389,15 +389,15 @@ rule_menu_activated (GtkMenuItem * menuitem, gpointer data)
 	  rules_table_set_font (rt, FONT_TYPE_CUSTOM);
 	}
       break;
-    case MENU_CONTENTS:
+    case CONF_MENU_CONTENTS:
       gui_help ();
       break;
 
-    case MENU_CUSTOMIZE:
+    case CONF_MENU_CUSTOMIZE:
       gui_customize_show (rt->window);
       break;
 
-    case MENU_ABOUT:
+    case CONF_MENU_ABOUT:
       gui_about (the_app->rt->window);
       break;
     }
@@ -1365,7 +1365,7 @@ menu_activated (aris_proof * ap, int menu_id)
   item_t * ev_itr;
   int arb;
 
-  if (menu_id >= MENU_SMALL && menu_id <= MENU_CUSTOM)
+  if (menu_id >= CONF_MENU_SMALL && menu_id <= CONF_MENU_CUSTOM)
     {
       gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (ap)->menubar));
       font_menu = (GtkWidget *) g_list_nth_data (gl, FONT_MENU);
@@ -1381,15 +1381,15 @@ menu_activated (aris_proof * ap, int menu_id)
 
   switch (menu_id)
     {
-    case MENU_NEW:
+    case CONF_MENU_NEW:
       ret = gui_new (ap);
       break;
 
-    case MENU_OPEN:
+    case CONF_MENU_OPEN:
       ret = gui_open (SEN_PARENT (ap)->window);
       break;
 
-    case MENU_SAVE:
+    case CONF_MENU_SAVE:
       ret = gui_save (ap, 0);
       if (ret < 0)
 	return -1;
@@ -1397,7 +1397,7 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_set_sb (ap, _("Proof Saved."));
       break;
 
-    case MENU_SAVE_AS:
+    case CONF_MENU_SAVE_AS:
       ret = gui_save (ap, 1);
       if (ret < 0)
 	return -1;
@@ -1405,15 +1405,15 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_set_sb (ap, _("Proof Saved."));
       break;
 
-    case MENU_CLOSE:
+    case CONF_MENU_CLOSE:
       gui_destroy (ap);
       break;
 
-    case MENU_QUIT:
+    case CONF_MENU_QUIT:
       app_quit ();
       break;
 
-    case MENU_ADD_PREM:
+    case CONF_MENU_ADD_PREM:
       if (the_app->verbose)
 	printf ("Inserting premise\n");
 
@@ -1429,7 +1429,7 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_set_sb (ap, _("Premise Created."));
       break;
 
-    case MENU_ADD_CONC:
+    case CONF_MENU_ADD_CONC:
       sen = aris_proof_create_new_conc (ap);
       if (!sen)
 	return -1;
@@ -1437,7 +1437,7 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_set_sb (ap, _("Conclusion Created."));
       break;
 
-    case MENU_ADD_SUB:
+    case CONF_MENU_ADD_SUB:
       sen = aris_proof_create_new_sub (ap);
       if (!sen)
 	return -1;
@@ -1445,7 +1445,7 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_set_sb (ap, _("Subproof Created."));
       break;
 
-    case MENU_END_SUB:
+    case CONF_MENU_END_SUB:
       sen = aris_proof_end_sub (ap);
       if (!sen)
 	return -1;
@@ -1453,7 +1453,7 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_set_sb (ap, _("Subproof Ended."));
       break;
 
-    case MENU_UNDO:
+    case CONF_MENU_UNDO:
       ret = aris_proof_undo (ap);
       if (ret < 0)
 	return -1;
@@ -1464,7 +1464,7 @@ menu_activated (aris_proof * ap, int menu_id)
 	aris_proof_set_sb (ap, _("Nothing to undo."));
       break;
 
-    case MENU_COPY:
+    case CONF_MENU_COPY:
       ret = aris_proof_copy (ap);
       if (ret < 0)
 	return -1;
@@ -1472,7 +1472,7 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_set_sb (ap, _("Sentence Copied."));
       break;
 
-    case MENU_KILL:
+    case CONF_MENU_KILL:
       ret = aris_proof_kill (ap);
       if (ret < 0)
 	return -1;
@@ -1483,37 +1483,37 @@ menu_activated (aris_proof * ap, int menu_id)
 	aris_proof_set_sb (ap, _("Sentence Killed."));
       break;
 
-    case MENU_INSERT:
+    case CONF_MENU_INSERT:
       ret = aris_proof_yank (ap);
       aris_proof_set_sb (ap, _("Sentence Inserted."));
       break;
 
-    case MENU_EVAL_LINE:
+    case CONF_MENU_EVAL_LINE:
       ls_clear (ap->vars);
       evaluate_line (ap, SENTENCE (SEN_PARENT (ap)->focused->value));
       break;
 
-    case MENU_EVAL_PROOF:
+    case CONF_MENU_EVAL_PROOF:
       ret = evaluate_proof (ap);
       break;
 
-    case MENU_GOAL:
+    case CONF_MENU_GOAL:
       gui_goal_check (ap);
       break;
 
-    case MENU_BOOLEAN:
+    case CONF_MENU_BOOLEAN:
       aris_proof_toggle_boolean_mode (ap);
       break;
 
-    case MENU_IMPORT:
+    case CONF_MENU_IMPORT:
       aris_proof_import_proof (ap);
       break;
 
-    case MENU_TOGGLE_RULES:
+    case CONF_MENU_TOGGLE_RULES:
       gui_toggle_rules (ap);
       break;
 
-    case MENU_SMALL:
+    case CONF_MENU_SMALL:
       if (SEN_PARENT (ap)->font != FONT_TYPE_SMALL)
 	{
 	  gtk_widget_set_sensitive (font_sel, TRUE);
@@ -1524,7 +1524,7 @@ menu_activated (aris_proof * ap, int menu_id)
 
       break;
 
-    case MENU_MEDIUM:
+    case CONF_MENU_MEDIUM:
       if (SEN_PARENT (ap)->font != FONT_TYPE_MEDIUM)
 	{
 	  gtk_widget_set_sensitive (font_sel, TRUE);
@@ -1534,7 +1534,7 @@ menu_activated (aris_proof * ap, int menu_id)
 	}
       break;
 
-    case MENU_LARGE:
+    case CONF_MENU_LARGE:
       if (SEN_PARENT (ap)->font != FONT_TYPE_LARGE)
 	{
 	  gtk_widget_set_sensitive (font_sel, TRUE);
@@ -1544,7 +1544,7 @@ menu_activated (aris_proof * ap, int menu_id)
 	}
       break;
 
-    case MENU_CUSTOM:
+    case CONF_MENU_CUSTOM:
       if (gtk_widget_get_sensitive (font_sel))
 	{
 	  FONT_GET_SIZE (the_app->fonts[FONT_TYPE_CUSTOM], cur_font);
@@ -1565,7 +1565,7 @@ menu_activated (aris_proof * ap, int menu_id)
 	}
       break;
 
-    case MENU_CONTENTS:
+    case CONF_MENU_CONTENTS:
       ret = gui_help ();
       if (ret < 0)
 	return -1;
@@ -1574,7 +1574,7 @@ menu_activated (aris_proof * ap, int menu_id)
       break;
 
 
-    case MENU_ABOUT:
+    case CONF_MENU_ABOUT:
       gui_about (SEN_PARENT (ap)->window);
       break;
     }

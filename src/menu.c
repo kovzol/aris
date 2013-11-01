@@ -73,7 +73,7 @@ construct_menu_item (conf_obj data, GCallback func,
 		    GINT_TO_POINTER (data.id));
 
   if (*got_radio == 0
-      && (data.id >= MENU_SMALL && data.id <= MENU_CUSTOM))
+      && (data.id >= CONF_MENU_SMALL && data.id <= CONF_MENU_CUSTOM))
     {
       gtk_widget_set_sensitive (item, FALSE);
       (*got_radio)++;

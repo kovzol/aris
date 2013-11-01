@@ -23,45 +23,6 @@
 #include <gdk/gdkkeysyms.h>
 #include "typedef.h"
 
-// Menu ids for the aris proofs, used in other gui menus as well.
-
-enum MENU_ID {
-  MENU_NEW=0,
-  MENU_OPEN,
-  MENU_FILE_SEP_0,
-  MENU_SAVE,
-  MENU_SAVE_AS,
-  MENU_FILE_SEP_1,
-  MENU_CLOSE,
-  MENU_QUIT,
-  MENU_ADD_PREM,
-  MENU_ADD_CONC,
-  MENU_ADD_SUB,
-  MENU_END_SUB,
-  MENU_LINE_SEP_0,
-  MENU_UNDO,
-  MENU_REDO,
-  MENU_COPY,
-  MENU_KILL,
-  MENU_INSERT,
-  MENU_EVAL_LINE,
-  MENU_EVAL_PROOF,
-  MENU_PROOF_SEP_0,
-  MENU_GOAL,
-  MENU_SUBMIT,
-  MENU_BOOLEAN,
-  MENU_IMPORT,
-  MENU_TOGGLE_RULES,
-  MENU_RULES_SEP_1,
-  MENU_SMALL,
-  MENU_MEDIUM,
-  MENU_LARGE,
-  MENU_CUSTOM,
-  MENU_CONTENTS,
-  MENU_CUSTOMIZE,
-  MENU_ABOUT
-};
-
 #define WIN_PATH "ARIS-WINDOW"
 
 GtkWidget * construct_menu_item (conf_obj data, GCallback func,

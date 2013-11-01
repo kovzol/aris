@@ -46,44 +46,23 @@ struct undo_info {
 // The main proof/gui structure.
 
 struct aris_proof {
-  /*
-  // Starting here, the order of these elements must match those in sen_parent.
-  GtkWidget * window;          // The main window.
-  GtkWidget * vbox;            // The container for the menu, statusbar, and
-                               // scrolledwindow.
-  GtkWidget * menubar;         // The menu bar for this gui.
-  GtkWidget * statusbar;       // The statusbar that displays status messages.
-  GtkWidget * scrolledwindow;  // The scrolledwindow that contains the viewport.
-  GtkWidget * viewport;        // The vewport that allows scrolling through sentences.
-  GtkWidget * container;       // The container of the sentences.
-  GtkWidget * separator;       // The separator that separates prems from concs.
-  GtkAccelGroup * accel;       // The accelerator for the keybindings.
+  struct sen_parent sp;	// The parent object of this proof.
 
-  GdkPixbuf * conn_pixbufs[11];
-  struct list * everything;  // The list of sentences.
-  struct item * focused;     // The currently focused sentence.
-  int font;                  // The index of the font in the_app->fonts.
-  int type;                  // The type of sentence parent.
-  int undo;
-  // sen_parent ends here.
-  */
-  struct sen_parent sp;
+  list_t * vars;	// The list of variables for this proof.
+  goal_t * goal;	// The goal structure for this proof.
 
-  list_t * vars;  // The list of variables for this proof.
-  goal_t * goal;  // The goal structure for this proof.
+  int edited : 1;	// Whether or not this proof has been edited.
+  char * cur_file;	// The current file associated with this proof.
 
-  int edited : 1;   // Whether or not this proof has been edited.
-  char * cur_file;  // The current file associated with this proof.
+  item_t * fin_prem;	// The final premise.
+  list_t * yanked;	// The currently yanked lines.
+  list_t * selected;	// The currently selected lines.
 
-  item_t * fin_prem;  // The final premise.
-  list_t * yanked;    // The currently yanked lines.
-  list_t * selected;  // The currently selected lines.
+  char * sb_text;	// The statusbar text - may not be needed.
+  int boolean : 1;	// Whether or not the proof is in boolean mode.
 
-  char * sb_text;  // The statusbar text - may not be needed.
-  int boolean : 1;
-
-  vec_t * undo_stack;
-  int undo_pt;
+  vec_t * undo_stack;	// The stack of previous actions to undo.
+  int undo_pt;		// The position within the undo stack.
 };
 
 aris_proof * aris_proof_init ();
