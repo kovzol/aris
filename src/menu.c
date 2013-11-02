@@ -40,6 +40,8 @@ construct_menu_item (conf_obj data, GCallback func,
   char * path;
   int alloc_size;
 
+  GtkWidget * grid, * label, * bin;
+
   if (!data.label)
     {
       item = gtk_separator_menu_item_new ();
@@ -47,18 +49,22 @@ construct_menu_item (conf_obj data, GCallback func,
       return item;
     }
 
+  item = gtk_menu_item_new_with_label (data.label);
+  /*
+  item = gtk_menu_item_new ();
+  grid = gtk_grid_new ();
+
+  label = gtk_label_new (data.label);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
+  */
+
   if (data.stock_id)
     {
-      item = gtk_image_menu_item_new_with_label (data.label);
-      image = gtk_image_new_from_stock (data.stock_id,
-					GTK_ICON_SIZE_MENU);
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item),
-				     image);
+      //image = gtk_image_new_from_icon_name (data.stock_id, GTK_ICON_SIZE_MENU);
+      //gtk_grid_attach (GTK_GRID (grid), image, 1, 0, 1, 1);
     }
-  else
-    {
-      item = gtk_menu_item_new_with_label (data.label);
-    }
+
+  //gtk_container_add (GTK_CONTAINER (item), grid);
 
   gtk_widget_set_tooltip_text (item, data.tooltip);
 

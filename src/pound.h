@@ -24,6 +24,9 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+#define LABEL_SET_FONT(l,f) gtk_widget_override_font (l, f);
+#define ENTRY_SET_FONT(e,f) gtk_widget_override_font (e, f);
+/*
 #ifdef gtk_widget_override_font
 #define LABEL_SET_FONT(l,f) gtk_widget_override_font (l, f);
 #define ENTRY_SET_FONT(e,f) gtk_widget_override_font (e, f);
@@ -31,6 +34,7 @@
 #define LABEL_SET_FONT(l,f) gtk_widget_modify_font (l, f);
 #define ENTRY_SET_FONT(e,f) gtk_widget_modify_font (e, f);
 #endif
+*/
 
 // Fonts
 #define FONT_TYPE PangoFontDescription *
@@ -41,19 +45,21 @@
   pango_font_description_set_size (f, s * PANGO_SCALE);
 #define FONT_GET_SIZE(f,s) s = pango_font_description_get_size (f) / PANGO_SCALE;
 
-#ifdef GdkRGBA
+
 #define COLOR_TYPE GdkRGBA *
 #define INIT_COLOR(c,r,g,b) c = (GdkRGBA *) calloc (1, sizeof (GdkRGBA)); \
   c->red = (double) r / 255.0; \
   c->green = (double) g / 255.0; \
   c->blue = (double) b / 255.0; \
   c->alpha = (double) 1.0;
-#define INVERT(c,n) n = (GdkColor *) calloc (1, sizeof (GdkRGBA));\
+#define INVERT(c,n) n = (GdkRGBA *) calloc (1, sizeof (GdkRGBA));\
   n->red = (double) 1.0 - c->red; \
   n->green = (double) 1.0 - c->green; \
-  n->blue = (dobule) 1.0 - c->blue; \
+  n->blue = (double) 1.0 - c->blue; \
   n->alpha = (double) 1.0;
 
+/*
+#ifdef GdkRGBA
 #else
 #define COLOR_TYPE GdkColor *
 #define INIT_COLOR(c,r,g,b) c = (GdkColor *) calloc (1, sizeof (GdkColor)); \
@@ -65,5 +71,6 @@
   n->green = c->green ^ 0xffff; \
   n->blue = c->blue ^ 0xffff;
 #endif
+*/
 
 #endif  /*  ARIS_POUND_H  */

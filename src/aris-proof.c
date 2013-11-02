@@ -169,7 +169,7 @@ aris_proof_post_init (aris_proof * ap)
   sentence * sen;
 
   // Initialize the separator
-  SEN_PARENT (ap)->separator = gtk_hseparator_new ();
+  SEN_PARENT (ap)->separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
 
   sd = SEN_DATA_DEFAULT (1, 0, 0);
   if (!sd)
@@ -179,8 +179,8 @@ aris_proof_post_init (aris_proof * ap)
   if (!sen)
     return -1;
 
-  gtk_box_pack_start (GTK_BOX (SEN_PARENT (ap)->container),
-		      sen->panel, FALSE, FALSE, 0);
+  gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
+			   sen->panel, NULL, GTK_POS_BOTTOM, 1, 1);
 
   item_t * itm = ls_ins_obj (SEN_PARENT (ap)->everything, sen,
 			     SEN_PARENT (ap)->everything->head);
@@ -189,8 +189,8 @@ aris_proof_post_init (aris_proof * ap)
 
   ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
 
-  gtk_box_pack_start (GTK_BOX (SEN_PARENT (ap)->container),
-		      SEN_PARENT (ap)->separator, FALSE, FALSE, 0);
+  gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
+			   SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM, 1, 1);
 
   // Clear the undo stack.
   ap->undo_pt = -1;
@@ -274,15 +274,16 @@ aris_proof_init_from_proof (proof_t * proof)
 
       if (first == 1)
 	{
-	  SEN_PARENT (ap)->separator = gtk_hseparator_new ();
+	  SEN_PARENT (ap)->separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
 	  item_t * itm;
 
 	  itm = sen_parent_ins_sentence ((sen_parent *) ap, sd, NULL, 0);
 
 	  ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
 
-	  gtk_box_pack_start (GTK_BOX (SEN_PARENT (ap)->container),
-			      SEN_PARENT (ap)->separator, FALSE, FALSE, 0);
+	  gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
+				   SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM,
+				   1, 1);
 	  first = 0;
 	}
       else
@@ -1178,8 +1179,8 @@ aris_proof_import_proof (aris_proof * ap)
     gtk_file_chooser_dialog_new (_("Select a file to Open..."),
 				 GTK_WINDOW (SEN_PARENT (ap)->window),
 				 GTK_FILE_CHOOSER_ACTION_OPEN,
-				 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				 GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				 "_Cancel", GTK_RESPONSE_CANCEL,
+				 "document-open", GTK_RESPONSE_ACCEPT,
 				 NULL);
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser), FALSE);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
@@ -1453,14 +1454,9 @@ aris_proof_undo_stack_pop (aris_proof * ap)
     aris_proof_create_sentence (a, d, 0);		\
   }
 
-// The following two functions are almost identical.
-// It may be a good idea to simply create one function for both,
-// that checks whether or not an undo or redo is occurring.
-
 int
-aris_proof_undo (aris_proof * ap)
+aris_proof_undo (aris_proof * ap, int undo)
 {
-  int undo = 1;
 
   if (undo)
     {

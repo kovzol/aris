@@ -104,7 +104,7 @@ int aris_proof_import_proof (aris_proof * ap);
 int aris_proof_undo_stack_push (aris_proof * ap, undo_info ui);
 int aris_proof_undo_stack_pop (aris_proof * ap);
 
-int aris_proof_undo (aris_proof * ap);
+int aris_proof_undo (aris_proof * ap, int undo);
 
 undo_info undo_info_init (aris_proof * ap, list_t * sens, int type);
 undo_info undo_info_init_one (aris_proof * ap, sentence * sen, int type);

@@ -202,13 +202,13 @@ goal_check_line (goal_t * goal, sentence * sen)
 
 	  if (is_valid)
 	    {
-	      gtk_widget_modify_bg (ev_sen->eventbox, GTK_STATE_NORMAL,
+	      gtk_widget_override_background_color (ev_sen->eventbox, GTK_STATE_NORMAL,
 				    the_app->bg_colors[BG_COLOR_GOOD]);
 	      sentence_set_value (sen, VALUE_TYPE_TRUE);
 	    }
 	  else
 	    {
-	      gtk_widget_modify_bg (ev_sen->eventbox, GTK_STATE_NORMAL,
+	      gtk_widget_override_background_color (ev_sen->eventbox, GTK_STATE_NORMAL,
 				    the_app->bg_colors[BG_COLOR_BAD]);
 	      sentence_set_value (sen, VALUE_TYPE_REF);
 	    }
@@ -296,8 +296,8 @@ goal_add_line (goal_t * goal, sen_data * sd)
   if (!itm)
     return -1;
 
-  gtk_box_pack_start (GTK_BOX (SEN_PARENT (goal)->container), sen->panel,
-		      FALSE, FALSE, 0);
+  gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (goal)->container), sen->panel,
+			   NULL, GTK_POS_BOTTOM, 1, 1);
   gtk_widget_show_all (sen->panel);
 
   undo_info ui;
@@ -329,7 +329,7 @@ goal_rem_line (goal_t * goal)
       item_t * itm;
       itm = ls_nth (SEN_PARENT (goal->parent)->everything, line_num - 1);
       sen = (sentence *) itm->value;
-      gtk_widget_modify_bg (sen->eventbox, GTK_STATE_NORMAL, NULL);
+      gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
     }
 
   undo_info ui;

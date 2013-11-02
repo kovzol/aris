@@ -37,12 +37,12 @@
 #ifdef LETTERS
 static char * sen_values[6] = {" ", "T", "F", "*", "?", "#"};
 #else
-static char * sen_values[6] = {GTK_STOCK_MEDIA_STOP,
-			       GTK_STOCK_APPLY,
-			       GTK_STOCK_CANCEL,
-			       GTK_STOCK_STOP,
-			       GTK_STOCK_SPELL_CHECK,
-			       GTK_STOCK_SELECT_COLOR};
+static char * sen_values[6] = {"media-playback-stop",
+			       "help-about",
+			       "window-close",
+			       "process-stop",
+			       "tools-check-spelling",
+			       "list-add"};
 #endif
 
 // GTextCharPredicate for determining the location of the comment.
@@ -226,7 +226,7 @@ void
 sentence_gui_init (sentence * sen)
 {
   // Initialize the GUI components.
-  sen->panel = gtk_hbox_new (FALSE, 0);
+  sen->panel = gtk_grid_new ();
 
   sen->line_no = gtk_label_new (NULL);
   gtk_label_set_justify (GTK_LABEL (sen->line_no), GTK_JUSTIFY_FILL);
@@ -245,38 +245,34 @@ sentence_gui_init (sentence * sen)
     }
 
   sen->entry = gtk_text_view_new ();
-
+  gtk_widget_set_hexpand (sen->entry, TRUE);
+  gtk_widget_set_halign (sen->entry, GTK_ALIGN_FILL);
 
 #ifdef LETTERS
   sen->value = gtk_label_new (NULL);
   gtk_label_set_justify (GTK_LABEL (sen->value), GTK_JUSTIFY_FILL);
   gtk_label_set_width_chars (GTK_LABEL (sen->value), 2);
 #else
-  sen->value = gtk_image_new_from_stock (sen_values[0], GTK_ICON_SIZE_MENU);
-  //sen->value = gtk_image_new ();
+  sen->value = gtk_image_new_from_icon_name (sen_values[0], GTK_ICON_SIZE_MENU);
 #endif
 
-  gtk_box_pack_start (GTK_BOX (sen->panel), sen->eventbox, FALSE,
-		      FALSE, 0);
+  int left = 0;
+
+  gtk_grid_attach (GTK_GRID (sen->panel), sen->eventbox, left++, 0, 1, 1);
   
   if (sen->depth > 0)
     {
-      gtk_box_pack_start (GTK_BOX (sen->panel), widget, FALSE, FALSE,
-			  0);
+      gtk_grid_attach (GTK_GRID (sen->panel), widget, left++, 0, 1, 1);
     }
 
-  gtk_box_pack_start (GTK_BOX (sen->panel), sen->entry, TRUE, TRUE,
-		      0);
-
-  gtk_box_pack_start (GTK_BOX (sen->panel), sen->value, FALSE, FALSE,
-		      0);
+  gtk_grid_attach (GTK_GRID (sen->panel), sen->entry, left++, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (sen->panel), sen->value, left++, 0, 1, 1);
 
   sen->rule_box = gtk_label_new (NULL);
   gtk_label_set_justify (GTK_LABEL (sen->rule_box), GTK_JUSTIFY_FILL);
   gtk_label_set_width_chars (GTK_LABEL (sen->rule_box), 2);
 
-  gtk_box_pack_start (GTK_BOX (sen->panel), sen->rule_box, FALSE,
-		      FALSE, 0);
+  gtk_grid_attach (GTK_GRID (sen->panel), sen->rule_box, left++, 0, 1, 1);
 
   sen->mark = NULL;
 
@@ -474,7 +470,6 @@ sentence_set_font (sentence * sen, int font)
 #ifdef LETTERS
   LABEL_SET_FONT (sen->value, the_app->fonts[font]);
 #else
-  //gtk_image_set_from_stock (GTK_WIDGET (sen->value), sen_values[sen->value_type], sen_value_sizes[font]);
 #endif
   LABEL_SET_FONT (sen->rule_box, the_app->fonts[font]);
 
@@ -538,11 +533,11 @@ sentence_set_bg (sentence * sen, int bg_color)
 {
   COLOR_TYPE inv;
   INVERT (the_app->bg_colors[bg_color], inv);
-  gtk_widget_modify_bg (sen->entry, GTK_STATE_NORMAL,
+  gtk_widget_override_background_color (sen->entry, GTK_STATE_NORMAL,
 			the_app->bg_colors[bg_color]);
-  gtk_widget_modify_base (sen->entry, GTK_STATE_NORMAL,
+  gtk_widget_override_background_color (sen->entry, GTK_STATE_NORMAL,
 			  the_app->bg_colors[bg_color]);
-  gtk_widget_modify_bg (sen->entry, GTK_STATE_SELECTED, inv);
+  gtk_widget_override_background_color (sen->entry, GTK_STATE_SELECTED, inv);
   sen->bg_color = bg_color;
   free (inv);
 }
@@ -561,7 +556,7 @@ sentence_set_value (sentence * sen, int value_type)
 #ifdef LETTERS
   gtk_label_set_text (GTK_LABEL (sen->value), sen_values[value_type]);
 #else
-  gtk_image_set_from_stock (GTK_IMAGE (sen->value), sen_values [value_type], GTK_ICON_SIZE_MENU);
+  gtk_image_set_from_icon_name (GTK_IMAGE (sen->value), sen_values [value_type], GTK_ICON_SIZE_MENU);
 #endif
 }
 
@@ -1461,7 +1456,7 @@ sentence_text_changed (sentence * sen)
       if (ret < 0)
 	return -1;
 
-      gtk_widget_modify_bg (sen->eventbox, GTK_STATE_NORMAL, NULL);
+      gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
 
       if (SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->num_stuff > 0)
 	{
@@ -1494,7 +1489,7 @@ sentence_text_changed (sentence * sen)
 	{
 
 	  mod_sen = mod_itm->value;
-	  gtk_widget_modify_bg (mod_sen->eventbox, GTK_STATE_NORMAL, NULL);
+	  gtk_widget_override_background_color (mod_sen->eventbox, GTK_STATE_NORMAL, NULL);
 	  gtk_label_set_text (GTK_LABEL (sen->line_no), "");
 	  sen->line_num = 0;
 	}

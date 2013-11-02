@@ -76,19 +76,22 @@ sen_parent_init (sen_parent * sp, const char * title,
   sp->accel = gtk_accel_group_new ();
   gtk_window_add_accel_group (GTK_WINDOW (sp->window), sp->accel);
 
-  sp->vbox = gtk_vbox_new (FALSE, 0);
+  sp->vbox = gtk_grid_new ();
   gtk_container_add (GTK_CONTAINER (sp->window), sp->vbox);
 
   // Call menu_func on sp.
   menu_func (sp);
-  gtk_box_pack_start (GTK_BOX (sp->vbox), sp->menubar, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (sp->vbox), sp->menubar, 0, 0, 1, 1);
 
   // Initialize the scrolled window.
   sp->scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
-  gtk_box_pack_start (GTK_BOX (sp->vbox), sp->scrolledwindow,
-		      TRUE, TRUE, 0);
+  gtk_widget_set_halign (sp->scrolledwindow, GTK_ALIGN_FILL);
+  gtk_widget_set_valign (sp->scrolledwindow, GTK_ALIGN_FILL);
+  gtk_widget_set_hexpand (sp->scrolledwindow, TRUE);
+  gtk_widget_set_vexpand (sp->scrolledwindow, TRUE);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sp->scrolledwindow),
 				  GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+  gtk_grid_attach (GTK_GRID (sp->vbox), sp->scrolledwindow, 0, 1, 1, 1);
 
   GtkAdjustment * f_adj;
   f_adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (sp->scrolledwindow));
@@ -98,13 +101,14 @@ sen_parent_init (sen_parent * sp, const char * title,
   gtk_container_add (GTK_CONTAINER (sp->scrolledwindow), sp->viewport);
 
   // Initialize the main container.
-  sp->container = gtk_vbox_new (FALSE, 4);
+  sp->container = gtk_grid_new ();
+  gtk_grid_set_row_spacing (GTK_GRID (sp->container), 4);
   gtk_container_add (GTK_CONTAINER (sp->viewport), sp->container);
   gtk_container_set_focus_vadjustment (GTK_CONTAINER (sp->container), f_adj);
 
   // Initialize the status bar.
   sp->statusbar = gtk_statusbar_new ();
-  gtk_box_pack_start (GTK_BOX (sp->vbox), sp->statusbar, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (sp->vbox), sp->statusbar, 0, 2, 1, 1);
 
   sp->everything = init_list ();
 
@@ -253,8 +257,8 @@ sen_parent_ins_sentence (sen_parent * sp, sen_data * sd,
   if (!sen)
     return NULL;
 
-  gtk_box_pack_start (GTK_BOX (sp->container), sen->panel, FALSE, FALSE, 0);
-  gtk_box_reorder_child (GTK_BOX (sp->container), sen->panel, new_order);
+  gtk_grid_insert_row (GTK_GRID (sp->container), new_order);
+  gtk_grid_attach (GTK_GRID (sp->container), sen->panel, 0, new_order, 1, 1);
 
   itm = ls_ins_obj (sp->everything, sen, fcs);
   sp->focused = itm;

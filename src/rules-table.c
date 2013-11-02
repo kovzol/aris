@@ -63,8 +63,10 @@ rules_group_init (int num_rules, char * label, rules_table * parent)
     }
 
   rg->frame = gtk_frame_new (label);
-  gtk_box_pack_start (GTK_BOX (parent->layout), rg->frame, FALSE, FALSE, 0);
-  rg->table = gtk_table_new (num_rules / 4, 4, TRUE);
+  gtk_grid_attach_next_to (GTK_GRID (parent->layout), rg->frame, NULL, GTK_POS_BOTTOM, 1, 1);
+  rg->table = gtk_grid_new ();
+  gtk_grid_set_row_homogeneous (GTK_GRID (rg->table), TRUE);
+  gtk_grid_set_column_homogeneous (GTK_GRID (rg->table), TRUE);
   gtk_container_add (GTK_CONTAINER (rg->frame), rg->table);
 
   return rg;
@@ -89,8 +91,7 @@ rules_table_help_init (rules_table * rt, int modif,
     {
       mod = i + modif;
       rt->rules[mod] = gtk_toggle_button_new_with_label (rules_list[mod]);
-      gtk_table_attach_defaults (GTK_TABLE (table), rt->rules[mod],
-				 (i % 4), (i % 4) + 1, i / 4, (i / 4) + 1);
+      gtk_grid_attach (GTK_GRID (table), rt->rules[mod], (i % 4),  i / 4, 1, 1);
       g_signal_connect (G_OBJECT (rt->rules[mod]), "toggled",
 			G_CALLBACK (toggled), GINT_TO_POINTER (mod));
       gtk_widget_set_tooltip_text (rt->rules[mod], rules_names[mod]);
@@ -123,17 +124,17 @@ rules_table_init (int boolean)
   rt->accel = gtk_accel_group_new ();
   gtk_window_add_accel_group (GTK_WINDOW (rt->window), rt->accel);
 
-  rt->vbox = gtk_vbox_new (FALSE, 0);
+  rt->vbox = gtk_grid_new ();
   gtk_container_add (GTK_CONTAINER (rt->window), rt->vbox);
 
   rt->menubar = gtk_menu_bar_new ();
   rules_table_create_menu (rt);
   gtk_accel_map_add_entry ("<ARIS-WINDOW>/Contents", GDK_KEY_F1, 0);
 
-  gtk_box_pack_start (GTK_BOX (rt->vbox), rt->menubar, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (rt->vbox), rt->menubar, 0, 0, 1, 1);
 
-  rt->layout = gtk_vbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (rt->vbox), rt->layout, FALSE, FALSE, 0);
+  rt->layout = gtk_grid_new ();
+  gtk_grid_attach (GTK_GRID (rt->vbox), rt->layout, 0, 1, 1, 1);
 
   rt->boolean = boolean;
 
@@ -340,8 +341,8 @@ rule_toggled (int index)
 	    gtk_file_chooser_dialog_new ("Select a file to Open...",
 					 GTK_WINDOW (the_app->rt->window),
 					 GTK_FILE_CHOOSER_ACTION_OPEN,
-					 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					 GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					 "_Cancel", GTK_RESPONSE_CANCEL,
+					 "document-open", GTK_RESPONSE_ACCEPT,
 					 NULL);
 	  gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser),
 						FALSE);
@@ -520,6 +521,17 @@ rules_table_set_font (rules_table * rt, int font)
 
   rt->font = font;
 
+  LABEL_SET_FONT (gtk_frame_get_label_widget (GTK_FRAME (rt->equiv->frame)),
+		  the_app->fonts[font]);
+  LABEL_SET_FONT (gtk_frame_get_label_widget (GTK_FRAME (rt->infer->frame)),
+		  the_app->fonts[font]);
+  LABEL_SET_FONT (gtk_frame_get_label_widget (GTK_FRAME (rt->pred->frame)),
+		  the_app->fonts[font]);
+  LABEL_SET_FONT (gtk_frame_get_label_widget (GTK_FRAME (rt->misc->frame)),
+		  the_app->fonts[font]);
+  LABEL_SET_FONT (gtk_frame_get_label_widget (GTK_FRAME (rt->boole->frame)),
+		  the_app->fonts[font]);
+  /*
   gtk_widget_modify_font (gtk_frame_get_label_widget (GTK_FRAME (rt->equiv->frame)),
 			  the_app->fonts[font]);
 
@@ -534,12 +546,14 @@ rules_table_set_font (rules_table * rt, int font)
 
   gtk_widget_modify_font (gtk_frame_get_label_widget (GTK_FRAME (rt->boole->frame)),
 			  the_app->fonts[font]);
+  */
 
   for (i = 0; i < NUM_RULES; i++)
     {
       GList * gl;
       gl = gtk_container_get_children (GTK_CONTAINER (rt->rules[i]));
-      gtk_widget_modify_font (GTK_WIDGET (gl->data), the_app->fonts[font]);
+      //gtk_widget_modify_font (GTK_WIDGET (gl->data), the_app->fonts[font]);
+      gtk_widget_override_font (GTK_WIDGET (gl->data), the_app->fonts[font]);
     }
 
 

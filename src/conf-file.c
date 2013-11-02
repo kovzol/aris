@@ -453,24 +453,30 @@ conf_color_value (conf_obj * obj, int get)
 {
   if (get)
     {
-      obj->widget = gtk_color_button_new_with_color
-	(the_app->bg_colors[obj->id]);
+      obj->widget =
+	gtk_color_button_new_with_rgba (the_app->bg_colors[obj->id]);
 
       return obj->widget;
     }
   else
     {
-      GdkColor color;
+      GdkRGBA color;
 
-      gtk_color_button_get_color (GTK_COLOR_BUTTON (obj->widget),
+      gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER (obj->widget),
 				  &color);
 
       char * cur_type;
       int r, g, b;
 
+      /*
       r = sqrt (color.red);
       g = sqrt (color.green);
       b = sqrt (color.blue);
+      */
+
+      r = color.red * 255;
+      g = color.green * 255;
+      b = color.blue * 255;
 
       cur_type = (char *) calloc (strlen (obj->label), sizeof (char));
       CHECK_ALLOC (cur_type, NULL);

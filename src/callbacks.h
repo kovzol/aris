@@ -22,6 +22,8 @@
 #include "pound.h"
 #include "typedef.h"
 
+#define CUSTOM_ROWS 14
+
 G_MODULE_EXPORT void toggled (GtkToggleButton * tb,
 			      gpointer data);
 G_MODULE_EXPORT gboolean rules_table_focus (GtkWidget * widget,

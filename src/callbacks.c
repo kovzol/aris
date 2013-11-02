@@ -74,8 +74,6 @@ rules_table_focus (GtkWidget * widget, GdkEvent * event, gpointer data)
 G_MODULE_EXPORT void
 menu_activate (GtkMenuItem * menuitem, gpointer data)
 {
-  //printf ("Got menu activate signal\n");
-
   int item_id;
 
   item_id = GPOINTER_TO_INT (data);
@@ -521,8 +519,8 @@ gui_open (GtkWidget * window)
     gtk_file_chooser_dialog_new (_("Select a file to Open..."),
 				 GTK_WINDOW (window),
 				 GTK_FILE_CHOOSER_ACTION_OPEN,
-				 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				 GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				 "_Cancel", GTK_RESPONSE_CANCEL,
+				 "document-open", GTK_RESPONSE_ACCEPT,
 				 NULL);
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser), FALSE);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
@@ -616,8 +614,8 @@ gui_save (aris_proof * ap, int save_as)
 	gtk_file_chooser_dialog_new (_("Select a file to Save to..."),
 				     GTK_WINDOW (SEN_PARENT (ap)->window),
 				     GTK_FILE_CHOOSER_ACTION_SAVE,
-				     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				     GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+				     "_Cancel", GTK_RESPONSE_CANCEL,
+				     "_Save", GTK_RESPONSE_ACCEPT,
 				     NULL);
       gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser),
 					    FALSE);
@@ -863,8 +861,8 @@ gui_set_custom (GtkWidget * window, int cur_font)
   dialog = gtk_dialog_new_with_buttons (_("Set Font Size"),
 					GTK_WINDOW (window),
 					GTK_DIALOG_MODAL,
-					GTK_STOCK_OK, GTK_RESPONSE_OK,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_OK,
+					"_Cancel", GTK_RESPONSE_CANCEL,
 					NULL);
 
   content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
@@ -958,8 +956,6 @@ gui_help ()
   return 0;
 }
 
-#define CUSTOM_ROWS 13
-
 /* Runs the customization dialog.
  *  input:
  *   window - The parent window of the dialog.
@@ -976,8 +972,8 @@ gui_customize_show (GtkWidget * window)
   dialog = gtk_dialog_new_with_buttons (_("Customize"),
 					GTK_WINDOW (window),
 					GTK_DIALOG_MODAL,
-					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					"_Save", GTK_RESPONSE_ACCEPT,
+					"_Cancel", GTK_RESPONSE_CANCEL,
 					NULL);
 
   content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
@@ -999,7 +995,7 @@ gui_customize_show (GtkWidget * window)
   // Run it for all of the configuration tables.
   for (j = 0; j < 4; j++)
     {
-      tables[j] = gtk_table_new (CUSTOM_ROWS, 4, FALSE);
+      tables[j] = gtk_grid_new ();
       for (i = 0; i < sizes[j]; i++)
 	{
 	  GtkWidget * label;
@@ -1014,17 +1010,16 @@ gui_customize_show (GtkWidget * window)
 	  gtk_widget_set_tooltip_text (confs[j][i].widget,
 				       confs[j][i].tooltip);
 
-	  int col;
+	  int col, row;
 	  col = i / CUSTOM_ROWS;
 	  col *= 2;
 
-	  gtk_table_attach_defaults (GTK_TABLE (tables[j]), label,
-				     col, col + 1,
-				     i % CUSTOM_ROWS, i % CUSTOM_ROWS + 1);
+	  row = i % CUSTOM_ROWS;
 
-	  gtk_table_attach_defaults (GTK_TABLE (tables[j]), confs[j][i].widget,
-				     col + 1, col + 2,
-				     i % CUSTOM_ROWS, i % CUSTOM_ROWS + 1);
+	  gtk_widget_set_halign (confs[j][i].widget, GTK_ALIGN_FILL);
+	  gtk_widget_set_hexpand (confs[j][i].widget, TRUE);
+	  gtk_grid_attach (GTK_GRID (tables[j]), label, col, row, 1, 1);
+	  gtk_grid_attach (GTK_GRID (tables[j]), confs[j][i].widget, col + 1, row, 1, 1);
 	}
 
       GtkWidget * tbl_label;
@@ -1136,7 +1131,7 @@ gui_customize_show (GtkWidget * window)
 
 	  for (j = 0; j < 4; j++)
 	    {
-	      tables[j] = gtk_table_new (CUSTOM_ROWS, 4, FALSE);
+	      tables[j] = gtk_grid_new ();
 
 	      for (i = 0; i < sizes[j]; i++)
 		{
@@ -1197,36 +1192,50 @@ gui_submit_show (GtkWidget * window)
   dialog = gtk_dialog_new_with_buttons (_("Submit Proofs"),
 					GTK_WINDOW (window),
 					GTK_DIALOG_MODAL,
-					GTK_STOCK_OK, GTK_RESPONSE_OK,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					"_OK", GTK_RESPONSE_OK,
+					"_Cancel", GTK_RESPONSE_CANCEL,
 					NULL);
 
   content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
-  table = gtk_table_new (4 + the_app->guis->num_stuff, 2, FALSE);
+  //table = gtk_table_new (4 + the_app->guis->num_stuff, 2, FALSE);
+  table = gtk_grid_new ();
 
   user_label = gtk_label_new (_("Your Email: "));
   user_entry = gtk_entry_new ();
+  /*
   gtk_table_attach_defaults (GTK_TABLE (table), user_label, 0, 1, 0, 1);
   gtk_table_attach_defaults (GTK_TABLE (table), user_entry, 1, 2, 0, 1);
+  */
+  gtk_grid_attach (GTK_GRID (table), user_label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (table), user_entry, 1, 0, 1, 1);
 
   instr_label = gtk_label_new (_("(Optional) Instructor's Email: "));
   instr_entry = gtk_entry_new ();
+  /*
   gtk_table_attach_defaults (GTK_TABLE (table), instr_label, 0, 1, 1, 2);
   gtk_table_attach_defaults (GTK_TABLE (table), instr_entry, 1, 2, 1, 2);
+  */
+  gtk_grid_attach (GTK_GRID (table), instr_label, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (table), instr_entry, 1, 1, 1, 1);
 
   GtkWidget * sep_label;
 
   sep_label = gtk_label_new (_("    "));
-  gtk_table_attach_defaults (GTK_TABLE (table), sep_label, 0, 2, 2, 3);
+  //gtk_table_attach_defaults (GTK_TABLE (table), sep_label, 0, 2, 2, 3);
+  gtk_grid_attach (GTK_GRID (table), sep_label, 0, 2, 1, 1);
 
   GtkWidget * proof_label, * hw_label;
 
   hw_label = gtk_label_new (_("Problem"));
   proof_label = gtk_label_new (_("File Name"));
 
+  /*
   gtk_table_attach_defaults (GTK_TABLE (table), hw_label, 0, 1, 3, 4);
   gtk_table_attach_defaults (GTK_TABLE (table), proof_label, 1, 2, 3, 4);
+  */
+  gtk_grid_attach (GTK_GRID (table), hw_label, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (table), proof_label, 1, 3, 1, 1);
 
   item_t * g_itr;
   int i = 4;
@@ -1244,8 +1253,12 @@ gui_submit_show (GtkWidget * window)
 	  label = gtk_label_new (ap->cur_file);
 	  entry = gtk_entry_new ();
 
+	  /*
 	  gtk_table_attach_defaults (GTK_TABLE (table), entry, 0, 1, i, i + 1);
 	  gtk_table_attach_defaults (GTK_TABLE (table), label, 1, 2, i, i + 1);
+	  */
+	  gtk_grid_attach (GTK_GRID (table), entry, 0, i, 1, 1);
+	  gtk_grid_attach (GTK_GRID (table), label, 1, i, 1, 1);
 	  
 	  i++;
 	}
@@ -1255,7 +1268,8 @@ gui_submit_show (GtkWidget * window)
     {
       GtkWidget * label;
       label = gtk_label_new (_("Please save your work first."));
-      gtk_table_attach_defaults (GTK_TABLE (table), label, 0, 2, i, i + 1);
+      //gtk_table_attach_defaults (GTK_TABLE (table), label, 0, 2, i, i + 1);
+      gtk_grid_attach (GTK_GRID (table), label, 0, i, 2, 1);
       gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, FALSE);
     }
 
@@ -1454,7 +1468,7 @@ menu_activated (aris_proof * ap, int menu_id)
       break;
 
     case CONF_MENU_UNDO:
-      ret = aris_proof_undo (ap);
+      ret = aris_proof_undo (ap, 1);
       if (ret < 0)
 	return -1;
 
@@ -1463,6 +1477,18 @@ menu_activated (aris_proof * ap, int menu_id)
       else
 	aris_proof_set_sb (ap, _("Nothing to undo."));
       break;
+
+    case CONF_MENU_REDO:
+      ret = aris_proof_undo (ap, 0);
+      if (ret < 0)
+	return -1;
+
+      if (ret == 0)
+	aris_proof_set_sb (ap, _("Undo!"));
+      else
+	aris_proof_set_sb (ap, _("Nothing to undo."));
+      break;
+
 
     case CONF_MENU_COPY:
       ret = aris_proof_copy (ap);
