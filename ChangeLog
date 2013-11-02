@@ -1,3 +1,142 @@
+2013-11-02  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.c: Changed sen_values to valid icon names.
+	(sentence_gui_init): Updated to GTK3.
+	(sentence_set_bg): Same.
+	(sentence_set_value): Same.
+	(sentence_text_changed): Same.
+
+	* sen-parent.c (sen_parent_init): Updated to GTK3.
+	(sen_parent_ins_sentence): Same.
+
+	* rules-table.c (rules_group_init): Updated to GTK3.
+	(rules_table_help_init): Same.
+	(rules_table_init): Same.
+	(rule_toggled): Same.
+	(rules_table_set_font): Same.
+
+	* pound.h: Updated macros for GTK3.
+
+	* menu.c (construct_menu_item): Updated to GTK3 - removed menu
+	icons.
+
+	* goal.c (goal_check_line): Updated to GTK3.
+	(goal_add_line): Same.
+	(goal_rem_line): Same.
+
+	* conf-file.h: Updated stock icons to GTK3.
+
+	* conf-file.c (conf_color_value): Updated to GTK3.
+
+	* callbacks.h: Moved CUSTOM_ROWS definition to here.
+
+	* callbacks.c (gui_open): Updated to GTK3.
+	(gui_save): Same.
+	(gui_set_custom): Same.
+	(gui_customize_show): Same.
+	(gui_submit_show): Same.
+	(menu_activated): Added entry for redo.
+
+	* aris-proof.h (aris_proof_undo): Changed to take two
+	arguments.
+
+	* aris-proof.c (aris_proof_post_init): Updated to GTK3.
+	(aris_proof_init_from_proof): Same.
+	(aris_proof_import_proof): Same.
+
+	* configure.ac: Updated to use GTK3.
+
+2013-11-01  Ian Dunn  <dunni@gnu.org>
+
+	* rules-table.c (rules_table_create_menu): Cleaned up
+	menu arrays.
+
+	* aris-proof.c (aris_proof_create_menu): Cleaned up
+	configuration object arrays.
+
+	* menu.c (construct_menu_item): Removed redundant MENU_ID
+	enumeration.
+
+	* conf-file.h: Removed redundant MENU_ID enumeration.
+	Added default option to configuration objects.
+	Removed old menu configuration object arrays.
+
+	* callbacks.c (menu_activated): Removed redundant MENU_ID
+	enumeration.
+	(rule_menu_activated): Same.
+
+	* menu.h: Removed redundant MENU_ID enumeration.
+
+2013-10-29  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.c (sentence_text_changed): Casted sp->goal as a
+	sen_parent.
+
+	* rules-table.c (rule_toggled): Casted ap as a sen_parent.
+	(rules_table_align): Same.
+
+	* goal.c (goal_init): Typecasted goal and ap as sen_parents.
+	(goal_check_all): Same.
+	(goal_rem_line): Same.
+
+	* callbacks.c (goal_menu_activate): Casted goal as a
+	sen_parent.
+	(goal_delete): Same.
+	(rules_table_state): Casted ap as sen_parent.
+	(gui_open): Same.
+	(gui_goal_check): Casted ap->goal as a sen_parent.
+
+	* aris-proof.c (aris_proof_to_proof): Casted ap->goal as a
+	sen_parent.
+	(aris_proof_adjust_lines): Casted ap as a sen_parent.
+	(aris_proof_create_sentence): Same.
+	(aris_proof_import_proof): Same.
+	(aris_proof_undo): Same.
+	Setup to handle both undo and redo.
+
+	* app.c (the_app_add_gui): Casted ap as a sen_parent.
+
+	* goal.h: Changed structure of goal struct to inherit
+	directly from sen parent.
+
+	* aris-proof.h: Changed structure of aris proof struct to
+	inherit directly from sen parent.
+
+2013-10-19  Ian Dunn  <dunni@gnu.org>
+
+	* aris-proof.c (aris_proof_kill): Fixed kill bug.
+
+	* sentence.c (sentence_copy_to_data): Fixed memory bug.
+
+2013-10-01  Ian Dunn  <dunni@gnu.org>
+
+	* aris-proof.c (aris_proof_create_sentence): Added undo
+	argument to check if undo information needs to be updated.
+	(aris_proof_undo): Added to undo an action.
+	(aris_proof_redo): Added to redo an action.
+	(undo_info_init): Changed to take a list as an argument.
+	(undo_info_init_one): Initialize an undo_info struct from a
+	single sentence.
+	(menu_activated): Updates statusbar after an undo.
+
+2013-09-28  Ian Dunn  <dunni@gnu.org>
+
+	* aris-proof.c (aris_proof_undo):
+
+	* aris-proof.h: Added undo element.
+
+	* sen-parent.c: Initializes undo element.
+
+	* goal.h: Added undo element.
+
+	* sen-parent.h: Added undo element.
+
+2013-09-17  Ian Dunn  <dunni@gnu.org>
+
+	* process.h (IS_BIN_CONN): Checks for a binary connective.
+
+	* process.c (check_sides): Fixed to check for negation.
+
 2013-09-14  Ian Dunn  <dunni@gnu.org>
 
 	* sexpr-process.c (sexpr_car_cdr): Fixed bug.
