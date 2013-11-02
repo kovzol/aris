@@ -28,7 +28,7 @@ AC_PROG_INSTALL
 
 # Check for gtk+-2.0
 
-PKG_CHECK_MODULES([GTK], [gtk+-2.0 >= 2.18.0])
+PKG_CHECK_MODULES([GTK], [gtk+-3.0 >= 3])
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
