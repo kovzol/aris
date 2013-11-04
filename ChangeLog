@@ -1,3 +1,11 @@
+2013-11-03  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-infer.c (proc_sm): Fixed error messages to be
+	more understandable.
+	(proc_ds): Same.
+	(proc_cn): Same.
+	(proc_ad): Same.
+
 2013-11-02  Ian Dunn  <dunni@gnu.org>
 
 	* sentence.c: Changed sen_values to valid icon names.
