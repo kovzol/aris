@@ -187,7 +187,7 @@ proc_ad (unsigned char * prem, unsigned char * conc)
 
   destroy_str_vec (gg_vec);
   if (!str_chk)
-    return _("The reference must be the first generality in the conclusion.");
+    return _("The reference must be the first disjunct in the conclusion.");
 
   return CORRECT;
 }
@@ -263,9 +263,9 @@ proc_cn (vec_t * prems, unsigned char * conc)
     case 0:
       return CORRECT;
     case -2:
-      return _("One of the references does not match up with a generality in the conclusion.");
+      return _("One of the references does not match up with a conjunct in the conclusion.");
     case -3:
-      return _("One of the generalities in the conclusion does not match up with a reference.");
+      return _("One of the conjuncts in the conclusion does not match up with a reference.");
     }
 }
 
@@ -480,9 +480,9 @@ proc_ds (vec_t * prems, unsigned char * conc)
     case 0:
       return CORRECT;
     case -2:
-      return _("One of the generalities does not match up with a reference or the conclusion.");
+      return _("One of the disjuncts does not correspond to a reference or the conclusion.");
     case -3:
-      return _("One of the references or conclusion does not match up with a generality.");
+      return _("One of the references or conclusion does not match up with a disjunct.");
     }
 }
 
