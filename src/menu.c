@@ -73,6 +73,7 @@ construct_menu_item (conf_obj data, GCallback func,
   CHECK_ALLOC (path, NULL);
   sprintf (path, "<%s>/%s", WIN_PATH, data.label);
   gtk_menu_item_set_accel_path (GTK_MENU_ITEM (item), path);
+  free (path);
 
   g_signal_connect (item, "activate",
 		    G_CALLBACK (func),
