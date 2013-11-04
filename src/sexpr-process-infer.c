@@ -228,7 +228,7 @@ proc_sm (unsigned char * prem, unsigned char * conc)
     }
 
   destroy_str_vec (gg_vec);
-  return _("One of the generalities in the reference must match the conclusion.");
+  return _("One of the conjuncts in the reference must match the conclusion.");
 }
 
 char *
