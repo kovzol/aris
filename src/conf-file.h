@@ -98,6 +98,8 @@ void * conf_font_value (conf_obj * obj, int get);
 void * conf_color_value (conf_obj * obj, int get);
 void * conf_grade_value (conf_obj * obj, int get);
 
+unsigned char * config_default ();
+
 /* The configuration arrays */
 
 /* The main menu configuration objects */
@@ -285,6 +287,22 @@ static conf_obj display_conf[NUM_DISPLAY_CONFS] = {
 static const conf_obj menu_separator = {NULL, NULL, NULL,
 					-1, -1, NULL, NULL, NULL};
 
+static conf_obj * conf_arrays[] = {main_menu_conf,
+				   goal_menu_conf,
+				   display_conf,
+				   grade_conf};
+
+static int conf_sizes[] = {NUM_CONF_MENUS-1,
+			   NUM_GOAL_MENUS,
+			   NUM_DISPLAY_CONFS,
+			   NUM_GRADE_CONFS};
+
+
+static const char * conf_cmds[] = {"key-cmd",
+				   "font-size",
+				   "color-pref",
+				   "grade"};
+
 /* Menu stuff. */
 
 enum MENU_ORDER {
@@ -310,6 +328,7 @@ static conf_obj * goal_menus;
 
 /* The default configuration */
 
+/*
 static const char * config_default ="\
 (key-cmd \'New\' \'c+n\')\n\
 (key-cmd \'Open\' \'c+o\')\n\
@@ -352,5 +371,6 @@ static const char * config_default ="\
 (grade \'ip\' \'127.0.0.1\')\n\
 (grade \'pass\' \'islegion\')\n\
 (grade \'dir\' \'.\')\n";
+*/
 
 #endif /*  ARIS_CONF_FILE_H  */

@@ -305,7 +305,9 @@ the_app_read_default_config (aris_app * app)
 {
   int ret_chk;
 
-  ret_chk = conf_file_read (config_default, app);
+  unsigned char * conf_def = config_default ();
+
+  ret_chk = conf_file_read (conf_def, app);
   if (ret_chk == -1)
     return -1;
 
@@ -405,10 +407,14 @@ the_app_make_default_config_file (char * path)
       return -2;
     }
 
-  int len;
-  len = strlen (config_default);
+  unsigned char * conf_def;
 
-  fwrite (config_default, 1, len, config_file);
+  conf_def = config_default ();
+
+  int len;
+  len = strlen (conf_def);
+
+  fwrite (conf_def, 1, len, config_file);
   fclose (config_file);
 
   return 0;

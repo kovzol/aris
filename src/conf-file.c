@@ -468,12 +468,6 @@ conf_color_value (conf_obj * obj, int get)
       char * cur_type;
       int r, g, b;
 
-      /*
-      r = sqrt (color.red);
-      g = sqrt (color.green);
-      b = sqrt (color.blue);
-      */
-
       r = color.red * 255;
       g = color.green * 255;
       b = color.blue * 255;
@@ -496,4 +490,34 @@ conf_color_value (conf_obj * obj, int get)
       free (cur_type);
       return ret;
     }
+}
+
+unsigned char *
+config_default ()
+{
+  unsigned char * ret;
+  int i, j, pos = 0, new_size;
+  ret = (unsigned char *) calloc (1, sizeof (char));
+  CHECK_ALLOC (ret, NULL);
+
+  for (j = 0; j < 4; j++)
+    {
+      for (i = 0; i < conf_sizes[j]; i++)
+	{
+	  conf_obj cur = conf_arrays[j][i];
+	  if (!cur.default_value)
+	    continue;
+	  const char * cmd = conf_cmds[cur.type];
+	  new_size = 9 + strlen (cmd) + strlen (cur.label)
+	    + strlen (cur.default_value);
+	  ret = (unsigned char *) realloc (ret, (new_size + 1)
+					   * sizeof (char));
+	  CHECK_ALLOC (ret, NULL);
+
+	  pos += sprintf (ret, "(%s \'%s\' \'%s\')\n",
+			  cmd, cur.label, cur.default_value);
+	}
+    }
+
+  return ret;
 }

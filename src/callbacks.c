@@ -986,29 +986,26 @@ gui_customize_show (GtkWidget * window)
 
   GtkWidget * tables[] = {main_kc_table, goal_kc_table,
 			  font_table, ip_table};
-  conf_obj * confs[] = {main_menu_conf, goal_menu_conf,
-			 display_conf, grade_conf};
 
-  int sizes[] = {NUM_CONF_MENUS-1, NUM_GOAL_MENUS, NUM_DISPLAY_CONFS, NUM_GRADE_CONFS};
   char * labels[] = {_("Main Keys"), _("Goal Keys"), _("Display"), _("Grade Server")};
 
   // Run it for all of the configuration tables.
   for (j = 0; j < 4; j++)
     {
       tables[j] = gtk_grid_new ();
-      for (i = 0; i < sizes[j]; i++)
+      for (i = 0; i < conf_sizes[j]; i++)
 	{
 	  GtkWidget * label;
 	  conf_obj cur_obj;
 
-	  cur_obj = confs[j][i];
+	  cur_obj = conf_arrays[j][i];
 
-	  confs[j][i].widget = confs[j][i].value_func (&confs[j][i], 1);
-	  label = gtk_label_new (confs[j][i].label);
-	  gtk_widget_set_tooltip_text (label, confs[j][i].tooltip);
+	  conf_arrays[j][i].widget = conf_arrays[j][i].value_func (&conf_arrays[j][i], 1);
+	  label = gtk_label_new (conf_arrays[j][i].label);
+	  gtk_widget_set_tooltip_text (label, conf_arrays[j][i].tooltip);
 
-	  gtk_widget_set_tooltip_text (confs[j][i].widget,
-				       confs[j][i].tooltip);
+	  gtk_widget_set_tooltip_text (conf_arrays[j][i].widget,
+				       conf_arrays[j][i].tooltip);
 
 	  int col, row;
 	  col = i / CUSTOM_ROWS;
@@ -1016,10 +1013,10 @@ gui_customize_show (GtkWidget * window)
 
 	  row = i % CUSTOM_ROWS;
 
-	  gtk_widget_set_halign (confs[j][i].widget, GTK_ALIGN_FILL);
-	  gtk_widget_set_hexpand (confs[j][i].widget, TRUE);
+	  gtk_widget_set_halign (conf_arrays[j][i].widget, GTK_ALIGN_FILL);
+	  gtk_widget_set_hexpand (conf_arrays[j][i].widget, TRUE);
 	  gtk_grid_attach (GTK_GRID (tables[j]), label, col, row, 1, 1);
-	  gtk_grid_attach (GTK_GRID (tables[j]), confs[j][i].widget, col + 1, row, 1, 1);
+	  gtk_grid_attach (GTK_GRID (tables[j]), conf_arrays[j][i].widget, col + 1, row, 1, 1);
 	}
 
       GtkWidget * tbl_label;
@@ -1045,21 +1042,21 @@ gui_customize_show (GtkWidget * window)
 	      int k;
 	      conf_obj obj_i, obj_k;
 
-	      for (i = 0; i < sizes[j]; i++)
+	      for (i = 0; i < conf_sizes[j]; i++)
 		{
-		  obj_i = confs[j][i];
+		  obj_i = conf_arrays[j][i];
 		  const char * str_i;
 		  str_i = gtk_entry_get_text (GTK_ENTRY (obj_i.widget));
 
 		  if (str_i[0] == '\0')
 		    continue;
 
-		  for (k = 0; k < sizes[j]; k++)
+		  for (k = 0; k < conf_sizes[j]; k++)
 		    {
 		      if (i == k)
 			continue;
 
-		      obj_k = confs[j][k];
+		      obj_k = conf_arrays[j][k];
 
 		      const char * str_k;
 		      str_k = gtk_entry_get_text (GTK_ENTRY (obj_k.widget));
@@ -1133,13 +1130,13 @@ gui_customize_show (GtkWidget * window)
 	    {
 	      tables[j] = gtk_grid_new ();
 
-	      for (i = 0; i < sizes[j]; i++)
+	      for (i = 0; i < conf_sizes[j]; i++)
 		{
 		  GtkWidget * label;
 		  conf_obj cur_obj;
 		  char * print_str;
 
-		  cur_obj = confs[j][i];
+		  cur_obj = conf_arrays[j][i];
 		  print_str = cur_obj.value_func (&cur_obj, 0);
 
 		  if (print_str)
