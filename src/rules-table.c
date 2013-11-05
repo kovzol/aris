@@ -213,7 +213,7 @@ void
 rule_toggled (int index)
 {
   sentence * sen;
-  int user;
+  int user, ret;
 
   if (the_app->focused)
     sen = SEN_PARENT (the_app->focused)->focused->value;
@@ -228,63 +228,22 @@ rule_toggled (int index)
     {
       the_app->rt->toggled = -1;
 
-      if (user)
+      if (user && the_app->focused)
 	{
 	  // Only change the currently focused rule if the user
 	  // initiated this.
 
-	  if (the_app->focused)
-	    {
-	      sen->rule = -1;
-	      gtk_label_set_text (GTK_LABEL (sen->rule_box), NULL);
+	  sen->rule = -1;
+	  gtk_label_set_text (GTK_LABEL (sen->rule_box), NULL);
 
-	      undo_info ui;
-	      ui.type = -1;
-	      int ret = 0;
-	      ret = aris_proof_set_changed (the_app->focused, 1, ui);
-	      if (ret < 0)
-		return;
+	  undo_info ui;
+	  ui.type = -1;
+	  ret = aris_proof_set_changed (the_app->focused, 1, ui);
+	  if (ret < 0)
+	    return;
 
-	      // If the sentence has a file, free the memory used by it.
-	      if (sen->file)
-		{
-		  GtkWidget * menu_item, * menu, * submenu;
-		  GList * gl, * gl_itr;
-		  gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
-		  menu = g_list_nth_data (gl, RULES_MENU);
-		  submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
-
-		  gl_itr = gtk_container_get_children (GTK_CONTAINER (submenu));
-
-		  GtkWidget * new_menu;
-
-		  new_menu = gtk_menu_new ();
-
-		  for (; gl_itr; gl_itr = g_list_next (gl_itr))
-		    {
-		      if (GTK_IS_SEPARATOR_MENU_ITEM (gl_itr->data))
-			continue;
-
-		      const char * label =
-			gtk_menu_item_get_label (GTK_MENU_ITEM (gl_itr->data));
-		      int chk, line_num;
-		      chk = sscanf (label, "%i", &line_num);
-		      if (chk != 1)
-			continue;
-
-		      if (line_num == sen->line_num)
-			{
-			  gtk_widget_destroy (gl_itr->data);
-			  break;
-			}
-		    }
-
-		  if (sen->proof)
-		    proof_destroy (sen->proof);
-		  free (sen->file);
-		  sen->file = NULL;
-		}
-	    }
+	  // If the sentence has a file, free the memory used by it.
+	  ret = rules_table_destroy_menu_item (sen);
 	}
 
       return;
@@ -316,15 +275,6 @@ rule_toggled (int index)
 
   if (user)
     {
-      sen->rule = index;
-      gtk_label_set_text (GTK_LABEL (sen->rule_box), rules_list[index]);
-
-      undo_info ui;
-      ui.type = -1;
-      int ret = aris_proof_set_changed (the_app->focused, 1, ui);
-      if (ret < 0)
-	return;
-
       if (index == RULE_LM)
 	{
 	  // Evaluate the external file.
@@ -342,52 +292,28 @@ rule_toggled (int index)
 					 GTK_WINDOW (the_app->rt->window),
 					 GTK_FILE_CHOOSER_ACTION_OPEN,
 					 "_Cancel", GTK_RESPONSE_CANCEL,
-					 "document-open", GTK_RESPONSE_ACCEPT,
+					 "_Open", GTK_RESPONSE_ACCEPT,
 					 NULL);
 	  gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser),
 						FALSE);
 	  gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
 
+	  char * filename = NULL;
+
 	  if (gtk_dialog_run (GTK_DIALOG (file_chooser)) == GTK_RESPONSE_ACCEPT)
 	    {
-	      char * filename;
 	      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
+	    }
 
-	      int file_len;
-	      file_len = strlen (filename);
-	      sen->file = (unsigned char *) calloc (file_len + 1, sizeof (char));
+	  gtk_widget_destroy (file_chooser);
 
-	      strcpy (sen->file, filename);
-
-	      sen->proof = aio_open (filename);
-	      if (!sen->proof)
+	  if (filename)
+	    {
+	      ret = rules_table_set_lm (the_app->rt, sen, filename);
+	      if (ret == -1)
 		{
 		  gtk_widget_destroy (file_chooser);
 		  return;
-		}
-
-	      if (the_app->focused)
-		{
-
-		  GtkWidget * menu_item, * menu, * submenu;
-		  GList * gl;
-		  char * label;
-
-		  label = (char *) calloc (file_len
-					   + 4
-					   + (int) log10 (sen->line_num)
-					   + 1,
-					   sizeof (char));
-
-		  sprintf (label, "%i - %s",
-			   sen->line_num, sen->file);
-		  menu_item = gtk_menu_item_new_with_label (label);
-
-		  gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
-		  menu = g_list_nth_data (gl, RULES_MENU);
-		  submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
-		  gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menu_item);
-		  gtk_widget_show (menu_item);
 		}
 	    }
 	  else
@@ -396,10 +322,18 @@ rule_toggled (int index)
 	      the_app->rt->user = 0;
 	      TOGGLE_BUTTON (the_app->rt->rules[index]);
 	      the_app->rt->user = user;
+	      return;
 	    }
-
-	  gtk_widget_destroy (file_chooser);
 	}
+
+      sen->rule = index;
+      gtk_label_set_text (GTK_LABEL (sen->rule_box), rules_list[index]);
+
+      undo_info ui;
+      ui.type = -1;
+      ret = aris_proof_set_changed (the_app->focused, 1, ui);
+      if (ret < 0)
+	return;
     }
 
   the_app->rt->toggled = index;
@@ -531,32 +465,13 @@ rules_table_set_font (rules_table * rt, int font)
 		  the_app->fonts[font]);
   LABEL_SET_FONT (gtk_frame_get_label_widget (GTK_FRAME (rt->boole->frame)),
 		  the_app->fonts[font]);
-  /*
-  gtk_widget_modify_font (gtk_frame_get_label_widget (GTK_FRAME (rt->equiv->frame)),
-			  the_app->fonts[font]);
-
-  gtk_widget_modify_font (gtk_frame_get_label_widget (GTK_FRAME (rt->infer->frame)),
-			  the_app->fonts[font]);
-
-  gtk_widget_modify_font (gtk_frame_get_label_widget (GTK_FRAME (rt->pred->frame)),
-			  the_app->fonts[font]);
-
-  gtk_widget_modify_font (gtk_frame_get_label_widget (GTK_FRAME (rt->misc->frame)),
-			  the_app->fonts[font]);
-
-  gtk_widget_modify_font (gtk_frame_get_label_widget (GTK_FRAME (rt->boole->frame)),
-			  the_app->fonts[font]);
-  */
 
   for (i = 0; i < NUM_RULES; i++)
     {
       GList * gl;
       gl = gtk_container_get_children (GTK_CONTAINER (rt->rules[i]));
-      //gtk_widget_modify_font (GTK_WIDGET (gl->data), the_app->fonts[font]);
       gtk_widget_override_font (GTK_WIDGET (gl->data), the_app->fonts[font]);
     }
-
-
 
   return 0;
 }
@@ -580,6 +495,90 @@ rules_table_set_boolean_mode (rules_table * rt, int boolean)
 	  || (i >= RULE_UG && i <= RULE_IN))
 	gtk_widget_set_sensitive (rt->rules[i], oth_sens);
     }
+
+  return 0;
+}
+
+int
+rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
+{
+  int file_len;
+  file_len = strlen (filename);
+  sen->file = (unsigned char *) calloc (file_len + 1, sizeof (char));
+
+  strcpy (sen->file, filename);
+
+  sen->proof = aio_open (filename);
+  if (!sen->proof)
+    return -1;
+
+  if (the_app->focused)
+    {
+      GtkWidget * menu_item, * menu, * submenu;
+      GList * gl;
+      char * label;
+      int alloc_size;
+
+      alloc_size = file_len + 4 + (int) log10 (sen->line_num);
+      label = (char *) calloc (alloc_size + 1, sizeof (char));
+      CHECK_ALLOC (label, -1);
+      sprintf (label, "%i - %s",
+	       sen->line_num, sen->file);
+      menu_item = gtk_menu_item_new_with_label (label);
+
+      gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
+      menu = g_list_nth_data (gl, RULES_MENU);
+      submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
+      gtk_menu_shell_append (GTK_MENU_SHELL (submenu), menu_item);
+      gtk_widget_show (menu_item);
+    }
+
+  return 0;
+
+}
+
+int
+rules_table_destroy_menu_item (sentence * sen)
+{
+  if (!sen->file)
+    return 0;
+
+  GtkWidget * menu_item, * menu, * submenu;
+  GList * gl, * gl_itr;
+  gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
+  menu = g_list_nth_data (gl, RULES_MENU);
+  submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
+
+  gl_itr = gtk_container_get_children (GTK_CONTAINER (submenu));
+
+  GtkWidget * new_menu;
+
+  new_menu = gtk_menu_new ();
+
+  for (; gl_itr; gl_itr = g_list_next (gl_itr))
+    {
+      if (GTK_IS_SEPARATOR_MENU_ITEM (gl_itr->data))
+	continue;
+
+      GtkWidget * mi;
+      mi = (GtkWidget *) gl_itr->data;
+      const char * label = gtk_menu_item_get_label (GTK_MENU_ITEM (mi));
+      int chk, line_num;
+      chk = sscanf (label, "%i", &line_num);
+      if (chk != 1)
+	continue;
+
+      if (line_num == sen->line_num)
+	{
+	  gtk_widget_destroy (gl_itr->data);
+	  break;
+	}
+    }
+
+  if (sen->proof)
+    proof_destroy (sen->proof);
+  free (sen->file);
+  sen->file = NULL;
 
   return 0;
 }

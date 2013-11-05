@@ -63,5 +63,7 @@ int rules_table_focused ();
 int rules_table_align (rules_table * rt, aris_proof * ap);
 int rules_table_set_font (rules_table * rt, int font);
 int rules_table_set_boolean_mode (rules_table * rt, int boolean);
+int rules_table_set_lm (rules_table * rt, sentence * sen, char * filename);
+int rules_table_destroy_menu_item (sentence * sen);
 
 #endif  /*  ARIS_RULES_TABLE_H  */
