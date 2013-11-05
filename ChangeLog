@@ -1,4 +1,34 @@
+2013-11-04  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (gui_customize_show): Cleaned up comments.
+	(gui_submit_show): Same.
+
+	* rules-table.c (rule_toggled): Moved LM handling over to
+	rules_table_set_lm and rules_table_destroy_menu_item.
+
+	* rules-table.h (rules_table_set_lm): Added to set LM rule
+	and initialize menu item.
+	(rules_table_destroy_menu_item): Destroys the menu item
+	associated with the LM rule.
+
 2013-11-03  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (gui_customize_show): Uses conf_arrays and
+	conf_sizes.
+
+	* config-file.h (conf_arrays): Added to collect the
+	configuration arrays.
+	(conf_sizes): Holds the sizes of the configuration arrays.
+	(conf_cmds): Holds the command names for each configuration
+	type.
+
+	* app.c (the_app_read_default_config): Gets the default config
+	from config_default.
+	(the_app_make_default_config_file): Calls config_default to
+	construct the default config file.
+
+	* conf-file.c (config_default): Creates the default config
+	file string.
 
 	* sexpr-process-infer.c (proc_sm): Fixed error messages to be
 	more understandable.
