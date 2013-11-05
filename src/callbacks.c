@@ -1195,31 +1195,21 @@ gui_submit_show (GtkWidget * window)
 
   content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
-  //table = gtk_table_new (4 + the_app->guis->num_stuff, 2, FALSE);
   table = gtk_grid_new ();
 
   user_label = gtk_label_new (_("Your Email: "));
   user_entry = gtk_entry_new ();
-  /*
-  gtk_table_attach_defaults (GTK_TABLE (table), user_label, 0, 1, 0, 1);
-  gtk_table_attach_defaults (GTK_TABLE (table), user_entry, 1, 2, 0, 1);
-  */
   gtk_grid_attach (GTK_GRID (table), user_label, 0, 0, 1, 1);
   gtk_grid_attach (GTK_GRID (table), user_entry, 1, 0, 1, 1);
 
   instr_label = gtk_label_new (_("(Optional) Instructor's Email: "));
   instr_entry = gtk_entry_new ();
-  /*
-  gtk_table_attach_defaults (GTK_TABLE (table), instr_label, 0, 1, 1, 2);
-  gtk_table_attach_defaults (GTK_TABLE (table), instr_entry, 1, 2, 1, 2);
-  */
   gtk_grid_attach (GTK_GRID (table), instr_label, 0, 1, 1, 1);
   gtk_grid_attach (GTK_GRID (table), instr_entry, 1, 1, 1, 1);
 
   GtkWidget * sep_label;
 
   sep_label = gtk_label_new (_("    "));
-  //gtk_table_attach_defaults (GTK_TABLE (table), sep_label, 0, 2, 2, 3);
   gtk_grid_attach (GTK_GRID (table), sep_label, 0, 2, 1, 1);
 
   GtkWidget * proof_label, * hw_label;
@@ -1227,10 +1217,6 @@ gui_submit_show (GtkWidget * window)
   hw_label = gtk_label_new (_("Problem"));
   proof_label = gtk_label_new (_("File Name"));
 
-  /*
-  gtk_table_attach_defaults (GTK_TABLE (table), hw_label, 0, 1, 3, 4);
-  gtk_table_attach_defaults (GTK_TABLE (table), proof_label, 1, 2, 3, 4);
-  */
   gtk_grid_attach (GTK_GRID (table), hw_label, 0, 3, 1, 1);
   gtk_grid_attach (GTK_GRID (table), proof_label, 1, 3, 1, 1);
 
@@ -1250,13 +1236,9 @@ gui_submit_show (GtkWidget * window)
 	  label = gtk_label_new (ap->cur_file);
 	  entry = gtk_entry_new ();
 
-	  /*
-	  gtk_table_attach_defaults (GTK_TABLE (table), entry, 0, 1, i, i + 1);
-	  gtk_table_attach_defaults (GTK_TABLE (table), label, 1, 2, i, i + 1);
-	  */
 	  gtk_grid_attach (GTK_GRID (table), entry, 0, i, 1, 1);
 	  gtk_grid_attach (GTK_GRID (table), label, 1, i, 1, 1);
-	  
+
 	  i++;
 	}
     }
@@ -1265,7 +1247,6 @@ gui_submit_show (GtkWidget * window)
     {
       GtkWidget * label;
       label = gtk_label_new (_("Please save your work first."));
-      //gtk_table_attach_defaults (GTK_TABLE (table), label, 0, 2, i, i + 1);
       gtk_grid_attach (GTK_GRID (table), label, 0, i, 2, 1);
       gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, FALSE);
     }
