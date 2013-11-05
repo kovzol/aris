@@ -301,9 +301,7 @@ rule_toggled (int index)
 	  char * filename = NULL;
 
 	  if (gtk_dialog_run (GTK_DIALOG (file_chooser)) == GTK_RESPONSE_ACCEPT)
-	    {
-	      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
-	    }
+	    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
 
 	  gtk_widget_destroy (file_chooser);
 
@@ -311,10 +309,7 @@ rule_toggled (int index)
 	    {
 	      ret = rules_table_set_lm (the_app->rt, sen, filename);
 	      if (ret == -1)
-		{
-		  gtk_widget_destroy (file_chooser);
-		  return;
-		}
+		return;
 	    }
 	  else
 	    {
@@ -499,6 +494,14 @@ rules_table_set_boolean_mode (rules_table * rt, int boolean)
   return 0;
 }
 
+/* Sets up the menu item associated with the LM rule.
+ *  input:
+ *    rt - the rules table object.
+ *    sen - the sentence to set up.
+ *    filename - the name of the lemma file.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
 {
@@ -537,6 +540,12 @@ rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
 
 }
 
+/* Destroys the menu item associated with the LM rule.
+ *  input:
+ *    sen - the sentence whose lemma is to be destroyed.
+ *  output:
+ *    0 on success.
+ */
 int
 rules_table_destroy_menu_item (sentence * sen)
 {
