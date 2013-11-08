@@ -1462,9 +1462,9 @@ menu_activated (aris_proof * ap, int menu_id)
 	return -1;
 
       if (ret == 0)
-	aris_proof_set_sb (ap, _("Undo!"));
+	aris_proof_set_sb (ap, _("Redo!"));
       else
-	aris_proof_set_sb (ap, _("Nothing to undo."));
+	aris_proof_set_sb (ap, _("Nothing to redo."));
       break;
 
 
