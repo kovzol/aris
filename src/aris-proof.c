@@ -508,64 +508,6 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
       ret = sentence_set_line_no (ev_sen, new_line_no);
       if (ret == -1)
 	return -1;
-
-      int i;
-      for (i = 0; i < ev_sen->depth; i++)
-	{
-	  // Check if any index is greater than or equal to
-	  // the new item's line number.
-	  if (ev_sen->indices[i] >= cur_line)
-	    ev_sen->indices[i] = ev_sen->indices[i] + line_mod;
-	}
-    }
-
-  // Find the corresponding menu item.
-  GtkWidget * menu_item, * menu, * submenu;
-  GList * gl;
-
-  gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (ap)->menubar));
-  menu = g_list_nth_data (gl, RULES_MENU);
-  submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
-
-  gl = gtk_container_get_children (GTK_CONTAINER (submenu));
-  for (; gl; gl = gl->next)
-    {
-      menu_item = gl->data;
-
-      if (GTK_IS_SEPARATOR_MENU_ITEM (menu_item))
-	continue;
-
-      const char * label =
-	gtk_menu_item_get_label (GTK_MENU_ITEM (gl->data));
-
-      int chk, line_num, lbl_len;
-      char * file_name;
-
-      lbl_len = strlen (label);
-
-      file_name = (char *) calloc (lbl_len, sizeof (char));
-      CHECK_ALLOC (file_name, -1);
-
-      chk = sscanf (label, "%i - %s", &line_num, file_name);
-      if (chk != 2)
-	continue;
-
-      if (line_num < cur_line)
-	continue;
-
-      line_num += line_mod;
-
-      char * new_label;
-      int alloc_size;
-
-      alloc_size = log10 (line_num) + strlen (file_name) + 4;
-      new_label = (char *) calloc (alloc_size + 1, sizeof (char));
-      CHECK_ALLOC (new_label, -1);
-
-      sprintf (new_label, "%i - %s", line_num, file_name);
-      free (file_name);
-
-      gtk_menu_item_set_label (GTK_MENU_ITEM (gl->data), new_label);
     }
 
   return 0;
@@ -967,7 +909,7 @@ aris_proof_copy (aris_proof * ap)
       else
 	sd->depth = DEPTH_DEFAULT;
 
-      ret_chk = ls_ins_obj (ap->yanked, sd, ap->yanked->tail);
+      ret_chk = ls_push_obj (ap->yanked, sd);
       if (!ret_chk)
 	return -1;
 
@@ -1074,6 +1016,10 @@ aris_proof_yank (aris_proof * ap)
     return 0;
 
   list_t * ls;
+  ls = init_list ();
+  if (!ls)
+    return -1;
+
   item_t * yank_itr;
   int ret;
   for (yank_itr = ap->yanked->head; yank_itr; yank_itr = yank_itr->next)

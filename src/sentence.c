@@ -31,6 +31,7 @@
 #include "process.h"
 #include "goal.h"
 #include "vec.h"
+#include "conf-file.h"
 
 //#define LETTERS
 
@@ -74,14 +75,10 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   int ln = 0, ret, depth;
 
-  // Only run this part if this is a proof sentence.
+  // Only proof containers need to worry about line numbers.
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {
-      // Is this the first sentence?
-      if (!fcs)
-	ln = 1;
-      else
-	ln = SENTENCE (fcs->value)->line_num + 1;
+      ln = (fcs) ? SENTENCE (fcs->value)->line_num + 1 : 1;
     }
 
   // Initialize the GUI components.
@@ -102,7 +99,6 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   if (!sen->premise)
     {
       sentence * fcs_sen;
-
       int index_copy_end;
 
       fcs_sen = fcs->value;
@@ -115,11 +111,13 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
       if (sd->subproof)
 	sen->indices[i++] = ln;
+
     }
 
   sen->indices[i] = -1;
 
   // Set the data components.
+
   ret = sentence_set_line_no (sen, ln);
   if (ret == -1)
     return NULL;
@@ -413,6 +411,8 @@ sentence_copy_to_data (sentence * sen)
 int
 sentence_set_line_no (sentence * sen, int new_line_no)
 {
+  int cur_line = sen->line_num;
+
   if (new_line_no < 1)
     {
       if (sen->line_num == -1)
@@ -441,11 +441,84 @@ Unable to print the correct characters to a string.\n");
       return -1;
     }
 
-  //Set the line_no label from sen.
   gtk_label_set_text (GTK_LABEL (sen->line_no), (const char *) new_label);
-
-  //Free the memory from new_label.
   free (new_label);
+
+  // The next part isn't necessary for a new sentence.
+  if (cur_line == 0)
+    return 0;
+
+  // This next part is only for aris proof sentences, not goal lines.
+  sen_parent * sp;
+  sp = sen->parent;
+  if (sp->type == SEN_PARENT_TYPE_GOAL)
+    return 0;
+
+  int line_mod, i;
+
+  line_mod = new_line_no - cur_line;
+
+  for (i = 0; i < sen->depth; i++)
+    {
+      // Only the indices that are greater than the new line will
+      // need to be changed.
+      if (sen->indices[i] >= cur_line)
+	sen->indices[i] = sen->indices[i] + line_mod;
+    }
+
+  if (sen->rule != RULE_LM)
+    return 0;
+
+  GtkWidget * menu_item, * menu, * submenu;
+  GList * gl;
+
+  gl = gtk_container_get_children (GTK_CONTAINER (sp->menubar));
+  menu = g_list_nth_data (gl, RULES_MENU);
+  submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
+
+  gl = gtk_container_get_children (GTK_CONTAINER (submenu));
+  for (; gl; gl = gl->next)
+    {
+      menu_item = gl->data;
+
+      if (GTK_IS_SEPARATOR_MENU_ITEM (menu_item))
+	continue;
+
+      const char * label =
+	gtk_menu_item_get_label (GTK_MENU_ITEM (gl->data));
+
+      int chk, line_num, lbl_len;
+      char * file_name;
+
+      lbl_len = strlen (label);
+
+      file_name = (char *) calloc (lbl_len, sizeof (char));
+      CHECK_ALLOC (file_name, -1);
+
+      chk = sscanf (label, "%i - %s", &line_num, file_name);
+      if (chk != 2)
+	continue;
+
+      if (line_num < cur_line)
+	continue;
+
+      line_num = new_line_no;
+
+      char * new_label;
+      int alloc_size;
+
+      alloc_size = log10 (line_num) + strlen (file_name) + 4;
+      new_label = (char *) calloc (alloc_size + 1, sizeof (char));
+      CHECK_ALLOC (new_label, -1);
+
+      sprintf (new_label, "%i - %s", line_num, file_name);
+      free (file_name);
+
+      gtk_menu_item_set_label (GTK_MENU_ITEM (gl->data), new_label);
+    }
+
+
+  return 0;
 }
 
 /* Sets the font of a sentence.
@@ -558,6 +631,22 @@ sentence_set_value (sentence * sen, int value_type)
 #else
   gtk_image_set_from_icon_name (GTK_IMAGE (sen->value), sen_values [value_type], GTK_ICON_SIZE_MENU);
 #endif
+}
+
+int
+sentence_get_line_no (sentence * sen)
+{
+  int line_num;
+  sen_parent * sp;
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_INT);
+  sp = sen->parent;
+  gtk_container_child_get_property (GTK_CONTAINER (sp->container),
+				   sen->panel,
+				   "top-attach",
+				    &val);
+  line_num = g_value_get_int (&val);
+  return line_num;
 }
 
 /* Connects the callback signals to a sentence.
