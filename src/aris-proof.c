@@ -438,7 +438,6 @@ aris_proof_create_menu (sen_parent * ap)
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), submenu);
       gtk_menu_shell_append (GTK_MENU_SHELL (ap->menubar), menu);
     }
-
 }
 
 /* Sets an aris proof to be changed or not changed.
@@ -1180,7 +1179,7 @@ aris_proof_import_proof (aris_proof * ap)
 				 GTK_WINDOW (SEN_PARENT (ap)->window),
 				 GTK_FILE_CHOOSER_ACTION_OPEN,
 				 "_Cancel", GTK_RESPONSE_CANCEL,
-				 "document-open", GTK_RESPONSE_ACCEPT,
+				 "_Open", GTK_RESPONSE_ACCEPT,
 				 NULL);
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser), FALSE);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
