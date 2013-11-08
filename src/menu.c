@@ -40,7 +40,7 @@ construct_menu_item (conf_obj data, GCallback func,
   char * path;
   int alloc_size;
 
-  GtkWidget * grid, * label, * bin;
+  //GtkWidget * grid, * label, * bin;
 
   if (!data.label)
     {
