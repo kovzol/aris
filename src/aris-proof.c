@@ -182,8 +182,7 @@ aris_proof_post_init (aris_proof * ap)
   gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
 			   sen->panel, NULL, GTK_POS_BOTTOM, 1, 1);
 
-  item_t * itm = ls_ins_obj (SEN_PARENT (ap)->everything, sen,
-			     SEN_PARENT (ap)->everything->head);
+  item_t * itm = ls_push_obj (SEN_PARENT (ap)->everything, sen);
   if (!itm)
     return -1;
 
@@ -596,6 +595,8 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
     }
 
   new_order = SENTENCE (fcs->value)->line_num;
+
+  // Increment this, since non-premises are attached at their line number + 1;
   if (!sd->premise)  new_order++;
 
   if (sd->depth == -1)
