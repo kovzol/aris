@@ -1,3 +1,33 @@
+2013-11-09  Ian Dunn  <dunni@gnu.org>
+
+	* Makefile.am: Removed test binary.
+
+	* aris-proof.c (aris_proof_post_init): Cleaned up code.
+	(aris_proof_create_sentence): Same.
+
+	* sen-parent.c (sen_parent_ins_sentence): Fixed up for
+	GtkGrid.
+	(sen_parent_rem_sentence): Same.
+
+	* sentence.h (sentence_get_line_no): Added to header file.
+
+	* sentence.c (sentence_set_line_no): Cleaned up code.
+
+2013-11-08  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.c (sentence_set_line_no): Moved major parts of
+	line adjustment here.
+	(sentence_get_line_no): Gets the position within the parent
+	GtkGrid.
+
+	* aris-proof.c (aris_proof_undo): Fixed up undo operation.
+	(aris_proof_import_proof): Fixed up dialog labels.
+	(aris_proof_yank): Fixed minor bug.
+	(aris_proof_adjust_lines): Moved bulk of processing to
+	sentence_set_line_no.
+
+	* menu.c (construct_menu_item): Cleaned up comments.
+
 2013-11-04  Ian Dunn  <dunni@gnu.org>
 
 	* callbacks.c (gui_customize_show): Cleaned up comments.
