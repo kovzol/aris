@@ -111,7 +111,6 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
       if (sd->subproof)
 	sen->indices[i++] = ln;
-
     }
 
   sen->indices[i] = -1;
