@@ -257,11 +257,17 @@ sen_parent_ins_sentence (sen_parent * sp, sen_data * sd,
   if (!sen)
     return NULL;
 
-  gtk_grid_insert_row (GTK_GRID (sp->container), new_order);
-  gtk_grid_attach (GTK_GRID (sp->container), sen->panel, 0, new_order, 1, 1);
+  if (sp->type == SEN_PARENT_TYPE_PROOF)
+    {
+      new_order = sen->line_num;
+      if (!sen->premise) new_order++;
+    }
 
   itm = ls_ins_obj (sp->everything, sen, fcs);
   sp->focused = itm;
+
+  gtk_grid_insert_row (GTK_GRID (sp->container), new_order);
+  gtk_grid_attach (GTK_GRID (sp->container), sen->panel, 0, new_order, 1, 1);
 
   gtk_widget_show_all (sen->panel);
 
@@ -279,7 +285,9 @@ item_t *
 sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 {
   item_t * ev_itr, * target = NULL;
+  int row_num;
 
+  row_num = sentence_get_line_no (sen);
   target = ls_find (sp->everything, sen);
 
   // Only need to start this past the target sentence.
@@ -309,6 +317,8 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 
   ls_rem_obj (sp->everything, target);
   sentence_destroy (sen);
+
+  gtk_grid_remove_row (GTK_GRID (sp->container), row_num);
 
   return new_focus;
 }
