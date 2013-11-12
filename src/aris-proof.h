@@ -48,7 +48,6 @@ struct undo_info {
 struct aris_proof {
   struct sen_parent sp;	// The parent object of this proof.
 
-  list_t * vars;	// The list of variables for this proof.
   goal_t * goal;	// The goal structure for this proof.
 
   int edited : 1;	// Whether or not this proof has been edited.

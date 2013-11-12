@@ -69,10 +69,6 @@ aris_proof_init ()
   ap = (aris_proof *) calloc (1, sizeof (aris_proof));
   CHECK_ALLOC (ap, NULL);
 
-  ap->vars = init_list ();
-  if (!ap->vars)
-    return NULL;
-
   sen_parent_init (SEN_PARENT (ap), _("GNU Aris - Untitled"),
 		   640, 320, aris_proof_create_menu, SEN_PARENT_TYPE_PROOF);
   ap->boolean = the_app->boolean;
@@ -212,10 +208,6 @@ aris_proof_init_from_proof (proof_t * proof)
   ap = (aris_proof *) calloc (1, sizeof (aris_proof));
   CHECK_ALLOC (ap, NULL);
 
-  ap->vars = init_list ();
-  if (!ap->vars)
-    return NULL;
-
   sen_parent_init (SEN_PARENT (ap), _("GNU Aris - "),
 		   640, 320, aris_proof_create_menu, SEN_PARENT_TYPE_PROOF);
 
@@ -330,23 +322,6 @@ aris_proof_destroy (aris_proof * ap)
 
   ap->fin_prem = NULL;
   ap->sb_text = NULL;
-
-  item_t * var_itr, * n_var_itr;
-  var_itr = ap->vars->head;
-
-  for (var_itr = ap->vars->head; var_itr != NULL; var_itr = n_var_itr)
-    {
-      n_var_itr = var_itr->next;
-      if (((variable *) var_itr->value)->text)
-	free (((variable *) var_itr->value)->text);
-
-      free (var_itr->value);
-      var_itr->value = var_itr->next = var_itr->prev = NULL;
-      free (var_itr);
-    }
-
-  free (ap->vars);
-  ap->vars = NULL;
 
   goal_destroy (ap->goal);
   if (ap->selected)

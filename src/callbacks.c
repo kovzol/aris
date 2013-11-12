@@ -668,11 +668,15 @@ evaluate_line (aris_proof * ap, sentence * sen)
 {
   item_t * ev_itr, * ret_chk;
   int ret;
-  list_t * lines;
+  list_t * lines, * vars;
   sen_data * tmp_sd;
 
   lines = init_list ();
   if (!lines)
+    return -1;
+
+  vars = init_list ();
+  if (!vars)
     return -1;
 
   for (ev_itr = SEN_PARENT (ap)->everything->head;
@@ -695,7 +699,7 @@ evaluate_line (aris_proof * ap, sentence * sen)
 		     || ev_sen->subproof
 		     || ev_sen->rule == RULE_SQ)
 	    ? 0 : 1;
-	  ret = sexpr_collect_vars_to_proof (ap->vars, ev_sen->sexpr, arb);
+	  ret = sexpr_collect_vars_to_proof (vars, ev_sen->sexpr, arb);
 	  if (ret == -1)
 	    return -1;
 	}
@@ -725,7 +729,7 @@ evaluate_line (aris_proof * ap, sentence * sen)
     return -1;
 
   char * ret_str;
-  ret_str = sen_data_evaluate (sd, &ret, ap->vars, lines);
+  ret_str = sen_data_evaluate (sd, &ret, vars, lines);
   if (!ret_str)
     return -1;
 
@@ -781,8 +785,6 @@ evaluate_proof (aris_proof * ap)
       ret = evaluate_line (ap, sen);
       if (ret == -1)
 	return -1;
-
-      ls_clear (ap->vars);
     }
 
   ret = goal_check_all (ap->goal);
@@ -837,7 +839,6 @@ gui_toggle_rules (aris_proof * ap)
     }
   else
     {
-
       gtk_widget_show_all (the_app->rt->window);
       rules_table_align (the_app->rt, ap);
     }
@@ -1493,7 +1494,7 @@ menu_activated (aris_proof * ap, int menu_id)
       break;
 
     case CONF_MENU_EVAL_LINE:
-      ls_clear (ap->vars);
+      //ls_clear (ap->vars);
       evaluate_line (ap, SENTENCE (SEN_PARENT (ap)->focused->value));
       break;
 
