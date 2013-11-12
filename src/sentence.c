@@ -35,16 +35,12 @@
 
 //#define LETTERS
 
-#ifdef LETTERS
-static char * sen_values[6] = {" ", "T", "F", "*", "?", "#"};
-#else
 static char * sen_values[6] = {"media-playback-stop",
 			       "help-about",
 			       "window-close",
 			       "process-stop",
 			       "tools-check-spelling",
 			       "list-add"};
-#endif
 
 // GTextCharPredicate for determining the location of the comment.
 static gboolean
@@ -245,13 +241,7 @@ sentence_gui_init (sentence * sen)
   gtk_widget_set_hexpand (sen->entry, TRUE);
   gtk_widget_set_halign (sen->entry, GTK_ALIGN_FILL);
 
-#ifdef LETTERS
-  sen->value = gtk_label_new (NULL);
-  gtk_label_set_justify (GTK_LABEL (sen->value), GTK_JUSTIFY_FILL);
-  gtk_label_set_width_chars (GTK_LABEL (sen->value), 2);
-#else
   sen->value = gtk_image_new_from_icon_name (sen_values[0], GTK_ICON_SIZE_MENU);
-#endif
 
   int left = 0;
 
@@ -539,10 +529,6 @@ sentence_set_font (sentence * sen, int font)
   sentence_resize_text (sen, font_size);
   LABEL_SET_FONT (sen->line_no, the_app->fonts[font]);
   ENTRY_SET_FONT (sen->entry, the_app->fonts[font]);
-#ifdef LETTERS
-  LABEL_SET_FONT (sen->value, the_app->fonts[font]);
-#else
-#endif
   LABEL_SET_FONT (sen->rule_box, the_app->fonts[font]);
 
   sen->font_resizing = 0;
@@ -625,11 +611,7 @@ void
 sentence_set_value (sentence * sen, int value_type)
 {
   sen->value_type = value_type;
-#ifdef LETTERS
-  gtk_label_set_text (GTK_LABEL (sen->value), sen_values[value_type]);
-#else
   gtk_image_set_from_icon_name (GTK_IMAGE (sen->value), sen_values [value_type], GTK_ICON_SIZE_MENU);
-#endif
 }
 
 int
@@ -1660,50 +1642,7 @@ sentence_check_boolean_rule (sentence * sen, int boolean)
 int
 sentence_can_select_as_ref (sentence * sen, sentence * ref)
 {
-  if (ref->line_num >= sen->line_num)
-    {
-      if (the_app->verbose)
-	printf ("Must select reference that comes before focused.\n");
-      return 0;
-    }
-
-  int entire;
-
-  // Get indices of each.
-  // This isn't necessary if the sentence is a premise, or if it has depth == zero.
-  if (ref->premise || ref->indices[0] == -1)
-    return ref->line_num;
-
-  int common_line;
-  int i;
-
-  common_line = 0;
-  for (i = 0; sen->indices[i] != -1 && ref->indices[i] != -1; i++)
-    {
-      if (sen->indices[i] != ref->indices[i])
-	break;
-    }
-
-  // If the set of the reference sentence's indices is a subset of
-  // the set of the focused sentence's indices, then the sentence can
-  // be selected as a reference.
-
-  if (ref->indices[i] == -1)
-    {
-      common_line = ref->line_num;
-      entire = 0;
-    }
-  else
-    {
-      common_line = ref->indices[i];
-      entire = 1;
-    }
-
-  if (ref->indices[i] != -1 && sen->indices[i] == -1)
-    entire = 1;
-
-  if (entire == 1)
-    common_line *= -1;
-
-  return common_line;
+  return sen_data_can_sel_as_ref (sen->line_num, sen->indices,
+				  ref->line_num, ref->indices,
+				  ref->premise);
 }

@@ -369,7 +369,61 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
   return proc_ret;
 }
 
-/* Determines whether a sentence can select another one.
+/* Determines whether a sentence can another as a reference.
+ *  input:
+ *  output:
+ */
+int
+sen_data_can_sel_as_ref (int sen_line, int * sen_indices,
+			 int ref_line, int * ref_indices,
+			 int ref_prem)
+{
+  if (ref_line >= sen_line)
+    return 0;
+
+  int entire;
+
+  // Get indices of each.
+  // This isn't necessary if the sentence is a premise, or if it has depth == zero.
+  if (ref_prem || ref_indices[0] == -1)
+    return ref_line;
+
+  int common_line;
+  int i;
+
+  common_line = 0;
+  for (i = 0; sen_indices[i] != -1 && ref_indices[i] != -1; i++)
+    {
+      if (sen_indices[i] != ref_indices[i])
+	break;
+    }
+
+  // If the set of the reference sentence's indices is a subset of
+  // the set of the focused sentence's indices, then the sentence can
+  // be selected as a reference.
+
+  if (ref_indices[i] == -1)
+    {
+      common_line = ref_line;
+      entire = 0;
+    }
+  else
+    {
+      common_line = ref_indices[i];
+      entire = 1;
+    }
+
+  if (ref_indices[i] != -1 && sen_indices[i] == -1)
+    entire = 1;
+
+  if (entire == 1)
+    common_line *= -1;
+
+  return common_line;
+
+}
+
+/* Determines whether a sentence can select another one - wrapper function.
  *  input:
  *    sen - The sentence selecting.
  *    ref - The sentence being selected.
@@ -381,46 +435,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 int
 sen_data_can_select_as_ref (sen_data * sen, sen_data * ref)
 {
-  if (ref->line_num >= sen->line_num)
-    return 0;
-
-  int entire;
-
-  // Get indices of each.
-  // This isn't necessary if the sentence is a premise, or if it has depth == zero.
-  if (ref->premise || ref->depth == 0)
-    return ref->line_num;
-
-  int common_line;
-  int i;
-
-  common_line = 0;
-  for (i = 0; sen->indices[i] != -1 && ref->indices[i] != -1; i++)
-    {
-      if (sen->indices[i] != ref->indices[i])
-	break;
-    }
-
-  // If the set of the reference sentence's indices is a subset of
-  // the set of the focused sentence's indices, then the sentence can
-  // be selected as a reference.
-
-  if (ref->indices[i] == -1)
-    {
-      common_line = ref->line_num;
-      entire = 0;
-    }
-  else
-    {
-      common_line = ref->indices[i];
-      entire = 1;
-    }
-
-  if (ref->indices[i] != -1 && sen->indices[i] == -1)
-    entire = 1;
-
-  if (entire == 1)
-    common_line *= -1;
-
-  return common_line;
+  return sen_data_can_sel_as_ref (sen->line_num, sen->indices,
+				  ref->line_num, ref->indices,
+				  ref->premise);
 }

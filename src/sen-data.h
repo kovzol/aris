@@ -69,5 +69,8 @@ int sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr);
 char * sen_data_evaluate (sen_data * sd, int * ret_val,
 			  list_t * vars, list_t * lines);
 int sen_data_can_select_as_ref (sen_data * sen, sen_data * ref);
+int sen_data_can_sel_as_ref (int sen_line, int * sen_indices,
+			     int ref_line, int * ref_indices,
+			     int ref_prem);
 
 #endif /* ARIS_SEN_DATA_H */
