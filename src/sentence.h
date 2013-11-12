@@ -33,8 +33,6 @@ struct sentence {
   int reference : 1;      // Whether or not this sentence is a reference.
   unsigned char * sexpr;  // The sexpr text of this sentence.
 
-  unsigned char ** vars;  // The variables used in this sentence.
-
   int premise : 1;   // Whether or not this sentence is a premise.
   int subproof : 1;  // Whether or not this sentence starts a subproof.
   int depth;         // The depth of this sentence.  0 for all top levels.

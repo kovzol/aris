@@ -193,7 +193,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
       sen->file = NULL;
     }
 
-  sen->vars = NULL;
+  //sen->vars = NULL;
   sen->reference = 0;
   sen->subproof = sd->subproof;
 
@@ -301,16 +301,6 @@ sentence_destroy (sentence * sen)
   if (sen->text)
     free (sen->text);
   sen->text = NULL;
-
-  if (sen->vars)
-    {
-      int i;
-      for (i = 0; sen->vars[i]; i++)
-	free (sen->vars[i]);
-      free (sen->vars);
-    }
-
-  sen->vars = NULL;
 
   sen->parent = NULL;
 

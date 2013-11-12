@@ -52,8 +52,6 @@ sen_data_init (int line_num, int rule, unsigned char * text,
   sd = (sen_data *) calloc (1, sizeof (sen_data));
   CHECK_ALLOC (sd, NULL);
 
-  sd->vars = NULL;
-
   sd->line_num = line_num;
   sd->rule = rule;
   sd->text = sd->file = sd->sexpr = NULL;
@@ -108,16 +106,6 @@ sen_data_destroy (sen_data * sd)
   if (sd->sexpr)
     free (sd->sexpr);
   sd->sexpr = NULL;
-
-  if (sd->vars)
-    {
-      int i = 0;
-      unsigned char * var = sd->vars[i];
-      for (i = 0; sd->vars[i] != NULL; i++)
-	free (sd->vars[i]);
-
-      free (sd->vars);
-    }
 
   if (sd->indices)
     free (sd->indices);
