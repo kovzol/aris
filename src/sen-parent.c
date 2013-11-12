@@ -257,11 +257,8 @@ sen_parent_ins_sentence (sen_parent * sp, sen_data * sd,
   if (!sen)
     return NULL;
 
-  if (sp->type == SEN_PARENT_TYPE_PROOF)
-    {
-      new_order = sen->line_num;
-      if (!sen->premise) new_order++;
-    }
+  if (sp->type == SEN_PARENT_TYPE_PROOF && !sen->premise)
+    new_order = sen->line_num;
 
   itm = ls_ins_obj (sp->everything, sen, fcs);
   sp->focused = itm;
