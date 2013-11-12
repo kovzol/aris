@@ -827,10 +827,7 @@ int
 gui_toggle_rules (aris_proof * ap)
 {
   int vis;
-  int x, y;
-  int width;
-
-  g_object_get (G_OBJECT (the_app->rt->window), "visible", &vis, NULL);
+  vis = gtk_widget_get_visible (the_app->rt->window);
 
   if (vis)
     {
@@ -841,6 +838,7 @@ gui_toggle_rules (aris_proof * ap)
     {
       gtk_widget_show_all (the_app->rt->window);
       rules_table_align (the_app->rt, ap);
+      aris_proof_set_sb (ap, _("Rules Tablet Shown."));
     }
 
   return 0;
