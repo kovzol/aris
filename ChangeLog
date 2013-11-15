@@ -1,3 +1,118 @@
+2013-11-15  Ian Dunn  <dunni@gnu.org>
+
+	* conf-file.h: Fixed up default color for `good' color.
+
+	* sen-data.c (sd_convert_sexpr): Calls sen_convert_sexpr
+	on the sen-data's text and sexpr objects.
+	(sen_data_copy): Added to copy data from one object to
+	another.
+
+	* sentence.h: Added sd element, and changed refs to
+	references.
+	(SEN_PREM): Added macro for sentence_premise.
+	(SEN_SUB): Added macro for sentence_subproof.
+	(SEN_DEPTH): Added macro for sentence_depth.
+	(SEN_IND): Added macro for sentence_get_index.
+
+	* sentence.c (sentence_init): Implemented
+	sentence_get_line_no, and sentence_update_line_no.
+	Implemented sentence_set_rule.
+	Implemented sentence_set_text.
+	(sentence_destroy): Changed sen->refs to sen->references.
+	Destroys data members with sen_data_destroy.
+	(sentence_copy_to_data): Implements sen_data_copy.
+	(sentence_set_line_no): Implemented sentence_get_line_no.
+	(sentence_update_line_no): Calls sentence_set_line_no.
+	Implemented sentence_get_rule.
+	(sentence_add_ref): Adds a sentence to the references.
+	(sentence_rem_ref): Removes a sentence from the references.
+	(sentence_get_line_no): Gets the line number of a sentence.
+	(sentence_in): Changed refs to references.
+	(sentence_out): Same.
+	(select_reference): Implemented sentence_get_line_no, and
+	changed refs to refs to references.
+	(sentence_text_changed): Same.
+	Fixed up small bug.
+	(sentence_can_select_as_ref): Same.
+	Changed to use sen_data_can_select_as_ref.
+	(sentence_check_boolean_rule): Implemented sentence_set_rule.
+	(sentence_set_rule): Added to set the rule and rule box text
+	for a sentence.
+	(sentence_get_rule): Gets the rule integer of a sentence.
+	(sentence_set_text): Sets the text of a sentence.
+	(sentence_get_text): Gets the text of a sentence.
+	(sentence_premise): Returns the sentence's premise member.
+	(sentence_subproof): Returns the setnence's subproof member.
+	(sentence_depth): Returns the sentence's depth member.
+	(sentence_get_index): Returns an element of the index member.
+	(sentence_set_index): Sets an element of the index member.
+
+	* sen-parent.c (sen_parent_ins_sentence): Implemented
+	sentence_get_grid_no and sentence_get_line_no.
+	(sen_parent_rem_sentence): Implemented sentence_rem_ref.
+
+	* sen-data.h: Added SD macro to cast an object as a sentence
+	data object.
+	(sd_convert_sexpr): Added to convert a sen-data object's
+	text to S-expr.
+
+	* rules-table.c (rules_table_set_lm): Implemented
+	sentence_get_line_no.
+	(rules_toggled): Implemented sentence_set_rule.
+
+	* proof.h (eval_proof): Added.
+
+	* proof.c (eval_proof): Added a generic version of proof
+	evaluation.
+
+	* goal.c (goal_check_line): Implemented sentence_get_line_no
+	and sentence_update_line_no.
+	(goal_rem_line): Same.
+
+	* callbacks.c (evaluate_line): Implemented
+	sentence_get_line_no.
+	Uses sd_convert_sexpr.
+	(evaluate_proof): Same.
+
+	* aris.c (main): Cleaned up some comments.
+
+	* aris-proof.c (aris_proof_adjust_lines): Implemented
+	sentence_get_line_no.
+	(aris_proof_create_sentence): Same.
+	(aris_proof_kill): Same.
+	(aris_proof_import_proof): Same.
+
+2013-11-12  Ian Dunn  <dunni@gnu.org>
+
+	* sen-data.c (sen_data_init): Removed var object.
+	(sen_data_destroy): Same.
+
+	* sentence.c (sentence_init): Removed var object.
+	(sentence_destroy): Same.
+	(sentence_add_ref): Added to add a reference sentence.
+	(sentence_rem_ref): Added to remove a reference sentence.
+	(sentence_get_line_no): Added to retrieve the line number of
+	a sentence.
+	(sentence_get_grid_no): Gets the position of a sentence in its
+	containing grid.
+
+	* sen-data.h: Removed sen data vars and reference object.
+
+	* sentence.h: Removed sentence vars.
+	Added sentence_get_line_no and sentence_get_grid_no.
+	Added sen_data object to the sentence object.
+	Changed refs to references.
+
+	* callbacks.c (evaluate_line): Removed aris proof vars.
+	(menu_activated): Same.
+	(gui_toggle_rules): Added statusbar message.
+
+	* aris-proof.c (aris_proof_init): Removed vars object.
+	(aris_proof_destroy): Same.
+	(aris_proof_adjust_lines): Implemented sentence_get_line_no.
+
+	* aris-proof.h: Removed vars object from aris proof.
+
 2013-11-09  Ian Dunn  <dunni@gnu.org>
 
 	* Makefile.am: Removed test binary.
