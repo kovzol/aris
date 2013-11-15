@@ -63,6 +63,8 @@ sen_data * sen_data_init (int line_num, int rule, unsigned char * text,
 			  int subproof, int depth, unsigned char * sexpr);
 void sen_data_destroy (sen_data * sd);
 
+int sen_data_copy (sen_data * old_sd, sen_data * new_sd);
+
 int sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr);
 int sd_convert_sexpr (sen_data * sd);
 

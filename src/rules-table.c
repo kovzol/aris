@@ -505,9 +505,9 @@ rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
 {
   int file_len;
   file_len = strlen (filename);
-  sen->file = (unsigned char *) calloc (file_len + 1, sizeof (char));
+  SD(sen)->file = (unsigned char *) calloc (file_len + 1, sizeof (char));
 
-  strcpy (sen->file, filename);
+  strcpy (SD(sen)->file, filename);
 
   sen->proof = aio_open (filename);
   if (!sen->proof)
@@ -524,7 +524,7 @@ rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
       alloc_size = file_len + 4 + (int) log10 (ln);
       label = (char *) calloc (alloc_size + 1, sizeof (char));
       CHECK_ALLOC (label, -1);
-      sprintf (label, "%i - %s", ln, sen->file);
+      sprintf (label, "%i - %s", ln, SD(sen)->file);
       menu_item = gtk_menu_item_new_with_label (label);
 
       gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
@@ -547,7 +547,7 @@ rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
 int
 rules_table_destroy_menu_item (sentence * sen)
 {
-  if (!sen->file)
+  if (!SD(sen)->file)
     return 0;
 
   GtkWidget * menu_item, * menu, * submenu;
@@ -585,8 +585,8 @@ rules_table_destroy_menu_item (sentence * sen)
 
   if (sen->proof)
     proof_destroy (sen->proof);
-  free (sen->file);
-  sen->file = NULL;
+  free (SD(sen)->file);
+  SD(sen)->file = NULL;
 
   return 0;
 }

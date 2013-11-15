@@ -69,7 +69,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   sen = (sentence *) calloc (1, sizeof (sentence));
   CHECK_ALLOC (sen, NULL);
 
-  int ln = 0, ret, depth;
+  int ln = 0, ret, depth, i = 0;
 
   // Only proof containers need to worry about line numbers.
   if (sp->type == SEN_PARENT_TYPE_PROOF)
@@ -79,6 +79,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   SD(sen)->premise = sd->premise;
   SD(sen)->depth = depth = sd->depth;
+  SD(sen)->subproof = sd->subproof;
 
   // Initialize the GUI components.
   sentence_gui_init (sen);
@@ -89,8 +90,6 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   SD(sen)->indices = (int *) calloc (depth + 1, sizeof (int));
   CHECK_ALLOC (SD(sen)->indices, NULL);
-
-  int i = 0;
 
   if (!SEN_PREM(sen))
     {
@@ -175,19 +174,16 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   if (sd->file)
     {
-      unsigned int file_len = strlen ((const char *) sd->file);
-      sen->file = (unsigned char *) calloc (file_len + 1,
-					    sizeof (char));
-      CHECK_ALLOC (sen->file, NULL);
-      strcpy (sen->file, sd->file);
+      SD(sen)->file = strdup (sd->file);
+      if (!SD(sen)->file)
+	return NULL;
     }
   else
     {
-      sen->file = NULL;
+      SD(sen)->file = NULL;
     }
 
   sen->reference = 0;
-  SD(sen)->subproof = sd->subproof;
 
   sentence_set_font (sen, sen->parent->font);
 
@@ -290,20 +286,6 @@ sentence_destroy (sentence * sen)
     destroy_list (sen->references);
   sen->references = NULL;
 
-  /*
-  if (SD(sen)->text)
-    free (SD(sen)->text);
-  SD(sen)->text = NULL;
-
-  if (SD(sen)->indices)
-  free (SD(sen)->indices);
-  SD(sen)->indices = NULL;
-
-  if (SD(sen)->sexpr)
-  free (SD(sen)->sexpr);
-  SD(sen)->sexpr = NULL;
-  */
-
   sen->parent = NULL;
 
   gtk_widget_destroy (sen->panel);
@@ -319,61 +301,15 @@ sentence_destroy (sentence * sen)
 sen_data *
 sentence_copy_to_data (sentence * sen)
 {
-  //return SD(sen);
 
   sen_data * sd;
   int i;
-  item_t * ref_itr, * var_itr;
-  short * refs;
 
-  i = 0;
-
-  if (sen->references && sen->references->num_stuff > 0)
-    {
-      refs = (short *) calloc (sen->references->num_stuff + 1, sizeof (int));
-      CHECK_ALLOC (refs, NULL);
-
-      ref_itr = sen->references->head;
-      for (; ref_itr != NULL; ref_itr = ref_itr->next)
-	{
-	  sentence * sen_itr;
-	  int line_num;
-
-	  sen_itr = ref_itr->value;
-	  line_num = sentence_get_line_no (sen_itr);
-	  refs[i++] = (short) line_num;
-	}
-    }
-  else
-    {
-      refs = (short *) calloc (1, sizeof (int));
-      CHECK_ALLOC (refs, NULL);
-    }
-
-  if (SD(sen)->text)
-    free (SD(sen)->text);
-
-  int depth = SEN_DEPTH (sen);
-
-  SD(sen)->text = sentence_copy_text (sen);
-  if (!SD(sen)->text)
+  sd = (sen_data *) calloc (1, sizeof (sen_data));
+  CHECK_ALLOC (sd, NULL);
+  i = sen_data_copy (SD(sen), sd);
+  if (i == -1)
     return NULL;
-
-  refs[i] = -1;
-
-  sd = sen_data_init (SD(sen)->line_num, SD(sen)->rule,
-		      SD(sen)->text, refs, SEN_PREM(sen), sen->file,
-		      SEN_SUB(sen), depth, SD(sen)->sexpr);
-
-  if (!sd)
-    return NULL;
-
-  sd->indices = (int *) calloc (depth + 1, sizeof (int));
-  CHECK_ALLOC (sd->indices, NULL);
-
-  for (i = 0; i < depth; i++)
-    sd->indices[i] = SEN_IND(sen,i);
-  sd->indices[i] = -1;
 
   return sd;
 }

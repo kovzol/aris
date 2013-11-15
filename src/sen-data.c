@@ -114,6 +114,64 @@ sen_data_destroy (sen_data * sd)
   free (sd);
 }
 
+int
+sen_data_copy (sen_data * old_sd, sen_data * new_sd)
+{
+  new_sd->line_num = old_sd->line_num;
+  new_sd->rule = old_sd->rule;
+  new_sd->text = new_sd->file = new_sd->sexpr = NULL;
+  new_sd->premise = old_sd->premise;
+  new_sd->depth = old_sd->depth;
+  new_sd->subproof = old_sd->subproof;
+
+  if (old_sd->text)
+    {
+      new_sd->text = strdup (old_sd->text);
+      CHECK_ALLOC (new_sd->text, -1);
+    }
+
+  if (old_sd->file)
+    {
+      new_sd->file = strdup (old_sd->file);
+      CHECK_ALLOC (new_sd->file, -1);
+    }
+
+  if (old_sd->sexpr)
+    {
+      new_sd->sexpr = strdup (old_sd->sexpr);
+      CHECK_ALLOC (new_sd->sexpr, -1);
+    }
+
+  new_sd->refs = NULL;
+  new_sd->indices = NULL;
+
+  int len;
+
+  // Determine length of old_sd->refs.
+  // Allocate the memory, and memcpy.
+  // This does need to be len+1, to catch the -1.
+  if (old_sd->refs)
+    {
+      len = 0;
+      while (old_sd->refs[len] != -1)
+	len++;
+
+      new_sd->refs = (short*) calloc (len + 1, sizeof (short));
+      CHECK_ALLOC (new_sd->refs, -1);
+      memcpy (new_sd->refs, old_sd->refs, sizeof(short)*(len+1));
+    }
+
+  if (old_sd->indices)
+    {
+      len = old_sd->depth;
+      new_sd->indices = (int*) calloc (len + 1, sizeof (int));
+      CHECK_ALLOC (new_sd->indices, -1);
+      memcpy (new_sd->indices, old_sd->indices, sizeof(int)*(len+1));
+    }
+
+  return 0;
+}
+
 /*
  */
 int

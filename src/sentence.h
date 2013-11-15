@@ -32,38 +32,32 @@
 #define SEN_IND(s,i) sentence_get_index ((sentence*)(s),i)
 
 struct sentence {
-  sen_data sd;
-  // Data components
+  sen_data sd;			// The data components.
 
-  //int depth;         // The depth of this sentence.  0 for all top levels.
-  //int * indices;     // The line numbers of the subproofs that contain this sentence.
+  int reference : 1;		// Whether or not this sentence is a reference.
+  list_t * references;		// A list of sentences that are references.
 
-  unsigned char * file;   // The file name if lemma is used on this sentence.
-
-  int reference : 1;      // Whether or not this sentence is a reference.
-  list_t * references;         // A list of sentences that are references.
-
-  proof_t * proof;        // The proof for this sentence, if lemma is used.
+  proof_t * proof;		// The proof for this sentence, if lemma is used.
 
   // GUI components
-  GtkWidget * panel;      // Contains the other items. - GtkGrid
-  GtkWidget * entry;      // Actual Text Entry. - GtkTextView
-  GtkWidget * line_no;    // The line number of this sentence. - GtkLabel
-  GtkWidget * value;      // True / False indicator. - GtkLabel
-  GtkWidget * eventbox;   // Contains the line number label.
-  GtkTextMark * mark;     // The mark that keeps track of the semi-colon in a sentence.
-  GtkWidget * rule_box;   // The box that displays the rule of the sentence.
+  GtkWidget * panel;		// Contains the other items - GtkGrid
+  GtkWidget * entry;		// Actual Text Entry - GtkTextView
+  GtkWidget * line_no;		// The line number of this sentence - GtkLabel
+  GtkWidget * value;		// Status indicator - GtkLabel
+  GtkWidget * eventbox;		// Contains the line number label
+  GtkTextMark * mark;		// The mark that keeps track of comments
+  GtkWidget * rule_box;		// The box that displays the rule of the sentence.
 
-  int font_resizing;      // Whether or not font is being resized.
-  int selected : 1;       // Whether or not this sentence is selected.
-  int bg_color;    // The index in the_app->bg_colors of the background color.
-  int value_type;  // The index of the value type of this sentence.
+  int font_resizing;		// Whether or not font is being resized.
+  int selected : 1;		// Whether or not this sentence is selected.
+  int bg_color;			// The index of the background color.
+  int value_type;		// The index of the value type of this sentence.
 
-  sen_parent * parent;  // The parent of this sentence.
+  sen_parent * parent;		// The parent of this sentence.
 
-  int sig_id;  // The signal id of the mapping signal for this sentence.
+  int sig_id;			// The signal id of the mapping signal for this sentence.
 
-  int matching_parens : 1;  // Whether or not parentheses are being matched.
+  int matching_parens : 1;	// Whether or not parentheses are being matched.
 };
 
 sentence * sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs);
