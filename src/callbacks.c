@@ -683,6 +683,8 @@ evaluate_line (aris_proof * ap, sentence * sen)
        ev_itr != SEN_PARENT (ap)->focused; ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
+      int ln;
+
       ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
       if (ret == -1)
 	return -1;
@@ -690,8 +692,9 @@ evaluate_line (aris_proof * ap, sentence * sen)
       if (ret == -2)
 	continue;
 
+      ln = sentence_get_line_no (ev_sen);
       ret = sentence_can_select_as_ref (sen, ev_sen);
-      if (ret == ev_sen->line_num)
+      if (ret == ln)
 	{
 	  // This means that the variables apply to the current line.
 	  int arb = (ev_sen->premise

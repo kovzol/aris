@@ -21,16 +21,17 @@
 
 #include "pound.h"
 #include "typedef.h"
+#include "sen-data.h"
 
 #define SENTENCE(o) ((sentence *) o)
 #define SEMI_NAME "semi"
 
 struct sentence {
+  sen_data sd;
   // Data components
-  int line_num;           // Keeps track of the line number.
+  //int line_num;           // Keeps track of the line number.
   int rule;               // Index of the rule of this sentence.
   unsigned char * text;   // Contains the text of this item.
-  int reference : 1;      // Whether or not this sentence is a reference.
   unsigned char * sexpr;  // The sexpr text of this sentence.
 
   int premise : 1;   // Whether or not this sentence is a premise.
@@ -38,9 +39,10 @@ struct sentence {
   int depth;         // The depth of this sentence.  0 for all top levels.
   int * indices;     // The line numbers of the subproofs that contain this sentence.
 
-  list_t * refs;         // A list of sentences that are references.
-
   unsigned char * file;   // The file name if lemma is used on this sentence.
+
+  int reference : 1;      // Whether or not this sentence is a reference.
+  list_t * references;         // A list of sentences that are references.
 
   proof_t * proof;        // The proof for this sentence, if lemma is used.
 
@@ -76,6 +78,17 @@ int sentence_in (sentence * sen);
 int sentence_key (sentence * sen, int key, int ctrl);
 int sentence_text_changed (sentence * sen);
 
+int sentence_set_line_no (sentence * sen, int new_line_no);
+int sentence_get_line_no (sentence * sen);
+int sentence_update_line_no (sentence * sen, int new);
+int sentence_get_grid_no (sentence * sen);
+
+int sentence_set_rule (sentence * sen, int rule);
+int sentence_get_rule (sentence * sen);
+
+int sentence_add_ref (sentence * sen, sentence * ref);
+int sentence_rem_ref (sentence * sen, sentence * ref);
+
 int select_reference (sentence * sen);
 int select_sentence (sentence * sen);
 
@@ -83,8 +96,6 @@ char * sentence_copy_text (sentence * sen);
 int sentence_paste_text (sentence * sen);
 
 int sentence_resize_text (sentence * sen, int new_size);
-int sentence_set_line_no (sentence * sen, int new_line_no);
-int sentence_get_line_no (sentence * sen);
 void sentence_set_font (sentence * sen, int font);
 void sentence_set_bg (sentence * sen, int bg_color);
 void sentence_set_value (sentence * sen, int value_type);

@@ -258,7 +258,7 @@ sen_parent_ins_sentence (sen_parent * sp, sen_data * sd,
     return NULL;
 
   if (sp->type == SEN_PARENT_TYPE_PROOF && !sen->premise)
-    new_order = sen->line_num;
+    new_order = sentence_get_grid_no (sen);
 
   itm = ls_ins_obj (sp->everything, sen, fcs);
   sp->focused = itm;
@@ -292,8 +292,7 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
     {
       sentence * ev_sen = ev_itr->value;
 
-      if (ev_sen->refs)
-	ls_rem_obj_value (ev_sen->refs, sen);
+      sentence_rem_ref (ev_sen, sen);
     }
 
   item_t * new_focus;

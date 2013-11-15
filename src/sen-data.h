@@ -24,6 +24,8 @@
 #define SEN_TAB "    "
 #define SEN_COMMENT_CHAR ';'
 
+#define SD(o) ((sen_data *) o)
+
 // Different value types.
 
 enum VALUE_TYPES {

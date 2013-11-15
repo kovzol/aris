@@ -466,20 +466,21 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
   int line_mod = 1;
   line_mod *= mod;
 
-  int cur_line = ((sentence *) itm->value)->line_num;
+  int cur_line = sentence_get_line_no ((sentence *) itm->value);
   item_t * ev_itr;
 
   for (ev_itr = itm->next; ev_itr; ev_itr = ev_itr->next)
     {
-      int new_line_no, ret;
+      int new_line_no, ret, old_ln;
       sentence * ev_sen;
 
       ev_sen = ev_itr->value;
       if (!ev_sen)
 	exit (EXIT_FAILURE);
 
-      new_line_no = ev_sen->line_num + line_mod;
-      ret = sentence_set_line_no (ev_sen, new_line_no);
+      old_ln = sentence_get_line_no (ev_sen);
+      new_line_no = old_ln + line_mod;
+      ret = sentence_update_line_no (ev_sen, new_line_no);
       if (ret == -1)
 	return -1;
     }
@@ -569,7 +570,7 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
       exit (EXIT_FAILURE);
     }
 
-  new_order = SENTENCE (fcs->value)->line_num;
+  new_order = sentence_get_line_no (fcs->value);
 
   // Increment this, since non-premises are attached at their line number + 1;
   if (!sd->premise)  new_order++;
@@ -610,18 +611,18 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
 
   if (sd->rule == RULE_LM && sd->file)
     {
-      int file_len, alloc_size;
+      int file_len, alloc_size, ln;
       GtkWidget * menu_item, * menu, * submenu;
       GList * gl;
       char * label;
 
+      ln = sentence_get_line_no (sen);
       file_len = strlen (sd->file);
-      alloc_size = file_len + 4 + 1 + (int) log10 (sen->line_num);
+      alloc_size = file_len + 4 + 1 + (int) log10 (ln);
       label = (char *) calloc (alloc_size, sizeof (char));
       CHECK_ALLOC (label, NULL);
 
-      sprintf (label, "%i - %s",
-	       sen->line_num, sd->file);
+      sprintf (label, "%i - %s", ln, sd->file);
       menu_item = gtk_menu_item_new_with_label (label);
 
       gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (ap)->menubar));
@@ -932,10 +933,12 @@ aris_proof_kill (aris_proof * ap)
 
   for (start_itr = sel_itr; start_itr; start_itr = start_itr->next)
     {
+      int ln;
       sentence * sen;
       sen = start_itr->value;
 
-      if (sen->line_num == 1)
+      ln = sentence_get_line_no (sen);
+      if (ln == 1)
 	return 1;
     }
 
@@ -1151,6 +1154,7 @@ aris_proof_import_proof (aris_proof * ap)
 	{
 	  char * ev_text;
 	  sentence * ev_sen;
+	  int ln;
 
 	  ev_sen = ev_itr->value;
 	  if (!ev_sen->premise)
@@ -1160,11 +1164,12 @@ aris_proof_import_proof (aris_proof * ap)
 	      break;
 	    }
 
+	  ln = sentence_get_line_no (ev_sen);
 	  ev_text = ev_sen->text;
 
 	  if (!strcmp (ev_text, pf_text))
 	    {
-	      refs[ref_num++] = (short) ev_sen->line_num;
+	      refs[ref_num++] = (short) ln;
 	      break;
 	    }
 	}
@@ -1172,10 +1177,13 @@ aris_proof_import_proof (aris_proof * ap)
       if (!ev_itr || !((sentence *) ev_itr->value)->premise)
 	{
 	  sentence * sen_chk;
+	  int ln;
+
 	  sen_chk = aris_proof_create_sentence (ap, sd, 1);
 	  if (!sen_chk)
 	    return -1;
-	  refs[ref_num++] = (short) sen_chk->line_num;
+	  ln = sentence_get_line_no (sen_chk);
+	  refs[ref_num++] = (short) ln;
 	}
     }
 
@@ -1469,7 +1477,8 @@ aris_proof_undo (aris_proof * ap, int undo)
       for (itm = SEN_PARENT(ap)->everything->head; itm; itm = itm->next)
 	{
 	  sen = (sentence *) itm->value;
-	  if (sen->line_num >= sd->line_num)
+	  ln = sentence_get_line_no (sen);
+	  if (ln >= sd->line_num)
 	    break;
 	}
 

@@ -198,7 +198,9 @@ goal_check_line (goal_t * goal, sentence * sen)
 	  else if (ev_sen->value_type != VALUE_TYPE_TRUE)
 	    is_valid = 0;
 
-	  sentence_set_line_no (sen, ev_sen->line_num);
+	  int ln;
+	  ln = sentence_get_line_no (ev_sen);
+	  sentence_update_line_no (sen, ln);
 
 	  if (is_valid)
 	    {
@@ -216,8 +218,7 @@ goal_check_line (goal_t * goal, sentence * sen)
 	  char * sb_text = (char *) calloc (30, sizeof (char *));
 	  CHECK_ALLOC (sb_text, -1);
 	  int offset = 0;
-	  offset += sprintf (sb_text, "The goal was met at line %i",
-			     ev_sen->line_num);
+	  offset += sprintf (sb_text, "The goal was met at line %i", ln);
 	  if (!is_valid)
 	    {
 	      offset += sprintf (sb_text + offset,
@@ -322,7 +323,7 @@ goal_rem_line (goal_t * goal)
 {
   int ret, line_num;
 
-  line_num = ((sentence *) SEN_PARENT (goal)->focused->value)->line_num;
+  line_num = sentence_get_line_no (SEN_PARENT (goal)->focused->value);
   if (line_num > 0)
     {
       sentence * sen;

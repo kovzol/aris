@@ -520,13 +520,13 @@ rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
       GtkWidget * menu_item, * menu, * submenu;
       GList * gl;
       char * label;
-      int alloc_size;
+      int alloc_size, ln;
 
-      alloc_size = file_len + 4 + (int) log10 (sen->line_num);
+      ln = sentence_get_line_no (sen);
+      alloc_size = file_len + 4 + (int) log10 (ln);
       label = (char *) calloc (alloc_size + 1, sizeof (char));
       CHECK_ALLOC (label, -1);
-      sprintf (label, "%i - %s",
-	       sen->line_num, sen->file);
+      sprintf (label, "%i - %s", ln, sen->file);
       menu_item = gtk_menu_item_new_with_label (label);
 
       gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
@@ -572,12 +572,13 @@ rules_table_destroy_menu_item (sentence * sen)
       GtkWidget * mi;
       mi = (GtkWidget *) gl_itr->data;
       const char * label = gtk_menu_item_get_label (GTK_MENU_ITEM (mi));
-      int chk, line_num;
+      int chk, line_num, ln;
       chk = sscanf (label, "%i", &line_num);
       if (chk != 1)
 	continue;
 
-      if (line_num == sen->line_num)
+      ln = sentence_get_line_no (sen);
+      if (line_num == ln)
 	{
 	  gtk_widget_destroy (gl_itr->data);
 	  break;

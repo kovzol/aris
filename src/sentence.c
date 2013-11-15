@@ -74,7 +74,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   // Only proof containers need to worry about line numbers.
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {
-      ln = (fcs) ? SENTENCE (fcs->value)->line_num + 1 : 1;
+      ln = (fcs) ? sentence_get_line_no (fcs->value) + 1 : 1;
     }
 
   // Initialize the GUI components.
@@ -113,7 +113,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   // Set the data components.
 
-  ret = sentence_set_line_no (sen, ln);
+  ret = sentence_update_line_no (sen, ln);
   if (ret == -1)
     return NULL;
 
@@ -145,8 +145,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
       sen->text[0] = '\0';
     }
 
-  sen->refs = init_list ();
-  if (!sen->refs)
+  sen->references = init_list ();
+  if (!sen->references)
     return NULL;
 
   if (sd->refs)
@@ -167,11 +167,10 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 	      sentence * ref_sen;
 	      ref_sen = ev_itr->value;
 
-	      if (ref_sen->line_num == cur_line)
+	      if (sentence_get_line_no (ref_sen) == cur_line)
 		{
-		  item_t * itm;
-		  itm = ls_push_obj (sen->refs, ref_sen);
-		  if (!itm)
+		  ret = sentence_add_ref (sen, ref_sen);
+		  if (ret == -1)
 		    return NULL;
 
 		  break;
@@ -294,9 +293,9 @@ sentence_gui_init (sentence * sen)
 void
 sentence_destroy (sentence * sen)
 {
-  if (sen->refs)
-    destroy_list (sen->refs);
-  sen->refs = NULL;
+  if (sen->references)
+    destroy_list (sen->references);
+  sen->references = NULL;
 
   if (sen->text)
     free (sen->text);
@@ -332,19 +331,19 @@ sentence_copy_to_data (sentence * sen)
 
   i = 0;
 
-  if (sen->refs && sen->refs->num_stuff > 0)
+  if (sen->references && sen->references->num_stuff > 0)
     {
-      refs = (short *) calloc (sen->refs->num_stuff + 1, sizeof (int));
+      refs = (short *) calloc (sen->references->num_stuff + 1, sizeof (int));
       CHECK_ALLOC (refs, NULL);
 
-      ref_itr = sen->refs->head;
+      ref_itr = sen->references->head;
       for (; ref_itr != NULL; ref_itr = ref_itr->next)
 	{
 	  sentence * sen_itr;
 	  int line_num;
 
 	  sen_itr = ref_itr->value;
-	  line_num = sen_itr->line_num;
+	  line_num = sentence_get_line_no (sen_itr);
 	  refs[i++] = (short) line_num;
 	}
     }
@@ -363,7 +362,7 @@ sentence_copy_to_data (sentence * sen)
 
   refs[i] = -1;
 
-  sd = sen_data_init (sen->line_num, sen->rule,
+  sd = sen_data_init (SD(sen)->line_num, sen->rule,
 		      sen->text, refs, sen->premise, sen->file,
 		      sen->subproof, sen->depth, sen->sexpr);
 
@@ -390,14 +389,14 @@ sentence_copy_to_data (sentence * sen)
 int
 sentence_set_line_no (sentence * sen, int new_line_no)
 {
-  int cur_line = sen->line_num;
+  int cur_line = sentence_get_line_no (sen);
 
   if (new_line_no < 1)
     {
-      if (sen->line_num == -1)
+      if (cur_line == -1)
 	return -2;
 
-      sen->line_num = -1;
+      SD(sen)->line_num = -1;
       gtk_label_set_text (GTK_LABEL (sen->line_no), NULL);
       return 0;
     }
@@ -405,7 +404,7 @@ sentence_set_line_no (sentence * sen, int new_line_no)
   char * new_label;
   double label_len = log10 ((double) new_line_no);
   int sp_chk = 0;
-  sen->line_num = new_line_no;
+  SD(sen)->line_num = new_line_no;
 
   //The length of any number in base 10 will be log10(n) + 1
   new_label = (char *) calloc ((int)label_len + 2, sizeof (char));
@@ -423,8 +422,21 @@ Unable to print the correct characters to a string.\n");
   gtk_label_set_text (GTK_LABEL (sen->line_no), (const char *) new_label);
   free (new_label);
 
+  return 0;
+}
+
+int
+sentence_update_line_no (sentence * sen, int new)
+{
+  int old, rc;
+  old = SD(sen)->line_num;
+
+  rc = sentence_set_line_no (sen, new);
+  if (rc == -1)
+    return -1;
+
   // The next part isn't necessary for a new sentence.
-  if (cur_line == 0)
+  if (old == 0)
     return 0;
 
   // This next part is only for aris proof sentences, not goal lines.
@@ -435,13 +447,13 @@ Unable to print the correct characters to a string.\n");
 
   int line_mod, i;
 
-  line_mod = new_line_no - cur_line;
+  line_mod = new - old;
 
   for (i = 0; i < sen->depth; i++)
     {
       // Only the indices that are greater than the new line will
       // need to be changed.
-      if (sen->indices[i] >= cur_line)
+      if (sen->indices[i] >= old)
 	sen->indices[i] = sen->indices[i] + line_mod;
     }
 
@@ -478,10 +490,10 @@ Unable to print the correct characters to a string.\n");
       if (chk != 2)
 	continue;
 
-      if (line_num < cur_line)
+      if (line_num < old)
 	continue;
 
-      line_num = new_line_no;
+      line_num = new;
 
       char * new_label;
       int alloc_size;
@@ -496,6 +508,56 @@ Unable to print the correct characters to a string.\n");
       gtk_menu_item_set_label (GTK_MENU_ITEM (gl->data), new_label);
     }
 
+  return 0;
+}
+
+int
+sentence_add_ref (sentence * sen, sentence * ref)
+{
+  item_t * itm;
+  itm = ls_push_obj (sen->references, ref);
+  if (!itm)
+    return -1;
+
+  if (SD(sen)->refs)
+    {
+      free (SD(sen)->refs);
+      SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
+					sizeof (short));
+      CHECK_ALLOC (SD(sen)->refs, -1);
+      int i = 0;
+      for (itm = sen->references->head; itm; itm = itm->next, i++)
+	{
+	  sen_data * sd = SD(itm->value);
+	  SD(sen)->refs[i] = sd->line_num;
+	}
+      SD(sen)->refs[i] = -1;
+    }
+
+  return 0;
+}
+
+int
+sentence_rem_ref (sentence * sen, sentence * ref)
+{
+  if (sen->references)
+    ls_rem_obj_value (sen->references, sen);
+
+  if (SD(sen)->refs)
+    {
+      item_t * itm;
+      free (SD(sen)->refs);
+      SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
+					sizeof (short));
+      CHECK_ALLOC (SD(sen)->refs, -1);
+      int i = 0;
+      for (itm = sen->references->head; itm; itm = itm->next, i++)
+	{
+	  sen_data * sd = SD(itm->value);
+	  SD(sen)->refs[i] = sd->line_num;
+	}
+      SD(sen)->refs[i] = -1;
+    }
 
   return 0;
 }
@@ -607,6 +669,12 @@ sentence_set_value (sentence * sen, int value_type)
 int
 sentence_get_line_no (sentence * sen)
 {
+  return SD(sen)->line_num;
+}
+
+int
+sentence_get_grid_no (sentence * sen)
+{
   int line_num;
   sen_parent * sp;
   GValue val = G_VALUE_INIT;
@@ -685,7 +753,7 @@ sentence_in (sentence * sen)
 	}
 
       // Set the background color of the references.
-      item_t * r_itr = sen->refs->head;
+      item_t * r_itr = sen->references->head;
       for (; r_itr; r_itr = r_itr->next)
 	{
 	  int entire = 1;
@@ -734,7 +802,7 @@ sentence_out (sentence * sen)
   if (!sen->premise)
     {
 
-      item_t * ref_itr = sen->refs->head;
+      item_t * ref_itr = sen->references->head;
       for (; ref_itr; ref_itr = ref_itr->next)
 	{
 	  int entire;
@@ -772,7 +840,7 @@ select_reference (sentence * sen)
   sentence * fcs_sen;
   fcs_sen = sp->focused->value;
 
-  if (sen->line_num >= fcs_sen->line_num)
+  if (sentence_get_line_no (sen) >= sentence_get_line_no (fcs_sen))
     {
       if (the_app->verbose)
 	printf ("Must select reference that comes before focused.\n");
@@ -805,7 +873,7 @@ select_reference (sentence * sen)
       if (the_app->verbose)
 	printf ("Removing reference.\n");
 
-      ls_rem_obj_value (fcs_sen->refs, ref_sen);
+      ls_rem_obj_value (fcs_sen->references, ref_sen);
       sentence_set_reference (ref_sen, 0, entire);
     }
   else
@@ -815,7 +883,7 @@ select_reference (sentence * sen)
 	printf ("Adding reference.\n");
 
       item_t * itm;
-      itm = ls_push_obj (fcs_sen->refs, ref_sen);
+      itm = ls_push_obj (fcs_sen->references, ref_sen);
       if (!itm)
 	return -2;
 
@@ -1421,6 +1489,9 @@ sentence_text_changed (sentence * sen)
   if (sen->font_resizing || sen->parent->undo)
     return 0;
 
+  int ln;
+  ln = sentence_get_line_no (sen);
+
   sen_parent * sp = sen->parent;
   sentence_set_value (sen, VALUE_TYPE_BLANK);
 
@@ -1429,7 +1500,7 @@ sentence_text_changed (sentence * sen)
   for (e_itr = sp->everything->head; e_itr; e_itr = e_itr->next)
     {
       list_t * e_refs;
-      e_refs = SENTENCE (e_itr->value)->refs;
+      e_refs = SENTENCE (e_itr->value)->references;
       if (e_refs)
 	{
 	  item_t * r_itr;
@@ -1524,9 +1595,11 @@ sentence_text_changed (sentence * sen)
 	  mod_itm = SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->head;
 	  for (; mod_itm; mod_itm = mod_itm->next)
 	    {
-	      if (SENTENCE (mod_itm->value)->line_num == sen->line_num)
+	      int m_ln;
+	      m_ln = sentence_get_line_no (mod_itm->value);
+	      if (m_ln == ln)
 		{
-		  sentence_set_line_no (SENTENCE (mod_itm->value), -1);
+		  sentence_update_line_no (SENTENCE (mod_itm->value), -1);
 		  sentence_set_value (SENTENCE (mod_itm->value), VALUE_TYPE_BLANK);
 		  break;
 		}
@@ -1544,14 +1617,12 @@ sentence_text_changed (sentence * sen)
 
       item_t * mod_itm;
       sentence * mod_sen;
-      mod_itm = ls_nth ((SEN_PARENT (GOAL (sp)->parent)->everything), sen->line_num);
+      mod_itm = ls_nth ((SEN_PARENT (GOAL (sp)->parent)->everything), ln);
       if (mod_itm)
 	{
-
 	  mod_sen = mod_itm->value;
 	  gtk_widget_override_background_color (mod_sen->eventbox, GTK_STATE_NORMAL, NULL);
-	  gtk_label_set_text (GTK_LABEL (sen->line_no), "");
-	  sen->line_num = 0;
+	  sentence_set_line_no (sen, -1);
 	}
     }
 
@@ -1632,7 +1703,10 @@ sentence_check_boolean_rule (sentence * sen, int boolean)
 int
 sentence_can_select_as_ref (sentence * sen, sentence * ref)
 {
-  return sen_data_can_sel_as_ref (sen->line_num, sen->indices,
-				  ref->line_num, ref->indices,
+  int s_ln, r_ln;
+  s_ln = sentence_get_line_no (sen);
+  r_ln = sentence_get_line_no (ref);
+  return sen_data_can_sel_as_ref (s_ln, sen->indices,
+				  r_ln, ref->indices,
 				  ref->premise);
 }
