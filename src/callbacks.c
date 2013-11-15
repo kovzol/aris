@@ -542,9 +542,13 @@ gui_open (GtkWidget * window)
       if (the_app->guis->num_stuff == 1)
 	{
 	  cur_ap = (aris_proof *) the_app->guis->head->value;
+	  sentence * sen;
+	  sen = ((sentence *) SEN_PARENT (cur_ap)->everything->head->value);
+	  unsigned char * text;
+	  text = sentence_get_text (sen);
 	  if (SEN_PARENT (cur_ap)->everything->num_stuff == 1
 	      && !cur_ap->edited
-	      && *((sentence *) SEN_PARENT (cur_ap)->everything->head->value)->text == '\0')
+	      && *text == '\0')
 	    have_blank_proof = 1;
 	}
 

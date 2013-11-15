@@ -168,12 +168,14 @@ goal_check_line (goal_t * goal, sentence * sen)
 {
   // First, check for text errors.
 
-  int ret_check = check_text (sen->text);
+  unsigned char * sen_text;
+  sen_text = sentence_get_text (sen);
+  int ret_check = check_text (sen_text);
   if (ret_check < 0)
     return -1;
 
   unsigned char * cmp_text;
-  cmp_text = die_spaces_die (sen->text);
+  cmp_text = die_spaces_die (sen_text);
   if (!cmp_text)
     return -1;
 
@@ -184,7 +186,7 @@ goal_check_line (goal_t * goal, sentence * sen)
        ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
-      unsigned char * ev_cmp_text = die_spaces_die (ev_sen->text);
+      unsigned char * ev_cmp_text = die_spaces_die (sentence_get_text (ev_sen));
       if (!ev_cmp_text)
 	return -1;
 

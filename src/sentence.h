@@ -29,7 +29,7 @@
 struct sentence {
   sen_data sd;
   // Data components
-  unsigned char * text;   // Contains the text of this item.
+  //unsigned char * text;   // Contains the text of this item.
   //unsigned char * sexpr;  // The sexpr text of this sentence.
 
   int premise : 1;   // Whether or not this sentence is a premise.
@@ -89,6 +89,9 @@ int sentence_rem_ref (sentence * sen, sentence * ref);
 
 int select_reference (sentence * sen);
 int select_sentence (sentence * sen);
+
+unsigned char * sentence_get_text (sentence * sen);
+int sentence_set_text (sentence * sen, unsigned char * text);
 
 char * sentence_copy_text (sentence * sen);
 int sentence_paste_text (sentence * sen);

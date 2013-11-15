@@ -509,7 +509,7 @@ aris_proof_to_proof (aris_proof * ap)
   for (g_itr = SEN_PARENT (ap->goal)->everything->head; g_itr; g_itr = g_itr->next)
     {
       sen = g_itr->value;
-      unsigned char * entry_text = sen->text;
+      unsigned char * entry_text = sentence_get_text (sen);
 
       itm = ls_ins_obj (proof->goals, entry_text, proof->goals->tail);
       if (!itm)
@@ -1165,7 +1165,7 @@ aris_proof_import_proof (aris_proof * ap)
 	    }
 
 	  ln = sentence_get_line_no (ev_sen);
-	  ev_text = ev_sen->text;
+	  ev_text = sentence_get_text (ev_sen);
 
 	  if (!strcmp (ev_text, pf_text))
 	    {
@@ -1216,7 +1216,7 @@ aris_proof_import_proof (aris_proof * ap)
 	  sentence * ev_sen;
 	  unsigned char * ev_text;
 	  ev_sen = ev_itr->value;
-	  ev_text = ev_sen->text;
+	  ev_text = sentence_get_text (ev_sen);
 
 	  if (!strcmp (pf_text, ev_text))
 	    break;
@@ -1295,7 +1295,7 @@ undo_info_init_one (aris_proof * ap, sentence * sen, int type)
 
   sen_data * sd;
   unsigned char * text;
-  text = strdup (sen->text);
+  text = strdup (sentence_get_text (sen));
   if (!text)
     return ret;
 
@@ -1305,7 +1305,6 @@ undo_info_init_one (aris_proof * ap, sentence * sen, int type)
 
   if (sd->text)
     free (sd->text);
-
   sd->text = text;
 
   ls_push_obj (sens, sd);
@@ -1489,11 +1488,8 @@ aris_proof_undo (aris_proof * ap, int undo)
 	  // Set text to ui->sd->text;
 
 	  SEN_PARENT(ap)->undo = 1;
-	  if (sen->text)
-	    free (sen->text);
-	  sen->text = strdup (sd->text);
-
-	  if (!sen->text)
+	  int ret = sentence_set_text (sen, sd->text);
+	  if (ret == -1)
 	    return -1;
 
 	  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));

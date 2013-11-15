@@ -121,10 +121,10 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   if (sd->text)
     {
-      sen->text = (unsigned char *) calloc (strlen (sd->text) + 1,
-					    sizeof (char));
-      CHECK_ALLOC (sen->text, NULL);
-      strcpy (sen->text, sd->text);
+      ret = sentence_set_text (sen, sd->text);
+      if (ret == -1)
+	return NULL;
+
       ret = sentence_paste_text (sen);
       if (ret == -1)
 	return NULL;
@@ -134,9 +134,9 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
     }
   else
     {
-      sen->text = (unsigned char *) calloc (1, sizeof (char));
-      CHECK_ALLOC (sen->text, NULL);
-      sen->text[0] = '\0';
+      SD(sen)->text = (unsigned char *) calloc (1, sizeof (char));
+      CHECK_ALLOC (SD(sen)->text, NULL);
+      SD(sen)->text[0] = '\0';
     }
 
   sen->references = init_list ();
@@ -291,9 +291,9 @@ sentence_destroy (sentence * sen)
     destroy_list (sen->references);
   sen->references = NULL;
 
-  if (sen->text)
-    free (sen->text);
-  sen->text = NULL;
+  if (SD(sen)->text)
+    free (SD(sen)->text);
+  SD(sen)->text = NULL;
 
   sen->parent = NULL;
 
@@ -347,17 +347,19 @@ sentence_copy_to_data (sentence * sen)
       CHECK_ALLOC (refs, NULL);
     }
 
+  /*
   if (sen->text)
     free (sen->text);
+  */
 
-  sen->text = sentence_copy_text (sen);
-  if (!sen->text)
+  SD(sen)->text = sentence_copy_text (sen);
+  if (!SD(sen)->text)
     return NULL;
 
   refs[i] = -1;
 
   sd = sen_data_init (SD(sen)->line_num, SD(sen)->rule,
-		      sen->text, refs, sen->premise, sen->file,
+		      SD(sen)->text, refs, sen->premise, sen->file,
 		      sen->subproof, sen->depth, SD(sen)->sexpr);
 
   if (!sd)
@@ -1200,16 +1202,18 @@ sentence_key (sentence * sen, int key, int ctrl)
 	{
 	  unsigned char * tmp_str = NULL;
 	  GtkTextIter oth_pos;
+	  unsigned char * sen_text;
+	  sen_text = sentence_get_text (sen);
 
 	  offset = get_index (&pos);
 
 	  if (got_par == 1)
 	    {
-	      tmp_pos = parse_parens (sen->text, offset, NULL);
+	      tmp_pos = parse_parens (sen_text, offset, NULL);
 	    }
 	  else
 	    {
-	      tmp_pos = reverse_parse_parens (sen->text, offset,
+	      tmp_pos = reverse_parse_parens (sen_text, offset,
 					      NULL);
 	      if (tmp_pos == -2)
 		return -1;
@@ -1416,29 +1420,31 @@ sentence_paste_text (sentence * sen)
   GtkTextBuffer * buffer;
   GtkTextIter end;
 
+  unsigned char * sen_text = sentence_get_text (sen);
+  
   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
   gtk_text_buffer_get_start_iter (buffer, &end);
 
-  for (i = 0; sen->text[i]; i++)
+  for (i = 0; sen_text[i]; i++)
     {
-      if (IS_TYPE_CONN (sen->text + i, gui_conns)
-	  || IS_TYPE_CONN (sen->text + i, cli_conns))
+      if (IS_TYPE_CONN (sen_text + i, gui_conns)
+	  || IS_TYPE_CONN (sen_text + i, cli_conns))
 	{
 	  GdkPixbuf * pix, * new_pix;
 
 	  unsigned char * conn;
 	  int len;
 
-	  if (IS_TYPE_CONN (sen->text + i, gui_conns))
+	  if (IS_TYPE_CONN (sen_text + i, gui_conns))
 	    {
-	      if (!strncmp (sen->text + i, gui_conns.not, gui_conns.nl))
+	      if (!strncmp (sen_text + i, gui_conns.not, gui_conns.nl))
 		len = gui_conns.nl;
 	      else
 		len = gui_conns.cl;
 	    }
 	  else
 	    {
-	      if (!strncmp (sen->text + i, NOT, NL))
+	      if (!strncmp (sen_text + i, NOT, NL))
 		len = NL;
 	      else
 		len = CL;
@@ -1447,7 +1453,7 @@ sentence_paste_text (sentence * sen)
 	  conn = (unsigned char *) calloc (len + 1, sizeof (char));
 	  CHECK_ALLOC (conn, -1);
 	  
-	  strncpy (conn, sen->text + i, len);
+	  strncpy (conn, sen_text + i, len);
 	  conn[len] = '\0';
 
 	  pix = sen_parent_get_conn_by_type (sen->parent,
@@ -1465,7 +1471,7 @@ sentence_paste_text (sentence * sen)
 	}
       else
 	{
-	  gtk_text_buffer_insert (buffer, &end, sen->text + i, 1);
+	  gtk_text_buffer_insert (buffer, &end, sen_text + i, 1);
 	}
     }
 
@@ -1522,12 +1528,14 @@ sentence_text_changed (sentence * sen)
   text = sentence_copy_text (sen);
   text_len = strlen (text);
 
+  unsigned char * sen_text;
   int diff_pos;
 
-  old_len = strlen (sen->text);
-  diff_pos = find_difference (sen->text, (unsigned char *) text);
+  sen_text = sentence_get_text (sen);
+  old_len = strlen (sen_text);
+  diff_pos = find_difference (sen_text, (unsigned char *) text);
 
-  if (0)
+#if 0
     {
       //TODO: Check for semi-colon and set mark.
       if (text_len > old_len)
@@ -1568,6 +1576,7 @@ sentence_text_changed (sentence * sen)
 	    }
 	}
     }
+#endif
 
   undo_info ui;
   ui = undo_info_init_one (NULL, sen, UIT_MOD_TEXT);
@@ -1621,13 +1630,10 @@ sentence_text_changed (sentence * sen)
 	}
     }
 
-  if (sen->text)
-    free (sen->text);
+  if (sen_text)
+    free (sen_text);
 
-  sen->text = (unsigned char *) calloc (text_len + 1, sizeof (char));
-  CHECK_ALLOC (sen->text, -1);
-
-  strcpy (sen->text, text);
+  sentence_set_text (sen, text);
   free (text);
   return 0;
 }
@@ -1722,4 +1728,21 @@ int
 sentence_get_rule (sentence  * sen)
 {
   return SD(sen)->rule;
+}
+
+int
+sentence_set_text (sentence * sen, unsigned char * text)
+{
+  if (SD(sen)->text)
+    free (SD(sen)->text);
+  SD(sen)->text = strdup (text);
+  if (!SD(sen)->text)
+    return -1;
+  return 0;
+}
+
+unsigned char *
+sentence_get_text (sentence * sen)
+{
+  return SD(sen)->text;
 }
