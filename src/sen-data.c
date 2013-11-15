@@ -148,6 +148,12 @@ sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
   return 0;
 }
 
+int
+sd_convert_sexpr (sen_data * sd)
+{
+  return sen_convert_sexpr (sd->text, &(sd->sexpr));
+}
+
 /* Evaluates a sentence given its data.
  *  input:
  *   sd - The sentence data to evaluate.

@@ -685,7 +685,8 @@ evaluate_line (aris_proof * ap, sentence * sen)
       sentence * ev_sen = ev_itr->value;
       int ln;
 
-      ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
+      //ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
+      ret = sd_convert_sexpr (SD(ev_sen));
       if (ret == -1)
 	return -1;
 
@@ -702,7 +703,7 @@ evaluate_line (aris_proof * ap, sentence * sen)
 		     || ev_sen->subproof
 		     || sentence_get_rule (ev_sen) == RULE_SQ)
 	    ? 0 : 1;
-	  ret = sexpr_collect_vars_to_proof (vars, ev_sen->sexpr, arb);
+	  ret = sexpr_collect_vars_to_proof (vars, SD(ev_sen)->sexpr, arb);
 	  if (ret == -1)
 	    return -1;
 	}
@@ -774,7 +775,8 @@ evaluate_proof (aris_proof * ap)
   for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
-      ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
+      //ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
+      ret = sd_convert_sexpr (SD(ev_sen));
       if (ret == -1)
 	return -1;
 

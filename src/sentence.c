@@ -77,14 +77,14 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
       ln = (fcs) ? sentence_get_line_no (fcs->value) + 1 : 1;
     }
 
-  // Initialize the GUI components.
   sen->premise = sd->premise;
   sen->depth = sd->depth;
+
+  // Initialize the GUI components.
   sentence_gui_init (sen);
   sen->parent = sp;
   sen->value_type = VALUE_TYPE_BLANK;
   sen->selected = 0;
-  sen->sexpr = NULL;
   sen->font_resizing = 0;
 
   sen->indices = (int *) calloc (sen->depth + 1, sizeof (int));
@@ -301,9 +301,9 @@ sentence_destroy (sentence * sen)
     free (sen->indices);
   sen->indices = NULL;
 
-  if (sen->sexpr)
-    free (sen->sexpr);
-  sen->sexpr = NULL;
+  if (SD(sen)->sexpr)
+    free (SD(sen)->sexpr);
+  SD(sen)->sexpr = NULL;
 
   gtk_widget_destroy (sen->panel);
   free (sen);
@@ -358,7 +358,7 @@ sentence_copy_to_data (sentence * sen)
 
   sd = sen_data_init (SD(sen)->line_num, SD(sen)->rule,
 		      sen->text, refs, sen->premise, sen->file,
-		      sen->subproof, sen->depth, sen->sexpr);
+		      sen->subproof, sen->depth, SD(sen)->sexpr);
 
   if (!sd)
     return NULL;
@@ -1506,10 +1506,10 @@ sentence_text_changed (sentence * sen)
 	}
     }
 
-  if (sen->sexpr)
+  if (SD(sen)->sexpr)
     {
-      free (sen->sexpr);
-      sen->sexpr = NULL;
+      free (SD(sen)->sexpr);
+      SD(sen)->sexpr = NULL;
     }
 
   char * text;

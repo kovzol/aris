@@ -64,6 +64,7 @@ sen_data * sen_data_init (int line_num, int rule, unsigned char * text,
 void sen_data_destroy (sen_data * sd);
 
 int sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr);
+int sd_convert_sexpr (sen_data * sd);
 
 char * sen_data_evaluate (sen_data * sd, int * ret_val,
 			  list_t * vars, list_t * lines);

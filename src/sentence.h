@@ -29,10 +29,8 @@
 struct sentence {
   sen_data sd;
   // Data components
-  //int line_num;           // Keeps track of the line number.
-  //int rule;               // Index of the rule of this sentence.
   unsigned char * text;   // Contains the text of this item.
-  unsigned char * sexpr;  // The sexpr text of this sentence.
+  //unsigned char * sexpr;  // The sexpr text of this sentence.
 
   int premise : 1;   // Whether or not this sentence is a premise.
   int subproof : 1;  // Whether or not this sentence starts a subproof.
