@@ -277,7 +277,7 @@ static conf_obj display_conf[NUM_DISPLAY_CONFS] = {
 
   {N_("Good Color"), N_("The background color in which to hilight\
  matched parentheses and valid goal lines."), NULL, CONF_OBJ_COLOR,
-   BG_COLOR_GOOD, conf_color_value, NULL, "ff0d00"},
+   BG_COLOR_GOOD, conf_color_value, NULL, "007f00"},
 
   {N_("Selection Color"), N_("The background color in which to\
  hilight selected sentences."), NULL, CONF_OBJ_COLOR, BG_COLOR_SEL,\
