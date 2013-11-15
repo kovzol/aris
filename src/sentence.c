@@ -87,8 +87,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   sen->selected = 0;
   sen->font_resizing = 0;
 
-  sen->indices = (int *) calloc (depth + 1, sizeof (int));
-  CHECK_ALLOC (sen->indices, NULL);
+  SD(sen)->indices = (int *) calloc (depth + 1, sizeof (int));
+  CHECK_ALLOC (SD(sen)->indices, NULL);
 
   int i = 0;
 
@@ -103,13 +103,13 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 	? SEN_DEPTH(fcs_sen) : depth;
 
       for (i = 0; i < index_copy_end; i++)
-	sen->indices[i] = fcs_sen->indices[i];
+	sentence_set_index (sen,i,SEN_IND(fcs_sen,i));
 
       if (sd->subproof)
-	sen->indices[i++] = ln;
+	sentence_set_index (sen,i++,ln);
     }
 
-  sen->indices[i] = -1;
+  sentence_set_index (sen,i,-1);
 
   // Set the data components.
 
@@ -290,22 +290,24 @@ sentence_destroy (sentence * sen)
     destroy_list (sen->references);
   sen->references = NULL;
 
+  /*
   if (SD(sen)->text)
     free (SD(sen)->text);
   SD(sen)->text = NULL;
 
-  sen->parent = NULL;
-
-  if (sen->indices)
-    free (sen->indices);
-  sen->indices = NULL;
+  if (SD(sen)->indices)
+  free (SD(sen)->indices);
+  SD(sen)->indices = NULL;
 
   if (SD(sen)->sexpr)
-    free (SD(sen)->sexpr);
+  free (SD(sen)->sexpr);
   SD(sen)->sexpr = NULL;
+  */
+
+  sen->parent = NULL;
 
   gtk_widget_destroy (sen->panel);
-  free (sen);
+  sen_data_destroy (SD(sen));
 }
 
 /* Copies the elements of a sentence into a sen_data structure.
@@ -317,6 +319,8 @@ sentence_destroy (sentence * sen)
 sen_data *
 sentence_copy_to_data (sentence * sen)
 {
+  //return SD(sen);
+
   sen_data * sd;
   int i;
   item_t * ref_itr, * var_itr;
@@ -368,7 +372,7 @@ sentence_copy_to_data (sentence * sen)
   CHECK_ALLOC (sd->indices, NULL);
 
   for (i = 0; i < depth; i++)
-    sd->indices[i] = sen->indices[i];
+    sd->indices[i] = SEN_IND(sen,i);
   sd->indices[i] = -1;
 
   return sd;
@@ -448,8 +452,8 @@ sentence_update_line_no (sentence * sen, int new)
     {
       // Only the indices that are greater than the new line will
       // need to be changed.
-      if (sen->indices[i] >= old)
-	sen->indices[i] = sen->indices[i] + line_mod;
+      if (SEN_IND(sen,i) >= old)
+	sentence_set_index (sen, i, SEN_IND(sen,i) + line_mod);
     }
 
   if (sentence_get_rule (sen) != RULE_LM)
@@ -1656,12 +1660,12 @@ sentence_check_entire (sentence * sen, sentence * ref)
   int i;
   for (i = 0; i < SEN_DEPTH(ref); i++)
     {
-      if (ref->indices[i] != sen->indices[i])
+      if (SEN_IND(ref,i) != SEN_IND(sen,i))
 	break;
     }
 
   int ret;
-  if (ref->indices[i] == -1)
+  if (SEN_IND(ref,i) == -1)
     ret = 0;
   else
     ret = 1;
@@ -1704,12 +1708,15 @@ sentence_check_boolean_rule (sentence * sen, int boolean)
 int
 sentence_can_select_as_ref (sentence * sen, sentence * ref)
 {
+  return sen_data_can_select_as_ref (SD(sen), SD(ref));
+  /*
   int s_ln, r_ln;
   s_ln = sentence_get_line_no (sen);
   r_ln = sentence_get_line_no (ref);
-  return sen_data_can_sel_as_ref (s_ln, sen->indices,
-				  r_ln, ref->indices,
+  return sen_data_can_sel_as_ref (s_ln, SD(sen)->indices,
+				  r_ln, SD(ref)->indices,
 				  SEN_PREM(ref));
+  */
 }
 
 int
@@ -1762,4 +1769,16 @@ int
 sentence_depth (sentence * sen)
 {
   return SD(sen)->depth;
+}
+
+int
+sentence_get_index (sentence * sen, int i)
+{
+  return SD(sen)->indices[i];
+}
+
+int
+sentence_set_index (sentence * sen, int i, int index)
+{
+  SD(sen)->indices[i] = index;
 }

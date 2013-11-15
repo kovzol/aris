@@ -29,13 +29,14 @@
 #define SEN_PREM(s) sentence_premise ((sentence*)(s))
 #define SEN_SUB(s) sentence_subproof ((sentence*)(s))
 #define SEN_DEPTH(s) sentence_depth ((sentence*)(s))
+#define SEN_IND(s,i) sentence_get_index ((sentence*)(s),i)
 
 struct sentence {
   sen_data sd;
   // Data components
 
   //int depth;         // The depth of this sentence.  0 for all top levels.
-  int * indices;     // The line numbers of the subproofs that contain this sentence.
+  //int * indices;     // The line numbers of the subproofs that contain this sentence.
 
   unsigned char * file;   // The file name if lemma is used on this sentence.
 
@@ -112,5 +113,8 @@ void sentence_connect_signals (sentence * sen);
 int sentence_premise (sentence * sen);
 int sentence_subproof (sentence * sen);
 int sentence_depth (sentence * sen);
+
+int sentence_get_index (sentence * sen, int i);
+int sentence_set_index (sentence * sen, int i, int index);
 
 #endif  /*  ARIS_SENTENCE_H  */
