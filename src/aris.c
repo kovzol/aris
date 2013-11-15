@@ -1067,8 +1067,6 @@ main (int argc, char *argv[])
       exit (EXIT_FAILURE);
 #else
 
-      //WARPSTAR
-      //main_conns = gui_conns;
       main_conns = cli_conns;
 
       gtk_init (&argc, &argv);
