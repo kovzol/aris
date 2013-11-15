@@ -133,9 +133,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
     }
   else
     {
-      SD(sen)->text = (unsigned char *) calloc (1, sizeof (char));
+      SD(sen)->text = strdup ("");
       CHECK_ALLOC (SD(sen)->text, NULL);
-      SD(sen)->text[0] = '\0';
     }
 
   sen->references = init_list ();
@@ -1571,6 +1570,7 @@ sentence_text_changed (sentence * sen)
 
   if (sen_text)
     free (sen_text);
+  SD(sen)->text = NULL;
 
   sentence_set_text (sen, text);
   free (text);
@@ -1645,14 +1645,6 @@ int
 sentence_can_select_as_ref (sentence * sen, sentence * ref)
 {
   return sen_data_can_select_as_ref (SD(sen), SD(ref));
-  /*
-  int s_ln, r_ln;
-  s_ln = sentence_get_line_no (sen);
-  r_ln = sentence_get_line_no (ref);
-  return sen_data_can_sel_as_ref (s_ln, SD(sen)->indices,
-				  r_ln, SD(ref)->indices,
-				  SEN_PREM(ref));
-  */
 }
 
 int
@@ -1677,7 +1669,9 @@ sentence_set_text (sentence * sen, unsigned char * text)
 {
   if (SD(sen)->text)
     free (SD(sen)->text);
+
   SD(sen)->text = strdup (text);
+
   if (!SD(sen)->text)
     return -1;
   return 0;
