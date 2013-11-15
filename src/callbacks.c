@@ -701,11 +701,12 @@ evaluate_line (aris_proof * ap, sentence * sen)
       ret = sentence_can_select_as_ref (sen, ev_sen);
       if (ret == ln)
 	{
+	  int rule = sentence_get_rule (ev_sen);
 	  // This means that the variables apply to the current line.
-	  int arb = (ev_sen->premise
-		     || sentence_get_rule (ev_sen) == RULE_EI
-		     || ev_sen->subproof
-		     || sentence_get_rule (ev_sen) == RULE_SQ)
+	  int prem = SEN_PREM(ev_sen), sub = SEN_SUB(ev_sen);
+	  int arb = (prem || sub
+		     || rule == RULE_EI
+		     || rule == RULE_SQ)
 	    ? 0 : 1;
 	  ret = sexpr_collect_vars_to_proof (vars, SD(ev_sen)->sexpr, arb);
 	  if (ret == -1)

@@ -251,7 +251,7 @@ rule_toggled (int index)
   // The currently focused sentence is a premise,
   // so just untoggle the old rule.
 
-  if (!sen || sen->premise)
+  if (!sen || SEN_PREM(sen))
     {
       the_app->rt->toggled = index;
       the_app->rt->user = 0;

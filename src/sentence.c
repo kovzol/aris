@@ -77,7 +77,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
       ln = (fcs) ? sentence_get_line_no (fcs->value) + 1 : 1;
     }
 
-  sen->premise = sd->premise;
+  SD(sen)->premise = sd->premise;
   sen->depth = sd->depth;
 
   // Initialize the GUI components.
@@ -92,7 +92,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   int i = 0;
 
-  if (!sen->premise)
+  if (!SEN_PREM(sen))
     {
       sentence * fcs_sen;
       int index_copy_end;
@@ -186,9 +186,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
       sen->file = NULL;
     }
 
-  //sen->vars = NULL;
   sen->reference = 0;
-  sen->subproof = sd->subproof;
+  SD(sen)->subproof = sd->subproof;
 
   sentence_set_font (sen, sen->parent->font);
 
@@ -359,8 +358,8 @@ sentence_copy_to_data (sentence * sen)
   refs[i] = -1;
 
   sd = sen_data_init (SD(sen)->line_num, SD(sen)->rule,
-		      SD(sen)->text, refs, sen->premise, sen->file,
-		      sen->subproof, sen->depth, SD(sen)->sexpr);
+		      SD(sen)->text, refs, SEN_PREM(sen), sen->file,
+		      SEN_SUB(sen), sen->depth, SD(sen)->sexpr);
 
   if (!sd)
     return NULL;
@@ -728,7 +727,7 @@ sentence_in (sentence * sen)
   // Set the background color to cyan.
   sentence_set_bg (sen, BG_COLOR_CONC);
 
-  if (!sen->premise)
+  if (!SEN_PREM(sen))
     {
       int rule = sentence_get_rule (sen);
       // Toggle the rule, if one exists.
@@ -796,7 +795,7 @@ sentence_out (sentence * sen)
   // Reset the background color of the references.
   sentence_set_bg (sen, BG_COLOR_DEFAULT);
 
-  if (!sen->premise)
+  if (!SEN_PREM(sen))
     {
 
       item_t * ref_itr = sen->references->head;
@@ -831,7 +830,7 @@ select_reference (sentence * sen)
   if (the_app->verbose)
     printf ("Selecting reference.\n");
 
-  if (!sp->focused || SENTENCE (sp->focused->value)->premise)
+  if (!sp->focused || SEN_PREM(sp->focused->value))
     return -1;
 
   sentence * fcs_sen;
@@ -924,7 +923,7 @@ select_sentence (sentence * sen)
 	printf ("Deselecting sentence.\n");
 
       ls_rem_obj_value (ARIS_PROOF (sp)->selected, sen);
-      if (sen->subproof)
+      if (SEN_SUB(sen))
 	{
 	  // Remove the entire subproof.
 	  int sen_depth;
@@ -954,7 +953,7 @@ select_sentence (sentence * sen)
       if (!itm)
 	return -1;
 
-      if (sen->subproof)
+      if (SEN_SUB(sen))
 	{
 	  // Add entire subproof.
 	  int sen_depth;
@@ -1260,7 +1259,7 @@ sentence_set_reference (sentence * sen, int reference, int entire_subproof)
   else
     sentence_set_bg (sen, BG_COLOR_DEFAULT);
 
-  if (sen->subproof && entire_subproof)
+  if (SEN_SUB(sen) && entire_subproof)
     {
       item_t * sub_itr;
 
@@ -1299,7 +1298,7 @@ sentence_set_selected (sentence * sen, int selected)
   else
     sentence_set_bg (sen, BG_COLOR_DEFAULT);
 
-  if (sen->subproof)
+  if (SEN_SUB(sen))
     {
       item_t * sub_itr;
 
@@ -1648,7 +1647,7 @@ sentence_text_changed (sentence * sen)
 int
 sentence_check_entire (sentence * sen, sentence * ref)
 {
-  if (!ref->subproof)
+  if (!SEN_SUB(ref))
     return 0;
 
   if (ref->depth > sen->depth)
@@ -1710,7 +1709,7 @@ sentence_can_select_as_ref (sentence * sen, sentence * ref)
   r_ln = sentence_get_line_no (ref);
   return sen_data_can_sel_as_ref (s_ln, sen->indices,
 				  r_ln, ref->indices,
-				  ref->premise);
+				  SEN_PREM(ref));
 }
 
 int
@@ -1745,4 +1744,16 @@ unsigned char *
 sentence_get_text (sentence * sen)
 {
   return SD(sen)->text;
+}
+
+int
+sentence_premise (sentence * sen)
+{
+  return SD(sen)->premise;
+}
+
+int
+sentence_subproof (sentence * sen)
+{
+  return SD(sen)->subproof;
 }

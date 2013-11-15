@@ -192,7 +192,7 @@ goal_check_line (goal_t * goal, sentence * sen)
 
       if (!strcmp (ev_cmp_text, cmp_text))
 	{
-	  if (ev_sen->premise || ev_sen->subproof)
+	  if (SEN_PREM(ev_sen) || SEN_SUB(ev_sen))
 	    {
 	      if (ev_sen->value_type == VALUE_TYPE_ERROR)
 		is_valid = 0;
@@ -234,7 +234,7 @@ goal_check_line (goal_t * goal, sentence * sen)
 	}
       else
 	{
-	  if (ev_sen->premise || ev_sen->subproof)
+	  if (SEN_PREM(ev_sen) || SEN_SUB(ev_sen))
 	    {
 	      if (ev_sen->value_type == VALUE_TYPE_ERROR)
 		is_valid = 0;

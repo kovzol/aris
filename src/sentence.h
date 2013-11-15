@@ -26,14 +26,13 @@
 #define SENTENCE(o) ((sentence *) o)
 #define SEMI_NAME "semi"
 
+#define SEN_PREM(s) sentence_premise ((sentence*)(s))
+#define SEN_SUB(s) sentence_subproof ((sentence*)(s))
+
 struct sentence {
   sen_data sd;
   // Data components
-  //unsigned char * text;   // Contains the text of this item.
-  //unsigned char * sexpr;  // The sexpr text of this sentence.
 
-  int premise : 1;   // Whether or not this sentence is a premise.
-  int subproof : 1;  // Whether or not this sentence starts a subproof.
   int depth;         // The depth of this sentence.  0 for all top levels.
   int * indices;     // The line numbers of the subproofs that contain this sentence.
 
@@ -45,13 +44,13 @@ struct sentence {
   proof_t * proof;        // The proof for this sentence, if lemma is used.
 
   // GUI components
-  GtkWidget * panel;      // Contains the other items. - GtkHBox
+  GtkWidget * panel;      // Contains the other items. - GtkGrid
   GtkWidget * entry;      // Actual Text Entry. - GtkTextView
   GtkWidget * line_no;    // The line number of this sentence. - GtkLabel
   GtkWidget * value;      // True / False indicator. - GtkLabel
   GtkWidget * eventbox;   // Contains the line number label.
   GtkTextMark * mark;     // The mark that keeps track of the semi-colon in a sentence.
-  GtkWidget * rule_box;
+  GtkWidget * rule_box;   // The box that displays the rule of the sentence.
 
   int font_resizing;      // Whether or not font is being resized.
   int selected : 1;       // Whether or not this sentence is selected.
@@ -108,5 +107,8 @@ int sentence_check_boolean_rule (sentence * sen, int boolean);
 int sentence_can_select_as_ref (sentence * sen, sentence * ref);
 
 void sentence_connect_signals (sentence * sen);
+
+int sentence_premise (sentence * sen);
+int sentence_subproof (sentence * sen);
 
 #endif  /*  ARIS_SENTENCE_H  */

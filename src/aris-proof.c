@@ -562,7 +562,7 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
       foc_2 = SEN_PARENT (ap)->focused;
     }
 
-  fcs = (SENTENCE (SEN_PARENT (ap)->focused->value)->premise) ? foc_1 : foc_2;
+  fcs = SEN_PREM(SEN_PARENT (ap)->focused->value) ? foc_1 : foc_2;
 
   if (!fcs)
     {
@@ -856,7 +856,7 @@ aris_proof_copy (aris_proof * ap)
   if (ap->selected->num_stuff == 0)
     {
       sel_itr = SEN_PARENT (ap)->focused;
-      if (((sentence *) sel_itr->value)->subproof)
+      if (SEN_SUB(sel_itr->value))
 	{
 	  is_subproof = 1;
 	  org_depth = ((sentence *) sel_itr->value)->depth;
@@ -920,7 +920,7 @@ aris_proof_kill (aris_proof * ap)
   if (ap->selected->num_stuff == 0)
     {
       sel_itr = SEN_PARENT (ap)->focused;
-      if (SENTENCE (sel_itr->value)->subproof)
+      if (SEN_SUB(sel_itr->value))
 	{
 	  is_subproof = 1;
 	  org_depth = SENTENCE (sel_itr->value)->depth;
@@ -1048,7 +1048,7 @@ aris_proof_toggle_boolean_mode (aris_proof * ap)
 
       ev_sen = ev_itr->value;
 
-      if (ev_sen->subproof)
+      if (SEN_SUB(ev_sen))
 	{
 	  aris_proof_set_sb (ap, _("Subproofs may not be used in boolean mode."));
 	  return -1;
@@ -1157,7 +1157,7 @@ aris_proof_import_proof (aris_proof * ap)
 	  int ln;
 
 	  ev_sen = ev_itr->value;
-	  if (!ev_sen->premise)
+	  if (!SEN_PREM(ev_sen))
 	    {
 	      if (!ev_conc)
 		ev_conc = ev_itr;
@@ -1174,7 +1174,7 @@ aris_proof_import_proof (aris_proof * ap)
 	    }
 	}
 
-      if (!ev_itr || !((sentence *) ev_itr->value)->premise)
+      if (!ev_itr || !SEN_PREM(ev_itr->value))
 	{
 	  sentence * sen_chk;
 	  int ln;
@@ -1197,7 +1197,7 @@ aris_proof_import_proof (aris_proof * ap)
 	  sentence * ev_sen;
 
 	  ev_sen = ev_itr->value;
-	  if (!ev_sen->premise)
+	  if (SEN_PREM(ev_sen))
 	    {
 	      if (!ev_conc)
 		ev_conc = ev_itr;
