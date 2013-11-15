@@ -78,7 +78,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
     }
 
   SD(sen)->premise = sd->premise;
-  sen->depth = sd->depth;
+  SD(sen)->depth = depth = sd->depth;
 
   // Initialize the GUI components.
   sentence_gui_init (sen);
@@ -87,7 +87,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   sen->selected = 0;
   sen->font_resizing = 0;
 
-  sen->indices = (int *) calloc (sen->depth + 1, sizeof (int));
+  sen->indices = (int *) calloc (depth + 1, sizeof (int));
   CHECK_ALLOC (sen->indices, NULL);
 
   int i = 0;
@@ -99,8 +99,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
       fcs_sen = fcs->value;
 
-      index_copy_end = (fcs_sen->depth < sen->depth)
-	? fcs_sen->depth : sen->depth;
+      index_copy_end = (SEN_DEPTH(fcs_sen) < depth)
+	? SEN_DEPTH(fcs_sen) : depth;
 
       for (i = 0; i < index_copy_end; i++)
 	sen->indices[i] = fcs_sen->indices[i];
@@ -222,10 +222,10 @@ sentence_gui_init (sentence * sen)
   gtk_event_box_set_above_child (GTK_EVENT_BOX (sen->eventbox), TRUE);
 
   GtkWidget * widget;
-  if (sen->depth > 0)
+  if (SEN_DEPTH(sen) > 0)
     {
       widget = gtk_label_new (NULL);
-      g_object_set (G_OBJECT (widget), "width-chars", 4 * sen->depth,
+      g_object_set (G_OBJECT (widget), "width-chars", 4 * SEN_DEPTH(sen),
 		    NULL);
     }
 
@@ -239,7 +239,7 @@ sentence_gui_init (sentence * sen)
 
   gtk_grid_attach (GTK_GRID (sen->panel), sen->eventbox, left++, 0, 1, 1);
   
-  if (sen->depth > 0)
+  if (SEN_DEPTH(sen) > 0)
     {
       gtk_grid_attach (GTK_GRID (sen->panel), widget, left++, 0, 1, 1);
     }
@@ -346,10 +346,10 @@ sentence_copy_to_data (sentence * sen)
       CHECK_ALLOC (refs, NULL);
     }
 
-  /*
-  if (sen->text)
-    free (sen->text);
-  */
+  if (SD(sen)->text)
+    free (SD(sen)->text);
+
+  int depth = SEN_DEPTH (sen);
 
   SD(sen)->text = sentence_copy_text (sen);
   if (!SD(sen)->text)
@@ -359,15 +359,15 @@ sentence_copy_to_data (sentence * sen)
 
   sd = sen_data_init (SD(sen)->line_num, SD(sen)->rule,
 		      SD(sen)->text, refs, SEN_PREM(sen), sen->file,
-		      SEN_SUB(sen), sen->depth, SD(sen)->sexpr);
+		      SEN_SUB(sen), depth, SD(sen)->sexpr);
 
   if (!sd)
     return NULL;
 
-  sd->indices = (int *) calloc (sen->depth + 1, sizeof (int));
+  sd->indices = (int *) calloc (depth + 1, sizeof (int));
   CHECK_ALLOC (sd->indices, NULL);
 
-  for (i = 0; i < sen->depth; i++)
+  for (i = 0; i < depth; i++)
     sd->indices[i] = sen->indices[i];
   sd->indices[i] = -1;
 
@@ -444,7 +444,7 @@ sentence_update_line_no (sentence * sen, int new)
 
   line_mod = new - old;
 
-  for (i = 0; i < sen->depth; i++)
+  for (i = 0; i < SEN_DEPTH(sen); i++)
     {
       // Only the indices that are greater than the new line will
       // need to be changed.
@@ -927,7 +927,7 @@ select_sentence (sentence * sen)
 	{
 	  // Remove the entire subproof.
 	  int sen_depth;
-	  sen_depth = sen->depth;
+	  sen_depth = SEN_DEPTH(sen);
 
 	  item_t * ev_itr;
 	  ev_itr = ls_find (sp->everything, sen);
@@ -935,7 +935,7 @@ select_sentence (sentence * sen)
 	    {
 	      sentence * ev_sen;
 	      ev_sen = ev_itr->value;
-	      if (ev_sen->depth < sen_depth)
+	      if (SEN_DEPTH(ev_sen) < SEN_DEPTH(sen))
 		break;
 
 	      ls_rem_obj_value (ARIS_PROOF (sp)->selected, ev_sen);
@@ -957,7 +957,7 @@ select_sentence (sentence * sen)
 	{
 	  // Add entire subproof.
 	  int sen_depth;
-	  sen_depth = sen->depth;
+	  sen_depth = SEN_DEPTH(sen);
 
 	  item_t * ev_itr;
 	  ev_itr = ls_find (sp->everything, sen);
@@ -965,7 +965,7 @@ select_sentence (sentence * sen)
 	    {
 	      sentence * ev_sen;
 	      ev_sen = ev_itr->value;
-	      if (ev_sen->depth < sen_depth)
+	      if (SEN_DEPTH(ev_sen) < sen_depth)
 		break;
 
 	      itm = ls_push_obj (ARIS_PROOF (sp)->selected, ev_sen);
@@ -1270,7 +1270,7 @@ sentence_set_reference (sentence * sen, int reference, int entire_subproof)
 	  sentence * sub_sen;
 	  sub_sen = sub_itr->value;
 
-	  if (sub_sen->depth < sen->depth)
+	  if (SEN_DEPTH(sub_sen) < SEN_DEPTH(sen))
 	    break;
 
 	  if (reference)
@@ -1309,7 +1309,7 @@ sentence_set_selected (sentence * sen, int selected)
 	  sentence * sub_sen;
 	  sub_sen = sub_itr->value;
 
-	  if (sub_sen->depth < sen->depth)
+	  if (SEN_DEPTH(sub_sen) < SEN_DEPTH(sen))
 	    break;
 
 	  if (selected)
@@ -1650,11 +1650,11 @@ sentence_check_entire (sentence * sen, sentence * ref)
   if (!SEN_SUB(ref))
     return 0;
 
-  if (ref->depth > sen->depth)
+  if (SEN_DEPTH(ref) > SEN_DEPTH(sen))
     return 1;
 
   int i;
-  for (i = 0; i < ref->depth; i++)
+  for (i = 0; i < SEN_DEPTH(ref); i++)
     {
       if (ref->indices[i] != sen->indices[i])
 	break;
@@ -1756,4 +1756,10 @@ int
 sentence_subproof (sentence * sen)
 {
   return SD(sen)->subproof;
+}
+
+int
+sentence_depth (sentence * sen)
+{
+  return SD(sen)->depth;
 }

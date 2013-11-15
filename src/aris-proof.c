@@ -577,11 +577,11 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
 
   if (sd->depth == -1)
     {
-      sd->depth = ((sentence *) fcs->value)->depth - 1;
+      sd->depth = SEN_DEPTH(fcs->value) - 1;
     }
   else if (sd->depth == DEPTH_DEFAULT)
     {
-      sd->depth = ((sentence *) fcs->value)->depth;
+      sd->depth = SEN_DEPTH(fcs->value);
       if (sd->subproof)
 	sd->depth++;
     }
@@ -719,7 +719,7 @@ aris_proof_create_new_sub (aris_proof * ap)
 sentence *
 aris_proof_end_sub (aris_proof * ap)
 {
-  if (((sentence *) SEN_PARENT (ap)->focused->value)->depth == 0)
+  if (SEN_DEPTH(SEN_PARENT (ap)->focused->value) == 0)
     return NULL;
 
   sentence * sen;
@@ -859,7 +859,7 @@ aris_proof_copy (aris_proof * ap)
       if (SEN_SUB(sel_itr->value))
 	{
 	  is_subproof = 1;
-	  org_depth = ((sentence *) sel_itr->value)->depth;
+	  org_depth = SEN_DEPTH(sel_itr->value);
 	}
     }
   else
@@ -872,16 +872,18 @@ aris_proof_copy (aris_proof * ap)
       sentence * sen;
       sen_data * sd;
       item_t * ret_chk;
+      int depth;
 
       sen = sel_itr->value;
-      if (sen->depth < org_depth)
+      depth = SEN_DEPTH(sen);
+      if (depth < org_depth)
 	break;
 
       sd = sentence_copy_to_data (sen);
       if (!sd)
 	return -1;
 
-      if (sel_itr->prev && sen->depth < ((sentence *) sel_itr->prev->value)->depth)
+      if (sel_itr->prev && SEN_DEPTH(sen) < SEN_DEPTH(sel_itr->prev->value))
 	sd->depth = -1;
       else
 	sd->depth = DEPTH_DEFAULT;
@@ -890,7 +892,7 @@ aris_proof_copy (aris_proof * ap)
       if (!ret_chk)
 	return -1;
 
-      if (ap->selected->num_stuff == 0 && (!is_subproof || (sen->depth < org_depth)))
+      if (ap->selected->num_stuff == 0 && (!is_subproof || (depth < org_depth)))
 	break;
     }
 
@@ -923,7 +925,7 @@ aris_proof_kill (aris_proof * ap)
       if (SEN_SUB(sel_itr->value))
 	{
 	  is_subproof = 1;
-	  org_depth = SENTENCE (sel_itr->value)->depth;
+	  org_depth = SEN_DEPTH(sel_itr->value);
 	}
     }
   else
@@ -958,7 +960,7 @@ aris_proof_kill (aris_proof * ap)
       sd = sentence_copy_to_data (sen);
       ls_push_obj (ls, sd);
 
-      sen_depth = sen->depth;
+      sen_depth = SEN_DEPTH(sen);
       if (sen_depth < org_depth)
 	break;
 
