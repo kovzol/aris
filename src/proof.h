@@ -32,5 +32,6 @@ struct proof {
 proof_t * proof_init ();
 void proof_destroy (proof_t * proof);
 int proof_eval (proof_t * proof, vec_t * rets, int verbose);
+int eval_proof (list_t * everything, vec_t * rets, int verbose);
 
 #endif  /*  PROOF_H  */
