@@ -698,9 +698,9 @@ evaluate_line (aris_proof * ap, sentence * sen)
 	{
 	  // This means that the variables apply to the current line.
 	  int arb = (ev_sen->premise
-		     || ev_sen->rule == RULE_EI
+		     || sentence_get_rule (ev_sen) == RULE_EI
 		     || ev_sen->subproof
-		     || ev_sen->rule == RULE_SQ)
+		     || sentence_get_rule (ev_sen) == RULE_SQ)
 	    ? 0 : 1;
 	  ret = sexpr_collect_vars_to_proof (vars, ev_sen->sexpr, arb);
 	  if (ret == -1)

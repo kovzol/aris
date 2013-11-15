@@ -117,13 +117,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   if (ret == -1)
     return NULL;
 
-  sen->rule = sd->rule;
-
-  if (sen->rule != -1)
-    {
-      gtk_label_set_text (GTK_LABEL (sen->rule_box),
-			  rules_list[sen->rule]);
-    }
+  sentence_set_rule (sen, sd->rule);
 
   if (sd->text)
     {
@@ -362,7 +356,7 @@ sentence_copy_to_data (sentence * sen)
 
   refs[i] = -1;
 
-  sd = sen_data_init (SD(sen)->line_num, sen->rule,
+  sd = sen_data_init (SD(sen)->line_num, SD(sen)->rule,
 		      sen->text, refs, sen->premise, sen->file,
 		      sen->subproof, sen->depth, sen->sexpr);
 
@@ -457,7 +451,7 @@ sentence_update_line_no (sentence * sen, int new)
 	sen->indices[i] = sen->indices[i] + line_mod;
     }
 
-  if (sen->rule != RULE_LM)
+  if (sentence_get_rule (sen) != RULE_LM)
     return 0;
 
   GtkWidget * menu_item, * menu, * submenu;
@@ -734,14 +728,15 @@ sentence_in (sentence * sen)
 
   if (!sen->premise)
     {
+      int rule = sentence_get_rule (sen);
       // Toggle the rule, if one exists.
-      if (sen->rule != -1)
+      if (rule != -1)
 	{
 	  // Find which toggle button corresponds to this rule.
-	  if (the_app->rt->toggled != sen->rule)
+	  if (the_app->rt->toggled != rule)
 	    {
 	      the_app->rt->user = 0;
-	      TOGGLE_BUTTON (the_app->rt->rules[sen->rule]);
+	      TOGGLE_BUTTON (the_app->rt->rules[rule]);
 	      the_app->rt->user = 1;
 	    }
 	}
@@ -1683,9 +1678,10 @@ sentence_check_boolean_rule (sentence * sen, int boolean)
     return 1;
 
   int bool_okay = 1;
+  int rule = sentence_get_rule (sen);
 
-  if (sen->rule < RULE_DM || sen->rule == RULE_EQ || sen->rule == RULE_EP
-      || (sen->rule >= RULE_EG && sen->rule <= RULE_SP))
+  if (rule < RULE_DM || rule == RULE_EQ || rule == RULE_EP
+      || (rule >= RULE_EG && rule <= RULE_SP))
     bool_okay = 0;
 
   return bool_okay;
@@ -1709,4 +1705,21 @@ sentence_can_select_as_ref (sentence * sen, sentence * ref)
   return sen_data_can_sel_as_ref (s_ln, sen->indices,
 				  r_ln, ref->indices,
 				  ref->premise);
+}
+
+int
+sentence_set_rule (sentence * sen, int rule)
+{
+  SD(sen)->rule = rule;
+  const char * rule_text = (SD(sen)->rule == -1)
+    ? NULL : rules_list[SD(sen)->rule];
+  gtk_label_set_text (GTK_LABEL (sen->rule_box),
+		      rule_text);
+  return 0;
+}
+
+int
+sentence_get_rule (sentence  * sen)
+{
+  return SD(sen)->rule;
 }

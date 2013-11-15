@@ -30,7 +30,7 @@ struct sentence {
   sen_data sd;
   // Data components
   //int line_num;           // Keeps track of the line number.
-  int rule;               // Index of the rule of this sentence.
+  //int rule;               // Index of the rule of this sentence.
   unsigned char * text;   // Contains the text of this item.
   unsigned char * sexpr;  // The sexpr text of this sentence.
 

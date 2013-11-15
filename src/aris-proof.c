@@ -1054,7 +1054,7 @@ aris_proof_toggle_boolean_mode (aris_proof * ap)
 	  return -1;
 	}
 
-      if (ev_sen->rule == -1)
+      if (sentence_get_rule (ev_sen) == -1)
 	continue;
       sen_check = sentence_check_boolean_rule (ev_sen, new_bool);
 

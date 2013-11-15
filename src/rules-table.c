@@ -233,8 +233,7 @@ rule_toggled (int index)
 	  // Only change the currently focused rule if the user
 	  // initiated this.
 
-	  sen->rule = -1;
-	  gtk_label_set_text (GTK_LABEL (sen->rule_box), NULL);
+	  sentence_set_rule (sen, -1);
 
 	  undo_info ui;
 	  ui.type = -1;
@@ -321,8 +320,7 @@ rule_toggled (int index)
 	    }
 	}
 
-      sen->rule = index;
-      gtk_label_set_text (GTK_LABEL (sen->rule_box), rules_list[index]);
+      sentence_set_rule (sen, index);
 
       undo_info ui;
       ui.type = -1;
