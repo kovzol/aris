@@ -163,7 +163,6 @@ sentence_btn_press (GtkWidget * widget, GdkEventButton * event, gpointer data)
 G_MODULE_EXPORT gboolean
 sentence_btn_release (GtkWidget * widget, GdkEventButton * event, gpointer data)
 {
-  //printf ("Sentence Button Release\n");
 
   if (event->state == (GDK_CONTROL_MASK | GDK_BUTTON1_MASK) && event->button == 1)
     {
@@ -180,7 +179,6 @@ sentence_btn_release (GtkWidget * widget, GdkEventButton * event, gpointer data)
       sentence * sen = (sentence *) data;
 
       // Will eventually select sentence.
-      //sentence_set_bg (sen, BG_COLOR_RED_ORANGE);
       select_sentence (sen);
 
       return TRUE;
@@ -689,7 +687,6 @@ evaluate_line (aris_proof * ap, sentence * sen)
       sentence * ev_sen = ev_itr->value;
       int ln;
 
-      //ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
       ret = sd_convert_sexpr (SD(ev_sen));
       if (ret == -1)
 	return -1;
@@ -722,44 +719,20 @@ evaluate_line (aris_proof * ap, sentence * sen)
       sentence * ev_sen;
       ev_sen = ev_itr->value;
 
-      tmp_sd = sentence_copy_to_data (ev_sen);
-      if (!tmp_sd)
-	return -1;
-
-      ret_chk = ls_push_obj (lines, tmp_sd);
+      ret_chk = ls_push_obj (lines, SD(ev_sen));
       if (!ret_chk)
 	return -1;
     }
 
-  // Get the sentence data.
-  sen_data * sd;
-  sd = sentence_copy_to_data (sen);
-  if (!sd)
-    return -1;
-
   char * ret_str;
-  ret_str = sen_data_evaluate (sd, &ret, vars, lines);
+  ret_str = sen_data_evaluate (SD(sen), &ret, vars, lines);
   if (!ret_str)
     return -1;
 
   sentence_set_value (sen, ret);
   aris_proof_set_sb (ap, ret_str);
 
-  for (ev_itr = lines->head; ev_itr;)
-    {
-      sen_data * sd;
-      item_t * n_itr;
-
-      sd = ev_itr->value;
-      sen_data_destroy (sd);
-
-      n_itr = ev_itr->next;
-      ev_itr->next = ev_itr->prev = NULL;
-      free (ev_itr);
-      ev_itr = n_itr;
-    }
-
-  free (lines);
+  destroy_list (lines);
 
   return ret;
 }
@@ -780,7 +753,6 @@ evaluate_proof (aris_proof * ap)
   for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
-      //ret = sen_convert_sexpr (ev_sen->text, &(ev_sen->sexpr));
       ret = sd_convert_sexpr (SD(ev_sen));
       if (ret == -1)
 	return -1;

@@ -141,6 +141,10 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   if (!sen->references)
     return NULL;
 
+  SD(sen)->refs = (short *) calloc (1, sizeof (short));
+  CHECK_ALLOC (SD(sen)->refs, NULL);
+  SD(sen)->refs[0] = -1;
+
   if (sd->refs)
     {
       for (i = 0; sd->refs[i] != -1; i++)
@@ -300,7 +304,6 @@ sentence_destroy (sentence * sen)
 sen_data *
 sentence_copy_to_data (sentence * sen)
 {
-
   sen_data * sd;
   int i;
 
@@ -454,19 +457,18 @@ sentence_add_ref (sentence * sen, sentence * ref)
     return -1;
 
   if (SD(sen)->refs)
+    free (SD(sen)->refs);
+  
+  SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
+				    sizeof (short));
+  CHECK_ALLOC (SD(sen)->refs, -1);
+  int i = 0;
+  for (itm = sen->references->head; itm; itm = itm->next, i++)
     {
-      free (SD(sen)->refs);
-      SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
-					sizeof (short));
-      CHECK_ALLOC (SD(sen)->refs, -1);
-      int i = 0;
-      for (itm = sen->references->head; itm; itm = itm->next, i++)
-	{
-	  sen_data * sd = SD(itm->value);
-	  SD(sen)->refs[i] = sd->line_num;
-	}
-      SD(sen)->refs[i] = -1;
+      sen_data * sd = SD(itm->value);
+      SD(sen)->refs[i] = sd->line_num;
     }
+  SD(sen)->refs[i] = -1;
 
   return 0;
 }
@@ -478,20 +480,20 @@ sentence_rem_ref (sentence * sen, sentence * ref)
     ls_rem_obj_value (sen->references, sen);
 
   if (SD(sen)->refs)
+    free (SD(sen)->refs);
+
+  item_t * itm;
+
+  SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
+				    sizeof (short));
+  CHECK_ALLOC (SD(sen)->refs, -1);
+  int i = 0;
+  for (itm = sen->references->head; itm; itm = itm->next, i++)
     {
-      item_t * itm;
-      free (SD(sen)->refs);
-      SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
-					sizeof (short));
-      CHECK_ALLOC (SD(sen)->refs, -1);
-      int i = 0;
-      for (itm = sen->references->head; itm; itm = itm->next, i++)
-	{
-	  sen_data * sd = SD(itm->value);
-	  SD(sen)->refs[i] = sd->line_num;
-	}
-      SD(sen)->refs[i] = -1;
+      sen_data * sd = SD(itm->value);
+      SD(sen)->refs[i] = sd->line_num;
     }
+  SD(sen)->refs[i] = -1;
 
   return 0;
 }
@@ -808,7 +810,7 @@ select_reference (sentence * sen)
       if (the_app->verbose)
 	printf ("Removing reference.\n");
 
-      ls_rem_obj_value (fcs_sen->references, ref_sen);
+      sentence_rem_ref (fcs_sen, ref_sen);
       sentence_set_reference (ref_sen, 0, entire);
     }
   else
@@ -817,11 +819,7 @@ select_reference (sentence * sen)
       if (the_app->verbose)
 	printf ("Adding reference.\n");
 
-      item_t * itm;
-      itm = ls_push_obj (fcs_sen->references, ref_sen);
-      if (!itm)
-	return -2;
-
+      sentence_add_ref (fcs_sen, ref_sen);
       sentence_set_reference (ref_sen, 1, entire);
     }
 
@@ -1325,7 +1323,7 @@ sentence_copy_text (sentence * sen)
   ret_str[i] = '\0';
 
   // Handle comments.
-  // Will need to fix this up, since this means that sentences aren't saved.
+  // Will need to fix this up, since this means that comments aren't saved.
 
   unsigned char * semi_str, * fin_str;
   semi_str = strchr (ret_str, ';');
