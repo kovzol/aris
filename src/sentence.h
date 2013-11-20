@@ -81,6 +81,7 @@ int sentence_get_rule (sentence * sen);
 
 int sentence_add_ref (sentence * sen, sentence * ref);
 int sentence_rem_ref (sentence * sen, sentence * ref);
+int sentence_update_refs (sentence * sen);
 
 int select_reference (sentence * sen);
 int select_sentence (sentence * sen);
