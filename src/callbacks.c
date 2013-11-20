@@ -709,15 +709,6 @@ evaluate_line (aris_proof * ap, sentence * sen)
 	  if (ret == -1)
 	    return -1;
 	}
-    }
-
-  // Construct lines.
-
-  for (ev_itr = SEN_PARENT (ap)->everything->head;
-       ev_itr; ev_itr = ev_itr->next)
-    {
-      sentence * ev_sen;
-      ev_sen = ev_itr->value;
 
       ret_chk = ls_push_obj (lines, SD(ev_sen));
       if (!ret_chk)
@@ -768,6 +759,12 @@ evaluate_proof (aris_proof * ap)
       if (ret == -1)
 	return -1;
     }
+
+  /*
+  ret = eval_proof (SEN_PARENT(ap)->everything, NULL, 0);
+  if (ret == -1)
+    return -1;
+  */
 
   ret = goal_check_all (ap->goal);
   if (ret == -1)
