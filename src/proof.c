@@ -99,6 +99,14 @@ proof_eval (proof_t * proof, vec_t * rets, int verbose)
   return rc;
 }
 
+/* Evaluates a list of sentences.
+ *  input:
+ *    everything - the list of sentences to evaluate.
+ *    rets - a vector in which to store the return values.
+ *    verbose - a flag denoting verbosity (1 if verbose).
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 eval_proof (list_t * everything, vec_t * rets, int verbose)
 {
@@ -152,9 +160,7 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
       if (verbose)
 	{
 	  if (sd->premise)
-	    {
-	      printf (" %3i | %s\n", cur_line, sd->text);
-	    }
+	    printf (" %3i | %s\n", cur_line, sd->text);
 
 	  if (!sd->premise)
 	    {

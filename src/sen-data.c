@@ -114,6 +114,13 @@ sen_data_destroy (sen_data * sd)
   free (sd);
 }
 
+/* Copies the data from one sentence data object to another.
+ *  input:
+ *    old_sd - the sentence data object from which to copy.
+ *    new_sd - the sentence data object to which to copy.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 sen_data_copy (sen_data * old_sd, sen_data * new_sd)
 {
@@ -172,7 +179,12 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
   return 0;
 }
 
-/*
+/* Convert text to sexpr form.
+ *  input:
+ *    text - the text to convert to sexpr form.
+ *    sexpr - a pointer to a string that receives the sexpr form.
+ *  output:
+ *    0 on succes, -1 on memory error, -2 on other error.
  */
 int
 sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
@@ -206,6 +218,12 @@ sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
   return 0;
 }
 
+/* Converts a sentence data object to sexpr form.
+ *  input:
+ *    sd - the sentence data object to convert.
+ *  output:
+ *    The same as sen_convert_sexpr.
+ */
 int
 sd_convert_sexpr (sen_data * sd)
 {
@@ -423,7 +441,13 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
 /* Determines whether a sentence can another as a reference.
  *  input:
+ *    sen_line, ref_line - the line numbers of the two lines.
+ *    sen_indices, ref_indices - the indices of the two lines.
+ *    ref_prem - whether or not the reference is a premise.
  *  output:
+ *    The line number of the line to be selected.
+ *    The negation of the line number if the entire subproof is to be selected.
+ *    0 if ref can not be selected by sen.
  */
 int
 sen_data_can_sel_as_ref (int sen_line, int * sen_indices,
