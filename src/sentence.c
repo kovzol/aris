@@ -73,13 +73,11 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   // Only proof containers need to worry about line numbers.
   if (sp->type == SEN_PARENT_TYPE_PROOF)
-    {
-      ln = (fcs) ? sentence_get_line_no (fcs->value) + 1 : 1;
-    }
+    ln = (fcs) ? sentence_get_line_no (fcs->value) + 1 : 1;
 
-  SD(sen)->premise = sd->premise;
-  SD(sen)->depth = depth = sd->depth;
-  SD(sen)->subproof = sd->subproof;
+  // Copy the data elements over.
+  sen_data_copy (sd, SD(sen));
+  free (SD(sen)->indices);
 
   // Initialize the GUI components.
   sentence_gui_init (sen);
@@ -87,6 +85,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   sen->value_type = VALUE_TYPE_BLANK;
   sen->selected = 0;
   sen->font_resizing = 0;
+
+  // Set the indices.
 
   SD(sen)->indices = (int *) calloc (depth + 1, sizeof (int));
   CHECK_ALLOC (SD(sen)->indices, NULL);
@@ -120,15 +120,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   if (sd->text)
     {
-      ret = sentence_set_text (sen, sd->text);
-      if (ret == -1)
-	return NULL;
-
       ret = sentence_paste_text (sen);
-      if (ret == -1)
-	return NULL;
-
-      if (ret == -2)
+      if (ret == -1 || ret == -2)
 	return NULL;
     }
   else
@@ -141,59 +134,13 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   if (!sen->references)
     return NULL;
 
-  SD(sen)->refs = (short *) calloc (1, sizeof (short));
-  CHECK_ALLOC (SD(sen)->refs, NULL);
-  SD(sen)->refs[0] = -1;
-
-  if (sd->refs)
-    {
-      for (i = 0; sd->refs[i] != -1; i++)
-	{
-	  int cur_line;
-	  item_t * ev_itr;
-
-	  cur_line = sd->refs[i];
-	  ev_itr = sen->parent->everything->head;
-
-	  if (cur_line > ln)
-	    continue;
-
-	  for (; ev_itr != NULL; ev_itr = ev_itr->next)
-	    {
-	      sentence * ref_sen;
-	      ref_sen = ev_itr->value;
-
-	      if (sentence_get_line_no (ref_sen) == cur_line)
-		{
-		  ret = sentence_add_ref (sen, ref_sen);
-		  if (ret == -1)
-		    return NULL;
-
-		  break;
-		}
-	    }
-	}
-    }
-
-  if (sd->file)
-    {
-      SD(sen)->file = strdup (sd->file);
-      if (!SD(sen)->file)
-	return NULL;
-    }
-  else
-    {
-      SD(sen)->file = NULL;
-    }
+  ret = sentence_update_refs (sen);
+  if (ret == -1)
+    return NULL;
 
   sen->reference = 0;
-
   sentence_set_font (sen, sen->parent->font);
-
-  if (!sd->premise)
-    sentence_set_bg (sen, BG_COLOR_CONC);
-  else
-    sentence_set_bg (sen, BG_COLOR_DEFAULT);
+  sentence_set_bg (sen, BG_COLOR_CONC);
 
   sentence_connect_signals (sen);
 
@@ -362,6 +309,13 @@ Unable to print the correct characters to a string.\n");
   return 0;
 }
 
+/* Updates the line number and label of a sentence.
+ *  input:
+ *    sen - the sentence to be updated.
+ *    new - the line number to be set.
+ *  output:
+ *    0 on success, -1 on error.
+ */
 int
 sentence_update_line_no (sentence * sen, int new)
 {
@@ -448,6 +402,13 @@ sentence_update_line_no (sentence * sen, int new)
   return 0;
 }
 
+/* Add a reference to the proof.
+ *  input:
+ *    sen - the sentence to which to add a reference.
+ *    ref - the reference to add.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 sentence_add_ref (sentence * sen, sentence * ref)
 {
@@ -473,11 +434,18 @@ sentence_add_ref (sentence * sen, sentence * ref)
   return 0;
 }
 
+/* Remove a reference from the proof.
+ *  input:
+ *    sen - the sentence from which to remove a reference.
+ *    ref - the reference to be removed.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 sentence_rem_ref (sentence * sen, sentence * ref)
 {
   if (sen->references)
-    ls_rem_obj_value (sen->references, sen);
+    ls_rem_obj_value (sen->references, ref);
 
   if (SD(sen)->refs)
     free (SD(sen)->refs);
@@ -495,6 +463,51 @@ sentence_rem_ref (sentence * sen, sentence * ref)
     }
   SD(sen)->refs[i] = -1;
 
+  return 0;
+}
+
+/* Update the references of a sentence from data.
+ *  input:
+ *    sen - the sentence of which to update the references.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
+int
+sentence_update_refs (sentence * sen)
+{
+  int i, ln;
+  ln = sentence_get_line_no (sen);
+
+  if (SD(sen)->refs)
+    {
+      for (i = 0; SD(sen)->refs[i] != -1; i++)
+	{
+	  int cur_line;
+	  item_t * ev_itr;
+
+	  cur_line = SD(sen)->refs[i];
+	  ev_itr = sen->parent->everything->head;
+
+	  if (cur_line > ln)
+	    continue;
+
+	  for (; ev_itr != NULL; ev_itr = ev_itr->next)
+	    {
+	      sentence * ref_sen;
+	      ref_sen = ev_itr->value;
+
+	      if (sentence_get_line_no (ref_sen) == cur_line)
+		{
+		  item_t * ret;
+		  ret = ls_push_obj (sen->references, ref_sen);
+		  if (!ret)
+		    return -1;
+
+		  break;
+		}
+	    }
+	}
+    }
   return 0;
 }
 
@@ -602,12 +615,16 @@ sentence_set_value (sentence * sen, int value_type)
   gtk_image_set_from_icon_name (GTK_IMAGE (sen->value), sen_values [value_type], GTK_ICON_SIZE_MENU);
 }
 
+/* Returns the line number of a sentence.
+ */
 int
 sentence_get_line_no (sentence * sen)
 {
   return SD(sen)->line_num;
 }
 
+/* Returns the position in the containing grid of a sentence.
+ */
 int
 sentence_get_grid_no (sentence * sen)
 {
@@ -1645,6 +1662,8 @@ sentence_can_select_as_ref (sentence * sen, sentence * ref)
   return sen_data_can_select_as_ref (SD(sen), SD(ref));
 }
 
+/* Sets the rule of a sentence and updates the rule box.
+ */
 int
 sentence_set_rule (sentence * sen, int rule)
 {
@@ -1656,12 +1675,16 @@ sentence_set_rule (sentence * sen, int rule)
   return 0;
 }
 
+/* Returns the rule of a sentence.
+ */
 int
 sentence_get_rule (sentence  * sen)
 {
   return SD(sen)->rule;
 }
 
+/* Sets the text of a sentence.
+ */
 int
 sentence_set_text (sentence * sen, unsigned char * text)
 {
@@ -1675,36 +1698,48 @@ sentence_set_text (sentence * sen, unsigned char * text)
   return 0;
 }
 
+/* Returns the text of a sentence.
+ */
 unsigned char *
 sentence_get_text (sentence * sen)
 {
   return SD(sen)->text;
 }
 
+/* Returns whether or not the sentence is a premise.
+ */
 int
 sentence_premise (sentence * sen)
 {
   return SD(sen)->premise;
 }
 
+/* Returns whether or not the sentence is a subproof.
+ */
 int
 sentence_subproof (sentence * sen)
 {
   return SD(sen)->subproof;
 }
 
+/* Returns the depth of a sentence.
+ */
 int
 sentence_depth (sentence * sen)
 {
   return SD(sen)->depth;
 }
 
+/* Gets an index of a sentence.
+ */
 int
 sentence_get_index (sentence * sen, int i)
 {
   return SD(sen)->indices[i];
 }
 
+/* Sets an index of a sentence.
+ */
 int
 sentence_set_index (sentence * sen, int i, int index)
 {
