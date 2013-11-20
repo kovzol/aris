@@ -1,3 +1,30 @@
+2013-11-20  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (evaluate_line): Only collects the lines that
+	are needed for evaluation rather than all of them.
+
+	* sen-data.c: Added comments.
+
+	* proof.c: Added comments.
+
+	* sentence.h (sentence_update_refs): Added.
+
+	* sentence.c: Added comments to new functions.
+	(sentence_update_refs): Added to initialize
+	references from data element.
+	(sentence_init): Calls sen_data_copy to copy data elements.
+
+2013-11-16  Ian Dunn  <dunni@gnu.org>
+
+	* proof.c (proof_eval): Calls eval_proof directly.
+
+	* callbacks.c (evaluate_line): Pulls data straight from a
+	setnence.
+
+	* sentence.c (sentence_add_ref): Correctly handles sd->refs.
+	(sentence_rem_ref): Same.
+	(sentence_init): Same.
+
 2013-11-15  Ian Dunn  <dunni@gnu.org>
 
 	* conf-file.h: Fixed up default color for `good' color.
