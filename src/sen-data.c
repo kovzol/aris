@@ -167,6 +167,12 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
       CHECK_ALLOC (new_sd->refs, -1);
       memcpy (new_sd->refs, old_sd->refs, sizeof(short)*(len+1));
     }
+  else
+    {
+      new_sd->refs = (short*) calloc (1, sizeof(short));
+      CHECK_ALLOC (new_sd->refs, -1);
+      new_sd->refs[0] = -1;
+    }
 
   if (old_sd->indices)
     {
@@ -174,6 +180,12 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
       new_sd->indices = (int*) calloc (len + 1, sizeof (int));
       CHECK_ALLOC (new_sd->indices, -1);
       memcpy (new_sd->indices, old_sd->indices, sizeof(int)*(len+1));
+    }
+  else
+    {
+      new_sd->indices = (int*) calloc (1, sizeof (int));
+      CHECK_ALLOC (new_sd->indices, -1);
+      new_sd->indices[0] = -1;
     }
 
   return 0;
