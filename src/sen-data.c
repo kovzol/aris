@@ -74,7 +74,22 @@ sen_data_init (int line_num, int rule, unsigned char * text,
       CHECK_ALLOC (sd->sexpr, NULL);
     }
 
-  sd->refs = refs;
+  if (refs)
+    {
+      int len = 0;
+      while (refs[len] != -1)
+	len++;
+
+      sd->refs = (short*) calloc (len + 1, sizeof (short));
+      CHECK_ALLOC (sd->refs, NULL);
+      memcpy (sd->refs, refs, sizeof(short)*(len+1));
+    }
+  else
+    {
+      sd->refs = (short*) calloc (1, sizeof(short));
+      CHECK_ALLOC (sd->refs, NULL);
+      sd->refs[0] = -1;
+    }
 
   sd->premise = premise;
   sd->depth = depth;
