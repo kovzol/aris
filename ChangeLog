@@ -1,3 +1,14 @@
+2013-11-21  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (evaluate_line): Added current line to allow
+	for subproofs.
+
+	* aio.c (aio_save): Handled possibility of no references.
+
+	* sentence.c (sentence_init): Initialized depth, line numbers,
+	and indices correctly.
+	(sentence_gui_init): Updated highlighting tags to GTk3.
+
 2013-11-20  Ian Dunn  <dunni@gnu.org>
 
 	* callbacks.c (evaluate_line): Only collects the lines that
