@@ -715,6 +715,10 @@ evaluate_line (aris_proof * ap, sentence * sen)
 	return -1;
     }
 
+  ret_chk = ls_push_obj (lines, SD(sen));
+  if (!ret_chk)
+    return -1;
+
   char * ret_str;
   ret_str = sen_data_evaluate (SD(sen), &ret, vars, lines);
   if (!ret_str)
