@@ -681,11 +681,16 @@ evaluate_line (aris_proof * ap, sentence * sen)
   if (!vars)
     return -1;
 
-  for (ev_itr = SEN_PARENT (ap)->everything->head;
-       ev_itr != SEN_PARENT (ap)->focused; ev_itr = ev_itr->next)
+  int sen_ln;
+  sen_ln = sentence_get_line_no (sen);
+
+  for (ev_itr = SEN_PARENT (ap)->everything->head; 1;
+       ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
-      int ln;
+      int ln = sentence_get_line_no (ev_sen);
+      if (ln == sen_ln)
+	break;
 
       ret = sd_convert_sexpr (SD(ev_sen));
       if (ret == -1)
@@ -694,7 +699,6 @@ evaluate_line (aris_proof * ap, sentence * sen)
       if (ret == -2)
 	continue;
 
-      ln = sentence_get_line_no (ev_sen);
       ret = sentence_can_select_as_ref (sen, ev_sen);
       if (ret == ln)
 	{
@@ -714,10 +718,6 @@ evaluate_line (aris_proof * ap, sentence * sen)
       if (!ret_chk)
 	return -1;
     }
-
-  ret_chk = ls_push_obj (lines, SD(sen));
-  if (!ret_chk)
-    return -1;
 
   char * ret_str;
   ret_str = sen_data_evaluate (SD(sen), &ret, vars, lines);
@@ -744,17 +744,6 @@ evaluate_proof (aris_proof * ap)
   item_t * ev_itr;
   sentence * sen;
   int ret;
-
-  for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
-    {
-      sentence * ev_sen = ev_itr->value;
-      ret = sd_convert_sexpr (SD(ev_sen));
-      if (ret == -1)
-	return -1;
-
-      if (ret == -2)
-	continue;
-    }
 
   for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
     {

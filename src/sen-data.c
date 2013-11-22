@@ -353,8 +353,13 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 	      item_t * ev_itr;
 
 	      ev_itr = ls_nth (lines, ref_data->line_num);
-	      while (((sen_data *) ev_itr->next->value)->depth >= ref_data->depth)
-		ev_itr = ev_itr->next;
+	      while (ev_itr->next &&
+		     SD(ev_itr->next->value)->depth >= ref_data->depth)
+		{
+		  if (!ev_itr->next)
+		    break;
+		  ev_itr = ev_itr->next;
+		}
 
 	      sen_0 = ev_itr->value;
 	      ret = check_text (sen_0->text);
