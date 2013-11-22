@@ -518,7 +518,7 @@ gui_open (GtkWidget * window)
 				 GTK_WINDOW (window),
 				 GTK_FILE_CHOOSER_ACTION_OPEN,
 				 "_Cancel", GTK_RESPONSE_CANCEL,
-				 "document-open", GTK_RESPONSE_ACCEPT,
+				 "_Open", GTK_RESPONSE_ACCEPT,
 				 NULL);
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser), FALSE);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
