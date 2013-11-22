@@ -256,14 +256,17 @@ aio_save (proof_t * proof, const char * file_name)
 	  XML_ERR (-1);
 	}
 
-      while (sd->refs[i] != -1)
+      if (sd->refs)
 	{
-	  max_line = (max_line > sd->refs[i]) ? max_line : sd->refs[i];
-	  num_refs++;
-	  i++;
+	  while (sd->refs[i] != -1)
+	    {
+	      max_line = (max_line > sd->refs[i]) ? max_line : sd->refs[i];
+	      num_refs++;
+	      i++;
+	    }
 	}
-
-      max_line = (int) log10 (max_line) + 1;
+      
+      max_line = (max_line > 0) ? (int) log10 (max_line) + 1 : 0;
 
       refs = (char *) calloc (num_refs * (max_line + 1), sizeof (char));
       if (!refs)
@@ -275,14 +278,17 @@ aio_save (proof_t * proof, const char * file_name)
 
       i = 0;
 
-      while (sd->refs[i] != -1)
+      if (sd->refs)
 	{
-	  int ref_line = sd->refs[i];
-	  ref_off += sprintf (refs + ref_off, "%i", ref_line);
+	  while (sd->refs[i] != -1)
+	    {
+	      int ref_line = sd->refs[i];
+	      ref_off += sprintf (refs + ref_off, "%i", ref_line);
 
-	  if (sd->refs[i+1] != -1)
-	    ref_off += sprintf (refs + ref_off, ",");
-	  i++;
+	      if (sd->refs[i+1] != -1)
+		ref_off += sprintf (refs + ref_off, ",");
+	      i++;
+	    }
 	}
 
       ret = xmlTextWriterWriteAttribute (xml, XML_CAST REF_DATA,
