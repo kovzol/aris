@@ -50,7 +50,7 @@
 #define CXML_CAST (const xmlChar *)
 #define CUNS_CAST (const unsigned char *)
 #define STD_CAST (char *)
-#define XML_CAST (xmlChar *)
+#define XML_CAST(o) ((xmlChar *)o)
 #define UNS_CAST (unsigned char *)
 
 int aio_save (proof_t * proof, const char * file_name);
