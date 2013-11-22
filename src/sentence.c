@@ -80,6 +80,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   free (SD(sen)->indices);
   SD(sen)->line_num = 0;
 
+  depth = SD(sen)->depth;
+
   // Initialize the GUI components.
   sentence_gui_init (sen);
   sen->parent = sp;
@@ -211,14 +213,14 @@ sentence_gui_init (sentence * sen)
 
   tag = gtk_text_tag_new ("hilight");
   g_object_set (G_OBJECT (tag),
-		"background-gdk", the_app->bg_colors[BG_COLOR_GOOD],
+		"background-rgba", the_app->bg_colors[BG_COLOR_GOOD],
 		NULL);
 
   gtk_text_tag_table_add (table, tag);
 
   tag = gtk_text_tag_new ("negative");
   g_object_set (G_OBJECT (tag),
-		"background-gdk", the_app->bg_colors[BG_COLOR_BAD],
+		"background-rgba", the_app->bg_colors[BG_COLOR_BAD],
 		NULL);
 
   gtk_text_tag_table_add (table, tag);
@@ -1744,6 +1746,5 @@ sentence_get_index (sentence * sen, int i)
 int
 sentence_set_index (sentence * sen, int i, int index)
 {
-  fprintf (stderr, "%i: %i -> %i\n", SD(sen)->line_num, i, index);
   SD(sen)->indices[i] = index;
 }
