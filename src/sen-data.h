@@ -44,8 +44,8 @@ struct sen_data {
   unsigned char * text;   // Contains the text of this item.
   unsigned char * sexpr;  // Sexpr text.
 
-  int premise : 1;   // Whether or not this sentence is a premise.
-  int subproof : 1;  // Whether or not this sentence starts a subproof.
+  short premise;   // Whether or not this sentence is a premise.
+  short subproof;  // Whether or not this sentence starts a subproof.
   int depth;         // The depth of this sentence.  0 for all top levels.
   int * indices;     // The line numbers of the subproofs that contain this sentence.
 
