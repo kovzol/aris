@@ -1,3 +1,22 @@
+2013-11-22  Ian Dunn  <dunni@gnu.org>
+
+	* aio.c (aio_write_line_num): Writes the line number member
+	to a file.
+	(aio_write_text): Writes the text member to a file.
+	(aio_write_rule): Writes the rule member to a file.
+	(aio_save_goal): Saves a goal to a file.
+	(aio_save): Used helper functions to clean up.
+	(aio_open_prem): Reads a premise from a file.
+	(aio_open_conc): Reads a conclusion from a file.
+	(aio_open): Used helper functions to clean up.
+
+	* sen-data.c (sen_data_evaluate): Fixed up evaluation bug.
+	(sen_data_init): Copies refs instead of setting refs.
+
+	* callbacks.c (evaluate_line): Fixed up evaluation bug.
+	(evaluate_proof): Same.
+	(gui_open): Fixed open label.
+
 2013-11-21  Ian Dunn  <dunni@gnu.org>
 
 	* callbacks.c (evaluate_line): Added current line to allow
