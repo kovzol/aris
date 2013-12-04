@@ -284,7 +284,8 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
   item_t * ev_itr, * target = NULL;
   int row_num;
 
-  row_num = sentence_get_line_no (sen);
+  //row_num = sentence_get_line_no (sen);
+  row_num = sentence_get_grid_no (sen);
   target = ls_find (sp->everything, sen);
 
   // Only need to start this past the target sentence.
