@@ -445,7 +445,6 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 	{
 	  struct connectives_list current_conns;
 	  current_conns = main_conns;
-	  //main_conns = gui_conns;
 
 	  proof = aio_open (sd->file);
 	  if (!proof)
