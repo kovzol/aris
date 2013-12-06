@@ -593,12 +593,26 @@ sentence_set_bg (sentence * sen, int bg_color)
   COLOR_TYPE inv;
   INVERT (the_app->bg_colors[bg_color], inv);
   gtk_widget_override_background_color (sen->entry, GTK_STATE_NORMAL,
-			the_app->bg_colors[bg_color]);
+                                        the_app->bg_colors[bg_color]);
   gtk_widget_override_background_color (sen->entry, GTK_STATE_NORMAL,
-			  the_app->bg_colors[bg_color]);
+                                        the_app->bg_colors[bg_color]);
   gtk_widget_override_background_color (sen->entry, GTK_STATE_SELECTED, inv);
   sen->bg_color = bg_color;
   free (inv);
+
+  COLOR_TYPE text;
+  if (IS_DARK(the_app->bg_colors[bg_color]))
+    {
+      INIT_COLOR (text, 255, 255, 255);
+    }
+  else
+    {
+      INIT_COLOR (text, 0, 0, 0);
+    }
+
+  gtk_widget_override_color (sen->entry, GTK_STATE_NORMAL, text);
+
+  free (text);
 }
 
 /* Sets the evaluation value of a sentence.
@@ -612,7 +626,9 @@ void
 sentence_set_value (sentence * sen, int value_type)
 {
   sen->value_type = value_type;
-  gtk_image_set_from_icon_name (GTK_IMAGE (sen->value), sen_values [value_type], GTK_ICON_SIZE_MENU);
+  gtk_image_set_from_icon_name (GTK_IMAGE (sen->value),
+                                sen_values [value_type],
+                                GTK_ICON_SIZE_MENU);
 }
 
 /* Returns the line number of a sentence.

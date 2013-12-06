@@ -47,16 +47,21 @@
 
 
 #define COLOR_TYPE GdkRGBA *
-#define INIT_COLOR(c,r,g,b) c = (GdkRGBA *) calloc (1, sizeof (GdkRGBA)); \
-  c->red = (double) r / 255.0; \
-  c->green = (double) g / 255.0; \
-  c->blue = (double) b / 255.0; \
-  c->alpha = (double) 1.0;
-#define INVERT(c,n) n = (GdkRGBA *) calloc (1, sizeof (GdkRGBA));\
-  n->red = (double) 1.0 - c->red; \
-  n->green = (double) 1.0 - c->green; \
-  n->blue = (double) 1.0 - c->blue; \
-  n->alpha = (double) 1.0;
+#define INIT_COLOR(c,r,g,b) {			\
+  c = (GdkRGBA *) calloc (1, sizeof (GdkRGBA)); \
+  c->red = (double) r / 255.0;			\
+  c->green = (double) g / 255.0;		\
+  c->blue = (double) b / 255.0;			\
+  c->alpha = (double) 1.0;			\
+}
+#define INVERT(c,n) {				\
+  n = (GdkRGBA *) calloc (1, sizeof (GdkRGBA));	\
+  n->red = (double) 1.0 - c->red;		\
+  n->green = (double) 1.0 - c->green;		\
+  n->blue = (double) 1.0 - c->blue;		\
+  n->alpha = (double) 1.0;			\
+}
+#define IS_DARK(c) (((c->red + c->green + c->blue) / 3.0) < 0.5)
 
 /*
 #ifdef GdkRGBA
