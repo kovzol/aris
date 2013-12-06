@@ -688,19 +688,17 @@ evaluate_line (aris_proof * ap, sentence * sen)
        ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
+      int conv_check = 0;
       int ln = sentence_get_line_no (ev_sen);
       if (ln == sen_ln)
 	break;
 
-      ret = sd_convert_sexpr (SD(ev_sen));
-      if (ret == -1)
+      conv_check = sd_convert_sexpr (SD(ev_sen));
+      if (conv_check == -1)
 	return -1;
 
-      if (ret == -2)
-	continue;
-
       ret = sentence_can_select_as_ref (sen, ev_sen);
-      if (ret == ln)
+      if (ret == ln && conv_check == 0)
 	{
 	  int rule = sentence_get_rule (ev_sen);
 	  // This means that the variables apply to the current line.
