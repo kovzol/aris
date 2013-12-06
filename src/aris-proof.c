@@ -1128,10 +1128,7 @@ aris_proof_import_proof (aris_proof * ap)
 
   proof = aio_open (filename);
   if (!proof)
-    {
-      gtk_widget_destroy (file_chooser);
-      return -1;
-    }
+    return -1;
 
   item_t * ev_itr, * pf_itr, * ev_conc = NULL;
   int ref_num = 0;
