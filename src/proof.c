@@ -64,21 +64,22 @@ proof_init ()
 void
 proof_destroy (proof_t * proof)
 {
-  item_t * itm, * n_itm;
+  item_t * itm;
 
-  for (itm = proof->everything->head; itm != NULL; itm = n_itm)
+  for (itm = proof->everything->head; itm != NULL;)
     {
       item_t * n_itm;
       n_itm = itm->next;
       free (itm);
+      itm = n_itm;
     }
 
-  itm = proof->goals->head;
-  for (itm = proof->goals->head; itm != NULL; itm = n_itm)
+  for (itm = proof->goals->head; itm != NULL;)
     {
       item_t * n_itm;
       n_itm = itm->next;
       free (itm->value);
+      itm = n_itm;
     }
 }
 
