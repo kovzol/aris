@@ -79,6 +79,7 @@ int sentence_get_grid_no (sentence * sen);
 int sentence_set_rule (sentence * sen, int rule);
 int sentence_get_rule (sentence * sen);
 
+int sentence_refresh_refs (sentence * sen);
 int sentence_add_ref (sentence * sen, sentence * ref);
 int sentence_rem_ref (sentence * sen, sentence * ref);
 int sentence_update_refs (sentence * sen);

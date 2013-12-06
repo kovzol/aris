@@ -255,12 +255,13 @@ sen_data *
 sentence_copy_to_data (sentence * sen)
 {
   sen_data * sd;
-  int i;
+  int ret;
 
+  sentence_refresh_refs (sen);
   sd = (sen_data *) calloc (1, sizeof (sen_data));
   CHECK_ALLOC (sd, NULL);
-  i = sen_data_copy (SD(sen), sd);
-  if (i == -1)
+  ret = sen_data_copy (SD(sen), sd);
+  if (ret == -1)
     return NULL;
 
   return sd;
@@ -300,7 +301,7 @@ sentence_set_line_no (sentence * sen, int new_line_no)
   sp_chk = sprintf (new_label, "%i", new_line_no);
   if (sp_chk != (int) label_len + 1)
     {
-      //There is an error, so exit the program.
+      //There is an error, so exit the function.
       fprintf (stderr, "Print Error - \
 Unable to print the correct characters to a string.\n");
       return -1;
@@ -405,6 +406,28 @@ sentence_update_line_no (sentence * sen, int new)
   return 0;
 }
 
+int
+sentence_refresh_refs (sentence * sen)
+{
+  if (SD(sen)->refs)
+    free (SD(sen)->refs);
+  
+  SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
+				    sizeof (short));
+  CHECK_ALLOC (SD(sen)->refs, -1);
+
+  item_t * itm;
+  int i = 0;
+  for (itm = sen->references->head; itm; itm = itm->next, i++)
+    {
+      sen_data * sd = SD(itm->value);
+      SD(sen)->refs[i] = sd->line_num;
+    }
+  SD(sen)->refs[i] = -1;
+
+  return 0;
+}
+
 /* Add a reference to the proof.
  *  input:
  *    sen - the sentence to which to add a reference.
@@ -420,19 +443,7 @@ sentence_add_ref (sentence * sen, sentence * ref)
   if (!itm)
     return -1;
 
-  if (SD(sen)->refs)
-    free (SD(sen)->refs);
-  
-  SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
-				    sizeof (short));
-  CHECK_ALLOC (SD(sen)->refs, -1);
-  int i = 0;
-  for (itm = sen->references->head; itm; itm = itm->next, i++)
-    {
-      sen_data * sd = SD(itm->value);
-      SD(sen)->refs[i] = sd->line_num;
-    }
-  SD(sen)->refs[i] = -1;
+  sentence_refresh_refs (sen);
 
   return 0;
 }
@@ -450,21 +461,7 @@ sentence_rem_ref (sentence * sen, sentence * ref)
   if (sen->references)
     ls_rem_obj_value (sen->references, ref);
 
-  if (SD(sen)->refs)
-    free (SD(sen)->refs);
-
-  item_t * itm;
-
-  SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
-				    sizeof (short));
-  CHECK_ALLOC (SD(sen)->refs, -1);
-  int i = 0;
-  for (itm = sen->references->head; itm; itm = itm->next, i++)
-    {
-      sen_data * sd = SD(itm->value);
-      SD(sen)->refs[i] = sd->line_num;
-    }
-  SD(sen)->refs[i] = -1;
+  sentence_refresh_refs (sen);
 
   return 0;
 }
