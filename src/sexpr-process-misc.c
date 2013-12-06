@@ -780,7 +780,7 @@ proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, v
   free (oth_str);
   free (in_str);
 
-  chk = (ret_str == CORRECT);
+  chk = !strcmp (ret_str, CORRECT);
 
   if (chk)
     return CORRECT;
