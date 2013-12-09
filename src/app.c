@@ -134,8 +134,8 @@ the_app_init_conn_pixbufs (aris_app * app)
 {
   int i;
 
-  INIT_CONN_PIXBUF (0, and_conn_large_xpm, AND);
-  INIT_CONN_PIXBUF (1, or_conn_large_xpm, OR);
+  INIT_CONN_PIXBUF (0, and_conn_xpm, AND);
+  INIT_CONN_PIXBUF (1, or_conn_xpm, OR);
   INIT_CONN_PIXBUF (2, not_conn_xpm, NOT);
   INIT_CONN_PIXBUF (3, con_conn_xpm, CON);
   INIT_CONN_PIXBUF (4, bic_conn_xpm, BIC);

@@ -1,5 +1,5 @@
 /* XPM */
-static char * and_conn_large_xpm[] = {
+static char * and_conn_xpm[] = {
 "30 36 2 1",
 " 	c None",
 ".	c #000000",
