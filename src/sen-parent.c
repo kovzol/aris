@@ -123,8 +123,7 @@ sen_parent_init_conns (sen_parent * sp)
 {
   int font;
 
-  font
-    = pango_font_description_get_size (the_app->fonts[sp->font]);
+  font = pango_font_description_get_size (the_app->fonts[sp->font]);
   font /= PANGO_SCALE;
 
   INIT_CONN_PIXBUF (sp, 0, AND, font);
@@ -205,9 +204,10 @@ sen_parent_set_font (sen_parent * sp, int new_font)
 	  h = 1.5;
 	}
 
-      sp->conn_pixbufs[i] = gdk_pixbuf_scale_simple
-	(the_app->conn_pixbufs[i], ((double) font) * w,
-	 ((double) font) * h, GDK_INTERP_BILINEAR);
+      sp->conn_pixbufs[i] = gdk_pixbuf_scale_simple (the_app->conn_pixbufs[i],
+						     ((double) font) * w,
+						     ((double) font) * h,
+						     GDK_INTERP_BILINEAR);
 
       g_object_set_data (G_OBJECT (sp->conn_pixbufs[i]),
 			 _("conn"), (gpointer) conn_list[i]);
