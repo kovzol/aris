@@ -34,4 +34,6 @@ void proof_destroy (proof_t * proof);
 int proof_eval (proof_t * proof, vec_t * rets, int verbose);
 int eval_proof (list_t * everything, vec_t * rets, int verbose);
 
+int convert_proof_latex (proof_t * proof, const char * filename);
+
 #endif  /*  PROOF_H  */
