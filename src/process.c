@@ -1293,6 +1293,12 @@ conn_to_sexpr (unsigned char * conn)
   if (!strcmp (conn, CTR))
     ret_conn = sexpr_conns.ctr;
 
+  if (!strcmp (conn, ELM))
+    ret_conn = sexpr_conns.elm;
+
+  if (!strcmp (conn, NIL))
+    ret_conn = sexpr_conns.nil;
+
   return ret_conn;
 }
 
@@ -1589,7 +1595,7 @@ infix_to_prefix (unsigned char * in_str)
   i = 0;
   pos = 0;
 
-  if (!strcmp (in_str, NIL))
+  if (!strcmp (in_str, NIL) && in_len == CL)
     {
       out_str = (unsigned char *) calloc (in_len + 1, sizeof (char));
       CHECK_ALLOC (out_str, NULL);
@@ -1598,14 +1604,13 @@ infix_to_prefix (unsigned char * in_str)
       return out_str;
     }
 
-
   while (i < in_len)
     {
       int ret_check;
 
       if (!strncmp (in_str + i, NIL, CL))
 	{
-	  i += 3;
+	  i += CL;
 	  got_nil = 1;
 	  continue;
 	}
@@ -1676,7 +1681,7 @@ infix_to_prefix (unsigned char * in_str)
 
   if (!strncmp (in_str + i, ELM, CL))
     {
-      strncpy (out_str, sexpr_conns.nil, sexpr_conns.cl);
+      strncpy (out_str, sexpr_conns.elm, sexpr_conns.cl);
       out_pos = sexpr_conns.cl;
     }
   else
