@@ -93,7 +93,7 @@ int sentence_set_text (sentence * sen, unsigned char * text);
 char * sentence_copy_text (sentence * sen);
 int sentence_paste_text (sentence * sen);
 
-int sentence_resize_text (sentence * sen, int new_size);
+int sentence_resize_text (sentence * sen);
 void sentence_set_font (sentence * sen, int font);
 void sentence_set_bg (sentence * sen, int bg_color);
 void sentence_set_value (sentence * sen, int value_type);

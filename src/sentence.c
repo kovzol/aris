@@ -36,11 +36,11 @@
 //#define LETTERS
 
 static char * sen_values[6] = {"media-playback-stop",
-			       "help-about",
-			       "window-close",
-			       "process-stop",
-			       "tools-check-spelling",
-			       "list-add"};
+                               "help-about",
+                               "window-close",
+                               "process-stop",
+                               "tools-check-spelling",
+                               "list-add"};
 
 // GTextCharPredicate for determining the location of the comment.
 static gboolean
@@ -102,13 +102,13 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
       fcs_sen = fcs->value;
 
       index_copy_end = (SEN_DEPTH(fcs_sen) < depth)
-	? SEN_DEPTH(fcs_sen) : depth;
+        ? SEN_DEPTH(fcs_sen) : depth;
 
       for (i = 0; i < index_copy_end; i++)
-	sentence_set_index (sen,i,SEN_IND(fcs_sen,i));
+        sentence_set_index (sen,i,SEN_IND(fcs_sen,i));
 
       if (sd->subproof)
-	sentence_set_index (sen,i++,ln);
+        sentence_set_index (sen,i++,ln);
     }
 
   sentence_set_index (sen,i,-1);
@@ -125,7 +125,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
     {
       ret = sentence_paste_text (sen);
       if (ret == -1 || ret == -2)
-	return NULL;
+        return NULL;
     }
   else
     {
@@ -175,7 +175,7 @@ sentence_gui_init (sentence * sen)
     {
       widget = gtk_label_new (NULL);
       g_object_set (G_OBJECT (widget), "width-chars", 4 * SEN_DEPTH(sen),
-		    NULL);
+                    NULL);
     }
 
   sen->entry = gtk_text_view_new ();
@@ -189,9 +189,7 @@ sentence_gui_init (sentence * sen)
   gtk_grid_attach (GTK_GRID (sen->panel), sen->eventbox, left++, 0, 1, 1);
   
   if (SEN_DEPTH(sen) > 0)
-    {
-      gtk_grid_attach (GTK_GRID (sen->panel), widget, left++, 0, 1, 1);
-    }
+    gtk_grid_attach (GTK_GRID (sen->panel), widget, left++, 0, 1, 1);
 
   gtk_grid_attach (GTK_GRID (sen->panel), sen->entry, left++, 0, 1, 1);
   gtk_grid_attach (GTK_GRID (sen->panel), sen->value, left++, 0, 1, 1);
@@ -209,19 +207,19 @@ sentence_gui_init (sentence * sen)
 
   table =
     gtk_text_buffer_get_tag_table (gtk_text_view_get_buffer
-				   (GTK_TEXT_VIEW (sen->entry)));
+                                   (GTK_TEXT_VIEW (sen->entry)));
 
   tag = gtk_text_tag_new ("hilight");
   g_object_set (G_OBJECT (tag),
-		"background-rgba", the_app->bg_colors[BG_COLOR_GOOD],
-		NULL);
+                "background-rgba", the_app->bg_colors[BG_COLOR_GOOD],
+                NULL);
 
   gtk_text_tag_table_add (table, tag);
 
   tag = gtk_text_tag_new ("negative");
   g_object_set (G_OBJECT (tag),
-		"background-rgba", the_app->bg_colors[BG_COLOR_BAD],
-		NULL);
+                "background-rgba", the_app->bg_colors[BG_COLOR_BAD],
+                NULL);
 
   gtk_text_tag_table_add (table, tag);
 }
@@ -282,7 +280,7 @@ sentence_set_line_no (sentence * sen, int new_line_no)
   if (new_line_no < 1)
     {
       if (cur_line == -1)
-	return -2;
+        return -2;
 
       SD(sen)->line_num = -1;
       gtk_label_set_text (GTK_LABEL (sen->line_no), NULL);
@@ -340,18 +338,6 @@ sentence_update_line_no (sentence * sen, int new)
   if (sp->type == SEN_PARENT_TYPE_GOAL)
     return 0;
 
-  int line_mod, i;
-
-  line_mod = new - old;
-
-  for (i = 0; i < SEN_DEPTH(sen); i++)
-    {
-      // Only the indices that are greater than the new line will
-      // need to be changed.
-      if (SEN_IND(sen,i) >= old)
-	sentence_set_index (sen, i, SEN_IND(sen,i) + line_mod);
-    }
-
   if (sentence_get_rule (sen) != RULE_LM)
     return 0;
 
@@ -368,10 +354,10 @@ sentence_update_line_no (sentence * sen, int new)
       menu_item = gl->data;
 
       if (GTK_IS_SEPARATOR_MENU_ITEM (menu_item))
-	continue;
+        continue;
 
       const char * label =
-	gtk_menu_item_get_label (GTK_MENU_ITEM (gl->data));
+        gtk_menu_item_get_label (GTK_MENU_ITEM (gl->data));
 
       int chk, line_num, lbl_len;
       char * file_name;
@@ -383,10 +369,10 @@ sentence_update_line_no (sentence * sen, int new)
 
       chk = sscanf (label, "%i - %s", &line_num, file_name);
       if (chk != 2)
-	continue;
+        continue;
 
       if (line_num < old)
-	continue;
+        continue;
 
       line_num = new;
 
@@ -413,7 +399,7 @@ sentence_refresh_refs (sentence * sen)
     free (SD(sen)->refs);
   
   SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
-				    sizeof (short));
+                                    sizeof (short));
   CHECK_ALLOC (SD(sen)->refs, -1);
 
   item_t * itm;
@@ -481,32 +467,32 @@ sentence_update_refs (sentence * sen)
   if (SD(sen)->refs)
     {
       for (i = 0; SD(sen)->refs[i] != -1; i++)
-	{
-	  int cur_line;
-	  item_t * ev_itr;
+        {
+          int cur_line;
+          item_t * ev_itr;
 
-	  cur_line = SD(sen)->refs[i];
-	  ev_itr = sen->parent->everything->head;
+          cur_line = SD(sen)->refs[i];
+          ev_itr = sen->parent->everything->head;
 
-	  if (cur_line > ln)
-	    continue;
+          if (cur_line > ln)
+            continue;
 
-	  for (; ev_itr != NULL; ev_itr = ev_itr->next)
-	    {
-	      sentence * ref_sen;
-	      ref_sen = ev_itr->value;
+          for (; ev_itr != NULL; ev_itr = ev_itr->next)
+            {
+              sentence * ref_sen;
+              ref_sen = ev_itr->value;
 
-	      if (sentence_get_line_no (ref_sen) == cur_line)
-		{
-		  item_t * ret;
-		  ret = ls_push_obj (sen->references, ref_sen);
-		  if (!ret)
-		    return -1;
+              if (sentence_get_line_no (ref_sen) == cur_line)
+                {
+                  item_t * ret;
+                  ret = ls_push_obj (sen->references, ref_sen);
+                  if (!ret)
+                    return -1;
 
-		  break;
-		}
-	    }
-	}
+                  break;
+                }
+            }
+        }
     }
   return 0;
 }
@@ -521,13 +507,9 @@ sentence_update_refs (sentence * sen)
 void
 sentence_set_font (sentence * sen, int font)
 {
-  int font_size;
-
   sen->font_resizing = 1;
-  font_size = pango_font_description_get_size (the_app->fonts[font]);
-  font_size /= PANGO_SCALE;
 
-  sentence_resize_text (sen, font_size);
+  sentence_resize_text (sen);
   LABEL_SET_FONT (sen->line_no, the_app->fonts[font]);
   ENTRY_SET_FONT (sen->entry, the_app->fonts[font]);
   LABEL_SET_FONT (sen->rule_box, the_app->fonts[font]);
@@ -538,12 +520,11 @@ sentence_set_font (sentence * sen, int font)
 /* Resizes the pixbufs of a sentence.
  *  input:
  *    sen - the sentence to be resized.
- *    new_size - the font size to which to set the sentence.
  *  output:
  *    0 on success.
  */
 int
-sentence_resize_text (sentence * sen, int new_size)
+sentence_resize_text (sentence * sen)
 {
   GtkTextIter iter;
   GtkTextBuffer * buffer;
@@ -556,25 +537,25 @@ sentence_resize_text (sentence * sen, int new_size)
       GdkPixbuf * pix;
       pix = gtk_text_iter_get_pixbuf (&iter);
       if (pix)
-	{
-	  GdkPixbuf * new_pix, * old_pix;
-	  char * val;
-	  val = (char *) g_object_get_data (G_OBJECT (pix), _("conn"));
+        {
+          GdkPixbuf * new_pix, * old_pix;
+          char * val;
+          val = (char *) g_object_get_data (G_OBJECT (pix), _("conn"));
 
-	  new_pix = sen_parent_get_conn_by_type (sen->parent,
-						 val);
+          new_pix = sen_parent_get_conn_by_type (sen->parent,
+                                                 val);
 
-	  GtkTextIter next;
-	  next = iter;
-	  gtk_text_iter_forward_char (&next);
-	  gtk_text_buffer_delete (buffer, &iter, &next);
-	  gtk_text_buffer_insert_pixbuf (buffer, &iter,
-					 new_pix);
-	}
+          GtkTextIter next;
+          next = iter;
+          gtk_text_iter_forward_char (&next);
+          gtk_text_buffer_delete (buffer, &iter, &next);
+          gtk_text_buffer_insert_pixbuf (buffer, &iter,
+                                         new_pix);
+        }
       else
-	{
-	  gtk_text_iter_forward_char (&iter);
-	}
+        {
+          gtk_text_iter_forward_char (&iter);
+        }
     }
 
   return 0;
@@ -650,9 +631,9 @@ sentence_get_grid_no (sentence * sen)
   g_value_init (&val, G_TYPE_INT);
   sp = sen->parent;
   gtk_container_child_get_property (GTK_CONTAINER (sp->container),
-				   sen->panel,
-				   "top-attach",
-				    &val);
+                                    sen->panel,
+                                    "top-attach",
+                                    &val);
   line_num = g_value_get_int (&val);
   return line_num;
 }
@@ -667,20 +648,20 @@ void
 sentence_connect_signals (sentence * sen)
 {
   g_signal_connect (G_OBJECT (sen->entry), "focus-in-event",
-		    G_CALLBACK (sentence_focus_in), (gpointer) sen);
+                    G_CALLBACK (sentence_focus_in), (gpointer) sen);
   g_signal_connect (G_OBJECT (sen->entry), "focus-out-event",
-		    G_CALLBACK (sentence_focus_out), (gpointer) sen);
+                    G_CALLBACK (sentence_focus_out), (gpointer) sen);
   g_signal_connect (G_OBJECT (sen->entry), "button-press-event",
-		    G_CALLBACK (sentence_btn_press), (gpointer) sen);
+                    G_CALLBACK (sentence_btn_press), (gpointer) sen);
   g_signal_connect (G_OBJECT (sen->entry), "button-release-event",
-		    G_CALLBACK (sentence_btn_release), (gpointer) sen);
+                    G_CALLBACK (sentence_btn_release), (gpointer) sen);
   g_signal_connect (G_OBJECT (sen->entry), "key-press-event",
-		    G_CALLBACK (sentence_key_press), (gpointer) sen);
+                    G_CALLBACK (sentence_key_press), (gpointer) sen);
   g_signal_connect (G_OBJECT (gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry))),
-		    "changed",
-		    G_CALLBACK (sentence_changed), (gpointer) sen);
+                    "changed",
+                    G_CALLBACK (sentence_changed), (gpointer) sen);
   sen->sig_id = g_signal_connect (G_OBJECT (sen->entry), "size-allocate",
-				  G_CALLBACK (sentence_mapped), (gpointer) sen);
+                                  G_CALLBACK (sentence_mapped), (gpointer) sen);
 }
 
 /* Selects the references and rule of a sentence when it is selected.
@@ -706,34 +687,34 @@ sentence_in (sentence * sen)
       int rule = sentence_get_rule (sen);
       // Toggle the rule, if one exists.
       if (rule != -1)
-	{
-	  // Find which toggle button corresponds to this rule.
-	  if (the_app->rt->toggled != rule)
-	    {
-	      the_app->rt->user = 0;
-	      TOGGLE_BUTTON (the_app->rt->rules[rule]);
-	      the_app->rt->user = 1;
-	    }
-	}
+        {
+          // Find which toggle button corresponds to this rule.
+          if (the_app->rt->toggled != rule)
+            {
+              the_app->rt->user = 0;
+              TOGGLE_BUTTON (the_app->rt->rules[rule]);
+              the_app->rt->user = 1;
+            }
+        }
       else if (the_app->rt->toggled != -1)
-	{
-	  the_app->rt->user = 0;
-	  TOGGLE_BUTTON (the_app->rt->rules[the_app->rt->toggled]);
-	  the_app->rt->user = 1;
-	}
+        {
+          the_app->rt->user = 0;
+          TOGGLE_BUTTON (the_app->rt->rules[the_app->rt->toggled]);
+          the_app->rt->user = 1;
+        }
 
       // Set the background color of the references.
       item_t * r_itr = sen->references->head;
       for (; r_itr; r_itr = r_itr->next)
-	{
-	  int entire = 1;
+        {
+          int entire = 1;
 
-	  entire = sentence_check_entire (sen, r_itr->value);
-	  sentence_set_reference (SENTENCE (r_itr->value), 1, entire);
-	}
+          entire = sentence_check_entire (sen, r_itr->value);
+          sentence_set_reference (SENTENCE (r_itr->value), 1, entire);
+        }
     }
   else if (sp->type == SEN_PARENT_TYPE_PROOF
-	   && the_app->rt->toggled != -1)
+           && the_app->rt->toggled != -1)
     {
       the_app->rt->user = 0;
       TOGGLE_BUTTON (the_app->rt->rules[the_app->rt->toggled]);
@@ -748,7 +729,7 @@ sentence_in (sentence * sen)
  *    sen - the newly deselected sentence.
  *  output:
  *    0 on success, -1 on memory error.
-*/
+ */
 int
 sentence_out (sentence * sen)
 {
@@ -774,12 +755,12 @@ sentence_out (sentence * sen)
 
       item_t * ref_itr = sen->references->head;
       for (; ref_itr; ref_itr = ref_itr->next)
-	{
-	  int entire;
+        {
+          int entire;
 
-	  entire = sentence_check_entire (sen, ref_itr->value);
-	  sentence_set_reference (SENTENCE (ref_itr->value), 0, entire);
-	}
+          entire = sentence_check_entire (sen, ref_itr->value);
+          sentence_set_reference (SENTENCE (ref_itr->value), 0, entire);
+        }
     }
 
   return 0;
@@ -813,7 +794,7 @@ select_reference (sentence * sen)
   if (sentence_get_line_no (sen) >= sentence_get_line_no (fcs_sen))
     {
       if (the_app->verbose)
-	printf ("Must select reference that comes before focused.\n");
+        printf ("Must select reference that comes before focused.\n");
       return -1;
     }
 
@@ -841,7 +822,7 @@ select_reference (sentence * sen)
     {
       // Remove sen from focused's references.
       if (the_app->verbose)
-	printf ("Removing reference.\n");
+        printf ("Removing reference.\n");
 
       sentence_rem_ref (fcs_sen, ref_sen);
       sentence_set_reference (ref_sen, 0, entire);
@@ -850,7 +831,7 @@ select_reference (sentence * sen)
     {
       // Add sen to focused's references.
       if (the_app->verbose)
-	printf ("Adding reference.\n");
+        printf ("Adding reference.\n");
 
       sentence_add_ref (fcs_sen, ref_sen);
       sentence_set_reference (ref_sen, 1, entire);
@@ -862,7 +843,7 @@ select_reference (sentence * sen)
       ui.type = -1;
       ret = aris_proof_set_changed ((aris_proof *) sp, 1, ui);
       if (ret < 0)
-	return -2;
+        return -2;
     }
 
   return 0;
@@ -890,59 +871,59 @@ select_sentence (sentence * sen)
   if (sen->selected)
     {
       if (the_app->verbose)
-	printf ("Deselecting sentence.\n");
+        printf ("Deselecting sentence.\n");
 
       ls_rem_obj_value (ARIS_PROOF (sp)->selected, sen);
       if (SEN_SUB(sen))
-	{
-	  // Remove the entire subproof.
-	  int sen_depth;
-	  sen_depth = SEN_DEPTH(sen);
+        {
+          // Remove the entire subproof.
+          int sen_depth;
+          sen_depth = SEN_DEPTH(sen);
 
-	  item_t * ev_itr;
-	  ev_itr = ls_find (sp->everything, sen);
-	  for (; ev_itr; ev_itr = ev_itr->next)
-	    {
-	      sentence * ev_sen;
-	      ev_sen = ev_itr->value;
-	      if (SEN_DEPTH(ev_sen) < SEN_DEPTH(sen))
-		break;
+          item_t * ev_itr;
+          ev_itr = ls_find (sp->everything, sen);
+          for (; ev_itr; ev_itr = ev_itr->next)
+            {
+              sentence * ev_sen;
+              ev_sen = ev_itr->value;
+              if (SEN_DEPTH(ev_sen) < SEN_DEPTH(sen))
+                break;
 
-	      ls_rem_obj_value (ARIS_PROOF (sp)->selected, ev_sen);
-	    }
-	}
+              ls_rem_obj_value (ARIS_PROOF (sp)->selected, ev_sen);
+            }
+        }
       sentence_set_selected (sen, 0);
     }
   else
     {
       if (the_app->verbose)
-	printf ("Selecting sentence.\n");
+        printf ("Selecting sentence.\n");
 
       item_t * itm;
       itm = ls_push_obj (ARIS_PROOF (sp)->selected, sen);
       if (!itm)
-	return -1;
+        return -1;
 
       if (SEN_SUB(sen))
-	{
-	  // Add entire subproof.
-	  int sen_depth;
-	  sen_depth = SEN_DEPTH(sen);
+        {
+          // Add entire subproof.
+          int sen_depth;
+          sen_depth = SEN_DEPTH(sen);
 
-	  item_t * ev_itr;
-	  ev_itr = ls_find (sp->everything, sen);
-	  for (ev_itr = ev_itr->next; ev_itr; ev_itr = ev_itr->next)
-	    {
-	      sentence * ev_sen;
-	      ev_sen = ev_itr->value;
-	      if (SEN_DEPTH(ev_sen) < sen_depth)
-		break;
+          item_t * ev_itr;
+          ev_itr = ls_find (sp->everything, sen);
+          for (ev_itr = ev_itr->next; ev_itr; ev_itr = ev_itr->next)
+            {
+              sentence * ev_sen;
+              ev_sen = ev_itr->value;
+              if (SEN_DEPTH(ev_sen) < sen_depth)
+                break;
 
-	      itm = ls_push_obj (ARIS_PROOF (sp)->selected, ev_sen);
-	      if (!itm)
-		return -1;
-	    }
-	}
+              itm = ls_push_obj (ARIS_PROOF (sp)->selected, ev_sen);
+              if (!itm)
+                return -1;
+            }
+        }
 
       sentence_set_selected (sen, 1);
     }
@@ -999,13 +980,13 @@ get_iter_at_index (GtkTextBuffer * buffer, GtkTextIter * iter, int index)
       gtk_text_buffer_get_iter_at_line (buffer, &tmp_itr, i);
       tmp = gtk_text_iter_get_chars_in_line (&tmp_itr);
       if (tmp + offset >= index)
-	break;
+        break;
       offset += tmp;
       i++;
     }
 
   gtk_text_buffer_get_iter_at_line_offset (buffer, iter, i,
-					   index - offset);
+                                           index - offset);
 }
 
 
@@ -1029,9 +1010,9 @@ sentence_key (sentence * sen, int key, int ctrl)
 
   gtk_text_buffer_get_bounds (buffer, &start, &end);
   gtk_text_buffer_remove_tag_by_name (buffer, "hilight", &start,
-				      &end);
+                                      &end);
   gtk_text_buffer_remove_tag_by_name (buffer, "negative", &start,
-				      &end);
+                                      &end);
 
   int tmp_pos, offset;
 
@@ -1039,66 +1020,61 @@ sentence_key (sentence * sen, int key, int ctrl)
     {
       char * insert_char = NULL;
       GdkPixbuf * pixbuf = NULL;
-      int font_size;
-
-      font_size =
-	pango_font_description_get_size (the_app->fonts[sen->parent->font]);
-      font_size /= PANGO_SCALE;
 
       switch (key)
-	{
-	case GDK_KEY_7:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, AND);
-	  break;
-	case GDK_KEY_backslash:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, OR);
-	  break;
-	case GDK_KEY_grave:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, NOT);
-	  break;
-	case GDK_KEY_4:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, CON);
-	  break;
-	case GDK_KEY_5:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, BIC);
-	  break;
-	case GDK_KEY_2:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, UNV);
-	  break;
-	case GDK_KEY_3:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, EXL);
-	  break;
-	case GDK_KEY_1:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, TAU);
-	  break;
-	case GDK_KEY_6:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, CTR);
-	  break;
-	case GDK_KEY_semicolon:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, ELM);
-	  break;
-	case GDK_KEY_period:
-	  pixbuf = sen_parent_get_conn_by_type (sen->parent, NIL);
-	  break;
-	case GDK_KEY_space:
-	  insert_char = " ";
-	  break;
- 	default:
-	  break;
-	}
+        {
+        case GDK_KEY_7:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, AND);
+          break;
+        case GDK_KEY_backslash:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, OR);
+          break;
+        case GDK_KEY_grave:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, NOT);
+          break;
+        case GDK_KEY_4:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, CON);
+          break;
+        case GDK_KEY_5:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, BIC);
+          break;
+        case GDK_KEY_2:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, UNV);
+          break;
+        case GDK_KEY_3:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, EXL);
+          break;
+        case GDK_KEY_1:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, TAU);
+          break;
+        case GDK_KEY_6:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, CTR);
+          break;
+        case GDK_KEY_semicolon:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, ELM);
+          break;
+        case GDK_KEY_period:
+          pixbuf = sen_parent_get_conn_by_type (sen->parent, NIL);
+          break;
+        case GDK_KEY_space:
+          insert_char = " ";
+          break;
+        default:
+          break;
+        }
 
       if (pixbuf)
-	{
-	  GtkTextIter iter;
-	  GtkTextMark * mark;
+        {
+          GtkTextIter iter;
+          GtkTextMark * mark;
 
-	  mark = gtk_text_buffer_get_insert (buffer);
-	  gtk_text_buffer_get_iter_at_mark (buffer, &iter, mark);
-	  gtk_text_buffer_insert_pixbuf (buffer, &iter, pixbuf);
-	}
+          mark = gtk_text_buffer_get_insert (buffer);
+          gtk_text_buffer_get_iter_at_mark (buffer, &iter, mark);
+          gtk_text_buffer_insert_pixbuf (buffer, &iter, pixbuf);
+        }
 
       if (insert_char)
-	gtk_text_buffer_insert_at_cursor (buffer, insert_char, -1);
+        gtk_text_buffer_insert_at_cursor (buffer, insert_char, -1);
     }
   else
     {
@@ -1108,106 +1084,106 @@ sentence_key (sentence * sen, int key, int ctrl)
       int got_par = 0, mod = 0, chk;
 
       gtk_text_buffer_get_iter_at_mark (buffer, &pos,
-					gtk_text_buffer_get_insert (buffer));
+                                        gtk_text_buffer_get_insert (buffer));
       chk_pos = pos;
 
       switch (key)
-	{
-	case GDK_KEY_Up:
-	  dst = (sp->focused == sp->everything->head)
-	    ? sp->everything->tail : sp->focused->prev;
-	  if (the_app->verbose)
-	    printf ("Got Key Up\n");
-	  gtk_widget_grab_focus (SENTENCE (dst->value)->entry);
-	  ret = 0;
-	  break;
-	case GDK_KEY_Down:
-	  dst = (sp->focused == sp->everything->tail)
-	    ? sp->everything->head : sp->focused->next;
-	  if (the_app->verbose)
-	    printf ("Got Key Down\n");
-	  gtk_widget_grab_focus (SENTENCE (dst->value)->entry);
-	  ret = 0;
-	  break;
-	case GDK_KEY_Left:
-	case GDK_KEY_Right:
-	  if (the_app->verbose)
-	    {
-	      if (key == GDK_KEY_Left)
-		printf ("Got Key Left\n");
-	      else
-		printf ("Got Key Right\n");
-	    }
+        {
+        case GDK_KEY_Up:
+          dst = (sp->focused == sp->everything->head)
+            ? sp->everything->tail : sp->focused->prev;
+          if (the_app->verbose)
+            printf ("Got Key Up\n");
+          gtk_widget_grab_focus (SENTENCE (dst->value)->entry);
+          ret = 0;
+          break;
+        case GDK_KEY_Down:
+          dst = (sp->focused == sp->everything->tail)
+            ? sp->everything->head : sp->focused->next;
+          if (the_app->verbose)
+            printf ("Got Key Down\n");
+          gtk_widget_grab_focus (SENTENCE (dst->value)->entry);
+          ret = 0;
+          break;
+        case GDK_KEY_Left:
+        case GDK_KEY_Right:
+          if (the_app->verbose)
+            {
+              if (key == GDK_KEY_Left)
+                printf ("Got Key Left\n");
+              else
+                printf ("Got Key Right\n");
+            }
 
-	  chk = (key == GDK_KEY_Left)
-	    ? gtk_text_iter_backward_char (&chk_pos)
-	    : gtk_text_iter_forward_char (&chk_pos);
+          chk = (key == GDK_KEY_Left)
+            ? gtk_text_iter_backward_char (&chk_pos)
+            : gtk_text_iter_forward_char (&chk_pos);
 
-	  break;
-	}
+          break;
+        }
 
       if (key != GDK_KEY_Up && key != GDK_KEY_Down)
-	{
-	  c_pos = chk_pos;
-	  gtk_text_iter_backward_char (&c_pos);
-	  o_char = gtk_text_iter_get_char (&chk_pos);
-	  c_char = gtk_text_iter_get_char (&c_pos);
-	  if (o_char == '(')
-	    {
-	      got_par = 1;
-	      pos = chk_pos;
-	      mod = 0;
-	    }
+        {
+          c_pos = chk_pos;
+          gtk_text_iter_backward_char (&c_pos);
+          o_char = gtk_text_iter_get_char (&chk_pos);
+          c_char = gtk_text_iter_get_char (&c_pos);
+          if (o_char == '(')
+            {
+              got_par = 1;
+              pos = chk_pos;
+              mod = 0;
+            }
 
-	  if (c_char == ')')
-	    {
-	      got_par = 2;
-	      pos = c_pos;
-	      mod = -1;
-	    }
-	}
-	  
+          if (c_char == ')')
+            {
+              got_par = 2;
+              pos = c_pos;
+              mod = -1;
+            }
+        }
+          
       if (got_par)
-	{
-	  unsigned char * tmp_str = NULL;
-	  GtkTextIter oth_pos;
-	  unsigned char * sen_text;
-	  sen_text = sentence_get_text (sen);
+        {
+          unsigned char * tmp_str = NULL;
+          GtkTextIter oth_pos;
+          unsigned char * sen_text;
+          sen_text = sentence_get_text (sen);
 
-	  offset = get_index (&pos);
+          offset = get_index (&pos);
 
-	  if (got_par == 1)
-	    {
-	      tmp_pos = parse_parens (sen_text, offset, NULL);
-	    }
-	  else
-	    {
-	      tmp_pos = reverse_parse_parens (sen_text, offset,
-					      NULL);
-	      if (tmp_pos == -2)
-		return -1;
-	    }
+          if (got_par == 1)
+            {
+              tmp_pos = parse_parens (sen_text, offset, NULL);
+            }
+          else
+            {
+              tmp_pos = reverse_parse_parens (sen_text, offset,
+                                              NULL);
+              if (tmp_pos == -2)
+                return -1;
+            }
 
-	  GtkTextIter semi;
-	  semi = pos;
-	  gtk_text_iter_forward_char (&semi);
+          GtkTextIter semi;
+          semi = pos;
+          gtk_text_iter_forward_char (&semi);
 
-	  if (tmp_pos < 0)
-	    {
-	      gtk_text_buffer_apply_tag_by_name (buffer, "negative",
-						 &pos, &semi);
-	    }
-	  else
-	    {
-	      gtk_text_buffer_apply_tag_by_name (buffer, "hilight",
-						 &pos, &semi);
-	      get_iter_at_index (buffer, &oth_pos, tmp_pos);
-	      semi = oth_pos;
-	      gtk_text_iter_forward_char (&semi);
-	      gtk_text_buffer_apply_tag_by_name (buffer, "hilight",
-						 &oth_pos, &semi);
-	    }
-	}
+          if (tmp_pos < 0)
+            {
+              gtk_text_buffer_apply_tag_by_name (buffer, "negative",
+                                                 &pos, &semi);
+            }
+          else
+            {
+              gtk_text_buffer_apply_tag_by_name (buffer, "hilight",
+                                                 &pos, &semi);
+              get_iter_at_index (buffer, &oth_pos, tmp_pos);
+              semi = oth_pos;
+              gtk_text_iter_forward_char (&semi);
+              gtk_text_buffer_apply_tag_by_name (buffer, "hilight",
+                                                 &oth_pos, &semi);
+            }
+        }
     }
   return ret;
 }
@@ -1236,18 +1212,18 @@ sentence_set_reference (sentence * sen, int reference, int entire_subproof)
       sub_itr = ls_find (sen->parent->everything, sen);
 
       for (sub_itr = sub_itr->next; sub_itr; sub_itr = sub_itr->next)
-	{
-	  sentence * sub_sen;
-	  sub_sen = sub_itr->value;
+        {
+          sentence * sub_sen;
+          sub_sen = sub_itr->value;
 
-	  if (SEN_DEPTH(sub_sen) < SEN_DEPTH(sen))
-	    break;
+          if (SEN_DEPTH(sub_sen) < SEN_DEPTH(sen))
+            break;
 
-	  if (reference)
-	    sentence_set_bg (sub_sen, BG_COLOR_REF);
-	  else
-	    sentence_set_bg (sub_sen, BG_COLOR_DEFAULT);
-	}
+          if (reference)
+            sentence_set_bg (sub_sen, BG_COLOR_REF);
+          else
+            sentence_set_bg (sub_sen, BG_COLOR_DEFAULT);
+        }
     }
 
   sen->reference = reference;
@@ -1275,18 +1251,18 @@ sentence_set_selected (sentence * sen, int selected)
       sub_itr = ls_find (sen->parent->everything, sen);
 
       for (sub_itr = sub_itr->next; sub_itr; sub_itr = sub_itr->next)
-	{
-	  sentence * sub_sen;
-	  sub_sen = sub_itr->value;
+        {
+          sentence * sub_sen;
+          sub_sen = sub_itr->value;
 
-	  if (SEN_DEPTH(sub_sen) < SEN_DEPTH(sen))
-	    break;
+          if (SEN_DEPTH(sub_sen) < SEN_DEPTH(sen))
+            break;
 
-	  if (selected)
-	    sentence_set_bg (sub_sen, BG_COLOR_SEL);
-	  else
-	    sentence_set_bg (sub_sen, BG_COLOR_DEFAULT);
-	}
+          if (selected)
+            sentence_set_bg (sub_sen, BG_COLOR_SEL);
+          else
+            sentence_set_bg (sub_sen, BG_COLOR_DEFAULT);
+        }
     }
 
   sen->selected = selected;
@@ -1320,35 +1296,35 @@ sentence_copy_text (sentence * sen)
       GdkPixbuf * pixbuf;
       pixbuf = gtk_text_iter_get_pixbuf (&start);
       if (pixbuf)
-	{
-	  // Determine what this is, and add the
-	  // corresponding character to ret_str;
-	  int alloc_size;
-	  unsigned char * new_char;
-	  const char * val;
+        {
+          // Determine what this is, and add the
+          // corresponding character to ret_str;
+          int alloc_size;
+          unsigned char * new_char;
+          const char * val;
 
-	  val = (char *) g_object_get_data (G_OBJECT (pixbuf),
-					    _("conn"));
-	  ret_str = (char *) realloc (ret_str,
-				      (i + CL + 1) * sizeof (char));
-	  CHECK_ALLOC (ret_str, NULL);
-	  strcpy (ret_str + i, val);
-	  i += CL;
-	}
+          val = (char *) g_object_get_data (G_OBJECT (pixbuf),
+                                            _("conn"));
+          ret_str = (char *) realloc (ret_str,
+                                      (i + CL + 1) * sizeof (char));
+          CHECK_ALLOC (ret_str, NULL);
+          strcpy (ret_str + i, val);
+          i += CL;
+        }
       else
-	{
-	  char * c;
-	  end = start;
-	  gtk_text_iter_forward_char (&end);
+        {
+          char * c;
+          end = start;
+          gtk_text_iter_forward_char (&end);
 
-	  c = gtk_text_iter_get_text (&start, &end);
+          c = gtk_text_iter_get_text (&start, &end);
 
-	  ret_str = (char *) realloc (ret_str, (i + 2)
-				      * sizeof (char));
-	  CHECK_ALLOC (ret_str, NULL);
-	  
-	  ret_str[i++] = *c;
-	}
+          ret_str = (char *) realloc (ret_str, (i + 2)
+                                      * sizeof (char));
+          CHECK_ALLOC (ret_str, NULL);
+          
+          ret_str[i++] = *c;
+        }
 
       gtk_text_iter_forward_char (&start);
     }
@@ -1397,51 +1373,51 @@ sentence_paste_text (sentence * sen)
   for (i = 0; sen_text[i]; i++)
     {
       if (IS_TYPE_CONN (sen_text + i, gui_conns)
-	  || IS_TYPE_CONN (sen_text + i, cli_conns))
-	{
-	  GdkPixbuf * pix, * new_pix;
+          || IS_TYPE_CONN (sen_text + i, cli_conns))
+        {
+          GdkPixbuf * pix, * new_pix;
 
-	  unsigned char * conn;
-	  int len;
+          unsigned char * conn;
+          int len;
 
-	  if (IS_TYPE_CONN (sen_text + i, gui_conns))
-	    {
-	      if (!strncmp (sen_text + i, gui_conns.not, gui_conns.nl))
-		len = gui_conns.nl;
-	      else
-		len = gui_conns.cl;
-	    }
-	  else
-	    {
-	      if (!strncmp (sen_text + i, NOT, NL))
-		len = NL;
-	      else
-		len = CL;
-	    }
+          if (IS_TYPE_CONN (sen_text + i, gui_conns))
+            {
+              if (!strncmp (sen_text + i, gui_conns.not, gui_conns.nl))
+                len = gui_conns.nl;
+              else
+                len = gui_conns.cl;
+            }
+          else
+            {
+              if (!strncmp (sen_text + i, NOT, NL))
+                len = NL;
+              else
+                len = CL;
+            }
 
-	  conn = (unsigned char *) calloc (len + 1, sizeof (char));
-	  CHECK_ALLOC (conn, -1);
-	  
-	  strncpy (conn, sen_text + i, len);
-	  conn[len] = '\0';
+          conn = (unsigned char *) calloc (len + 1, sizeof (char));
+          CHECK_ALLOC (conn, -1);
+          
+          strncpy (conn, sen_text + i, len);
+          conn[len] = '\0';
 
-	  pix = sen_parent_get_conn_by_type (sen->parent,
-					     conn);
-	  free (conn);
+          pix = sen_parent_get_conn_by_type (sen->parent,
+                                             conn);
+          free (conn);
 
-	  if (!pix)
-	    return -2;
+          if (!pix)
+            return -2;
 
-	  // No need to resize this, since sentence_set_font
-	  // will be called after this, and it handles it instead.
+          // No need to resize this, since sentence_set_font
+          // will be called after this, and it handles it instead.
 
-	  gtk_text_buffer_insert_pixbuf (buffer, &end, pix);
-	  i += len - 1;
-	}
+          gtk_text_buffer_insert_pixbuf (buffer, &end, pix);
+          i += len - 1;
+        }
       else
-	{
-	  gtk_text_buffer_insert (buffer, &end, sen_text + i, 1);
-	}
+        {
+          gtk_text_buffer_insert (buffer, &end, sen_text + i, 1);
+        }
     }
 
   return 0;
@@ -1472,13 +1448,13 @@ sentence_text_changed (sentence * sen)
       list_t * e_refs;
       e_refs = SENTENCE (e_itr->value)->references;
       if (e_refs)
-	{
-	  item_t * r_itr;
-	  r_itr = ls_find (e_refs, sen);
+        {
+          item_t * r_itr;
+          r_itr = ls_find (e_refs, sen);
 
-	  if (r_itr)
-	    sentence_set_value (SENTENCE (e_itr->value), VALUE_TYPE_BLANK);
-	}
+          if (r_itr)
+            sentence_set_value (SENTENCE (e_itr->value), VALUE_TYPE_BLANK);
+        }
     }
 
   if (SD(sen)->sexpr)
@@ -1505,46 +1481,46 @@ sentence_text_changed (sentence * sen)
   diff_pos = find_difference (sen_text, (unsigned char *) text);
 
 #if 0
-    {
-      //TODO: Check for semi-colon and set mark.
-      if (text_len > old_len)
-	{
-	  if (sen->text[diff_pos] == ';')
-	    {
-	      GtkTextIter cur_pos;
-	      gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
-						gtk_text_buffer_get_insert (buffer));
-	  
-	      if (sen->mark)
-		{
-		  gtk_text_buffer_get_iter_at_mark (buffer, &semi, sen->mark);
+  {
+    //TODO: Check for semi-colon and set mark.
+    if (text_len > old_len)
+      {
+        if (sen->text[diff_pos] == ';')
+          {
+            GtkTextIter cur_pos;
+            gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
+                                              gtk_text_buffer_get_insert (buffer));
+          
+            if (sen->mark)
+              {
+                gtk_text_buffer_get_iter_at_mark (buffer, &semi, sen->mark);
 
-		  int mark_off, cur_off;
-		  mark_off = gtk_text_iter_get_offset (&semi);
-		  cur_off = gtk_text_iter_get_offset (&cur_pos);
+                int mark_off, cur_off;
+                mark_off = gtk_text_iter_get_offset (&semi);
+                cur_off = gtk_text_iter_get_offset (&cur_pos);
 
-		  if (cur_off < mark_off)
-		    {
-		      gtk_text_buffer_move_mark (buffer, sen->mark, &cur_pos);
-		    }
-		}
-	      else
-		{
-		  sen->mark = gtk_text_mark_new (SEMI_NAME, TRUE);
-		  gtk_text_buffer_add_mark (buffer, sen->mark, &cur_pos);
-		}
-	    }
-	}
-      else
-	{
-	  if (text[diff_pos] == ';')
-	    {
-	      GtkTextIter cur_pos;
-	      gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
-						gtk_text_buffer_get_insert (buffer));
-	    }
-	}
-    }
+                if (cur_off < mark_off)
+                  {
+                    gtk_text_buffer_move_mark (buffer, sen->mark, &cur_pos);
+                  }
+              }
+            else
+              {
+                sen->mark = gtk_text_mark_new (SEMI_NAME, TRUE);
+                gtk_text_buffer_add_mark (buffer, sen->mark, &cur_pos);
+              }
+          }
+      }
+    else
+      {
+        if (text[diff_pos] == ';')
+          {
+            GtkTextIter cur_pos;
+            gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
+                                              gtk_text_buffer_get_insert (buffer));
+          }
+      }
+  }
 #endif
 
   undo_info ui;
@@ -1558,26 +1534,26 @@ sentence_text_changed (sentence * sen)
 
       ret = aris_proof_set_changed (ARIS_PROOF (sp), 1, ui);
       if (ret < 0)
-	return -1;
+        return -1;
 
       gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
 
       if (SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->num_stuff > 0)
-	{
-	  item_t * mod_itm;
-	  mod_itm = SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->head;
-	  for (; mod_itm; mod_itm = mod_itm->next)
-	    {
-	      int m_ln;
-	      m_ln = sentence_get_line_no (mod_itm->value);
-	      if (m_ln == ln)
-		{
-		  sentence_update_line_no (SENTENCE (mod_itm->value), -1);
-		  sentence_set_value (SENTENCE (mod_itm->value), VALUE_TYPE_BLANK);
-		  break;
-		}
-	    }
-	}
+        {
+          item_t * mod_itm;
+          mod_itm = SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->head;
+          for (; mod_itm; mod_itm = mod_itm->next)
+            {
+              int m_ln;
+              m_ln = sentence_get_line_no (mod_itm->value);
+              if (m_ln == ln)
+                {
+                  sentence_update_line_no (SENTENCE (mod_itm->value), -1);
+                  sentence_set_value (SENTENCE (mod_itm->value), VALUE_TYPE_BLANK);
+                  break;
+                }
+            }
+        }
     }
   else
     {
@@ -1586,17 +1562,17 @@ sentence_text_changed (sentence * sen)
 
       ret = aris_proof_set_changed (GOAL (sp)->parent, 1, ui);
       if (ret < 0)
-	return -1;
+        return -1;
 
       item_t * mod_itm;
       sentence * mod_sen;
       mod_itm = ls_nth ((SEN_PARENT (GOAL (sp)->parent)->everything), ln);
       if (mod_itm)
-	{
-	  mod_sen = mod_itm->value;
-	  gtk_widget_override_background_color (mod_sen->eventbox, GTK_STATE_NORMAL, NULL);
-	  sentence_set_line_no (sen, -1);
-	}
+        {
+          mod_sen = mod_itm->value;
+          gtk_widget_override_background_color (mod_sen->eventbox, GTK_STATE_NORMAL, NULL);
+          sentence_set_line_no (sen, -1);
+        }
     }
 
   if (sen_text)
@@ -1628,7 +1604,7 @@ sentence_check_entire (sentence * sen, sentence * ref)
   for (i = 0; i < SEN_DEPTH(ref); i++)
     {
       if (SEN_IND(ref,i) != SEN_IND(sen,i))
-	break;
+        break;
     }
 
   int ret;
@@ -1687,7 +1663,7 @@ sentence_set_rule (sentence * sen, int rule)
   const char * rule_text = (SD(sen)->rule == -1)
     ? NULL : rules_list[SD(sen)->rule];
   gtk_label_set_text (GTK_LABEL (sen->rule_box),
-		      rule_text);
+                      rule_text);
   return 0;
 }
 
