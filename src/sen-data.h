@@ -75,4 +75,6 @@ int sen_data_can_sel_as_ref (int sen_line, int * sen_indices,
 			     int ref_line, int * ref_indices,
 			     int ref_prem);
 
+char * convert_sd_latex (sen_data * sd);
+
 #endif /* ARIS_SEN_DATA_H */

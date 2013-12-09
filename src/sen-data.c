@@ -38,15 +38,14 @@
  *    file - the file name to set, in the event that rule == RULE_LM.
  *    subproof - whether or not this starts a subproof.
  *    depth - the depth of this sentence.
- *    indices - the indices of the sentence.
  *    sexpr - the sexpr text of this sentence.
  *  output:
  *    the newly initialized sentence data, or NULL on error.
  */
 sen_data *
 sen_data_init (int line_num, int rule, unsigned char * text,
-	       short * refs, int premise, unsigned char * file,
-	       int subproof, int depth, unsigned char * sexpr)
+               short * refs, int premise, unsigned char * file,
+               int subproof, int depth, unsigned char * sexpr)
 {
   sen_data * sd;
   sd = (sen_data *) calloc (1, sizeof (sen_data));
@@ -78,7 +77,7 @@ sen_data_init (int line_num, int rule, unsigned char * text,
     {
       int len = 0;
       while (refs[len] != -1)
-	len++;
+        len++;
 
       sd->refs = (short*) calloc (len + 1, sizeof (short));
       CHECK_ALLOC (sd->refs, NULL);
@@ -176,7 +175,7 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
     {
       len = 0;
       while (old_sd->refs[len] != -1)
-	len++;
+        len++;
 
       new_sd->refs = (short*) calloc (len + 1, sizeof (short));
       CHECK_ALLOC (new_sd->refs, -1);
@@ -225,19 +224,19 @@ sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
     {
       ret = check_text (text);
       if (ret == -1)
-	return -1;
+        return -1;
 
       if (ret != 0)
-	return -2;
+        return -2;
 
       unsigned char * tmp_str, * sexpr_sen;
       tmp_str = die_spaces_die (text);
       if (!tmp_str)
-	return -1;
+        return -1;
 
       sexpr_sen = convert_sexpr (tmp_str);
       if (!sexpr_sen)
-	return -1;
+        return -1;
       free (tmp_str);
       *sexpr = sexpr_sen;
     }
@@ -272,15 +271,15 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
   if (sd->text[0] == '\0')
     {
       if (sd->line_num == 1)
-	{
-	  *ret_val = VALUE_TYPE_BLANK;
-	  return CORRECT;
-	}
+        {
+          *ret_val = VALUE_TYPE_BLANK;
+          return CORRECT;
+        }
       else
-	{
-	  *ret_val = VALUE_TYPE_ERROR;
-	  return _("Only the first sentence can be blank.");
-	}
+        {
+          *ret_val = VALUE_TYPE_ERROR;
+          return _("Only the first sentence can be blank.");
+        }
     }
 
   int ret;
@@ -335,71 +334,71 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
       sen_data * ref_data;
 
       if (sd->refs[i] > lines->num_stuff)
-	return NULL;
+        return NULL;
 
       cur_ref = ls_nth (lines, sd->refs[i] - 1);
       ref_data = cur_ref->value;
 
       ret = check_text (ref_data->text);
       if (ret == -1)
-	return NULL;
+        return NULL;
 
       if (ret < 0)
-	{
-	  destroy_str_vec (refs);
-	  *ret_val = VALUE_TYPE_REF;
+        {
+          destroy_str_vec (refs);
+          *ret_val = VALUE_TYPE_REF;
 
-	  return _("One of the sentence's references has a text error.");
-	}
+          return _("One of the sentence's references has a text error.");
+        }
 
       unsigned char * ref_text;
       ref_text = ref_data->sexpr;
 
       ret = vec_str_add_obj (refs, ref_text);
       if (ret == -1)
-	return NULL;
+        return NULL;
 
       if (ref_data->subproof)
-	{
-	  ret = sen_data_can_select_as_ref (sd, ref_data);
-	  if (ret < 0)
-	    {
-	      sen_data * sen_0;
-	      item_t * ev_itr;
+        {
+          ret = sen_data_can_select_as_ref (sd, ref_data);
+          if (ret < 0)
+            {
+              sen_data * sen_0;
+              item_t * ev_itr;
 
-	      ev_itr = ls_nth (lines, ref_data->line_num);
-	      while (ev_itr->next &&
-		     SD(ev_itr->next->value)->depth >= ref_data->depth)
-		{
-		  if (!ev_itr->next)
-		    break;
-		  ev_itr = ev_itr->next;
-		}
+              ev_itr = ls_nth (lines, ref_data->line_num);
+              while (ev_itr->next &&
+                     SD(ev_itr->next->value)->depth >= ref_data->depth)
+                {
+                  if (!ev_itr->next)
+                    break;
+                  ev_itr = ev_itr->next;
+                }
 
-	      sen_0 = ev_itr->value;
-	      ret = check_text (sen_0->text);
-	      if (ret == -1)
-		return NULL;
+              sen_0 = ev_itr->value;
+              ret = check_text (sen_0->text);
+              if (ret == -1)
+                return NULL;
 
-	      if (ret < 0)
-		{
-		  *ret_val = VALUE_TYPE_REF;
-		  destroy_str_vec (refs);
-		  return _("One of the sentence's references has a text error.");
-		}
+              if (ret < 0)
+                {
+                  *ret_val = VALUE_TYPE_REF;
+                  destroy_str_vec (refs);
+                  return _("One of the sentence's references has a text error.");
+                }
 
-	      unsigned char * ref_text;
-	      ref_text = sen_0->sexpr;
+              unsigned char * ref_text;
+              ref_text = sen_0->sexpr;
 
-	      ret = vec_str_add_obj (refs, ref_text);
-	      if (ret == -1)
-		return NULL;
-	    }
-	  else if (sd->rule == RULE_SP)
-	    {
-	      return _("\'sp\' can only be used with a subproof as a reference.");
-	    }
-	}
+              ret = vec_str_add_obj (refs, ref_text);
+              if (ret == -1)
+                return NULL;
+            }
+          else if (sd->rule == RULE_SP)
+            {
+              return _("\'sp\' can only be used with a subproof as a reference.");
+            }
+        }
     }
 
   // Next, get the variables.
@@ -413,7 +412,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
       variable * var = var_itr->value;
       ret = vec_add_obj (vars, var);
       if (ret == -1)
-	return NULL;
+        return NULL;
     }
 
   char * fin_text;
@@ -432,25 +431,25 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
       f_len = strlen (sd->file);
 
       if (!strncmp (sd->file + f_len - 4, ".thy", 4))
-	{
-	  proof = proof_init ();
-	  if (!proof)
-	    return NULL;
+        {
+          proof = proof_init ();
+          if (!proof)
+            return NULL;
 
-	  ret = parse_thy (sd->file, proof);
-	  if (ret == -1)
-	    return NULL;
-	}
+          ret = parse_thy (sd->file, proof);
+          if (ret == -1)
+            return NULL;
+        }
       else
-	{
-	  struct connectives_list current_conns;
-	  current_conns = main_conns;
+        {
+          struct connectives_list current_conns;
+          current_conns = main_conns;
 
-	  proof = aio_open (sd->file);
-	  if (!proof)
-	    return NULL;
-	  main_conns = current_conns;
-	}
+          proof = aio_open (sd->file);
+          if (!proof)
+            return NULL;
+          main_conns = current_conns;
+        }
     }
 
   char * proc_ret = process (fin_text, refs, rule, vars, proof);
@@ -482,8 +481,8 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
  */
 int
 sen_data_can_sel_as_ref (int sen_line, int * sen_indices,
-			 int ref_line, int * ref_indices,
-			 int ref_prem)
+                         int ref_line, int * ref_indices,
+                         int ref_prem)
 {
   if (ref_line >= sen_line)
     return 0;
@@ -502,7 +501,7 @@ sen_data_can_sel_as_ref (int sen_line, int * sen_indices,
   for (i = 0; sen_indices[i] != -1 && ref_indices[i] != -1; i++)
     {
       if (sen_indices[i] != ref_indices[i])
-	break;
+        break;
     }
 
   // If the set of the reference sentence's indices is a subset of
@@ -543,6 +542,144 @@ int
 sen_data_can_select_as_ref (sen_data * sen, sen_data * ref)
 {
   return sen_data_can_sel_as_ref (sen->line_num, sen->indices,
-				  ref->line_num, ref->indices,
-				  ref->premise);
+                                  ref->line_num, ref->indices,
+                                  ref->premise);
+}
+
+/* Converts sentence data to a LaTeX line.
+ *  input:
+ *   sd - the sentence data to convert.
+ *  output:
+ *   The converted text, or NULL on error.
+ */
+char *
+convert_sd_latex (sen_data * sd)
+{
+  char * out_str, * text;
+  int out_pos, i;
+
+  text = die_spaces_die (sd->text);
+  if (!text)
+    return NULL;
+
+  out_str = (char *) calloc (sd->depth * 6 + 1, sizeof (char));
+  CHECK_ALLOC (out_str, NULL);
+
+  out_pos = 0;
+
+  for (i = 0; i < sd->depth; i++)
+    out_pos += sprintf (out_str + out_pos, "\\pquad ");
+
+  for (i = 0; text[i]; i++)
+    {
+      if (!strncmp (text + i, AND, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 8);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\land ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, OR, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 8);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\lor ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, NOT, NL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 8);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\neg ");
+	  i += NL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, CON, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 16);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\rightarrow ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, BIC, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 18);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\leftrightarrow ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, UNV, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 16);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\forall ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, EXL, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 16);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\exists ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, TAU, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 8);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\top ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, CTR, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 8);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\bot ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, ELM, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 8);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, "\\in ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      if (!strncmp (text + i, NIL, CL))
+	{
+	  out_str = (char *) realloc (out_str, out_pos + 8);
+	  CHECK_ALLOC (out_str, NULL);
+	  out_pos += sprintf (out_str + out_pos, " \\obslash ");
+	  i += CL - 1;
+	  continue;
+	}
+
+      out_str = (char *) realloc (out_str, out_pos + 2);
+      CHECK_ALLOC (out_str, NULL);
+      out_str[out_pos++] = text[i];
+
+    }
+
+  out_str = (char *) realloc (out_str, out_pos + 1);
+  CHECK_ALLOC (out_str, NULL);
+  out_str[out_pos] = '\0';
+
+  return out_str;
 }
