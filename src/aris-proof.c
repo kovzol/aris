@@ -54,7 +54,7 @@ static const char * head_text[] =
 // Number of submenus for each menu.
 
 static int num_subs[NUM_MENUS] = { FILE_MENU_SIZE, EDIT_MENU_SIZE, PROOF_MENU_SIZE,
-				   RULES_MENU_SIZE, FONT_MENU_SIZE, HELP_MENU_SIZE };
+                                   RULES_MENU_SIZE, FONT_MENU_SIZE, HELP_MENU_SIZE };
 
 /* Initializes an aris proof.
  *  input:
@@ -70,7 +70,7 @@ aris_proof_init ()
   CHECK_ALLOC (ap, NULL);
 
   sen_parent_init (SEN_PARENT (ap), _("GNU Aris - Untitled"),
-		   640, 320, aris_proof_create_menu, SEN_PARENT_TYPE_PROOF);
+                   640, 320, aris_proof_create_menu, SEN_PARENT_TYPE_PROOF);
   ap->boolean = the_app->boolean;
 
   if (the_app->boolean || SUBPROOFS_DISABLED)
@@ -143,9 +143,9 @@ aris_proof_init ()
     }
 
   g_signal_connect (G_OBJECT (SEN_PARENT (ap)->window), "delete-event",
-		    G_CALLBACK (window_delete), (gpointer) ap);
+                    G_CALLBACK (window_delete), (gpointer) ap);
   g_signal_connect (G_OBJECT (SEN_PARENT (ap)->window), "focus-in-event",
-		    G_CALLBACK (window_focus_in), (gpointer) ap);
+                    G_CALLBACK (window_focus_in), (gpointer) ap);
 
   gtk_widget_show_all (SEN_PARENT (ap)->window);
 
@@ -176,7 +176,7 @@ aris_proof_post_init (aris_proof * ap)
     return -1;
 
   gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
-			   sen->panel, NULL, GTK_POS_BOTTOM, 1, 1);
+                           sen->panel, NULL, GTK_POS_BOTTOM, 1, 1);
 
   item_t * itm = ls_push_obj (SEN_PARENT (ap)->everything, sen);
   if (!itm)
@@ -185,7 +185,7 @@ aris_proof_post_init (aris_proof * ap)
   ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
 
   gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
-			   SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM, 1, 1);
+                           SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM, 1, 1);
 
   // Clear the undo stack.
   ap->undo_pt = -1;
@@ -209,7 +209,7 @@ aris_proof_init_from_proof (proof_t * proof)
   CHECK_ALLOC (ap, NULL);
 
   sen_parent_init (SEN_PARENT (ap), _("GNU Aris - "),
-		   640, 320, aris_proof_create_menu, SEN_PARENT_TYPE_PROOF);
+                   640, 320, aris_proof_create_menu, SEN_PARENT_TYPE_PROOF);
 
   ap->boolean = proof->boolean;
   ap->cur_file = NULL;
@@ -243,9 +243,9 @@ aris_proof_init_from_proof (proof_t * proof)
   aris_proof_set_sb (ap, _("Ready"));
 
   g_signal_connect (G_OBJECT (SEN_PARENT (ap)->window), "delete-event",
-		    G_CALLBACK (window_delete), (gpointer) ap);
+                    G_CALLBACK (window_delete), (gpointer) ap);
   g_signal_connect (G_OBJECT (SEN_PARENT (ap)->window), "focus-in-event",
-		    G_CALLBACK (window_focus_in), (gpointer) ap);
+                    G_CALLBACK (window_focus_in), (gpointer) ap);
 
   ap->undo_stack = init_vec (sizeof (undo_info));
   if (!ap->undo_stack)
@@ -264,27 +264,27 @@ aris_proof_init_from_proof (proof_t * proof)
       sd = ev_itr->value;
 
       if (first == 1)
-	{
-	  SEN_PARENT (ap)->separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-	  item_t * itm;
+        {
+          SEN_PARENT (ap)->separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+          item_t * itm;
 
-	  itm = sen_parent_ins_sentence ((sen_parent *) ap, sd, NULL, 0);
+          itm = sen_parent_ins_sentence ((sen_parent *) ap, sd, NULL, 0);
 
-	  ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
+          ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
 
-	  gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
-				   SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM,
-				   1, 1);
-	  first = 0;
-	}
+          gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
+                                   SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM,
+                                   1, 1);
+          first = 0;
+        }
       else
-	{
-	  sen = aris_proof_create_sentence (ap, sd, 0);
-	  if (!sen)
-	    return NULL;
+        {
+          sen = aris_proof_create_sentence (ap, sd, 0);
+          if (!sen)
+            return NULL;
 
-	  sentence_set_bg (sen, BG_COLOR_DEFAULT);
-	}
+          sentence_set_bg (sen, BG_COLOR_DEFAULT);
+        }
     }
 
   ap->goal = goal_init_from_list (ap, proof->goals);
@@ -310,11 +310,11 @@ aris_proof_destroy (aris_proof * ap)
     {
       item_t * yank_itr;
       for (yank_itr = ap->yanked->head; yank_itr; yank_itr = yank_itr->next)
-	{
-	  sen_data * y_sd;
-	  y_sd = yank_itr->value;
-	  sen_data_destroy (y_sd);
-	}
+        {
+          sen_data * y_sd;
+          y_sd = yank_itr->value;
+          sen_data_destroy (y_sd);
+        }
 
       destroy_list (ap->yanked);
       ap->yanked = NULL;
@@ -405,10 +405,10 @@ aris_proof_create_menu (sen_parent * ap)
       gtk_menu_set_accel_group (GTK_MENU (submenu), ap->accel);
       conf_obj * cur_data = main_menus_menu[i];
       for (j = 0; j < num_subs[i]; j++)
-	{
-	  construct_menu_item (cur_data[j], G_CALLBACK (menu_activate),
-			       submenu, &got_radio);
-	}
+        {
+          construct_menu_item (cur_data[j], G_CALLBACK (menu_activate),
+                               submenu, &got_radio);
+        }
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), submenu);
       gtk_menu_shell_append (GTK_MENU_SHELL (ap->menubar), menu);
     }
@@ -476,13 +476,22 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
 
       ev_sen = ev_itr->value;
       if (!ev_sen)
-	exit (EXIT_FAILURE);
+        exit (EXIT_FAILURE);
 
       old_ln = sentence_get_line_no (ev_sen);
       new_line_no = old_ln + line_mod;
       ret = sentence_update_line_no (ev_sen, new_line_no);
       if (ret == -1)
-	return -1;
+        return -1;
+
+      int i;
+
+      for (i = 0; i < SEN_DEPTH(ev_sen); i++)
+	{
+	  // Update all of the indices that are greater than the removed/inserted line.
+	  if (SEN_IND(ev_sen,i) >= cur_line)
+	    sentence_set_index (ev_sen, i, SEN_IND(ev_sen,i) + line_mod);
+	}
     }
 
   return 0;
@@ -513,7 +522,7 @@ aris_proof_to_proof (aris_proof * ap)
 
       itm = ls_ins_obj (proof->goals, entry_text, proof->goals->tail);
       if (!itm)
-	return NULL;
+        return NULL;
     }
 
   for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
@@ -521,11 +530,11 @@ aris_proof_to_proof (aris_proof * ap)
       sen = ev_itr->value;
       sd = sentence_copy_to_data (sen);
       if (!sd)
-	return NULL;
+        return NULL;
 
       itm = ls_ins_obj (proof->everything, sd, proof->everything->tail);
       if (!itm)
-	return NULL;
+        return NULL;
     }
 
   proof->boolean = ap->boolean;
@@ -583,7 +592,7 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
     {
       sd->depth = SEN_DEPTH(fcs->value);
       if (sd->subproof)
-	sd->depth++;
+        sd->depth++;
     }
 
   itm = sen_parent_ins_sentence ((sen_parent *) ap, sd, fcs, new_order);
@@ -835,18 +844,18 @@ aris_proof_copy (aris_proof * ap)
     {
       item_t * yank_itr;
       for (yank_itr = ap->yanked->head; yank_itr; yank_itr = yank_itr->next)
-	{
-	  sen_data * y_sd;
-	  y_sd = yank_itr->value;
-	  sen_data_destroy (y_sd);
-	}
+        {
+          sen_data * y_sd;
+          y_sd = yank_itr->value;
+          sen_data_destroy (y_sd);
+        }
       ls_clear (ap->yanked);
     }
   else
     {
       ap->yanked = init_list ();
       if (!ap->yanked)
-	return -1;
+        return -1;
     }
 
   item_t * sel_itr;
@@ -857,10 +866,10 @@ aris_proof_copy (aris_proof * ap)
     {
       sel_itr = SEN_PARENT (ap)->focused;
       if (SEN_SUB(sel_itr->value))
-	{
-	  is_subproof = 1;
-	  org_depth = SEN_DEPTH(sel_itr->value);
-	}
+        {
+          is_subproof = 1;
+          org_depth = SEN_DEPTH(sel_itr->value);
+        }
     }
   else
     {
@@ -877,23 +886,23 @@ aris_proof_copy (aris_proof * ap)
       sen = sel_itr->value;
       depth = SEN_DEPTH(sen);
       if (depth < org_depth)
-	break;
+        break;
 
       sd = sentence_copy_to_data (sen);
       if (!sd)
-	return -1;
+        return -1;
 
       if (sel_itr->prev && SEN_DEPTH(sen) < SEN_DEPTH(sel_itr->prev->value))
-	sd->depth = -1;
+        sd->depth = -1;
       else
-	sd->depth = DEPTH_DEFAULT;
+        sd->depth = DEPTH_DEFAULT;
 
       ret_chk = ls_push_obj (ap->yanked, sd);
       if (!ret_chk)
-	return -1;
+        return -1;
 
       if (ap->selected->num_stuff == 0 && (!is_subproof || (depth < org_depth)))
-	break;
+        break;
     }
 
   return 0;
@@ -923,10 +932,10 @@ aris_proof_kill (aris_proof * ap)
     {
       sel_itr = SEN_PARENT (ap)->focused;
       if (SEN_SUB(sel_itr->value))
-	{
-	  is_subproof = 1;
-	  org_depth = SEN_DEPTH(sel_itr->value);
-	}
+        {
+          is_subproof = 1;
+          org_depth = SEN_DEPTH(sel_itr->value);
+        }
     }
   else
     {
@@ -941,7 +950,7 @@ aris_proof_kill (aris_proof * ap)
 
       ln = sentence_get_line_no (sen);
       if (ln == 1)
-	return 1;
+        return 1;
     }
 
   undo_info ui;
@@ -962,14 +971,14 @@ aris_proof_kill (aris_proof * ap)
 
       sen_depth = SEN_DEPTH(sen);
       if (sen_depth < org_depth)
-	break;
+        break;
 
       ret_chk = aris_proof_remove_sentence (ap, sen);
       if (ret_chk == -1)
-	return -1;
+        return -1;
 
       if (ap->selected->num_stuff == 0 && (!is_subproof || (sen_depth < org_depth)))
-	break;
+        break;
     }
 
   ui = undo_info_init (ap, ls, UIT_REM_SEN);
@@ -1012,7 +1021,7 @@ aris_proof_yank (aris_proof * ap)
 
       sen = aris_proof_create_sentence (ap, sd, 0);
       if (!sen)
-	return -1;
+        return -1;
     }
 
   undo_info ui;
@@ -1051,23 +1060,23 @@ aris_proof_toggle_boolean_mode (aris_proof * ap)
       ev_sen = ev_itr->value;
 
       if (SEN_SUB(ev_sen))
-	{
-	  aris_proof_set_sb (ap, _("Subproofs may not be used in boolean mode."));
-	  return -1;
-	}
+        {
+          aris_proof_set_sb (ap, _("Subproofs may not be used in boolean mode."));
+          return -1;
+        }
 
       if (sentence_get_rule (ev_sen) == -1)
-	continue;
+        continue;
       sen_check = sentence_check_boolean_rule (ev_sen, new_bool);
 
       if (!sen_check)
-	{
-	  if (new_bool)
-	    {
-	      aris_proof_set_sb (ap, _("No prohibited rules must be used for boolean mode."));
-	      return -1;
-	    }
-	}
+        {
+          if (new_bool)
+            {
+              aris_proof_set_sb (ap, _("No prohibited rules must be used for boolean mode."));
+              return -1;
+            }
+        }
     }
 
   ap->boolean = new_bool;
@@ -1103,11 +1112,11 @@ aris_proof_import_proof (aris_proof * ap)
   GtkWidget * file_chooser;
   file_chooser =
     gtk_file_chooser_dialog_new (_("Select a file to Open..."),
-				 GTK_WINDOW (SEN_PARENT (ap)->window),
-				 GTK_FILE_CHOOSER_ACTION_OPEN,
-				 "_Cancel", GTK_RESPONSE_CANCEL,
-				 "_Open", GTK_RESPONSE_ACCEPT,
-				 NULL);
+                                 GTK_WINDOW (SEN_PARENT (ap)->window),
+                                 GTK_FILE_CHOOSER_ACTION_OPEN,
+                                 "_Cancel", GTK_RESPONSE_CANCEL,
+                                 "_Open", GTK_RESPONSE_ACCEPT,
+                                 NULL);
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser), FALSE);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
 
@@ -1145,45 +1154,45 @@ aris_proof_import_proof (aris_proof * ap)
 
       sd = pf_itr->value;
       if (!sd->premise)
-	break;
+        break;
 
       pf_text = sd->text;
 
       for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
-	{
-	  char * ev_text;
-	  sentence * ev_sen;
-	  int ln;
+        {
+          char * ev_text;
+          sentence * ev_sen;
+          int ln;
 
-	  ev_sen = ev_itr->value;
-	  if (!SEN_PREM(ev_sen))
-	    {
-	      if (!ev_conc)
-		ev_conc = ev_itr;
-	      break;
-	    }
+          ev_sen = ev_itr->value;
+          if (!SEN_PREM(ev_sen))
+            {
+              if (!ev_conc)
+                ev_conc = ev_itr;
+              break;
+            }
 
-	  ln = sentence_get_line_no (ev_sen);
-	  ev_text = sentence_get_text (ev_sen);
+          ln = sentence_get_line_no (ev_sen);
+          ev_text = sentence_get_text (ev_sen);
 
-	  if (!strcmp (ev_text, pf_text))
-	    {
-	      refs[ref_num++] = (short) ln;
-	      break;
-	    }
-	}
+          if (!strcmp (ev_text, pf_text))
+            {
+              refs[ref_num++] = (short) ln;
+              break;
+            }
+        }
 
       if (!ev_itr || !SEN_PREM(ev_itr->value))
-	{
-	  sentence * sen_chk;
-	  int ln;
+        {
+          sentence * sen_chk;
+          int ln;
 
-	  sen_chk = aris_proof_create_sentence (ap, sd, 1);
-	  if (!sen_chk)
-	    return -1;
-	  ln = sentence_get_line_no (sen_chk);
-	  refs[ref_num++] = (short) ln;
-	}
+          sen_chk = aris_proof_create_sentence (ap, sd, 1);
+          if (!sen_chk)
+            return -1;
+          ln = sentence_get_line_no (sen_chk);
+          refs[ref_num++] = (short) ln;
+        }
     }
 
   refs[ref_num] = -1;
@@ -1191,18 +1200,18 @@ aris_proof_import_proof (aris_proof * ap)
   if (!ev_conc)
     {
       for (ev_itr = SEN_PARENT(ap)->everything->head; ev_itr;
-	   ev_itr = ev_itr->next)
-	{
-	  sentence * ev_sen;
+           ev_itr = ev_itr->next)
+        {
+          sentence * ev_sen;
 
-	  ev_sen = ev_itr->value;
-	  if (SEN_PREM(ev_sen))
-	    {
-	      if (!ev_conc)
-		ev_conc = ev_itr;
-	      break;
-	    }
-	}
+          ev_sen = ev_itr->value;
+          if (SEN_PREM(ev_sen))
+            {
+              if (!ev_conc)
+                ev_conc = ev_itr;
+              break;
+            }
+        }
     }
 
   for (pf_itr = proof->goals->head; pf_itr; pf_itr = pf_itr->next)
@@ -1211,30 +1220,30 @@ aris_proof_import_proof (aris_proof * ap)
       pf_text = pf_itr->value;
 
       for (ev_itr = ev_conc; ev_itr; ev_itr = ev_itr->next)
-	{
-	  sentence * ev_sen;
-	  unsigned char * ev_text;
-	  ev_sen = ev_itr->value;
-	  ev_text = sentence_get_text (ev_sen);
+        {
+          sentence * ev_sen;
+          unsigned char * ev_text;
+          ev_sen = ev_itr->value;
+          ev_text = sentence_get_text (ev_sen);
 
-	  if (!strcmp (pf_text, ev_text))
-	    break;
-	}
+          if (!strcmp (pf_text, ev_text))
+            break;
+        }
 
       if (!ev_itr)
-	{
-	  sen_data * sd;
-	  sentence * sen_chk;
+        {
+          sen_data * sd;
+          sentence * sen_chk;
 
-	  sd = sen_data_init (-1, RULE_LM, pf_text, refs,
-			      0, filename, 0, DEPTH_DEFAULT, NULL);
-	  if (!sd)
-	    return -1;
+          sd = sen_data_init (-1, RULE_LM, pf_text, refs,
+                              0, filename, 0, DEPTH_DEFAULT, NULL);
+          if (!sd)
+            return -1;
 
-	  sen_chk = aris_proof_create_sentence (ap, sd, 1);
-	  if (!sen_chk)
-	    return -1;
-	}
+          sen_chk = aris_proof_create_sentence (ap, sd, 1);
+          if (!sen_chk)
+            return -1;
+        }
     }
 
   free (refs);
@@ -1327,13 +1336,13 @@ undo_info_destroy (undo_info ui)
   if (ui.ls)
     {
       for (it = ui.ls->head; it;)
-	{
-	  item_t * next = it->next;
-	  sd = (sen_data *) it->value;
-	  sen_data_destroy (sd);
-	  free (it);
-	  it = next;
-	}
+        {
+          item_t * next = it->next;
+          sd = (sen_data *) it->value;
+          sen_data_destroy (sd);
+          free (it);
+          it = next;
+        }
 
       free (ui.ls);
     }
@@ -1360,17 +1369,17 @@ aris_proof_undo_stack_push (aris_proof * ap, undo_info ui)
       undo_info * last;
       last = vec_nth (ap->undo_stack, ap->undo_pt);
       if (last->type == UIT_MOD_TEXT)
-	{
-	  sen_data * lsd = (sen_data *) last->ls->head->value;
-	  sen_data * usd = (sen_data *) ui.ls->head->value;
-	  if (ui.stamp - last->stamp <= UNDO_INT
-	      && lsd->line_num == usd->line_num)
-	    {
-	      last->stamp = ui.stamp;
-	      undo_info_destroy (ui);
-	      return 0;
-	    }
-	}
+        {
+          sen_data * lsd = (sen_data *) last->ls->head->value;
+          sen_data * usd = (sen_data *) ui.ls->head->value;
+          if (ui.stamp - last->stamp <= UNDO_INT
+              && lsd->line_num == usd->line_num)
+            {
+              last->stamp = ui.stamp;
+              undo_info_destroy (ui);
+              return 0;
+            }
+        }
     }
 
   int rc;
@@ -1411,15 +1420,15 @@ aris_proof_undo_stack_pop (aris_proof * ap)
 /* A macro to assist with undo/redo.
  */
 
-#define UNDO_SEN(u,a,i,s,d) if (u) {			\
-    SEN_PARENT(a)->focused = i;				\
-    aris_proof_remove_sentence (a,s);			\
-  }							\
-  else {						\
-    if (i) { i = i->prev;}				\
-    else { i = SEN_PARENT (a)->everything->tail; }	\
-    SEN_PARENT (a)->focused = i;			\
-    aris_proof_create_sentence (a, d, 0);		\
+#define UNDO_SEN(u,a,i,s,d) if (u) {                    \
+    SEN_PARENT(a)->focused = i;                         \
+    aris_proof_remove_sentence (a,s);                   \
+  }                                                     \
+  else {                                                \
+    if (i) { i = i->prev;}                              \
+    else { i = SEN_PARENT (a)->everything->tail; }      \
+    SEN_PARENT (a)->focused = i;                        \
+    aris_proof_create_sentence (a, d, 0);               \
   }
 
 /* Undo or redo an action from an aris proof.
@@ -1440,7 +1449,7 @@ aris_proof_undo (aris_proof * ap, int undo)
       // If undo_pt < 0, then it is pointing past the bottom of the
       // stack, and therefore there is nothing to undo.
       if (ap->undo_pt < 0)
-	return 1;
+        return 1;
       pt = ap->undo_pt;
     }
   else
@@ -1448,7 +1457,7 @@ aris_proof_undo (aris_proof * ap, int undo)
       // Since the undo_pt is a position, if it is the last one item
       // in the stack, then there isn't anything to redo.
       if (ap->undo_pt + 1 == ap->undo_stack->num_stuff)
-	return 1;
+        return 1;
       pt = ap->undo_pt + 1;
     }
 
@@ -1473,43 +1482,43 @@ aris_proof_undo (aris_proof * ap, int undo)
       GtkTextBuffer * buffer;
 
       for (itm = SEN_PARENT(ap)->everything->head; itm; itm = itm->next)
-	{
-	  sen = (sentence *) itm->value;
-	  ln = sentence_get_line_no (sen);
-	  if (ln >= sd->line_num)
-	    break;
-	}
+        {
+          sen = (sentence *) itm->value;
+          ln = sentence_get_line_no (sen);
+          if (ln >= sd->line_num)
+            break;
+        }
 
       switch (ui->type)
-	{
-	case UIT_MOD_TEXT:
-	  // Goto line ui->sd->line_num;
-	  // Set text to ui->sd->text;
+        {
+        case UIT_MOD_TEXT:
+          // Goto line ui->sd->line_num;
+          // Set text to ui->sd->text;
 
-	  SEN_PARENT(ap)->undo = 1;
-	  int ret = sentence_set_text (sen, sd->text);
-	  if (ret == -1)
-	    return -1;
+          SEN_PARENT(ap)->undo = 1;
+          int ret = sentence_set_text (sen, sd->text);
+          if (ret == -1)
+            return -1;
 
-	  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
-	  gtk_text_buffer_set_text (buffer, "", -1);
-	  sentence_paste_text (sen);
-	  SEN_PARENT(ap)->undo = 0;
+          buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
+          gtk_text_buffer_set_text (buffer, "", -1);
+          sentence_paste_text (sen);
+          SEN_PARENT(ap)->undo = 0;
 
-	  break;
+          break;
 
-	case UIT_ADD_SEN:
-	  // Remove the sentence.
-	  UNDO_SEN (undo, ap, itm, sen, sd);
-	  break;
+        case UIT_ADD_SEN:
+          // Remove the sentence.
+          UNDO_SEN (undo, ap, itm, sen, sd);
+          break;
 
-	case UIT_REM_SEN:
-	  UNDO_SEN (!undo, ap, itm, sen, sd);
-	  // Add the sentence back in.
-	  // Move itm to the sentence just before the one to insert.
-	  // In other words, the sentence with line_num == sd->line_num - 1;
-	  break;
-	}
+        case UIT_REM_SEN:
+          UNDO_SEN (!undo, ap, itm, sen, sd);
+          // Add the sentence back in.
+          // Move itm to the sentence just before the one to insert.
+          // In other words, the sentence with line_num == sd->line_num - 1;
+          break;
+        }
     }
 
   return 0;
