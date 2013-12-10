@@ -55,6 +55,7 @@
 		   || isupper (*(s))	     \
 		   || !strncmp (s, NOT, NL)  \
 		   || !strncmp (s, CTR, CL)  \
+		   || !strncmp (s, NIL, CL)  \
 		   || !strncmp (s, TAU, CL))
 
 #define ISSBOOL(s) (!strncmp (s, S_TAU, S_CL) || !strncmp (s, S_CTR, S_CL))
