@@ -95,8 +95,8 @@ static char * rules_names[NUM_RULES] = {
   N_("Exportation"), N_("Subsumption"),
   N_("Universal Generalization"), N_("Universal Instantiation"),
   N_("Existential Generalization"), N_("Existential Instantiation"),
-  N_("Bound Variable"), N_("Null Quantifier"), N_("Prenex"), N_("Identity"),
-  N_("Free Variable"),
+  N_("Bound Variable Substitution"), N_("Null Quantifier"), N_("Prenex"), N_("Identity"),
+  N_("Free Variable Substitution"),
   N_("Lemma"), N_("Subproof"), N_("Sequence"), N_("Induction"),
   N_("Boolean Identity"), N_("Boolean Negation"), N_("Boolean Dominance"),
   N_("Symbol Negation")
