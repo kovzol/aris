@@ -305,6 +305,8 @@ sexpr_get_generalities (unsigned char * in_str, unsigned char * conn, vec_t * ve
 
   if (tmp_conn[0] == '(')
     {
+      vec_pop_obj (vec);
+      vec_str_add_obj (vec, in_str);
       return 1;
     }
 
