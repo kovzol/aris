@@ -717,6 +717,8 @@ evaluate_line (aris_proof * ap, sentence * sen)
 	return -1;
     }
 
+  sentence_refresh_refs (sen);
+
   char * ret_str;
   ret_str = sen_data_evaluate (SD(sen), &ret, vars, lines);
   if (!ret_str)
@@ -1366,6 +1368,13 @@ menu_activated (aris_proof * ap, int menu_id)
       aris_proof_set_sb (ap, _("Proof Saved."));
       break;
 
+    case CONF_MENU_EXPORT_LATEX:
+      /* Select the file name.
+       * Convert the aris proof to a proof object.
+       * proof_convert_latex (proof, filename);
+       */
+      break;
+
     case CONF_MENU_CLOSE:
       gui_destroy (ap);
       break;
@@ -1462,7 +1471,6 @@ menu_activated (aris_proof * ap, int menu_id)
       break;
 
     case CONF_MENU_EVAL_LINE:
-      //ls_clear (ap->vars);
       evaluate_line (ap, SENTENCE (SEN_PARENT (ap)->focused->value));
       break;
 
