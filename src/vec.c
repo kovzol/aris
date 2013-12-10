@@ -86,14 +86,14 @@ destroy_str_vec (vec_t * v)
     {
       int i;
       for (i = 0; i < v->num_stuff; i++)
-	{
-	  unsigned char * cur_str;
-	  cur_str = vec_str_nth (v, i);
+        {
+          unsigned char * cur_str;
+          cur_str = vec_str_nth (v, i);
 
-	  if (cur_str)
-	    free (cur_str);
-	  cur_str = NULL;
-	}
+          if (cur_str)
+            free (cur_str);
+          cur_str = NULL;
+        }
 
       free (v->stuff);
     }
@@ -124,14 +124,14 @@ vec_add_obj (vec_t * v, const void * more)
 
       v->stuff = realloc (v->stuff, v->alloc_space * v->size_stuff);
       if (!v->stuff)
-	{
-	  perror (NULL);
-	  return -1;
-	}
+        {
+          perror (NULL);
+          return -1;
+        }
     }
 
   memcpy (v->stuff + ((v->num_stuff - 1) * v->size_stuff),
-	  more, v->size_stuff);
+          more, v->size_stuff);
 
   return 0;
 }
@@ -154,10 +154,10 @@ vec_str_add_obj (vec_t * v, unsigned char * more)
 
       v->stuff = realloc (v->stuff, v->alloc_space * sizeof (char *));
       if (!v->stuff)
-	{
-	  perror (NULL);
-	  return -1;
-	}
+        {
+          perror (NULL);
+          return -1;
+        }
     }
 
   unsigned char * obj;
@@ -170,7 +170,7 @@ vec_str_add_obj (vec_t * v, unsigned char * more)
 
   strcpy (obj, more);
   memcpy (v->stuff + ((v->num_stuff - 1) * sizeof (char *)),
-	  &obj, sizeof (char *));
+          &obj, sizeof (char *));
 
   unsigned char * new_obj;
   new_obj = vec_str_nth (v, v->num_stuff - 1);
@@ -263,7 +263,7 @@ vec_find (vec_t * vec, void * obj)
       void * cur_obj;
       cur_obj = vec_nth (vec, i);
       if (cur_obj == obj)
-	break;
+        break;
     }
 
   i = (i == vec->num_stuff) ? -1 : i;
@@ -299,25 +299,25 @@ vec_str_cmp (vec_t * vec_0, vec_t * vec_1)
       cur_0 = vec_str_nth (vec_0, i);
 
       for (j = 0; j < vec_1->num_stuff; j++)
-	{
-	  if (check[j])
-	    continue;
+        {
+          if (check[j])
+            continue;
 
-	  unsigned char * cur_1;
-	  cur_1 = vec_str_nth (vec_1, j);
+          unsigned char * cur_1;
+          cur_1 = vec_str_nth (vec_1, j);
 
-	  if (!strcmp (cur_0, cur_1))
-	    {
-	      check[j] = 1;
-	      break;
-	    }
-	}
+          if (!strcmp (cur_0, cur_1))
+            {
+              check[j] = 1;
+              break;
+            }
+        }
 
       if (j == vec_1->num_stuff)
-	{
-	  free (check);
-	  return -2;
-	}
+        {
+          free (check);
+          return -2;
+        }
     }
 
   // vec_0 is a subsequence of vec_1
@@ -325,10 +325,10 @@ vec_str_cmp (vec_t * vec_0, vec_t * vec_1)
   for (i = 0; i < vec_1->num_stuff; i++)
     {
       if (!check[i])
-	{
-	  free (check);
-	  return -3;
-	}
+        {
+          free (check);
+          return -3;
+        }
     }
 
   free (check);
@@ -349,8 +349,6 @@ vec_str_cmp (vec_t * vec_0, vec_t * vec_1)
 int
 vec_str_sub (vec_t * vec_0, vec_t * vec_1)
 {
-  // vec_0 is the smaller vector,
-  // vec_1 is the larger one.
   int ret;
   
   int i, j;
@@ -369,31 +367,31 @@ vec_str_sub (vec_t * vec_0, vec_t * vec_1)
       cur_1 = vec_str_nth (vec_1, i);
 
       for (j = 0; j < vec_0->num_stuff; j++)
-	{
-	  unsigned char * cur_0;
-	  cur_0 = vec_str_nth (vec_0, j);
+        {
+          unsigned char * cur_0;
+          cur_0 = vec_str_nth (vec_0, j);
 
-	  if (!strcmp (cur_0, cur_1))
-	    {
-	      check[j] = 1;
-	      break;
-	    }
-	}
+          if (!strcmp (cur_0, cur_1))
+            {
+              check[j] = 1;
+              break;
+            }
+        }
 
       if (j == vec_0->num_stuff)
-	{
-	  free (check);
-	  return -2;
-	}
+        {
+          free (check);
+          return -2;
+        }
     }
 
   for (i = 0; i < vec_0->num_stuff; i++)
     {
       if (!check[i])
-	{
-	  free (check);
-	  return -3;
-	}
+        {
+          free (check);
+          return -3;
+        }
     }
 
   free (check);
