@@ -38,6 +38,10 @@
 #include "sexpr-process.h"
 #include "vec.h"
 
+/*
+ * mode - 0 for commutativity, 1 for idempotence.
+ * In Idempotence, sen_0 is the larger sentence, sen_1 the shorter.
+ */
 int
 recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 {
@@ -152,6 +156,8 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
       return -2;
     }
 
+  /* The connectives only need to be the same if mode == 1 */
+
   con_0 = 1;
   if (strcmp (conn_0, S_AND) && strcmp (conn_0, S_OR))
     con_0 = 0;
@@ -188,6 +194,7 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
       else if (mode == 1 && gg_0 != gg_1)
 	{
 	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+	  return -2;
 	}
     }
 
