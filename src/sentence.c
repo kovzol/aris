@@ -143,7 +143,8 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
 
   sen->reference = 0;
   sentence_set_font (sen, sen->parent->font);
-  sentence_set_bg (sen, BG_COLOR_CONC);
+  sentence_set_bg_color (sen, BG_COLOR_CONC, GTK_STATE_FLAG_FOCUSED);
+  sentence_set_bg_color (sen, BG_COLOR_DEFAULT, GTK_STATE_FLAG_NORMAL);
 
   sentence_connect_signals (sen);
 
@@ -561,6 +562,37 @@ sentence_resize_text (sentence * sen)
   return 0;
 }
 
+void
+sentence_set_bg_color (sentence * sen, int bg_color, int state)
+{
+  COLOR_TYPE inv;
+  INVERT (the_app->bg_colors[bg_color], inv);
+  gtk_widget_override_background_color (sen->entry, state,
+                                        the_app->bg_colors[bg_color]);
+
+  //gtk_widget_override_background_color (sen->entry, GTK_STATE_FLAG_SELECTED, inv);
+  sen->bg_color = bg_color;
+  free (inv);
+
+  COLOR_TYPE text;
+  //COLOR_TYPE inv_text;
+  if (IS_DARK(the_app->bg_colors[bg_color]))
+    {
+      INIT_COLOR (text, 255, 255, 255);
+      //INIT_COLOR (inv_text, 0, 0, 0);
+    }
+  else
+    {
+      INIT_COLOR (text, 0, 0, 0);
+      //INIT_COLOR (inv_text, 255, 255, 255);
+    }
+
+  gtk_widget_override_color (sen->entry, state, text);
+  //gtk_widget_override_color (sen->entry, GTK_STATE_SELECTED, inv_text);
+
+  free (text);
+}
+
 /* Sets the background color of a sentence.
  *  input:
  *    sen - the sentence to change the background color of.
@@ -573,27 +605,31 @@ sentence_set_bg (sentence * sen, int bg_color)
 {
   COLOR_TYPE inv;
   INVERT (the_app->bg_colors[bg_color], inv);
-  gtk_widget_override_background_color (sen->entry, GTK_STATE_NORMAL,
+  gtk_widget_override_background_color (sen->entry, GTK_STATE_FLAG_NORMAL,
                                         the_app->bg_colors[bg_color]);
-  gtk_widget_override_background_color (sen->entry, GTK_STATE_NORMAL,
-                                        the_app->bg_colors[bg_color]);
+
   gtk_widget_override_background_color (sen->entry, GTK_STATE_SELECTED, inv);
   sen->bg_color = bg_color;
   free (inv);
 
   COLOR_TYPE text;
+  COLOR_TYPE inv_text;
   if (IS_DARK(the_app->bg_colors[bg_color]))
     {
       INIT_COLOR (text, 255, 255, 255);
+      INIT_COLOR (inv_text, 0, 0, 0);
     }
   else
     {
       INIT_COLOR (text, 0, 0, 0);
+      INIT_COLOR (inv_text, 255, 255, 255);
     }
 
-  gtk_widget_override_color (sen->entry, GTK_STATE_NORMAL, text);
+  gtk_widget_override_color (sen->entry, GTK_STATE_FLAG_NORMAL, text);
+  gtk_widget_override_color (sen->entry, GTK_STATE_FLAG_SELECTED, inv_text);
 
   free (text);
+  free (inv_text);
 }
 
 /* Sets the evaluation value of a sentence.
