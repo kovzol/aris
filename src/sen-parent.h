@@ -66,6 +66,8 @@ item_t * sen_parent_ins_sentence (sen_parent * sp, sen_data * sd,
 item_t * sen_parent_rem_sentence (sen_parent * sp, sentence * sen);
 void sen_parent_set_focus (sen_parent * sp, item_t * focus);
 
+int sen_parent_children_set_bg_color (sen_parent * sp);
+
 GdkPixbuf * sen_parent_get_conn_by_type (sen_parent * sp, char * type);
 
 #define INIT_CONN_PIXBUF_ALT(s,i,c,w,h) {		\

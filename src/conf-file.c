@@ -235,7 +235,8 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  if (app->bg_colors[cur])
 	    free (app->bg_colors[cur]);
 
-	  INIT_COLOR (app->bg_colors[cur], r, g, b);
+	  app_set_color (app, cur, r, g, b);
+	  // Also need to update the colors of each sentence in each proof.
 
 	  pos = tmp_pos + 2;
 	  continue;

@@ -563,6 +563,25 @@ app_quit ()
   return 0;
 }
 
+int
+app_set_color (aris_app * app, int index, int red, int green, int blue)
+{
+  INIT_COLOR (app->bg_colors[index], red, green, blue);
+
+  if (app->guis)
+    {
+      item_t * gui_iter;
+      for (gui_iter = app->guis->head; gui_iter;
+	   gui_iter = gui_iter->next)
+	{
+	  aris_proof * ap = gui_iter->value;
+	  sen_parent_children_set_bg_color (SEN_PARENT (ap));
+	}
+    }
+
+  return 0;
+}
+
 // Thanks to the developers of the inetutils package for this next part.
 // The ftp utility's source code was very helpful with this.
 

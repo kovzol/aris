@@ -104,6 +104,7 @@ int the_app_get_color_by_type (aris_app * app, char * type);
 char * the_app_get_color_by_index (aris_app * app, int index);
 int the_app_get_font_by_name (aris_app * app, char * name);
 
+int app_set_color (aris_app * app, int index, int red, int green, int blue);
 /* The main application */
 aris_app * the_app;
 

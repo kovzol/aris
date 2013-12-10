@@ -351,3 +351,17 @@ sen_parent_set_sb (sen_parent * sp, char * sb_text)
 		      context_id,
 		      (const char *) sb_text);
 }
+
+int
+sen_parent_children_set_bg_color (sen_parent * sp)
+{
+  item_t * itm;
+  for (itm = sp->everything->head; itm; itm = itm->next)
+    {
+      sentence * sen = itm->value;
+      sentence_set_bg_color (sen, BG_COLOR_CONC, GTK_STATE_FLAG_FOCUSED);
+      sentence_set_bg_color (sen, BG_COLOR_DEFAULT, GTK_STATE_FLAG_NORMAL);
+    }
+
+  return 0;
+}
