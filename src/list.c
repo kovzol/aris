@@ -264,3 +264,10 @@ ls_find (list_t * ls, void * val)
 
   return itm;
 }
+
+int
+ls_empty (list_t * ls)
+{
+  int ret = (ls->num_stuff == 0) ? 1 : 0;
+  return ret;
+}

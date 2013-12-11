@@ -50,5 +50,6 @@ void ls_rem_obj_value (list_t * ls, void * obj);
 void ls_clear (list_t * ls);
 item_t * ls_nth (list_t * ls, int n);
 item_t * ls_find (list_t * ls, void * val);
+int ls_empty (list_t * ls);
 
 #endif /* ARIS_LIST_H */
