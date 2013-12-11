@@ -486,11 +486,11 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
       int i;
 
       for (i = 0; i < SEN_DEPTH(ev_sen); i++)
-	{
-	  // Update all of the indices that are greater than the removed/inserted line.
-	  if (SEN_IND(ev_sen,i) >= cur_line)
-	    sentence_set_index (ev_sen, i, SEN_IND(ev_sen,i) + line_mod);
-	}
+        {
+          // Update all of the indices that are greater than the removed/inserted line.
+          if (SEN_IND(ev_sen,i) >= cur_line)
+            sentence_set_index (ev_sen, i, SEN_IND(ev_sen,i) + line_mod);
+        }
     }
 
   return 0;
@@ -857,23 +857,58 @@ aris_proof_copy (aris_proof * ap)
         return -1;
     }
 
-  item_t * sel_itr;
-  int is_subproof = 0;
-  int org_depth = -1;
- 
-  if (ap->selected->num_stuff == 0)
+  /* Here is what should be happening:
+   *  If nothing is selected, add the current line to ap->selected.
+   *  foreach elm in ap->selected:
+   *    If it is a subproof, then add each of its children to sel_list.
+   *    else, just add elm to sel_list.
+   *  Then iterate through each element in sel_list, and copy it.
+   */
+
+  list_t * sel_list;
+  item_t * sel_itr, * itm;
+
+  sel_list = init_list ();
+  if (!sel_list)
+    return -1;
+
+  if (!ap->selected)
     {
-      sel_itr = SEN_PARENT (ap)->focused;
-      if (SEN_SUB(sel_itr->value))
+      ap->selected = init_list ();
+      if (!ap->selected)
+        return -1;
+    }
+
+  if (ls_empty (ap->selected))
+    ls_push_obj (ap->selected, (sentence *) SEN_PARENT (ap)->focused->value);
+
+  for (sel_itr = ap->selected->head; sel_itr; sel_itr = sel_itr->next)
+    {
+      sentence * sen = sel_itr->value;
+      ls_push_obj (sel_list, sen);
+
+      if (!SEN_SUB (sen))
+        continue;
+
+      // Iterate through ap.
+      int sen_depth;
+      sen_depth = SEN_DEPTH(sen);
+
+      item_t * ev_itr;
+      ev_itr = ls_find (SEN_PARENT(ap)->everything, sen);
+      for (ev_itr = ev_itr->next; ev_itr; ev_itr = ev_itr->next)
         {
-          is_subproof = 1;
-          org_depth = SEN_DEPTH(sel_itr->value);
+          sentence * ev_sen;
+          ev_sen = ev_itr->value;
+          if (SEN_DEPTH(ev_sen) < sen_depth)
+            break;
+
+          itm = ls_push_obj (sel_list, ev_sen);
+          if (!itm)
+            return -1;
         }
     }
-  else
-    {
-      sel_itr = ap->selected->head;
-    }
+
   /* For subproofs:
    *  Determine the line number of the premise.
    *  for each line:
@@ -881,7 +916,18 @@ aris_proof_copy (aris_proof * ap)
    *      if it is before the premise, then leave it alone.
    *      else, (within the subproof) set it to an offset from the current line.
    */
-  for (; sel_itr; sel_itr = sel_itr->next)
+
+  /* This needs to be a stack of line numbers, the top of which should
+   *  always be the current subproof's line.
+   */
+
+  vec_t * sub_lines;
+  sub_lines = init_vec (sizeof (int));
+  if (!sub_lines)
+    return -1;
+
+  item_t * n_itr;
+  for (sel_itr = sel_list->head; sel_itr;)
     {
       sentence * sen;
       sen_data * sd;
@@ -889,13 +935,34 @@ aris_proof_copy (aris_proof * ap)
       int depth;
 
       sen = sel_itr->value;
-      depth = SEN_DEPTH(sen);
-      if (depth < org_depth)
-        break;
-
       sd = sentence_copy_to_data (sen);
       if (!sd)
         return -1;
+
+      if (SEN_SUB(sen))
+        {
+          int sub_line = sd->line_num, rc;
+          rc = vec_add_obj (sub_lines, &sub_line);
+          if (rc < 0)
+            return -1;
+        }
+      else if (sel_itr->prev && SEN_DEPTH(sen) < SEN_DEPTH(sel_itr->prev->value))
+        {
+          vec_pop_obj (sub_lines);
+        }
+
+      if (sd->depth > 0)
+        {
+          int i, * sub_line;
+          sub_line = vec_nth (sub_lines, sub_lines->num_stuff - 1);
+          for (i = 0; sd->refs[i] != REF_END; i++)
+            {
+              if (sd->refs[i] < *sub_line)
+                continue;
+
+              sd->refs[i] -= sd->line_num;
+            }
+        }
 
       if (sel_itr->prev && SEN_DEPTH(sen) < SEN_DEPTH(sel_itr->prev->value))
         sd->depth = -1;
@@ -906,13 +973,16 @@ aris_proof_copy (aris_proof * ap)
       if (!ret_chk)
         return -1;
 
-      if (ap->selected->num_stuff == 0 && (!is_subproof || (depth < org_depth)))
-        break;
+      n_itr = sel_itr->next;
+      free (sel_itr);
+      sel_itr = n_itr;
     }
 
+  destroy_vec (sub_lines);
+
+  aris_proof_clear_selected (ap);
   return 0;
 }
-
 
 /* Kills the selected line(s) from an aris proof.
  *  input:
@@ -927,64 +997,60 @@ aris_proof_kill (aris_proof * ap)
   ret_chk = aris_proof_copy (ap);
   if (ret_chk == -1)
     return -1;
-
-  list_t * sens;
-  item_t * sel_itr, * start_itr;
-  int is_subproof = 0;
-  int org_depth = -1;
-
-  if (ap->selected->num_stuff == 0)
-    {
-      sel_itr = SEN_PARENT (ap)->focused;
-      if (SEN_SUB(sel_itr->value))
-        {
-          is_subproof = 1;
-          org_depth = SEN_DEPTH(sel_itr->value);
-        }
-    }
-  else
-    {
-      sel_itr = ap->selected->head;
-    }
-
-  for (start_itr = sel_itr; start_itr; start_itr = start_itr->next)
-    {
-      int ln;
-      sentence * sen;
-      sen = start_itr->value;
-
-      ln = sentence_get_line_no (sen);
-      if (ln == 1)
-        return 1;
-    }
+  
+  item_t * sel_itr = ap->yanked->head;
 
   undo_info ui;
-  list_t * ls;
+  list_t * ls, * sen_ls;
   ls = init_list ();
   if (!ls)
     return -1;
 
+  sen_ls = init_list ();
+  if (!sen_ls)
+    return -1;
+
+  item_t * push_chk;
+
+  /* Since refs will be changing, set up undo information and
+   *  the list of sentences before removing anything.
+   */
+
   for (; sel_itr; sel_itr = sel_itr->next)
     {
+      sen_data * sd = sel_itr->value;
+
+      // This is really inefficient.
+      item_t * ev_itr = ls_nth (SEN_PARENT (ap)->everything, sd->line_num - 1);
+
       sentence * sen;
-      int sen_depth;
-      sen_data * sd;
+      sen = ev_itr->value;
+      sen_data * undo_sd;
 
-      sen = sel_itr->value;
-      sd = sentence_copy_to_data (sen);
-      ls_push_obj (ls, sd);
+      // This will fix the differences with depth and refs imposed by copy.
+      undo_sd = sentence_copy_to_data (sen);
+      push_chk = ls_push_obj (ls, undo_sd);
+      if (!push_chk)
+        return -1;
 
-      sen_depth = SEN_DEPTH(sen);
-      if (sen_depth < org_depth)
-        break;
+      push_chk = ls_push_obj (sen_ls, sen);
+      if (!push_chk)
+        return -1;
+    }
 
+  item_t * n_itr;
+
+  for (sel_itr = sen_ls->head; sel_itr;)
+    {
+      sentence * sen = sel_itr->value;
       ret_chk = aris_proof_remove_sentence (ap, sen);
       if (ret_chk == -1)
         return -1;
-
-      if (ap->selected->num_stuff == 0 && (!is_subproof || (sen_depth < org_depth)))
-        break;
+      n_itr = sel_itr->next;
+      free (sel_itr);
+      sel_itr = n_itr;
     }
+  free (sen_ls);
 
   ui = undo_info_init (ap, ls, UIT_REM_SEN);
   if (ui.type == -1)
@@ -1016,29 +1082,26 @@ aris_proof_yank (aris_proof * ap)
     return -1;
 
   item_t * yank_itr;
-  int ret;
+  int ret, line_num;
+  line_num = sentence_get_line_no ((sentence *)SEN_PARENT(ap)->focused->value);
   for (yank_itr = ap->yanked->head; yank_itr; yank_itr = yank_itr->next)
     {
+      line_num++;
       sentence * sen;
       sen_data * sd;
       sd = yank_itr->value;
       ls_push_obj (ls, sd);
 
-      /*
-       * So it doesn't actually know its line number until after it has been created.
-       */
-      /*
       if (sd->refs)
-	{
-	  int i;
-	  for (i = 0; sd->refs[i] != 0; i++)
-	    {
-	      if (sd->refs[i] > 0)
-		continue;
-	      sd->refs[i] += sd->line_num;
-	    }
-	}
-      */
+        {
+          int i;
+          for (i = 0; sd->refs[i] != REF_END; i++)
+            {
+              if (sd->refs[i] > 0)
+                continue;
+              sd->refs[i] += line_num;
+            }
+        }
 
       sen = aris_proof_create_sentence (ap, sd, 0);
       if (!sen)
@@ -1054,6 +1117,47 @@ aris_proof_yank (aris_proof * ap)
   if (ret < 0)
     return -1;
 
+  return 0;
+}
+
+int
+aris_proof_clear_selected (aris_proof * ap)
+{
+  if (!ap->selected)
+    return 0;
+
+  item_t * itm, * n_itr;
+  for (itm = ap->selected->head; itm; )
+    {
+      sentence * sen;
+      sen = itm->value;
+
+      sentence_set_selected (sen, 0);
+      n_itr = itm->next;
+      free (itm);
+      itm = n_itr;
+    }
+
+  free (ap->selected);
+  ap->selected = NULL;
+
+  return 0;
+}
+
+int
+aris_proof_select_sentence (aris_proof * ap, sentence * sen)
+{
+  item_t * push_chk;
+  push_chk = ls_push_obj (ap->selected, sen);
+  if (!push_chk)
+    return -1;
+  return 0;
+}
+
+int
+aris_proof_deselect_sentence (aris_proof * ap, sentence * sen)
+{
+  ls_rem_obj_value (ap->selected, sen);
   return 0;
 }
 

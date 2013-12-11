@@ -895,32 +895,16 @@ select_sentence (sentence * sen)
     return 0;
 
   if (!ARIS_PROOF (sp)->selected)
-    return 0;
+    {
+      ARIS_PROOF(sp)->selected = init_list ();
+    }
 
   if (sen->selected)
     {
       if (the_app->verbose)
         printf ("Deselecting sentence.\n");
 
-      ls_rem_obj_value (ARIS_PROOF (sp)->selected, sen);
-      if (SEN_SUB(sen))
-        {
-          // Remove the entire subproof.
-          int sen_depth;
-          sen_depth = SEN_DEPTH(sen);
-
-          item_t * ev_itr;
-          ev_itr = ls_find (sp->everything, sen);
-          for (; ev_itr; ev_itr = ev_itr->next)
-            {
-              sentence * ev_sen;
-              ev_sen = ev_itr->value;
-              if (SEN_DEPTH(ev_sen) < SEN_DEPTH(sen))
-                break;
-
-              ls_rem_obj_value (ARIS_PROOF (sp)->selected, ev_sen);
-            }
-        }
+      aris_proof_deselect_sentence ((aris_proof *) sp, sen);
       sentence_set_selected (sen, 0);
     }
   else
@@ -928,32 +912,7 @@ select_sentence (sentence * sen)
       if (the_app->verbose)
         printf ("Selecting sentence.\n");
 
-      item_t * itm;
-      itm = ls_push_obj (ARIS_PROOF (sp)->selected, sen);
-      if (!itm)
-        return -1;
-
-      if (SEN_SUB(sen))
-        {
-          // Add entire subproof.
-          int sen_depth;
-          sen_depth = SEN_DEPTH(sen);
-
-          item_t * ev_itr;
-          ev_itr = ls_find (sp->everything, sen);
-          for (ev_itr = ev_itr->next; ev_itr; ev_itr = ev_itr->next)
-            {
-              sentence * ev_sen;
-              ev_sen = ev_itr->value;
-              if (SEN_DEPTH(ev_sen) < sen_depth)
-                break;
-
-              itm = ls_push_obj (ARIS_PROOF (sp)->selected, ev_sen);
-              if (!itm)
-                return -1;
-            }
-        }
-
+      aris_proof_select_sentence ((aris_proof *) sp, sen);
       sentence_set_selected (sen, 1);
     }
 
@@ -1115,6 +1074,17 @@ sentence_key (sentence * sen, int key, int ctrl)
       gtk_text_buffer_get_iter_at_mark (buffer, &pos,
                                         gtk_text_buffer_get_insert (buffer));
       chk_pos = pos;
+
+      switch (key)
+        {
+        case GDK_KEY_Up:
+        case GDK_KEY_Down:
+        case GDK_KEY_Left:
+        case GDK_KEY_Right:
+          // Clear out ap->selected.
+          if (sp->type == SEN_PARENT_TYPE_PROOF)
+            aris_proof_clear_selected ((aris_proof *) sp);
+        }
 
       switch (key)
         {

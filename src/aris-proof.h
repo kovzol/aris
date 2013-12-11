@@ -92,6 +92,10 @@ int aris_proof_kill (aris_proof * ap);
 int aris_proof_yank (aris_proof * ap);
 int aris_proof_copy (aris_proof * ap);
 
+int aris_proof_clear_selected (aris_proof * ap);
+int aris_proof_select_sentence (aris_proof * ap, sentence * sen);
+int aris_proof_deselect_sentence (aris_proof * ap, sentence * sen);
+
 int aris_proof_toggle_boolean_mode (aris_proof * ap);
 
 int aris_proof_submit (aris_proof * ap, const char * hw,
