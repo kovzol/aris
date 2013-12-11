@@ -636,7 +636,7 @@ gui_save (aris_proof * ap, int save_as)
       int alloc_size;
       ext = strrchr (filename, '.');
 
-      if (!strcmp (ext, ".tle"))
+      if (!ext || strcmp (ext, ".tle"))
 	{
 	  alloc_size = strlen (filename) + 4;
 	  fname = (char *) calloc (alloc_size + 1, sizeof (char));
