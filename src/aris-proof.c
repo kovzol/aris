@@ -282,8 +282,6 @@ aris_proof_init_from_proof (proof_t * proof)
           sen = aris_proof_create_sentence (ap, sd, 0);
           if (!sen)
             return NULL;
-
-          sentence_set_bg (sen, BG_COLOR_DEFAULT);
         }
     }
 
@@ -355,6 +353,7 @@ aris_proof_create_menu (sen_parent * ap)
       menu_separator,
       main_menu_conf[CONF_MENU_SAVE],
       main_menu_conf[CONF_MENU_SAVE_AS],
+      main_menu_conf[CONF_MENU_EXPORT_LATEX],
       menu_separator,
       main_menu_conf[CONF_MENU_CLOSE],
       main_menu_conf[CONF_MENU_QUIT]
@@ -875,7 +874,13 @@ aris_proof_copy (aris_proof * ap)
     {
       sel_itr = ap->selected->head;
     }
-
+  /* For subproofs:
+   *  Determine the line number of the premise.
+   *  for each line:
+   *    for each reference:
+   *      if it is before the premise, then leave it alone.
+   *      else, (within the subproof) set it to an offset from the current line.
+   */
   for (; sel_itr; sel_itr = sel_itr->next)
     {
       sentence * sen;
@@ -1018,6 +1023,22 @@ aris_proof_yank (aris_proof * ap)
       sen_data * sd;
       sd = yank_itr->value;
       ls_push_obj (ls, sd);
+
+      /*
+       * So it doesn't actually know its line number until after it has been created.
+       */
+      /*
+      if (sd->refs)
+	{
+	  int i;
+	  for (i = 0; sd->refs[i] != 0; i++)
+	    {
+	      if (sd->refs[i] > 0)
+		continue;
+	      sd->refs[i] += sd->line_num;
+	    }
+	}
+      */
 
       sen = aris_proof_create_sentence (ap, sd, 0);
       if (!sen)
@@ -1195,7 +1216,7 @@ aris_proof_import_proof (aris_proof * ap)
         }
     }
 
-  refs[ref_num] = -1;
+  refs[ref_num] = REF_END;
 
   if (!ev_conc)
     {

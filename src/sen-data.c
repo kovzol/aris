@@ -76,7 +76,7 @@ sen_data_init (int line_num, int rule, unsigned char * text,
   if (refs)
     {
       int len = 0;
-      while (refs[len] != -1)
+      while (refs[len] != REF_END)
         len++;
 
       sd->refs = (short*) calloc (len + 1, sizeof (short));
@@ -87,7 +87,7 @@ sen_data_init (int line_num, int rule, unsigned char * text,
     {
       sd->refs = (short*) calloc (1, sizeof(short));
       CHECK_ALLOC (sd->refs, NULL);
-      sd->refs[0] = -1;
+      sd->refs[0] = REF_END;
     }
 
   sd->premise = premise;
@@ -174,7 +174,7 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
   if (old_sd->refs)
     {
       len = 0;
-      while (old_sd->refs[len] != -1)
+      while (old_sd->refs[len] != REF_END)
         len++;
 
       new_sd->refs = (short*) calloc (len + 1, sizeof (short));
@@ -185,7 +185,7 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
     {
       new_sd->refs = (short*) calloc (1, sizeof(short));
       CHECK_ALLOC (new_sd->refs, -1);
-      new_sd->refs[0] = -1;
+      new_sd->refs[0] = REF_END;
     }
 
   if (old_sd->indices)
@@ -328,7 +328,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
   int i;
 
-  for (i = 0; sd->refs[i] != -1; i++)
+  for (i = 0; sd->refs[i] != REF_END; i++)
     {
       item_t * cur_ref;
       sen_data * ref_data;

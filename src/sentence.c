@@ -405,12 +405,12 @@ sentence_refresh_refs (sentence * sen)
 
   item_t * itm;
   int i = 0;
-  for (itm = sen->references->head; itm; itm = itm->next, i++)
+  for (itm = sen->references->head; itm; itm = itm->next)
     {
       sen_data * sd = SD(itm->value);
-      SD(sen)->refs[i] = sd->line_num;
+      SD(sen)->refs[i++] = sd->line_num;
     }
-  SD(sen)->refs[i] = -1;
+  SD(sen)->refs[i] = REF_END;
 
   return 0;
 }
@@ -467,7 +467,7 @@ sentence_update_refs (sentence * sen)
 
   if (SD(sen)->refs)
     {
-      for (i = 0; SD(sen)->refs[i] != -1; i++)
+      for (i = 0; SD(sen)->refs[i] != REF_END; i++)
         {
           int cur_line;
           item_t * ev_itr;
@@ -715,9 +715,6 @@ sentence_in (sentence * sen)
 
   sp->focused = e_itr;
 
-  // Set the background color to cyan.
-  sentence_set_bg (sen, BG_COLOR_CONC);
-
   if (!SEN_PREM(sen))
     {
       int rule = sentence_get_rule (sen);
@@ -782,11 +779,7 @@ sentence_out (sentence * sen)
   gtk_text_buffer_remove_tag_by_name (buffer, "hilight", &start, &end);
   gtk_text_buffer_remove_tag_by_name (buffer, "negative", &start, &end);
 
-  // Reset the background color.
-  // Reset the background color of the references.
-  sentence_set_bg (sen, BG_COLOR_DEFAULT);
-
-  if (!SEN_PREM(sen))
+  if (!SEN_PREM(sen) && !SEN_SUB(sen))
     {
 
       item_t * ref_itr = sen->references->head;

@@ -279,7 +279,7 @@ aio_open_conc (xmlTextReader * xml)
 	      refs[i++] = new_ref;
 	      tok = strtok (NULL, ",");
 	    }
-	  refs[i] = -1;
+	  refs[i] = REF_END;
 
 	  free (ref_str);
 
@@ -473,7 +473,7 @@ aio_save (proof_t * proof, const char * file_name)
 
       if (sd->refs)
 	{
-	  while (sd->refs[i] != -1)
+	  while (sd->refs[i] != REF_END)
 	    {
 	      max_line = (max_line > sd->refs[i]) ? max_line : sd->refs[i];
 	      num_refs++;
@@ -490,12 +490,12 @@ aio_save (proof_t * proof, const char * file_name)
 
       if (sd->refs)
 	{
-	  while (sd->refs[i] != -1)
+	  while (sd->refs[i] != REF_END)
 	    {
 	      int ref_line = sd->refs[i];
 	      ref_off += sprintf (refs + ref_off, "%i", ref_line);
 
-	      if (sd->refs[i+1] != -1)
+	      if (sd->refs[i+1] != REF_END)
 		ref_off += sprintf (refs + ref_off, ",");
 	      i++;
 	    }

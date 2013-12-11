@@ -180,10 +180,10 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
 	      printf (" ");
 
 	      int j;
-	      for (j = 0; sd->refs[j] != -1; j++)
+	      for (j = 0; sd->refs[j] != REF_END; j++)
 		{
 		  printf ("%i", sd->refs[j]);
-		  if (sd->refs[j + 1] != -1)
+		  if (sd->refs[j + 1] != REF_END)
 		    printf (",");
 		}
 
@@ -286,10 +286,10 @@ convert_proof_latex (proof_t * proof, const char * filename)
 	    || sd->rule == RULE_SQ || sd->subproof))
 	{
 	  fprintf (file, "(");
-	  for (i = 0; sd->refs[i] != -1; i++)
+	  for (i = 0; sd->refs[i] != REF_END; i++)
 	    {
 	      fprintf (file, "%i", sd->refs[i]);
-	      if (sd->refs[i + 1] != -1)
+	      if (sd->refs[i + 1] != REF_END)
 		fprintf (file, ",");
 	    }
 
