@@ -632,6 +632,22 @@ gui_save (aris_proof * ap, int save_as)
 
   if (filename)
     {
+      char * ext, * fname;
+      int alloc_size;
+      ext = strrchr (filename, '.');
+
+      if (!strcmp (ext, ".tle"))
+	{
+	  alloc_size = strlen (filename) + 4;
+	  fname = (char *) calloc (alloc_size + 1, sizeof (char));
+	  CHECK_ALLOC (fname, -1);
+	  sprintf (fname, "%s.tle", filename);
+	}
+      else
+	{
+	  fname = strdup (filename);
+	}
+
       proof_t * proof;
       int ret;
 
@@ -639,7 +655,7 @@ gui_save (aris_proof * ap, int save_as)
       if (!proof)
 	return -1;
 
-      ret = aio_save (proof, filename);
+      ret = aio_save (proof, fname);
       if (ret < 0)
 	return -1;
 
@@ -650,9 +666,11 @@ gui_save (aris_proof * ap, int save_as)
       if (ret < 0)
 	return -1;
 
-      ret = aris_proof_set_filename (ap, filename);
+      ret = aris_proof_set_filename (ap, fname);
       if (ret < 0)
 	return -1;
+
+      free (fname);
     }
 
   return 0;
