@@ -39,6 +39,7 @@ enum CONF_MENU_ID {
   CONF_MENU_OPEN,
   CONF_MENU_SAVE,
   CONF_MENU_SAVE_AS,
+  CONF_MENU_EXPORT_LATEX,
   CONF_MENU_CLOSE,
   CONF_MENU_QUIT,
   CONF_MENU_ADD_PREM,
@@ -117,6 +118,10 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
   {N_("Save As"), N_("Save this proof under a different name."),
    NULL, CONF_OBJ_MENU, CONF_MENU_SAVE_AS, conf_menu_value,
    "document-save-as", "c+s+s"},
+
+  {N_("Export to LaTeX"), N_("Export this proof to a LaTeX file."),
+   NULL, CONF_OBJ_MENU, CONF_MENU_EXPORT_LATEX, conf_menu_value,
+   "document-save-as", NULL},
 
   {N_("Close"), N_("Close the current proof."), NULL, CONF_OBJ_MENU,
    CONF_MENU_CLOSE, conf_menu_value, "window-close", "c+w"},
@@ -316,7 +321,7 @@ enum MENU_ORDER {
 };
 
 enum MENU_SIZE {
-  FILE_MENU_SIZE = 8,
+  FILE_MENU_SIZE = 9,
   EDIT_MENU_SIZE = 11,
   PROOF_MENU_SIZE = 6,
   RULES_MENU_SIZE = 2,
