@@ -23,7 +23,7 @@
 
 #define SEN_TAB "    "
 #define SEN_COMMENT_CHAR ';'
-#define REF_END -1
+#define REF_END 0
 
 #define SD(o) ((sen_data *) o)
 
