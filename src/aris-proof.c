@@ -808,11 +808,18 @@ aris_proof_set_sb (aris_proof * ap, char * sbtext)
 int
 aris_proof_set_filename (aris_proof * ap, const char * filename)
 {
+  if (ap->cur_file)
+    {
+      free (ap->cur_file);
+      ap->cur_file = NULL;
+    }
+
   char * new_title, * base_name;
 
   new_title = (char *) calloc (strlen (filename) + 12, sizeof (char));
   CHECK_ALLOC (new_title, -1);
-  ap->cur_file = (char *) filename;
+  ap->cur_file = strdup (filename);
+  CHECK_ALLOC (ap->cur_file, -1);
 
   GFile * file = g_file_new_for_path (filename);
   base_name = g_file_get_basename (file);
