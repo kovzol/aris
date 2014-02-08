@@ -859,6 +859,7 @@ main (int argc, char *argv[])
 
 	      aris_proof_set_filename (new_gui, file_name[c]);
 	      new_gui->edited = 0;
+              free (file_name[c]);
 
 	      ret = the_app_add_gui (new_gui);
 	      if (ret < 0)
