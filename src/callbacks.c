@@ -163,12 +163,18 @@ sentence_btn_press (GtkWidget * widget, GdkEventButton * event, gpointer data)
 G_MODULE_EXPORT gboolean
 sentence_btn_release (GtkWidget * widget, GdkEventButton * event, gpointer data)
 {
+  /*
+  if (event->state == 0)
+    {
+      aris_proof_clear_selected (the_app->focused);
+      return TRUE;
+    }
+  */
 
   if (event->state == (GDK_CONTROL_MASK | GDK_BUTTON1_MASK) && event->button == 1)
     {
       // Only want to do anything if the ctrl key is pressed.
       sentence * sen = (sentence *) data;
-
       select_reference (sen);
 
       return TRUE;
@@ -177,8 +183,6 @@ sentence_btn_release (GtkWidget * widget, GdkEventButton * event, gpointer data)
   if (event->state == (GDK_SHIFT_MASK | GDK_BUTTON1_MASK) && event->button == 1)
     {
       sentence * sen = (sentence *) data;
-
-      // Will eventually select sentence.
       select_sentence (sen);
 
       return TRUE;
@@ -202,11 +206,17 @@ sentence_key_press (GtkWidget * widget, GdkEventKey * event, gpointer data)
 
   sen = (sentence *) data;
 
+  /*
+  if (event->state == 0 && event->keyval != 0)
+    aris_proof_clear_selected (the_app->focused);
+  */
+
   ctrl = event->state & GDK_CONTROL_MASK;
   prop = sentence_key (sen, event->keyval, ctrl);
 
   if (prop == 0)
     return TRUE;
+
   return FALSE;
 }
 
@@ -259,7 +269,7 @@ goal_menu_activate (GtkMenuItem * item, gpointer data)
       break;
     case CONF_MENU_EVAL_LINE:
       if (SEN_PARENT(goal)->focused)
-	goal_check_line (goal, SEN_PARENT(goal)->focused->value);
+        goal_check_line (goal, SEN_PARENT(goal)->focused->value);
       break;
     case CONF_MENU_EVAL_PROOF:
       goal_check_all (goal);
@@ -344,46 +354,46 @@ rule_menu_activated (GtkMenuItem * menuitem, gpointer data)
       break;
     case CONF_MENU_SMALL:
       if (rt->font != FONT_TYPE_SMALL)
-	{
-	  gtk_widget_set_sensitive (font_sel, TRUE);
-	  rules_table_set_font (rt, FONT_TYPE_SMALL);
-	  gtk_widget_set_sensitive (font_small, FALSE);
-	}
+        {
+          gtk_widget_set_sensitive (font_sel, TRUE);
+          rules_table_set_font (rt, FONT_TYPE_SMALL);
+          gtk_widget_set_sensitive (font_small, FALSE);
+        }
       break;
     case CONF_MENU_MEDIUM:
       if (rt->font != FONT_TYPE_MEDIUM)
-	{
-	  gtk_widget_set_sensitive (font_sel, TRUE);
-	  rules_table_set_font (rt, FONT_TYPE_MEDIUM);
-	  gtk_widget_set_sensitive (font_medium, FALSE);
-	}
+        {
+          gtk_widget_set_sensitive (font_sel, TRUE);
+          rules_table_set_font (rt, FONT_TYPE_MEDIUM);
+          gtk_widget_set_sensitive (font_medium, FALSE);
+        }
       break;
     case CONF_MENU_LARGE:
       if (rt->font != FONT_TYPE_LARGE)
-	{
-	  gtk_widget_set_sensitive (font_sel, TRUE);
-	  rules_table_set_font (rt, FONT_TYPE_LARGE);
-	  gtk_widget_set_sensitive (font_large, FALSE);
-	}
+        {
+          gtk_widget_set_sensitive (font_sel, TRUE);
+          rules_table_set_font (rt, FONT_TYPE_LARGE);
+          gtk_widget_set_sensitive (font_large, FALSE);
+        }
       break;
     case CONF_MENU_CUSTOM:
       if (gtk_widget_get_sensitive (font_sel))
-	{
-	  FONT_GET_SIZE (the_app->fonts[FONT_TYPE_CUSTOM], cur_font);
-	}
+        {
+          FONT_GET_SIZE (the_app->fonts[FONT_TYPE_CUSTOM], cur_font);
+        }
       else
-	cur_font = 0;
+        cur_font = 0;
 
       new_font = gui_set_custom (rt->window, cur_font);
 
       if (new_font > 0)
-	{
-	  gtk_widget_set_sensitive (font_sel, TRUE);
-	  if (the_app->fonts[FONT_TYPE_CUSTOM])
-	    pango_font_description_free (the_app->fonts[FONT_TYPE_CUSTOM]);
-	  INIT_FONT (the_app->fonts[FONT_TYPE_CUSTOM], new_font);
-	  rules_table_set_font (rt, FONT_TYPE_CUSTOM);
-	}
+        {
+          gtk_widget_set_sensitive (font_sel, TRUE);
+          if (the_app->fonts[FONT_TYPE_CUSTOM])
+            pango_font_description_free (the_app->fonts[FONT_TYPE_CUSTOM]);
+          INIT_FONT (the_app->fonts[FONT_TYPE_CUSTOM], new_font);
+          rules_table_set_font (rt, FONT_TYPE_CUSTOM);
+        }
       break;
     case CONF_MENU_CONTENTS:
       gui_help ();
@@ -426,12 +436,12 @@ rules_table_state (GtkWidget * widget, GdkEvent * event, gpointer data)
       item_t * app_itr;
 
       for (app_itr = the_app->guis->head; app_itr; app_itr = app_itr->next)
-	{
-	  aris_proof * ap;
-	  ap = app_itr->value;
+        {
+          aris_proof * ap;
+          ap = app_itr->value;
 
-	  gtk_window_iconify (GTK_WINDOW (SEN_PARENT(ap)->window));
-	}
+          gtk_window_iconify (GTK_WINDOW (SEN_PARENT(ap)->window));
+        }
     }
 
   return FALSE;
@@ -452,20 +462,20 @@ gui_destroy (aris_proof * ap)
       int result;
 
       confirm_prompt =
-	gtk_message_dialog_new_with_markup (GTK_WINDOW (SEN_PARENT (ap)->window),
-					    GTK_DIALOG_MODAL
-					    | GTK_DIALOG_DESTROY_WITH_PARENT,
-					    GTK_MESSAGE_WARNING,
-					    GTK_BUTTONS_OK_CANCEL,
-					    "<b>Unsaved Changes</b>");
+        gtk_message_dialog_new_with_markup (GTK_WINDOW (SEN_PARENT (ap)->window),
+                                            GTK_DIALOG_MODAL
+                                            | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_WARNING,
+                                            GTK_BUTTONS_OK_CANCEL,
+                                            "<b>Unsaved Changes</b>");
 
       gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (confirm_prompt),
-						  _("There are unsaved changes to this proof.\nAre you sure that you want to exit?"));
+                                                  _("There are unsaved changes to this proof.\nAre you sure that you want to exit?"));
 
       result = gtk_dialog_run (GTK_DIALOG (confirm_prompt));
       gtk_widget_destroy (confirm_prompt);
       if (result != GTK_RESPONSE_OK)
-	return -1;
+        return -1;
     }
 
   int ret;
@@ -515,11 +525,11 @@ gui_open (GtkWidget * window)
   GtkWidget * file_chooser;
   file_chooser =
     gtk_file_chooser_dialog_new (_("Select a file to Open..."),
-				 GTK_WINDOW (window),
-				 GTK_FILE_CHOOSER_ACTION_OPEN,
-				 "_Cancel", GTK_RESPONSE_CANCEL,
-				 "_Open", GTK_RESPONSE_ACCEPT,
-				 NULL);
+                                 GTK_WINDOW (window),
+                                 GTK_FILE_CHOOSER_ACTION_OPEN,
+                                 "_Cancel", GTK_RESPONSE_CANCEL,
+                                 "_Open", GTK_RESPONSE_ACCEPT,
+                                 NULL);
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser), FALSE);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
 
@@ -538,53 +548,53 @@ gui_open (GtkWidget * window)
       int have_blank_proof = 0;
 
       if (the_app->guis->num_stuff == 1)
-	{
-	  cur_ap = (aris_proof *) the_app->guis->head->value;
-	  sentence * sen;
-	  sen = ((sentence *) SEN_PARENT (cur_ap)->everything->head->value);
-	  unsigned char * text;
-	  text = sentence_get_text (sen);
-	  if (SEN_PARENT (cur_ap)->everything->num_stuff == 1
-	      && !cur_ap->edited
-	      && *text == '\0')
-	    have_blank_proof = 1;
-	}
+        {
+          cur_ap = (aris_proof *) the_app->guis->head->value;
+          sentence * sen;
+          sen = ((sentence *) SEN_PARENT (cur_ap)->everything->head->value);
+          unsigned char * text;
+          text = sentence_get_text (sen);
+          if (SEN_PARENT (cur_ap)->everything->num_stuff == 1
+              && !cur_ap->edited
+              && *text == '\0')
+            have_blank_proof = 1;
+        }
 
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
 
       proof = aio_open (filename);
       if (!proof)
-	{
-	  gtk_widget_destroy (file_chooser);
-	  return -1;
-	}
+        {
+          gtk_widget_destroy (file_chooser);
+          return -1;
+        }
 
       new_ap = aris_proof_init_from_proof (proof);
       if (!new_ap)
-	{
-	  gtk_widget_destroy (file_chooser);
-	  return -1;
-	}
+        {
+          gtk_widget_destroy (file_chooser);
+          return -1;
+        }
 
       ret = the_app_add_gui (new_ap);
       if (ret < 0)
-	{
-	  gtk_widget_destroy (file_chooser);
-	  return -1;
-	}
+        {
+          gtk_widget_destroy (file_chooser);
+          return -1;
+        }
 
       ret = aris_proof_set_filename (new_ap, filename);
       if (ret < 0)
-	{
-	  gtk_widget_destroy (file_chooser);
-	  return -1;
-	}
+        {
+          gtk_widget_destroy (file_chooser);
+          return -1;
+        }
 
       gui_save (new_ap, 0);
       new_ap->edited = 0;
 
       if (have_blank_proof)
-	gui_destroy (cur_ap);
+        gui_destroy (cur_ap);
     }
 
   gtk_widget_destroy (file_chooser);
@@ -613,19 +623,19 @@ gui_save (aris_proof * ap, int save_as)
     {
       GtkWidget * file_chooser;
       file_chooser =
-	gtk_file_chooser_dialog_new (_("Select a file to Save to..."),
-				     GTK_WINDOW (SEN_PARENT (ap)->window),
-				     GTK_FILE_CHOOSER_ACTION_SAVE,
-				     "_Cancel", GTK_RESPONSE_CANCEL,
-				     "_Save", GTK_RESPONSE_ACCEPT,
-				     NULL);
+        gtk_file_chooser_dialog_new (_("Select a file to Save to..."),
+                                     GTK_WINDOW (SEN_PARENT (ap)->window),
+                                     GTK_FILE_CHOOSER_ACTION_SAVE,
+                                     "_Cancel", GTK_RESPONSE_CANCEL,
+                                     "_Save", GTK_RESPONSE_ACCEPT,
+                                     NULL);
       gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser),
-					    FALSE);
+                                            FALSE);
       gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (file_chooser), TRUE);
       gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (file_chooser), TRUE);
       gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
       if (gtk_dialog_run (GTK_DIALOG (file_chooser)) == GTK_RESPONSE_ACCEPT)
-	filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
+        filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
 
       gtk_widget_destroy (file_chooser);
     }
@@ -637,38 +647,38 @@ gui_save (aris_proof * ap, int save_as)
       ext = strrchr (filename, '.');
 
       if (!ext || strcmp (ext, ".tle"))
-	{
-	  alloc_size = strlen (filename) + 4;
-	  fname = (char *) calloc (alloc_size + 1, sizeof (char));
-	  CHECK_ALLOC (fname, -1);
-	  sprintf (fname, "%s.tle", filename);
-	}
+        {
+          alloc_size = strlen (filename) + 4;
+          fname = (char *) calloc (alloc_size + 1, sizeof (char));
+          CHECK_ALLOC (fname, -1);
+          sprintf (fname, "%s.tle", filename);
+        }
       else
-	{
-	  fname = strdup (filename);
-	}
+        {
+          fname = strdup (filename);
+        }
 
       proof_t * proof;
       int ret;
 
       proof = aris_proof_to_proof (ap);
       if (!proof)
-	return -1;
+        return -1;
 
       ret = aio_save (proof, fname);
       if (ret < 0)
-	return -1;
+        return -1;
 
       undo_info ui;
       ui.type = -1;
 
       ret = aris_proof_set_changed (ap, 0, ui);
       if (ret < 0)
-	return -1;
+        return -1;
 
       ret = aris_proof_set_filename (ap, fname);
       if (ret < 0)
-	return -1;
+        return -1;
 
       free (fname);
     }
@@ -709,30 +719,30 @@ evaluate_line (aris_proof * ap, sentence * sen)
       int conv_check = 0;
       int ln = sentence_get_line_no (ev_sen);
       if (ln == sen_ln)
-	break;
+        break;
 
       conv_check = sd_convert_sexpr (SD(ev_sen));
       if (conv_check == -1)
-	return -1;
+        return -1;
 
       ret = sentence_can_select_as_ref (sen, ev_sen);
       if (ret == ln && conv_check == 0)
-	{
-	  int rule = sentence_get_rule (ev_sen);
-	  // This means that the variables apply to the current line.
-	  int prem = SEN_PREM(ev_sen), sub = SEN_SUB(ev_sen);
-	  int arb = (prem || sub
-		     || rule == RULE_EI
-		     || rule == RULE_SQ)
-	    ? 0 : 1;
-	  ret = sexpr_collect_vars_to_proof (vars, SD(ev_sen)->sexpr, arb);
-	  if (ret == -1)
-	    return -1;
-	}
+        {
+          int rule = sentence_get_rule (ev_sen);
+          // This means that the variables apply to the current line.
+          int prem = SEN_PREM(ev_sen), sub = SEN_SUB(ev_sen);
+          int arb = (prem || sub
+                     || rule == RULE_EI
+                     || rule == RULE_SQ)
+            ? 0 : 1;
+          ret = sexpr_collect_vars_to_proof (vars, SD(ev_sen)->sexpr, arb);
+          if (ret == -1)
+            return -1;
+        }
 
       ret_chk = ls_push_obj (lines, SD(ev_sen));
       if (!ret_chk)
-	return -1;
+        return -1;
     }
 
   sentence_refresh_refs (sen);
@@ -768,7 +778,7 @@ evaluate_proof (aris_proof * ap)
       sen = ev_itr->value;
       ret = evaluate_line (ap, sen);
       if (ret == -1)
-	return -1;
+        return -1;
     }
 
   /*
@@ -848,11 +858,11 @@ gui_set_custom (GtkWidget * window, int cur_font)
   int run, ret;
 
   dialog = gtk_dialog_new_with_buttons (_("Set Font Size"),
-					GTK_WINDOW (window),
-					GTK_DIALOG_MODAL,
-					"_OK", GTK_RESPONSE_OK,
-					"_Cancel", GTK_RESPONSE_CANCEL,
-					NULL);
+                                        GTK_WINDOW (window),
+                                        GTK_DIALOG_MODAL,
+                                        "_OK", GTK_RESPONSE_OK,
+                                        "_Cancel", GTK_RESPONSE_CANCEL,
+                                        NULL);
 
   content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
@@ -910,17 +920,17 @@ with this program; if not, write to the Free Software Foundation, Inc., 51 \
 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.");
 
   gtk_show_about_dialog (GTK_WINDOW (window),
-			 "program-name", _("Aris"),
-			 "version", VERSION,
-			 "authors", authors,
-			 "artists", artists,
-			 "documenters", documenters,
-			 "license", license,
-			 "comments", _("  GNU Aris is a logical proof program, which supports both propositional and predicate logic, as well as Boolean algebra and arithmetical logic in the form of abstract sequences."),
-			 "logo", the_app->icon,
-			 "wrap-license", TRUE,
-			 "website", _("http://www.gnu.org/software/aris/"),
-			 NULL);
+                         "program-name", _("Aris"),
+                         "version", VERSION,
+                         "authors", authors,
+                         "artists", artists,
+                         "documenters", documenters,
+                         "license", license,
+                         "comments", _("  GNU Aris is a logical proof program, which supports both propositional and predicate logic, as well as Boolean algebra and arithmetical logic in the form of abstract sequences."),
+                         "logo", the_app->icon,
+                         "wrap-license", TRUE,
+                         "website", _("http://www.gnu.org/software/aris/"),
+                         NULL);
 
   return 0;
 }
@@ -939,7 +949,7 @@ gui_help ()
   if (!ret)
     {
       gtk_show_uri (NULL, "http://www.gnu.org/software/aris/manual/",
-		    GDK_CURRENT_TIME, NULL);
+                    GDK_CURRENT_TIME, NULL);
     }
 
   return 0;
@@ -959,11 +969,11 @@ gui_customize_show (GtkWidget * window)
     * ip_table, * font_table, * goal_kc_table;
 
   dialog = gtk_dialog_new_with_buttons (_("Customize"),
-					GTK_WINDOW (window),
-					GTK_DIALOG_MODAL,
-					"_Save", GTK_RESPONSE_ACCEPT,
-					"_Cancel", GTK_RESPONSE_CANCEL,
-					NULL);
+                                        GTK_WINDOW (window),
+                                        GTK_DIALOG_MODAL,
+                                        "_Save", GTK_RESPONSE_ACCEPT,
+                                        "_Cancel", GTK_RESPONSE_CANCEL,
+                                        NULL);
 
   content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
@@ -974,7 +984,7 @@ gui_customize_show (GtkWidget * window)
   int i, j;
 
   GtkWidget * tables[] = {main_kc_table, goal_kc_table,
-			  font_table, ip_table};
+                          font_table, ip_table};
 
   char * labels[] = {_("Main Keys"), _("Goal Keys"), _("Display"), _("Grade Server")};
 
@@ -983,36 +993,36 @@ gui_customize_show (GtkWidget * window)
     {
       tables[j] = gtk_grid_new ();
       for (i = 0; i < conf_sizes[j]; i++)
-	{
-	  GtkWidget * label;
-	  conf_obj cur_obj;
+        {
+          GtkWidget * label;
+          conf_obj cur_obj;
 
-	  cur_obj = conf_arrays[j][i];
+          cur_obj = conf_arrays[j][i];
 
-	  conf_arrays[j][i].widget = conf_arrays[j][i].value_func (&conf_arrays[j][i], 1);
-	  label = gtk_label_new (conf_arrays[j][i].label);
-	  gtk_widget_set_tooltip_text (label, conf_arrays[j][i].tooltip);
+          conf_arrays[j][i].widget = conf_arrays[j][i].value_func (&conf_arrays[j][i], 1);
+          label = gtk_label_new (conf_arrays[j][i].label);
+          gtk_widget_set_tooltip_text (label, conf_arrays[j][i].tooltip);
 
-	  gtk_widget_set_tooltip_text (conf_arrays[j][i].widget,
-				       conf_arrays[j][i].tooltip);
+          gtk_widget_set_tooltip_text (conf_arrays[j][i].widget,
+                                       conf_arrays[j][i].tooltip);
 
-	  int col, row;
-	  col = i / CUSTOM_ROWS;
-	  col *= 2;
+          int col, row;
+          col = i / CUSTOM_ROWS;
+          col *= 2;
 
-	  row = i % CUSTOM_ROWS;
+          row = i % CUSTOM_ROWS;
 
-	  gtk_widget_set_halign (conf_arrays[j][i].widget, GTK_ALIGN_FILL);
-	  gtk_widget_set_hexpand (conf_arrays[j][i].widget, TRUE);
-	  gtk_grid_attach (GTK_GRID (tables[j]), label, col, row, 1, 1);
-	  gtk_grid_attach (GTK_GRID (tables[j]), conf_arrays[j][i].widget, col + 1, row, 1, 1);
-	}
+          gtk_widget_set_halign (conf_arrays[j][i].widget, GTK_ALIGN_FILL);
+          gtk_widget_set_hexpand (conf_arrays[j][i].widget, TRUE);
+          gtk_grid_attach (GTK_GRID (tables[j]), label, col, row, 1, 1);
+          gtk_grid_attach (GTK_GRID (tables[j]), conf_arrays[j][i].widget, col + 1, row, 1, 1);
+        }
 
       GtkWidget * tbl_label;
 
       tbl_label = gtk_label_new (labels[j]);
       gtk_notebook_append_page (GTK_NOTEBOOK (notebook), tables[j],
-				tbl_label);
+                                tbl_label);
     }
 
   gtk_container_add (GTK_CONTAINER (content), notebook);
@@ -1023,127 +1033,127 @@ gui_customize_show (GtkWidget * window)
   while (problem)
     {
       if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-	{
-	  problem = 0;
-	  /* First, confirm that each entry is unique. */
-	  for (j = 0; j < 2; j++)
-	    {
-	      int k;
-	      conf_obj obj_i, obj_k;
+        {
+          problem = 0;
+          /* First, confirm that each entry is unique. */
+          for (j = 0; j < 2; j++)
+            {
+              int k;
+              conf_obj obj_i, obj_k;
 
-	      for (i = 0; i < conf_sizes[j]; i++)
-		{
-		  obj_i = conf_arrays[j][i];
-		  const char * str_i;
-		  str_i = gtk_entry_get_text (GTK_ENTRY (obj_i.widget));
+              for (i = 0; i < conf_sizes[j]; i++)
+                {
+                  obj_i = conf_arrays[j][i];
+                  const char * str_i;
+                  str_i = gtk_entry_get_text (GTK_ENTRY (obj_i.widget));
 
-		  if (str_i[0] == '\0')
-		    continue;
+                  if (str_i[0] == '\0')
+                    continue;
 
-		  for (k = 0; k < conf_sizes[j]; k++)
-		    {
-		      if (i == k)
-			continue;
+                  for (k = 0; k < conf_sizes[j]; k++)
+                    {
+                      if (i == k)
+                        continue;
 
-		      obj_k = conf_arrays[j][k];
+                      obj_k = conf_arrays[j][k];
 
-		      const char * str_k;
-		      str_k = gtk_entry_get_text (GTK_ENTRY (obj_k.widget));
+                      const char * str_k;
+                      str_k = gtk_entry_get_text (GTK_ENTRY (obj_k.widget));
 
-		      if (str_k[0] == '\0')
-			continue;
+                      if (str_k[0] == '\0')
+                        continue;
 
-		      if (!strcmp (str_i, str_k))
-			{
-			  // The same key has been assigned to
-			  // two different commands.
+                      if (!strcmp (str_i, str_k))
+                        {
+                          // The same key has been assigned to
+                          // two different commands.
 
-			  GtkWidget * err_dialog;
+                          GtkWidget * err_dialog;
 
-			  err_dialog
-			    = gtk_message_dialog_new (GTK_WINDOW (dialog),
-						      GTK_DIALOG_MODAL,
-						      GTK_MESSAGE_ERROR,
-						      GTK_BUTTONS_CLOSE,
-						      _("There are two commands with the same key\nPlease change this."));
-			  gtk_dialog_run (GTK_DIALOG (err_dialog));
-			  problem = 1;
-			  gtk_widget_destroy (err_dialog);
-			  break;
-			}
-		    }
+                          err_dialog
+                            = gtk_message_dialog_new (GTK_WINDOW (dialog),
+                                                      GTK_DIALOG_MODAL,
+                                                      GTK_MESSAGE_ERROR,
+                                                      GTK_BUTTONS_CLOSE,
+                                                      _("There are two commands with the same key\nPlease change this."));
+                          gtk_dialog_run (GTK_DIALOG (err_dialog));
+                          problem = 1;
+                          gtk_widget_destroy (err_dialog);
+                          break;
+                        }
+                    }
 
-		  if (problem == 1)
-		    break;
-		}
+                  if (problem == 1)
+                    break;
+                }
 
-	      if (problem == 1)
-		break;
-	    }
+              if (problem == 1)
+                break;
+            }
 
-	  if (problem == 1)
-	    continue;
+          if (problem == 1)
+            continue;
 
-	  problem = 0;
+          problem = 0;
 
-	  FILE * conf_file;
-	  char * path, * home_dir;
-	  int alloc_size, path_pos = 0;
+          FILE * conf_file;
+          char * path, * home_dir;
+          int alloc_size, path_pos = 0;
 
-	  home_dir = getenv ("HOME");
-	  if (!home_dir)
-	    home_dir = getenv ("HOMEPATH");
-
-#ifdef WIN32
-	  alloc_size += strlen (getenv ("HOMEDRIVE")) + 1;
-#endif
-	  path = (char *) calloc (alloc_size + 1, sizeof (char));
-	  CHECK_ALLOC (path, -1);
+          home_dir = getenv ("HOME");
+          if (!home_dir)
+            home_dir = getenv ("HOMEPATH");
 
 #ifdef WIN32
-	  path_pos += sprintf (path, "%s\\", getenv ("HOMEDRIVE"));
+          alloc_size += strlen (getenv ("HOMEDRIVE")) + 1;
+#endif
+          path = (char *) calloc (alloc_size + 1, sizeof (char));
+          CHECK_ALLOC (path, -1);
+
+#ifdef WIN32
+          path_pos += sprintf (path, "%s\\", getenv ("HOMEDRIVE"));
 #endif
 
-	  sprintf (path + path_pos, "%s/%s", home_dir, CONF_FILE);
+          sprintf (path + path_pos, "%s/%s", home_dir, CONF_FILE);
 
-	  conf_file = fopen (path, "w");
-	  if (!conf_file)
-	    {
-	      perror (NULL);
-	      gtk_widget_destroy (dialog);
-	      return -2;
-	    }
-	  free (path);
+          conf_file = fopen (path, "w");
+          if (!conf_file)
+            {
+              perror (NULL);
+              gtk_widget_destroy (dialog);
+              return -2;
+            }
+          free (path);
 
-	  for (j = 0; j < 4; j++)
-	    {
-	      tables[j] = gtk_grid_new ();
+          for (j = 0; j < 4; j++)
+            {
+              tables[j] = gtk_grid_new ();
 
-	      for (i = 0; i < conf_sizes[j]; i++)
-		{
-		  GtkWidget * label;
-		  conf_obj cur_obj;
-		  char * print_str;
+              for (i = 0; i < conf_sizes[j]; i++)
+                {
+                  GtkWidget * label;
+                  conf_obj cur_obj;
+                  char * print_str;
 
-		  cur_obj = conf_arrays[j][i];
-		  print_str = cur_obj.value_func (&cur_obj, 0);
+                  cur_obj = conf_arrays[j][i];
+                  print_str = cur_obj.value_func (&cur_obj, 0);
 
-		  if (print_str)
-		    {
-		      fprintf (conf_file, "%s", print_str);
-		      free (print_str);
-		    }
-		}
-	    }
+                  if (print_str)
+                    {
+                      fprintf (conf_file, "%s", print_str);
+                      free (print_str);
+                    }
+                }
+            }
 
-	  fclose (conf_file);
+          fclose (conf_file);
 
-	  the_app_read_config_file (the_app);
-	}
+          the_app_read_config_file (the_app);
+        }
       else
-	{
-	  problem = 0;
-	}
+        {
+          problem = 0;
+        }
     }
 
   gtk_widget_destroy (dialog);
@@ -1176,11 +1186,11 @@ gui_submit_show (GtkWidget * window)
   GtkWidget * user_label, * user_entry, * instr_label, * instr_entry;
 
   dialog = gtk_dialog_new_with_buttons (_("Submit Proofs"),
-					GTK_WINDOW (window),
-					GTK_DIALOG_MODAL,
-					"_OK", GTK_RESPONSE_OK,
-					"_Cancel", GTK_RESPONSE_CANCEL,
-					NULL);
+                                        GTK_WINDOW (window),
+                                        GTK_DIALOG_MODAL,
+                                        "_OK", GTK_RESPONSE_OK,
+                                        "_Cancel", GTK_RESPONSE_CANCEL,
+                                        NULL);
 
   content = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
@@ -1220,16 +1230,16 @@ gui_submit_show (GtkWidget * window)
       ap = g_itr->value;
 
       if (ap->cur_file)
-	{
+        {
 
-	  label = gtk_label_new (ap->cur_file);
-	  entry = gtk_entry_new ();
+          label = gtk_label_new (ap->cur_file);
+          entry = gtk_entry_new ();
 
-	  gtk_grid_attach (GTK_GRID (table), entry, 0, i, 1, 1);
-	  gtk_grid_attach (GTK_GRID (table), label, 1, i, 1, 1);
+          gtk_grid_attach (GTK_GRID (table), entry, 0, i, 1, 1);
+          gtk_grid_attach (GTK_GRID (table), label, 1, i, 1, 1);
 
-	  i++;
-	}
+          i++;
+        }
     }
 
   if (i == 4)
@@ -1254,7 +1264,7 @@ gui_submit_show (GtkWidget * window)
       instr_email = gtk_entry_get_text (GTK_ENTRY (instr_entry));
 
       entries = (struct submit_ent *) calloc (the_app->guis->num_stuff + 1,
-					       sizeof (struct submit_ent));
+                                               sizeof (struct submit_ent));
       CHECK_ALLOC (entries, -1);
 
       GList * gl;
@@ -1263,35 +1273,35 @@ gui_submit_show (GtkWidget * window)
       gl = gtk_container_get_children (GTK_CONTAINER (table));
 
       while (gl)
-	{
-	  GtkWidget * wid;
+        {
+          GtkWidget * wid;
 
-	  wid = gl->data;
+          wid = gl->data;
 
-	  if (GTK_IS_LABEL (wid)
-	      && !strcmp (gtk_label_get_label (GTK_LABEL (wid)),
-			  _("File Name")))
-	    {
-	      break;
-	    }
+          if (GTK_IS_LABEL (wid)
+              && !strcmp (gtk_label_get_label (GTK_LABEL (wid)),
+                          _("File Name")))
+            {
+              break;
+            }
 
-	  GtkWidget * ent;
+          GtkWidget * ent;
 
-	  ent = gl->next->data;
-	  const char * entry_text = gtk_entry_get_text (GTK_ENTRY (ent));
+          ent = gl->next->data;
+          const char * entry_text = gtk_entry_get_text (GTK_ENTRY (ent));
 
-	  if (entry_text[0] == '\0')
-	    {
-	      gl = gl->next->next;
-	      continue;
-	    }
+          if (entry_text[0] == '\0')
+            {
+              gl = gl->next->next;
+              continue;
+            }
 
-	  entries[i].hw = strdup (entry_text);
-	  entries[i].file_name = strdup (gtk_label_get_label (GTK_LABEL (wid)));
+          entries[i].hw = strdup (entry_text);
+          entries[i].file_name = strdup (gtk_label_get_label (GTK_LABEL (wid)));
 
-	  i++;
-	  gl = gl->next->next;
-	}
+          i++;
+          gl = gl->next->next;
+        }
 
       entries[i].hw = entries[i].file_name = NULL;
 
@@ -1300,23 +1310,23 @@ gui_submit_show (GtkWidget * window)
       int rc;
       rc = the_app_submit (user_email, instr_email, entries);
       if (rc == -3)
-	{
-	  GtkWidget * error_dialog;
-	  error_dialog = gtk_message_dialog_new (GTK_WINDOW (window),
-						 GTK_DIALOG_DESTROY_WITH_PARENT,
-						 GTK_MESSAGE_ERROR,
-						 GTK_BUTTONS_CLOSE,
-						 "Unable to submit files to server: %s",
-						 the_app->ip_addr);
-	  gtk_dialog_run (GTK_DIALOG (error_dialog));
-	  gtk_widget_destroy (error_dialog);
-	}
+        {
+          GtkWidget * error_dialog;
+          error_dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                 GTK_MESSAGE_ERROR,
+                                                 GTK_BUTTONS_CLOSE,
+                                                 "Unable to submit files to server: %s",
+                                                 the_app->ip_addr);
+          gtk_dialog_run (GTK_DIALOG (error_dialog));
+          gtk_widget_destroy (error_dialog);
+        }
 
       for (i = 0; i < num_ents; i++)
-	{
-	  free (entries[i].hw);
-	  free (entries[i].file_name);
-	}
+        {
+          free (entries[i].hw);
+          free (entries[i].file_name);
+        }
 
       free (entries);
     }
@@ -1373,7 +1383,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_SAVE:
       ret = gui_save (ap, 0);
       if (ret < 0)
-	return -1;
+        return -1;
 
       aris_proof_set_sb (ap, _("Proof Saved."));
       break;
@@ -1381,7 +1391,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_SAVE_AS:
       ret = gui_save (ap, 1);
       if (ret < 0)
-	return -1;
+        return -1;
 
       aris_proof_set_sb (ap, _("Proof Saved."));
       break;
@@ -1403,7 +1413,7 @@ menu_activated (aris_proof * ap, int menu_id)
 
     case CONF_MENU_ADD_PREM:
       if (the_app->verbose)
-	printf ("Inserting premise\n");
+        printf ("Inserting premise\n");
 
       // There's an error around here...
       // The second time, it happened in here.
@@ -1412,7 +1422,7 @@ menu_activated (aris_proof * ap, int menu_id)
       // gtk_text_layout_free_line_display
       sen = aris_proof_create_new_prem (ap);
       if (!sen)
-	return -1;
+        return -1;
 
       aris_proof_set_sb (ap, _("Premise Created."));
       break;
@@ -1420,7 +1430,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_ADD_CONC:
       sen = aris_proof_create_new_conc (ap);
       if (!sen)
-	return -1;
+        return -1;
 
       aris_proof_set_sb (ap, _("Conclusion Created."));
       break;
@@ -1428,7 +1438,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_ADD_SUB:
       sen = aris_proof_create_new_sub (ap);
       if (!sen)
-	return -1;
+        return -1;
 
       aris_proof_set_sb (ap, _("Subproof Created."));
       break;
@@ -1436,7 +1446,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_END_SUB:
       sen = aris_proof_end_sub (ap);
       if (!sen)
-	return -1;
+        return -1;
 
       aris_proof_set_sb (ap, _("Subproof Ended."));
       break;
@@ -1444,30 +1454,30 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_UNDO:
       ret = aris_proof_undo (ap, 1);
       if (ret < 0)
-	return -1;
+        return -1;
 
       if (ret == 0)
-	aris_proof_set_sb (ap, _("Undo!"));
+        aris_proof_set_sb (ap, _("Undo!"));
       else
-	aris_proof_set_sb (ap, _("Nothing to undo."));
+        aris_proof_set_sb (ap, _("Nothing to undo."));
       break;
 
     case CONF_MENU_REDO:
       ret = aris_proof_undo (ap, 0);
       if (ret < 0)
-	return -1;
+        return -1;
 
       if (ret == 0)
-	aris_proof_set_sb (ap, _("Redo!"));
+        aris_proof_set_sb (ap, _("Redo!"));
       else
-	aris_proof_set_sb (ap, _("Nothing to redo."));
+        aris_proof_set_sb (ap, _("Nothing to redo."));
       break;
 
 
     case CONF_MENU_COPY:
       ret = aris_proof_copy (ap);
       if (ret < 0)
-	return -1;
+        return -1;
 
       aris_proof_set_sb (ap, _("Sentence Copied."));
       break;
@@ -1475,12 +1485,12 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_KILL:
       ret = aris_proof_kill (ap);
       if (ret < 0)
-	return -1;
+        return -1;
 
       if (ret == 1)
-	aris_proof_set_sb (ap, _("The first sentence can not be killed."));
+        aris_proof_set_sb (ap, _("The first sentence can not be killed."));
       else
-	aris_proof_set_sb (ap, _("Sentence Killed."));
+        aris_proof_set_sb (ap, _("Sentence Killed."));
       break;
 
     case CONF_MENU_INSERT:
@@ -1514,60 +1524,60 @@ menu_activated (aris_proof * ap, int menu_id)
 
     case CONF_MENU_SMALL:
       if (SEN_PARENT (ap)->font != FONT_TYPE_SMALL)
-	{
-	  gtk_widget_set_sensitive (font_sel, TRUE);
-	  aris_proof_set_font (ap, FONT_TYPE_SMALL);
-	  aris_proof_set_sb (ap, _("Font Type Set to Small."));
-	  gtk_widget_set_sensitive (font_small, FALSE);
-	}
+        {
+          gtk_widget_set_sensitive (font_sel, TRUE);
+          aris_proof_set_font (ap, FONT_TYPE_SMALL);
+          aris_proof_set_sb (ap, _("Font Type Set to Small."));
+          gtk_widget_set_sensitive (font_small, FALSE);
+        }
 
       break;
 
     case CONF_MENU_MEDIUM:
       if (SEN_PARENT (ap)->font != FONT_TYPE_MEDIUM)
-	{
-	  gtk_widget_set_sensitive (font_sel, TRUE);
-	  aris_proof_set_font (ap, FONT_TYPE_MEDIUM);
-	  aris_proof_set_sb (ap, _("Font Type Set to Medium."));
-	  gtk_widget_set_sensitive (font_medium, FALSE);
-	}
+        {
+          gtk_widget_set_sensitive (font_sel, TRUE);
+          aris_proof_set_font (ap, FONT_TYPE_MEDIUM);
+          aris_proof_set_sb (ap, _("Font Type Set to Medium."));
+          gtk_widget_set_sensitive (font_medium, FALSE);
+        }
       break;
 
     case CONF_MENU_LARGE:
       if (SEN_PARENT (ap)->font != FONT_TYPE_LARGE)
-	{
-	  gtk_widget_set_sensitive (font_sel, TRUE);
-	  aris_proof_set_font (ap, FONT_TYPE_LARGE);
-	  aris_proof_set_sb (ap, _("Font Type Set to Large."));
-	  gtk_widget_set_sensitive (font_large, FALSE);
-	}
+        {
+          gtk_widget_set_sensitive (font_sel, TRUE);
+          aris_proof_set_font (ap, FONT_TYPE_LARGE);
+          aris_proof_set_sb (ap, _("Font Type Set to Large."));
+          gtk_widget_set_sensitive (font_large, FALSE);
+        }
       break;
 
     case CONF_MENU_CUSTOM:
       if (gtk_widget_get_sensitive (font_sel))
-	{
-	  FONT_GET_SIZE (the_app->fonts[FONT_TYPE_CUSTOM], cur_font);
-	}
+        {
+          FONT_GET_SIZE (the_app->fonts[FONT_TYPE_CUSTOM], cur_font);
+        }
       else
-	cur_font = 0;
+        cur_font = 0;
 
       new_font = gui_set_custom (SEN_PARENT (ap)->window, cur_font);
 
       if (new_font > 0)
-	{
+        {
 
-	  gtk_widget_set_sensitive (font_sel, TRUE);
-	  if (the_app->fonts[FONT_TYPE_CUSTOM])
-	    pango_font_description_free (the_app->fonts[FONT_TYPE_CUSTOM]);
-	  INIT_FONT (the_app->fonts[FONT_TYPE_CUSTOM], new_font);
-	  aris_proof_set_font (ap, FONT_TYPE_CUSTOM);
-	}
+          gtk_widget_set_sensitive (font_sel, TRUE);
+          if (the_app->fonts[FONT_TYPE_CUSTOM])
+            pango_font_description_free (the_app->fonts[FONT_TYPE_CUSTOM]);
+          INIT_FONT (the_app->fonts[FONT_TYPE_CUSTOM], new_font);
+          aris_proof_set_font (ap, FONT_TYPE_CUSTOM);
+        }
       break;
 
     case CONF_MENU_CONTENTS:
       ret = gui_help ();
       if (ret < 0)
-	return -1;
+        return -1;
 
       aris_proof_set_sb (ap, _("Displaying Help."));
       break;
