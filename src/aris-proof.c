@@ -846,6 +846,7 @@ aris_proof_set_filename (aris_proof * ap, const char * filename)
 int
 aris_proof_copy (aris_proof * ap)
 {
+  // First, clear out the old copied sentences.
   if (ap->yanked)
     {
       item_t * yank_itr;
@@ -889,6 +890,9 @@ aris_proof_copy (aris_proof * ap)
   if (ls_empty (ap->selected))
     ls_push_obj (ap->selected, (sentence *) SEN_PARENT (ap)->focused->value);
 
+  /* TODO: Make sure that if a sentence is selected, and then its parent is selected,
+     that the sentence is removed from selected. */
+
   for (sel_itr = ap->selected->head; sel_itr; sel_itr = sel_itr->next)
     {
       sentence * sen = sel_itr->value;
@@ -922,6 +926,9 @@ aris_proof_copy (aris_proof * ap)
    *    for each reference:
    *      if it is before the premise, then leave it alone.
    *      else, (within the subproof) set it to an offset from the current line.
+   */
+
+  /* The sentences should have the same depth, with the exception of subproofs.
    */
 
   /* This needs to be a stack of line numbers, the top of which should
@@ -958,6 +965,9 @@ aris_proof_copy (aris_proof * ap)
           vec_pop_obj (sub_lines);
         }
 
+      // This clears up potential problems with subproofs.
+      sd->depth = sub_lines->num_stuff;
+
       if (sd->depth > 0)
         {
           int i, * sub_line;
@@ -971,6 +981,7 @@ aris_proof_copy (aris_proof * ap)
             }
         }
 
+      // This may cause problems.  I'm not sure yet.
       if (sel_itr->prev && SEN_DEPTH(sen) < SEN_DEPTH(sel_itr->prev->value))
         sd->depth = -1;
       else
