@@ -271,7 +271,7 @@ sentence_copy_to_data (sentence * sen)
  *    sen - The sentence to set the line number.
  *    new_line_no - The new line number.
  *  output:
- *    -1 on error, -2 if the line isn't meant to be set, 0 on success.
+ *    -1 on error, -2 if the line isn't meant to be set (new_line_no < 1), 0 on success.
  */
 int
 sentence_set_line_no (sentence * sen, int new_line_no)
@@ -393,6 +393,12 @@ sentence_update_line_no (sentence * sen, int new)
   return 0;
 }
 
+/* Update the reference line numbers within the backend sentence data structure.
+ *  input:
+ *    sen - the sentence to update.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 sentence_refresh_refs (sentence * sen)
 {
@@ -879,6 +885,7 @@ select_reference (sentence * sen)
 }
 
 /* Selects a sentence.
+ * A selected sentence is a sentence that is to be copied or cut.
  *  input:
  *    sen - the sentence being selected.
  *  output:
@@ -1248,6 +1255,11 @@ sentence_set_selected (sentence * sen, int selected)
       item_t * sub_itr;
 
       sub_itr = ls_find (sen->parent->everything, sen);
+      if (!sub_itr)
+        {
+          fprintf (stderr, "sentence_set_selcted: Unable to find a sentence.\n");
+          exit (EXIT_FAILURE);
+        }
 
       for (sub_itr = sub_itr->next; sub_itr; sub_itr = sub_itr->next)
         {
@@ -1256,6 +1268,13 @@ sentence_set_selected (sentence * sen, int selected)
 
           if (SEN_DEPTH(sub_sen) < SEN_DEPTH(sen))
             break;
+
+          if (selected)
+            {
+              if (sub_sen->selected)
+                aris_proof_deselect_sentence (ARIS_PROOF (sub_sen->parent), sub_sen);
+              sub_sen->selected = 0;
+            }
 
           if (selected)
             sentence_set_bg (sub_sen, BG_COLOR_SEL);
@@ -1735,4 +1754,5 @@ int
 sentence_set_index (sentence * sen, int i, int index)
 {
   SD(sen)->indices[i] = index;
+  return 0;
 }
