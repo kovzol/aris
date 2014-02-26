@@ -91,6 +91,8 @@ aris_SOURCES +=		\
 	sexpr-process-misc.c  \
 	sexpr-process-quant.c	\
 	typedef.h	\
+	undo.c		\
+	undo.h		\
 	var.h 		\
 	var.c		\
 	vec.h		\
