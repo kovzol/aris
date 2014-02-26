@@ -40,6 +40,7 @@
 #include "conf-file.h"
 #include "aio.h"
 #include "vec.h"
+#include "undo.h"
 
 #define SUBPROOFS_DISABLED 0
 
@@ -608,7 +609,7 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
 
   sen = itm->value;
 
-  fprintf (stderr, "create_sentence: sen->line_num == %i\n", sentence_get_line_no (sen));
+  //fprintf (stderr, "create_sentence: sen->line_num == %i\n", sentence_get_line_no (sen));
 
   undo_info ui;
   ui.type = -1;
@@ -1397,111 +1398,6 @@ aris_proof_import_proof (aris_proof * ap)
   return 0;
 }
 
-/* Initialize and undo information object.
- *  input:
- *    ap - the aris proof object to which this undo information belongs.
- *    sens - a list of sentences that have been modified.
- *    type - the type of action by which this was generated.
- *  output:
- *    A newly initialized undo information object.
- */
-undo_info
-undo_info_init (aris_proof * ap, list_t * sens, int type)
-{
-  undo_info ret;
-  ret.type = -1;
-
-  item_t * it, * nit;
-  ret.ls = init_list ();
-  if (!ret.ls)
-    return ret;
-
-  for (it = sens->head; it;)
-    {
-      nit = it->next;
-      sen_data * sd = it->value;
-      ls_push_obj (ret.ls, sd);
-      free (it);
-      it = nit;
-    }
-  free (sens);
-
-  ret.type = type;
-  ret.stamp = time (NULL);
-
-  return ret;
-}
-
-/* Initialize an undo information object from a single sentence.
- *  input:
- *    ap - the aris proof to which this object belongs.
- *    sen - the sentence that was modified.
- *    type - the type of action that generated this.
- *  output:
- *    A newly initialized undo information object.
- */
-undo_info
-undo_info_init_one (aris_proof * ap, sentence * sen, int type)
-{
-  undo_info ret;
-  ret.type = -1;
-
-  list_t * sens;
-
-  sens = init_list ();
-  if (!sens)
-    return ret;
-
-  sen_data * sd;
-  unsigned char * text;
-  text = strdup (sentence_get_text (sen));
-  if (!text)
-    return ret;
-
-  sd = sentence_copy_to_data (sen);
-  if (!sd)
-    return ret;
-
-  if (sd->text)
-    free (sd->text);
-  sd->text = text;
-
-  fprintf (stderr, "ui_init: sd->line_num == %i\n", sd->line_num);
-
-  ls_push_obj (sens, sd);
-
-  ret = undo_info_init (ap, sens, type);
-
-  return ret;
-}
-
-/* Destroy an undo information object.
- *  input:
- *    ui - the undo information object to destroy.
- *  output:
- *    None.
- */
-void
-undo_info_destroy (undo_info ui)
-{
-  item_t * it;
-  sen_data * sd;
-  if (ui.ls)
-    {
-      for (it = ui.ls->head; it;)
-        {
-          item_t * next = it->next;
-          sd = (sen_data *) it->value;
-          sen_data_destroy (sd);
-          free (it);
-          it = next;
-        }
-
-      free (ui.ls);
-    }
-  ui.ls = NULL;
-}
-
 /* Push an undo informatoin object onto an undo stack.
  *  input:
  *    ap - the aris proof that owns the undo stack that to which an object is being pushed.
@@ -1570,20 +1466,6 @@ aris_proof_undo_stack_pop (aris_proof * ap)
   return 0;
 }
 
-/* A macro to assist with undo/redo.
- */
-
-#define UNDO_SEN(u,a,i,s,d) if (u) {                    \
-    SEN_PARENT(a)->focused = i;                         \
-    aris_proof_remove_sentence (a,s);                   \
-  }                                                     \
-  else {                                                \
-    if (i) { i = i->prev;}                              \
-    else { i = SEN_PARENT (a)->everything->tail; }      \
-    SEN_PARENT (a)->focused = i;                        \
-    aris_proof_create_sentence (a, d, 0);               \
-  }
-
 /* Undo or redo an action from an aris proof.
  *  input:
  *    ap - the aris proof from which to undo or redo an action.
@@ -1626,54 +1508,11 @@ aris_proof_undo (aris_proof * ap, int undo)
 
   item_t * it;
 
-  for (it = ui->ls->head; it; it = it->next)
-    {
-      sen_data * sd = (sen_data *) it->value;
-      int ln;
-      item_t * itm;
-      sentence * sen;
-      GtkTextBuffer * buffer;
+  int rc;
+  undo_op op;
+  op = undo_determine_op (undo, ui->type);
+  // Use ui->type and undo to determine new op.
 
-      for (itm = SEN_PARENT(ap)->everything->head; itm; itm = itm->next)
-        {
-          sen = (sentence *) itm->value;
-          ln = sentence_get_line_no (sen);
-          if (ln >= sd->line_num)
-            break;
-        }
-
-      switch (ui->type)
-        {
-        case UIT_MOD_TEXT:
-          // Goto line ui->sd->line_num;
-          // Set text to ui->sd->text;
-
-          SEN_PARENT(ap)->undo = 1;
-          int ret = sentence_set_text (sen, sd->text);
-          if (ret == -1)
-            return -1;
-
-          buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
-          gtk_text_buffer_set_text (buffer, "", -1);
-          sentence_paste_text (sen);
-          SEN_PARENT(ap)->undo = 0;
-
-          break;
-
-        case UIT_ADD_SEN:
-          fprintf (stderr, "undo:%i, ln:%i\n", undo, ln);
-          // Remove the sentence.
-          UNDO_SEN (undo, ap, itm, sen, sd);
-          break;
-
-        case UIT_REM_SEN:
-          UNDO_SEN (!undo, ap, itm, sen, sd);
-          // Add the sentence back in.
-          // Move itm to the sentence just before the one to insert.
-          // In other words, the sentence with line_num == sd->line_num - 1;
-          break;
-        }
-    }
-
-  return 0;
+  rc = op (ap, ui);
+  return rc;
 }

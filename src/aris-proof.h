@@ -23,25 +23,10 @@
 #include "pound.h"
 #include "typedef.h"
 #include "sen-parent.h"
+#include "undo.h"
 #include <time.h>
 
 #define ARIS_PROOF(o) ((aris_proof *) o)
-
-enum UNDO_INFO_TYPE {
-  UIT_ADD_SEN = 0,
-  UIT_REM_SEN,
-  UIT_ADD_GOAL,
-  UIT_REM_GOAL,
-  UIT_MOD_TEXT
-};
-
-#define UNDO_INT 1
-
-struct undo_info {
-  int type;
-  time_t stamp;
-  list_t * ls;
-};
 
 // The main proof/gui structure.
 
@@ -108,10 +93,6 @@ int aris_proof_undo_stack_push (aris_proof * ap, undo_info ui);
 int aris_proof_undo_stack_pop (aris_proof * ap);
 
 int aris_proof_undo (aris_proof * ap, int undo);
-
-undo_info undo_info_init (aris_proof * ap, list_t * sens, int type);
-undo_info undo_info_init_one (aris_proof * ap, sentence * sen, int type);
-void undo_info_destroy (undo_info ui);
 
 
 #endif /*  ARIS_PROOF_H  */
