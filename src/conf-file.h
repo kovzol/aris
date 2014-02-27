@@ -270,11 +270,11 @@ static conf_obj display_conf[NUM_DISPLAY_CONFS] = {
 
   {N_("Conclusion Color"), N_("The background color in which to\
  hilight the selected conclusion."), NULL, CONF_OBJ_COLOR,
-   BG_COLOR_CONC, conf_color_value, NULL, "7fffff"} ,
+   BG_COLOR_CONC, conf_color_value, NULL, "729fcf"},
 
   {N_("Reference Color"), N_("The background color in which to\
  hilight the selected references."), NULL, CONF_OBJ_COLOR,
-   BG_COLOR_REF, conf_color_value, NULL, "ff7fff"},
+   BG_COLOR_REF, conf_color_value, NULL, "a40000"},
 
   {N_("Bad Color"), N_("The background color in which to hilight\
  mismatched parentheses and invalid goal lines."), NULL,
@@ -330,52 +330,5 @@ enum MENU_SIZE {
 };
 
 static conf_obj * goal_menus;
-
-/* The default configuration */
-
-/*
-static const char * config_default ="\
-(key-cmd \'New\' \'c+n\')\n\
-(key-cmd \'Open\' \'c+o\')\n\
-(key-cmd \'Save\' \'c+s\')\n\
-(key-cmd \'Save As\' \'c+s+s\')\n\
-(key-cmd \'Close\' \'c+w\')\n\
-(key-cmd \'Quit\' \'c+q\')\n\
-(key-cmd \'Add Premise\' \'c+p\')\n\
-(key-cmd \'Add Conclusion\' \'c+j\')\n\
-(key-cmd \'Add Subproof\' \'c+b\')\n\
-(key-cmd \'End Subproof\' \'c+d\')\n\
-(key-cmd \'Undo\' \'c+z\')\n\
-(key-cmd \'Redo\' \'c+y\')\n\
-(key-cmd \'Copy Line\' \'c+g\')\n\
-(key-cmd \'Kill Line\' \'c+k\')\n\
-(key-cmd \'Insert Line\' \'c+i\')\n\
-(key-cmd \'Evaluate Line\' \'c+e\')\n\
-(key-cmd \'Evaluate Proof\' \'c+f\')\n\
-(key-cmd \'Toggle Goals...\' \'c+l\')\n\
-(key-cmd \'Toggle Boolean Mode\' \'c+m\')\n\
-(key-cmd \'Toggle Rules\' \'c+r\')\n\
-(key-cmd \'Small\' \'c+-\')\n\
-(key-cmd \'Medium\' \'c+0\')\n\
-(key-cmd \'Large\' \'c+=\')\n\
-(key-cmd \'Add Goal\' \'c+j\')\n\
-(key-cmd \'Remove Goal\' \'c+k\')\n\
-(key-cmd \'Check Line\' \'c+e\')\n\
-(key-cmd \'Check All\' \'c+f\')\n\
-(key-cmd \'Hide Goals\' \'c+l\')\n\
-(font-size \'Small\' 8)\n\
-(font-size \'Medium\' 16)\n\
-(font-size \'Large\' 24)\n\
-(font-size \'Default\' 8)\n\
-(color-pref \'Default\' ffffff)\n\
-(color-pref \'Conclusion\' 7fffff)\n\
-(color-pref \'Reference\' ff7fff)\n\
-(color-pref \'Bad\' 7f0000)\n\
-(color-pref \'Good\' 007f00)\n\
-(color-pref \'Selection\' ff0d00)\n\
-(grade \'ip\' \'127.0.0.1\')\n\
-(grade \'pass\' \'islegion\')\n\
-(grade \'dir\' \'.\')\n";
-*/
 
 #endif /*  ARIS_CONF_FILE_H  */
