@@ -222,17 +222,17 @@ sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
 
   if (!(*sexpr))
     {
-      ret = check_text (text);
+      unsigned char * tmp_str, * sexpr_sen;
+      tmp_str = format_string (text);
+      if (!tmp_str)
+        return -1;
+
+      ret = check_text (tmp_str);
       if (ret == -1)
         return -1;
 
       if (ret != 0)
         return -2;
-
-      unsigned char * tmp_str, * sexpr_sen;
-      tmp_str = die_spaces_die (text);
-      if (!tmp_str)
-        return -1;
 
       sexpr_sen = convert_sexpr (tmp_str);
       if (!sexpr_sen)
@@ -282,8 +282,11 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         }
     }
 
+  unsigned char * text;
+  text = format_string (sd->text);
+
   int ret;
-  ret = check_text (sd->text);
+  ret = check_text (text);
   if (ret == -1)
     return NULL;
 
@@ -339,9 +342,12 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
       cur_ref = ls_nth (lines, sd->refs[i] - 1);
       ref_data = cur_ref->value;
 
-      ret = check_text (ref_data->text);
+      unsigned char * tmp_ref_str = format_string (ref_data->text);
+
+      ret = check_text (tmp_ref_str);
       if (ret == -1)
         return NULL;
+      free (tmp_ref_str);
 
       if (ret < 0)
         {
@@ -376,9 +382,14 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                 }
 
               sen_0 = ev_itr->value;
-              ret = check_text (sen_0->text);
-              if (ret == -1)
+              tmp_ref_str = format_string (sen_0->text);
+              if (!tmp_ref_str)
                 return NULL;
+
+              ret = check_text (tmp_ref_str);
+              if (ret == ERROR_CODE_MEMORY)
+                return NULL;
+              free (tmp_ref_str);
 
               if (ret < 0)
                 {
@@ -558,9 +569,9 @@ convert_sd_latex (sen_data * sd)
   char * out_str, * text;
   int out_pos, i;
 
-  text = die_spaces_die (sd->text);
-  if (!text)
-    return NULL;
+  // I feel like that isn't necessary either.
+
+  text = sd->text;
 
   out_str = (char *) calloc (sd->depth * 6 + 1, sizeof (char));
   CHECK_ALLOC (out_str, NULL);
