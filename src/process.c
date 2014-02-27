@@ -105,6 +105,44 @@ die_spaces_die (unsigned char * in_str)
   return ret_str;
 }
 
+unsigned char *
+remove_comment (unsigned char * in_str)
+{
+  size_t in_str_len, alloc_size;
+  unsigned char * out_str, * ret_str;
+  in_str_len = strlen (in_str);
+
+  out_str = strchr (in_str, ';');
+
+  if (!out_str)
+    out_str = in_str + in_str_len;
+
+  alloc_size = out_str - in_str;
+  ret_str = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+  CHECK_ALLOC (ret_str, NULL);
+
+  strncpy (ret_str, in_str, alloc_size);
+  ret_str[alloc_size] = '\0';
+
+  return ret_str;
+}
+
+unsigned char *
+format_string (unsigned char * in_str)
+{
+  unsigned char * tmp_str, * ret_str;
+  tmp_str = remove_comment (in_str);
+  if (!tmp_str)
+    return NULL;
+
+  ret_str = die_spaces_die (tmp_str);
+  if (!ret_str)
+    return NULL;
+  free (tmp_str);
+
+  return ret_str;
+}
+
 /* Finds a difference between two strings.
  *  input:
  *    sen_0 - the first string.
@@ -196,7 +234,7 @@ parse_tags (const unsigned char * in_str, const int init_pos,
 	}
       else
 	{
-	  //If both strings are NULL, then return -1.
+	  //If both strings are NULL, then return -2.
 	  return -2;
 	}
     }
@@ -208,7 +246,7 @@ parse_tags (const unsigned char * in_str, const int init_pos,
       // Allocate enough room for out_str,
       // and copy the parentheses construct from in_str.
       *out_str = (unsigned char*) calloc (tag_pos - init_pos + 2, sizeof (char));
-      CHECK_ALLOC (*out_str, -1);
+      CHECK_ALLOC (*out_str, ERROR_CODE_MEMORY);
       strncpy (*out_str, in_str + init_pos, tag_pos - init_pos + 1);
       (*out_str)[tag_pos - init_pos + 1] = '\0';
     }
@@ -231,73 +269,7 @@ int
 parse_parens (const unsigned char * in_str, const int init_pos,
 	      unsigned char ** out_str)
 {
-  if (!in_str)
-    return -1;
-
-  //If the character at the given position is not an opening parentheses,
-  //return -1 and set out_str to NULL.
-  if (in_str[init_pos] != '(')
-    {
-      if (out_str)
-	*out_str = NULL;
-      return -1;
-    }
-
-  //The opening and closing parentheses count.
-  int o_paren, c_paren;
-
-  //The offset of the last parentheses.
-  int paren_pos;
-
-  //Temporary strings that take the return from strchr.
-  unsigned char * o_str, * c_str;
-
-  o_paren = 1;
-  c_paren = 0;
-
-  paren_pos = init_pos + 1;
-
-  while (o_paren != c_paren)
-    {
-      //Find the next opening and closing parentheses.
-      o_str = (unsigned char*) strchr ((const char *) in_str + paren_pos, '(');
-      c_str = (unsigned char*) strchr ((const char *) in_str + paren_pos, ')');
-
-      //If the offset of c_str from in_str,
-      // is less than the offset of o_str from in_str,
-      //then this is a closing parentheses.
-      if (c_str != NULL
-	  && (o_str == NULL || (c_str - in_str) < (o_str - in_str)))
-	{
-	  c_paren++;
-	  paren_pos = c_str - in_str + 1;
-	}
-      else if (o_str != NULL)
-	{
-	  o_paren++;
-	  paren_pos = o_str - in_str + 1;
-	}
-      else
-	{
-	  //If both strings are NULL, then return -1.
-	  return -1;
-	}
-    }
-
-  paren_pos--;
-
-  if (out_str)
-    {
-      // Allocate enough room for out_str,
-      // and copy the parentheses construct from in_str.
-      *out_str = (unsigned char*) calloc (paren_pos - init_pos + 2, sizeof (char));
-      CHECK_ALLOC (*out_str, -2);
-      strncpy (*out_str, in_str + init_pos, paren_pos - init_pos + 1);
-      (*out_str)[paren_pos - init_pos + 1] = '\0';
-    }
-
-  //Return paren_pos.
-  return paren_pos;
+  return parse_tags (in_str, init_pos, out_str, "(", ")");
 }
 
 /* Reverses the paren parsing process, and starts from a closing parentheses.
@@ -318,7 +290,7 @@ reverse_parse_parens (const unsigned char * in_str, const int init_pos, unsigned
   if (out_str)
     *out_str = NULL;
   if (in_str[init_pos] != ')')
-    return -1;
+    return -2;
 
   //The opening and closing parentheses count.
   int o_paren, c_paren;
@@ -337,7 +309,7 @@ reverse_parse_parens (const unsigned char * in_str, const int init_pos, unsigned
   //Allocate enough memory, then copy the memory into tmp_str.
   in_len = strlen ((const char *) in_str);
   tmp_str = (unsigned char *) calloc (in_len, sizeof (char));
-  CHECK_ALLOC (tmp_str, -2);
+  CHECK_ALLOC (tmp_str, ERROR_CODE_MEMORY);
   strncpy (tmp_str, in_str, init_pos);
   tmp_str[init_pos] = '\0';
 
@@ -378,7 +350,7 @@ reverse_parse_parens (const unsigned char * in_str, const int init_pos, unsigned
 	{
 	  //If both strings are NULL, then return -1.
 	  free (tmp_str);
-	  return -1;
+	  return -2;
 	}
     }
 
@@ -389,7 +361,7 @@ reverse_parse_parens (const unsigned char * in_str, const int init_pos, unsigned
     {
       //Allocate space for out_str.
       *out_str = (unsigned char *) calloc (init_pos - paren_pos + 2, sizeof (char));
-      CHECK_ALLOC (*out_str, -2);
+      CHECK_ALLOC (*out_str, ERROR_CODE_MEMORY);
 
       //When this is all finished, o_str will point to the string that is needed.
       strncpy (*out_str, in_str + paren_pos, init_pos - paren_pos + 1);
@@ -795,11 +767,8 @@ check_text (unsigned char * text)
   if (text[0] == '\0')
     return -2;
 
-  unsigned char * eval_text;
-
-  eval_text = die_spaces_die (text);
-  if (!eval_text)
-    return -1;
+  unsigned char * eval_text = strdup (text);
+  CHECK_ALLOC (eval_text, -1);
 
   int paren_check = 0, conn_check = 0, quant_check = 0;
   paren_check = check_parens (eval_text);
@@ -1609,7 +1578,7 @@ infix_to_prefix (unsigned char * in_str)
 	  unsigned char * tmp_str;
 
 	  tmp_pos = parse_parens (in_str, i, &tmp_str);
-	  if (tmp_pos == -2)
+	  if (tmp_pos == ERROR_CODE_MEMORY)
 	    return NULL;
 
 	  free (tmp_str);
@@ -1719,7 +1688,7 @@ infix_to_prefix_func (unsigned char * in_str)
 	  unsigned char * tmp_str;
 
 	  tmp_pos = parse_parens (in_str, i, &tmp_str);
-	  if (tmp_pos == -2)
+	  if (tmp_pos == ERROR_CODE_MEMORY)
 	    return NULL;
 
 	  free (tmp_str);
@@ -1808,7 +1777,7 @@ get_pred_func_args (unsigned char * in_str, int in_pos,
   int tmp_pos;
 
   tmp_pos = parse_parens (in_str, i, &tmp_str);
-  if (tmp_pos == -2)
+  if (tmp_pos == ERROR_CODE_MEMORY)
     return -1;
 
   unsigned char * elim_str;
@@ -1829,7 +1798,7 @@ get_pred_func_args (unsigned char * in_str, int in_pos,
       if (elim_str[i] == '(')
 	{
 	  tmp_pos = parse_parens (elim_str, i, &tmp_str);
-	  if (tmp_pos == -2)
+	  if (tmp_pos == ERROR_CODE_MEMORY)
 	    return -1;
 
 	  free (tmp_str);

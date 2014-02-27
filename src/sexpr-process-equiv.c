@@ -362,7 +362,7 @@ proc_im (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str;
 
   tmp_pos = parse_parens (dis_sen, i - 2, &tmp_str);
-  if (tmp_pos == -2)
+  if (tmp_pos == ERROR_CODE_MEMORY)
     return NULL;
   if (!tmp_str)
     return _("Implication constructed incorrectly.");
@@ -477,7 +477,7 @@ proc_dm (unsigned char * prem, unsigned char * conc, int mode_guess)
       unsigned char * tmp_str;
 
       tmp_pos = parse_parens (not_sen, i - 2, &tmp_str);
-      if (tmp_pos == -2)
+      if (tmp_pos == ERROR_CODE_MEMORY)
 	return NULL;
       if (!tmp_str)
 	return _("DeMorgan constructed incorrectly.");
@@ -584,7 +584,7 @@ proc_dm (unsigned char * prem, unsigned char * conc, int mode_guess)
       unsigned char * tmp_str, * elim_sen;
 
       tmp_pos = parse_parens (not_sen, i - 1, &tmp_str);
-      if (tmp_pos == -2)
+      if (tmp_pos == ERROR_CODE_MEMORY)
 	return NULL;
       if (!tmp_str)
 	return _("DeMorgan constructed incorrectly.");
@@ -693,7 +693,7 @@ proc_as (unsigned char * prem, unsigned char * conc)
   int tmp_pos;
   unsigned char * tmp_str;
   tmp_pos = parse_parens (ln_sen, li, &tmp_str);
-  if (tmp_pos == -2)
+  if (tmp_pos == ERROR_CODE_MEMORY)
     return NULL;
   if (!tmp_str || tmp_pos < 0)
     {
@@ -928,7 +928,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 	}
 
       tmp_pos = parse_parens (sh_sen, i - 1, &tmp_str);
-      if (tmp_pos == -2)
+      if (tmp_pos == ERROR_CODE_MEMORY)
 	return NULL;
       if (!tmp_str)
 	return _("Distribution constructed incorrectly.");
@@ -1034,7 +1034,7 @@ proc_eq (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str;
 
   tmp_pos = parse_parens (bic_sen, i - 2, &tmp_str);
-  if (tmp_pos == -2)
+  if (tmp_pos == ERROR_CODE_MEMORY)
     return NULL;
   if (!tmp_str)
     return _("Equivalence constructed incorrectly.");
@@ -1118,7 +1118,7 @@ proc_dn (unsigned char * prem, unsigned char * conc)
   int tmp_pos;
   unsigned char * tmp_str;
   tmp_pos = parse_parens (ln_sen, i, &tmp_str);
-  if (tmp_pos == -2)
+  if (tmp_pos == ERROR_CODE_MEMORY)
     return NULL;
   if (!tmp_str)
     return _("Double Negation constructed incorrectly.");
@@ -1252,7 +1252,7 @@ proc_ep (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str;
 
   tmp_pos = parse_parens (and_sen, ai, &tmp_str);
-  if (tmp_pos == -2)
+  if (tmp_pos == ERROR_CODE_MEMORY)
     return NULL;
 
   int ftc;
@@ -1398,7 +1398,7 @@ proc_sb (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str;
 
   tmp_pos = parse_parens (ln_sen, li, &tmp_str);
-  if (tmp_pos == -2)
+  if (tmp_pos == ERROR_CODE_MEMORY)
     return NULL;
   if (!tmp_str)
     return _("Subsumption constructed incorrectly.");

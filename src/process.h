@@ -269,6 +269,8 @@ int check_infix (unsigned char * in_str, int pred);
 // Helper functions
 
 unsigned char * die_spaces_die (unsigned char * in_str);
+unsigned char * remove_comment (unsigned char * in_str);
+unsigned char * format_string (unsigned char * in_str);
 
 int find_difference (unsigned char * sen_0, unsigned char * sen_1);
 

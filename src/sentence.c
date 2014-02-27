@@ -205,10 +205,12 @@ sentence_gui_init (sentence * sen)
 
   GtkTextTag * tag;
   GtkTextTagTable * table;
+  GtkTextBuffer * buffer;
+
+  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
 
   table =
-    gtk_text_buffer_get_tag_table (gtk_text_view_get_buffer
-                                   (GTK_TEXT_VIEW (sen->entry)));
+    gtk_text_buffer_get_tag_table (buffer);
 
   tag = gtk_text_tag_new ("hilight");
   g_object_set (G_OBJECT (tag),
@@ -223,6 +225,15 @@ sentence_gui_init (sentence * sen)
                 NULL);
 
   gtk_text_tag_table_add (table, tag);
+
+  tag = gtk_text_tag_new ("comment");
+  g_object_set (G_OBJECT (tag), "background-rgba",
+                the_app->bg_colors[BG_COLOR_GOOD], NULL);
+  gtk_text_tag_table_add (table, tag);
+
+  GtkTextIter end;
+  gtk_text_buffer_get_end_iter (buffer, &end);
+  gtk_text_buffer_apply_tag (buffer, tag, &end, &end);
 }
 
 /* Destroys a sentence.
@@ -1163,7 +1174,7 @@ sentence_key (sentence * sen, int key, int ctrl)
             {
               tmp_pos = reverse_parse_parens (sen_text, offset,
                                               NULL);
-              if (tmp_pos == -2)
+              if (tmp_pos == ERROR_CODE_MEMORY)
                 return -1;
             }
 
@@ -1343,23 +1354,6 @@ sentence_copy_text (sentence * sen)
 
   ret_str[i] = '\0';
 
-  // Handle comments.
-  // Will need to fix this up, since this means that comments aren't saved.
-
-  unsigned char * semi_str, * fin_str;
-  semi_str = strchr (ret_str, ';');
-  if (semi_str)
-    {
-      int ret_len;
-      semi_str[0] = '\0';
-      ret_len = strlen (ret_str);
-      fin_str = (unsigned char *) calloc (ret_len + 1, sizeof (char));
-      CHECK_ALLOC (fin_str, NULL);
-      memcpy (fin_str, ret_str, ret_len);
-      free (ret_str);
-      ret_str = fin_str;
-    }
-
   return ret_str;
 }
 
@@ -1492,12 +1486,11 @@ sentence_text_changed (sentence * sen)
   old_len = strlen (sen_text);
   diff_pos = find_difference (sen_text, (unsigned char *) text);
 
-#if 0
   {
     //TODO: Check for semi-colon and set mark.
     if (text_len > old_len)
       {
-        if (sen->text[diff_pos] == ';')
+        if (text[text_len - 1] == ';')
           {
             GtkTextIter cur_pos;
             gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
@@ -1521,6 +1514,26 @@ sentence_text_changed (sentence * sen)
                 sen->mark = gtk_text_mark_new (SEMI_NAME, TRUE);
                 gtk_text_buffer_add_mark (buffer, sen->mark, &cur_pos);
               }
+
+            GtkTextIter mark_iter, end_iter;
+            gtk_text_buffer_get_iter_at_mark (buffer, &mark_iter, sen->mark);
+            gtk_text_buffer_get_end_iter (buffer, &end_iter);
+            gtk_text_iter_backward_char (&mark_iter);
+
+            gtk_text_buffer_apply_tag_by_name (buffer, "comment", &mark_iter, &end_iter);
+          }
+        else if (sen->mark)
+          {
+            GtkTextIter cur_pos;
+            gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
+                                              gtk_text_buffer_get_insert (buffer));
+            gtk_text_buffer_get_iter_at_mark (buffer, &semi, sen->mark);
+
+            GtkTextIter end_iter;
+            gtk_text_buffer_get_end_iter (buffer, &end_iter);
+            gtk_text_iter_backward_char (&semi);
+
+            gtk_text_buffer_apply_tag_by_name (buffer, "comment", &semi, &end_iter);
           }
       }
     else
@@ -1533,7 +1546,6 @@ sentence_text_changed (sentence * sen)
           }
       }
   }
-#endif
 
   undo_info ui;
   ui = undo_info_init_one (NULL, sen, UIT_MOD_TEXT);

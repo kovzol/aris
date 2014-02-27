@@ -391,7 +391,7 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
 	      if (c_ret == -1 || c_ret == 0)
 		exit (EXIT_FAILURE);
 
-	      tmp_str = die_spaces_die (optarg);
+	      tmp_str = format_string (optarg);
 	      if (!tmp_str)
 		exit (EXIT_FAILURE);
 
@@ -428,7 +428,7 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
 		exit (EXIT_FAILURE);
 
 	      unsigned char * tmp_str;
-	      tmp_str = die_spaces_die (optarg);
+	      tmp_str = format_string (optarg);
 	      if (!tmp_str)
 		exit (EXIT_FAILURE);
 
@@ -587,7 +587,7 @@ parse_args (int argc, char * argv[], struct arg_items * ai)
 	      main_conns = cli_conns;
 
 	      unsigned char * no_spaces, * sexpr_str;
-	      no_spaces = die_spaces_die (optarg);
+	      no_spaces = format_string (optarg);
 	      sexpr_str = convert_sexpr (no_spaces);
 	      printf ("%s\n", sexpr_str);
 	      exit (EXIT_SUCCESS);

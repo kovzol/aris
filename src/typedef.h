@@ -55,4 +55,8 @@ typedef void * (* conf_obj_value_func) (conf_obj * obj, int get);
 #define REPORT() fprintf (stderr, "%s:%i reporting!\n", __FILE__, __LINE__);
 #define CHECK_ALLOC(o,r) if (!o) {perror (NULL); return r; }
 
+enum ERROR_CODES {
+  ERROR_CODE_MEMORY = -1
+};
+
 #endif /*  ARIS_TYPE_DEF_H  */

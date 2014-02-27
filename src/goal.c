@@ -167,17 +167,18 @@ int
 goal_check_line (goal_t * goal, sentence * sen)
 {
   // First, check for text errors.
+  // Is that necessary?
 
-  unsigned char * sen_text;
+  unsigned char * cmp_text, * sen_text;
   sen_text = sentence_get_text (sen);
+  cmp_text = format_string (sen_text);
+  if (!cmp_text)
+    return -1;
+
   int ret_check = check_text (sen_text);
   if (ret_check < 0)
     return -1;
 
-  unsigned char * cmp_text;
-  cmp_text = die_spaces_die (sen_text);
-  if (!cmp_text)
-    return -1;
 
   item_t * ev_itr;
   int is_valid = 1;

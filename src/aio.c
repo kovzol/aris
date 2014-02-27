@@ -34,7 +34,7 @@
 #include "rules.h"
 #include "process.h"
 
-#define XML_ERR(r) {fprintf (stderr, "XML Error\n"); REPORT(); return r;}
+#define XML_ERR(r) {fprintf (stderr, "XML Error\n"); return r;}
 #define IF_FREE(p) if (p) free (p); p = NULL;
 //#define PRINT_ALLOC() {struct mallinfo mal = mallinfo (); fprintf (stderr, "%i: blks == %i\n", __LINE__, mal.uordblks); }
 #define PRINT_ALLOC()
@@ -95,6 +95,8 @@ aio_get_next_attribute (xmlTextReader * xml, xmlChar ** name)
   return buffer;
 }
 
+/* Write the line number of a sentence object to an XML stream.
+ */
 int
 aio_write_line_num (xmlTextWriter * xml, sen_data * sd)
 {
@@ -105,6 +107,8 @@ aio_write_line_num (xmlTextWriter * xml, sen_data * sd)
   return ret;
 }
 
+/* Write the text of a sentence object to an XML stream.
+ */
 int
 aio_write_text (xmlTextWriter * xml, sen_data * sd)
 {
@@ -115,6 +119,8 @@ aio_write_text (xmlTextWriter * xml, sen_data * sd)
   return ret;
 }
 
+/* Write the rule of a sentence object to an XML stream.
+ */
 int
 aio_write_rule (xmlTextWriter * xml, sen_data * sd)
 {
@@ -125,6 +131,8 @@ aio_write_rule (xmlTextWriter * xml, sen_data * sd)
   return ret;
 }
 
+/* Save a goal to an XML stream.
+ */
 int
 aio_save_goal (xmlTextWriter * xml, unsigned char * text)
 {
@@ -306,7 +314,6 @@ aio_open_conc (xmlTextReader * xml)
 	    XML_ERR (NULL);
 
 	  got_depth = 1;
-	  PRINT_ALLOC ();
 
 	  free (buffer);
 	  buffer = aio_get_next_attribute (xml, &name);
@@ -565,8 +572,6 @@ aio_open (const char * file_name)
   if (!proof)
     return NULL;
 
-  PRINT_ALLOC ();
-
   xml = xmlReaderForFile (file_name, NULL, 0);
   if (!xml) XML_ERR (NULL);
 
@@ -579,19 +584,13 @@ aio_open (const char * file_name)
 
   if (ret < 0) XML_ERR (NULL);
 
-  PRINT_ALLOC ();
-
   buffer = xmlTextReaderName (xml);
   if (!buffer) XML_ERR (NULL);
 
   if (strcmp ((const char *) buffer, PROOF_TAG))
-    {
-      XML_ERR (NULL);
-    }
+    XML_ERR (NULL);
 
   free (buffer);
-
-  PRINT_ALLOC ();
 
   buffer = aio_get_first_attribute (xml, &name);
   if (buffer)
@@ -606,8 +605,6 @@ aio_open (const char * file_name)
   IF_FREE (name);
   IF_FREE (buffer);
 
-  PRINT_ALLOC ();
-
   // Get the <goals> tag.
   ret = xmlTextReaderRead (xml);
   if (ret < 0) XML_ERR (NULL);
@@ -615,27 +612,19 @@ aio_open (const char * file_name)
   ret = xmlTextReaderRead (xml);
   if (ret < 0) XML_ERR (NULL);
 
-  PRINT_ALLOC ();
-
   buffer = xmlTextReaderName (xml);
   if (!buffer) XML_ERR (NULL);
 
   if (strcmp ((const char *) buffer, GOAL_TAG))
-    {
-      XML_ERR (NULL);
-    }
+    XML_ERR (NULL);
 
   free (buffer);
-
-  PRINT_ALLOC ();
 
   ret = xmlTextReaderRead (xml);
   if (ret < 0) XML_ERR (NULL);
 
   depth = xmlTextReaderDepth (xml);
   if (depth < 0) XML_ERR (NULL);
-
-  PRINT_ALLOC ();
 
   // Read the goals.
 
@@ -655,9 +644,7 @@ aio_open (const char * file_name)
 	      free (buffer);
 	      buffer = aio_get_first_attribute (xml, &name);
 	      if (!buffer || !IS_TEXT(name))
-		{
-		  XML_ERR (NULL);
-		}
+                XML_ERR (NULL);
 
 	      IF_FREE (name);
 
@@ -674,16 +661,12 @@ aio_open (const char * file_name)
 	      break;
 	    }
 	  else
-	    {
-	      XML_ERR (NULL);
-	    }
+            XML_ERR (NULL);
 
 	  ret = xmlTextReaderRead (xml);
 	  if (ret < 0) XML_ERR (NULL);
 	}
     }
-
-  PRINT_ALLOC ();
 
   /*** Read the Premises. ***/
 
@@ -696,13 +679,9 @@ aio_open (const char * file_name)
   if (!buffer) XML_ERR (NULL);
 
   if (strcmp ((const char *) buffer, PREMISE_TAG))
-    {
-      XML_ERR (NULL);
-    }
+    XML_ERR (NULL);
 
   free (buffer);
-
-  PRINT_ALLOC ();
 
   ret = xmlTextReaderRead (xml);
   if (ret < 0) XML_ERR (NULL);
@@ -745,7 +724,7 @@ aio_open (const char * file_name)
       if (ret < 0) XML_ERR (NULL);
     }
 
-  PRINT_ALLOC ();
+  
 
   ret = xmlTextReaderRead (xml);
   if (ret < 0) XML_ERR (NULL);
@@ -754,21 +733,15 @@ aio_open (const char * file_name)
   if (!buffer) XML_ERR (NULL);
 
   if (strcmp ((const char *) buffer, CONCLUSION_TAG))
-    {
-      XML_ERR (NULL);
-    }
+    XML_ERR (NULL);
 
   free (buffer);
-
-  PRINT_ALLOC ();
 
   ret = xmlTextReaderRead (xml);
   if (ret < 0) XML_ERR (NULL);
 
   depth = xmlTextReaderDepth (xml);
   if (depth < 0) XML_ERR (NULL);
-
-  PRINT_ALLOC ();
 
   if (depth == 2)
     {
@@ -797,7 +770,6 @@ aio_open (const char * file_name)
 	  sd = aio_open_conc (xml);
 	  if (!sd)
 	    XML_ERR (NULL);
-	  PRINT_ALLOC ();
 
 	  int sub = 0, old_depth;
 	  old_depth = ((sen_data *) proof->everything->tail->value)->depth;
@@ -811,12 +783,8 @@ aio_open (const char * file_name)
 	  itm = ls_push_obj (proof->everything, sd);
 	  if (!itm)
 	    return NULL;
-
-	  PRINT_ALLOC ();
 	}
     }
-
-  PRINT_ALLOC ();
 
   xmlFreeTextReader (xml);
 
