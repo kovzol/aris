@@ -331,21 +331,23 @@ conf_grade_value (conf_obj * obj, int get)
   if (get)
     {
       GtkEntryBuffer * buffer;
+      int len = 0;
 
       switch (obj->id)
 	{
 	case CONF_GRADE_IP:
-	  buffer = gtk_entry_buffer_new (the_app->ip_addr,
-					 strlen (the_app->ip_addr));
+          len = the_app->ip_addr ? strlen (the_app->ip_addr) : -1;
+	  buffer = gtk_entry_buffer_new (the_app->ip_addr, len);
 	  break;
+
 	case CONF_GRADE_PASS:
-	  buffer = gtk_entry_buffer_new (the_app->grade_pass,
-					 strlen (the_app->grade_pass));
+          len = the_app->grade_pass ? strlen (the_app->grade_pass) : -1;
+	  buffer = gtk_entry_buffer_new (the_app->grade_pass, len);
 	  break;
 
 	case CONF_GRADE_DIR:
-	  buffer = gtk_entry_buffer_new (the_app->grade_dir,
-					 strlen (the_app->grade_dir));
+          len = the_app->grade_dir ? strlen (the_app->grade_dir) : -1;
+	  buffer = gtk_entry_buffer_new (the_app->grade_dir, len);
 	  break;
 	}
 
