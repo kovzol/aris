@@ -270,6 +270,8 @@ aris_proof_init_from_proof (proof_t * proof)
           item_t * itm;
 
           itm = sen_parent_ins_sentence ((sen_parent *) ap, sd, NULL, 0);
+          if (!itm)
+            return NULL;
 
           ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
 
@@ -759,6 +761,9 @@ aris_proof_end_sub (aris_proof * ap)
 int
 aris_proof_remove_sentence (aris_proof * ap, sentence * sen)
 {
+  if (sentence_get_line_no (sen) == 1)
+    return 1;
+
   item_t * target = sen_parent_rem_sentence ((sen_parent *) ap, sen);
   if (!target)
     return -1;
@@ -949,7 +954,6 @@ aris_proof_copy (aris_proof * ap)
       sentence * sen;
       sen_data * sd;
       item_t * ret_chk;
-      int depth;
 
       sen = sel_itr->value;
       sd = sentence_copy_to_data (sen);
@@ -1068,6 +1072,8 @@ aris_proof_kill (aris_proof * ap)
       ret_chk = aris_proof_remove_sentence (ap, sen);
       if (ret_chk == -1)
         return -1;
+      if (ret_chk == 1)
+        return 1;
       n_itr = sel_itr->next;
       free (sel_itr);
       sel_itr = n_itr;
@@ -1505,8 +1511,6 @@ aris_proof_undo (aris_proof * ap, int undo)
       || ui->type == UIT_REM_GOAL
       || ui->type == -1)
     return 1;
-
-  item_t * it;
 
   int rc;
   undo_op op;

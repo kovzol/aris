@@ -194,13 +194,11 @@ undo_op_remove (aris_proof * ap, undo_info * ui)
 int
 undo_op_add (aris_proof * ap, undo_info * ui)
 {
-  int rc;
   item_t * ui_itr, * itm;
 
   for (ui_itr = ui->ls->head; ui_itr; ui_itr = ui_itr->next)
     {
       sen_data * sd;
-      GtkTextBuffer * buffer;
       int ln;
       sentence * sen;
 
@@ -228,7 +226,6 @@ undo_op_add (aris_proof * ap, undo_info * ui)
 int
 undo_op_mod (aris_proof * ap, undo_info * ui)
 {
-  int rc;
   item_t * ui_itr, * itm;
 
   for (ui_itr = ui->ls->head; ui_itr; ui_itr = ui_itr->next)

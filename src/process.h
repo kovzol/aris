@@ -109,6 +109,7 @@ static struct connectives_list cli_conns = {
 // It also works just fine under Wine, which is why it's hard to test it.
 // Gtk only displays utf-8 strings.  Maybe that has something to do
 //  with it.
+// Got a work around - using pixbufs.
 
 static struct connectives_list gui_conns = {
   "\u2227",
