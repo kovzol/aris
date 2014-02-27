@@ -996,10 +996,6 @@ get_iter_at_index (GtkTextBuffer * buffer, GtkTextIter * iter, int index)
 int
 sentence_key (sentence * sen, int key, int ctrl)
 {
-  // Don't waste time if it's just a control key, and ONLY a control key.
-  if (key == GDK_KEY_Control_L || key == GDK_KEY_Control_R)
-    return 0;
-
   sen_parent * sp = sen->parent;
   int ret = 1;
   GtkTextBuffer * buffer;
@@ -1082,8 +1078,9 @@ sentence_key (sentence * sen, int key, int ctrl)
       gunichar o_char, c_char;
       int got_par = 0;
 
-      gtk_text_buffer_get_iter_at_mark (buffer, &pos,
+      gtk_text_buffer_get_iter_at_mark (buffer, &chk_pos,
                                         gtk_text_buffer_get_insert (buffer));
+
       switch (key)
         {
         case GDK_KEY_Up:
@@ -1149,7 +1146,7 @@ sentence_key (sentence * sen, int key, int ctrl)
               pos = c_pos;
             }
         }
-          
+
       if (got_par)
         {
           GtkTextIter oth_pos;
