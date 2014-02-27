@@ -144,6 +144,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
       if (!strcmp (cur_conf_key, "grade"))
 	{
 	  free (cur_conf_key);
+
 	  char * cmd, * key;
 
 	  cmd = (char *) calloc (conf_len, sizeof (char));
@@ -179,7 +180,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  type = (char *) calloc (strlen (cur_conf), sizeof (char));
 	  CHECK_ALLOC (type, -1);
 
-	  ret_chk = sscanf (cur_conf, "(font-size \'%[^\']\' %i)",
+	  ret_chk = sscanf (cur_conf, "(font-size \'%[^\']\' \'%i\')",
 			    type, &def_font);
 
 	  if (ret_chk != 2)
@@ -189,7 +190,6 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	    }
 
 	  int font_type;
-
 	  font_type = the_app_get_font_by_name (app, type);
 
 	  if (app->fonts[font_type])
@@ -212,7 +212,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  cur_color = (char *) calloc (conf_len, sizeof (char));
 	  CHECK_ALLOC (cur_color, -1);
 
-	  ret_chk = sscanf (cur_conf, "(color-pref \'%[^\']\' %x)",
+	  ret_chk = sscanf (cur_conf, "(color-pref \'%[^\']\' \'%x\')",
 			    cur_color, &c_hex);
 	  free (cur_conf);
 
