@@ -89,6 +89,12 @@ init_app (int boolean, int verbose)
   // 3.  If it checks out, load it.
   // 4.  Otherwise, don't do anything with it.
 
+  int i;
+  for (i = 0; i < NUM_FONT_TYPES; i++)
+    app->fonts[i] = NULL;
+  for (i = 0; i < NUM_BG_COLORS; i++)
+    app->bg_colors[i] = NULL;
+
   ret_chk = the_app_read_default_config (app);
   if (ret_chk == -1)
     return NULL;
@@ -206,24 +212,15 @@ int
 the_app_get_color_by_type (aris_app * app, char * type)
 {
   int ret;
-
-  if (!strcmp (type, _("Default")))
-      ret = BG_COLOR_DEFAULT;
-
-  if (!strcmp (type, _("Conclusion")))
-      ret = BG_COLOR_CONC;
-
-  if (!strcmp (type, _("Reference")))
-    ret = BG_COLOR_REF;
-
-  if (!strcmp (type, _("Good")))
-    ret = BG_COLOR_GOOD;
-
-  if (!strcmp (type, _("Bad")))
-    ret = BG_COLOR_BAD;
-
-  if (!strcmp (type, _("Selection")))
-    ret = BG_COLOR_SEL;
+  int i;
+  for (i = 4; i < NUM_DISPLAY_CONFS; i++)
+    {
+      if (!strcmp (type, display_conf[i].label))
+        {
+          ret = display_conf[i].id;
+          break;
+        }
+    }
 
   return ret;
 }
@@ -240,32 +237,15 @@ char *
 the_app_get_color_by_index (aris_app * app, int index)
 {
   char * ret = NULL;
+  int i;
 
-  switch (index)
+  for (i = 4; i < NUM_DISPLAY_CONFS; i++)
     {
-    case BG_COLOR_DEFAULT:
-      ret = _("Default");
-      break;
-
-    case BG_COLOR_CONC:
-      ret = _("Conclusion");
-      break;
-
-    case BG_COLOR_REF:
-      ret = _("Reference");
-      break;
-
-    case BG_COLOR_BAD:
-      ret = _("Bad");
-      break;
-
-    case BG_COLOR_GOOD:
-      ret = _("Good");
-      break;
-
-    case BG_COLOR_SEL:
-      ret = _("Select");
-      break;
+      if (display_conf[i].id == index)
+        {
+          ret = display_conf[i].label;
+          break;
+        }
     }
 
   return ret;
@@ -282,18 +262,16 @@ int
 the_app_get_font_by_name (aris_app * app, char * name)
 {
   int ret = -1;
+  int i;
 
-  if (!strcmp (name, _("Small")))
-    ret = FONT_TYPE_SMALL;
-
-  if (!strcmp (name, _("Medium")))
-    ret = FONT_TYPE_MEDIUM;
-
-  if (!strcmp (name, _("Large")))
-    ret = FONT_TYPE_LARGE;
-
-  if (!strcmp (name, _("Default")))
-    ret = FONT_TYPE_CUSTOM;
+  for (i = 0; i < 4; i++)
+    {
+      if (!strcmp (name, display_conf[i].label))
+        {
+          ret = display_conf[i].id;
+          break;
+        }
+    }
 
   return ret;
 }
