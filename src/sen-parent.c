@@ -22,19 +22,6 @@
 #include "sen-data.h"
 #include "app.h"
 #include "list.h"
-#include "process.h"
-
-#include "and-conn.xpm"
-#include "or-conn.xpm"
-#include "not-conn.xpm"
-#include "con-conn.xpm"
-#include "bic-conn.xpm"
-#include "unv-conn.xpm"
-#include "exl-conn.xpm"
-#include "tau-conn.xpm"
-#include "ctr-conn.xpm"
-#include "elm-conn.xpm"
-#include "nil-conn.xpm"
 
 #define INIT_CONN_PIXBUF(s,i,c,f) {			\
   s->conn_pixbufs[i]					\
@@ -189,14 +176,14 @@ sen_parent_set_font (sen_parent * sp, int new_font)
   font /= PANGO_SCALE;
 
   int i;
-  GdkPixbuf * old_conns[NUM_CONNS];
+  //GdkPixbuf * old_conns[NUM_CONNS];
 
   double w, h;
   w = h = 1.0;
 
   for (i = 0; i < NUM_CONNS; i++)
     {
-      old_conns[i] = sp->conn_pixbufs[i];
+      //old_conns[i] = sp->conn_pixbufs[i];
 
       if (i == 5 || i == 6)
 	{
@@ -282,10 +269,10 @@ item_t *
 sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 {
   item_t * ev_itr, * target = NULL;
-  int row_num;
+  //int row_num;
 
   //row_num = sentence_get_line_no (sen);
-  row_num = sentence_get_grid_no (sen);
+  //row_num = sentence_get_grid_no (sen);
   target = ls_find (sp->everything, sen);
 
   // Only need to start this past the target sentence.
@@ -312,10 +299,13 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 	sen_parent_set_focus (sp, new_focus);
     }
 
+  //gtk_container_remove (GTK_CONTAINER (sp->container), sen->panel);
+
   ls_rem_obj (sp->everything, target);
   sentence_destroy (sen);
 
-  gtk_grid_remove_row (GTK_GRID (sp->container), row_num);
+  //gtk_grid_remove_row (GTK_GRID (sp->container), row_num);
+
 
   return new_focus;
 }
