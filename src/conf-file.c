@@ -509,12 +509,12 @@ config_default ()
 	    continue;
 	  const char * cmd = conf_cmds[cur.type];
 	  new_size = 9 + strlen (cmd) + strlen (cur.label)
-	    + strlen (cur.default_value);
+	    + strlen (cur.default_value) + pos;
 	  ret = (unsigned char *) realloc (ret, (new_size + 1)
 					   * sizeof (char));
 	  CHECK_ALLOC (ret, NULL);
 
-	  pos += sprintf (ret, "(%s \'%s\' \'%s\')\n",
+	  pos += sprintf (ret + pos, "(%s \'%s\' \'%s\')\n",
 			  cmd, cur.label, cur.default_value);
 	}
     }
