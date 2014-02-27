@@ -665,7 +665,7 @@ main (int argc, char *argv[])
   proof_t ** proof;
   int cur_file, cur_latex, grade;
   char * rule_file = NULL;
-  int opt_len, verbose, boolean, evaluate_mode;
+  int verbose, boolean, evaluate_mode;
   int c_ret;
   struct arg_items args;
 

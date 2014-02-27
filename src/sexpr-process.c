@@ -75,7 +75,6 @@ sexpr_get_part (unsigned char * in_str, unsigned int init_pos, unsigned char ** 
 unsigned char *
 sexpr_car (unsigned char * in_str)
 {
-  int init_pos = (in_str[0] == '(') ? 1 : 0;
   unsigned char * out_str;
   int pos;
   pos = sexpr_get_part (in_str, 1, &out_str);
@@ -142,7 +141,7 @@ sexpr_str_car_cdr (unsigned char * in_str,
 		   unsigned char ** car,
 		   unsigned char ** cdr)
 {
-  int tmp_pos, ret_chk;
+  int tmp_pos;
 
   *car = *cdr = NULL;
 
@@ -651,7 +650,6 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
     return -2;
 
   unsigned char * var, * elm_sen, qs_quant[S_CL + 1];
-  int tmp_pos;
 
   elm_sen = sexpr_elim_quant (quant_sen, qs_quant, &var);
   if (!elm_sen)
@@ -924,7 +922,6 @@ sexpr_collect_vars_to_proof (list_t * vars, unsigned char * text, int arb)
 {
   int ret, i, is_arbitrary;
   vec_t * sen_vars;
-  unsigned char * sp_text, * sexpr_text;
 
   sen_vars = init_vec (sizeof (char *));
   if (!sen_vars)
@@ -1108,8 +1105,6 @@ sexpr_get_ids (unsigned char * sen, int ** ids, vec_t * sen_ids)
 
       if (isalnum (sen[i]))
 	{
-	  unsigned char * new_sen;
-
 	  int k;
 	  int start, end;
 	  int new_id;
