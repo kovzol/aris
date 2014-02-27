@@ -483,8 +483,6 @@ check_sides (const unsigned char * chk_str, const unsigned int init_pos)
   if (init_pos == 0)
     return 0;
 
-  unsigned char tmp_str[CL];
-
   if (!isalnum (chk_str[init_pos - 1]) && chk_str[init_pos - 1] != ')'
       && (init_pos < CL || (strncmp (chk_str + init_pos - CL, NIL, CL)
 			    && strncmp (chk_str + init_pos - CL, CTR, CL)
@@ -698,11 +696,8 @@ get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
   int ret;
 
   unsigned char * lsen;
-  unsigned char * rgt_str;
 
   int conn_pos, pos;
-  unsigned int r_len;
-
   unsigned int c_len;
 
   c_len = strlen (chk_str);
@@ -801,7 +796,6 @@ check_text (unsigned char * text)
     return -2;
 
   unsigned char * eval_text;
-  int ret;
 
   eval_text = die_spaces_die (text);
   if (!eval_text)
@@ -863,11 +857,7 @@ check_generalities (unsigned char * text)
   // 5. Check the connective get_generalities returned, and confirm that it fits.
   // 6. Run check_text() on all generalities, returning an error if one arises.
 
-  int text_len;
   int pos = 0;
-  int par_off = 0;
-  int num_par = 0, cur_par = 0;
-  text_len = strlen (text);
 
   unsigned char * tmp_str;
   int tmp_pos, ret_chk;
@@ -954,7 +944,7 @@ check_generalities (unsigned char * text)
   // Get generalities across the parenthesis construct.
 
   int gg;
-  unsigned char conn[CL + 1], * elims;
+  unsigned char conn[CL + 1];
   vec_t * gens;
 
   gens = init_vec (sizeof (char *));
@@ -1091,7 +1081,7 @@ check_symbols (unsigned char * in_str, int pred)
       if (!ISSEP (in_str[cur_pos]))
 	return -2;
 
-      int got_infix = 0, done = 0, cont = 0;
+      int done = 0;
 
       while (1)
 	{
@@ -1209,9 +1199,6 @@ check_infix (unsigned char * in_str, int pred)
 	sym = "<";
 
       unsigned char * sym_str;
-      int in_len;
-
-      in_len = strlen (in_str);
       sym_str = (unsigned char *) strstr (in_str, sym);
 
       lsen = (unsigned char *) calloc (sym_str - in_str + 1, sizeof (char));
@@ -1589,7 +1576,7 @@ infix_to_prefix (unsigned char * in_str)
   unsigned char * out_str;
 
   int i, pos, in_len, got_nil = 0;
-  unsigned char * lsen, * rsen, * sym;
+  unsigned char * lsen, * rsen;
 
   in_len = strlen (in_str);
   i = 0;
@@ -1606,8 +1593,6 @@ infix_to_prefix (unsigned char * in_str)
 
   while (i < in_len)
     {
-      int ret_check;
-
       if (!strncmp (in_str + i, NIL, CL))
 	{
 	  i += CL;
@@ -1725,8 +1710,6 @@ infix_to_prefix_func (unsigned char * in_str)
 
   while (i < in_len)
     {
-      int ret_check;
-
       while (islower (in_str[i]) || isdigit (in_str[i]))
 	i++;
 

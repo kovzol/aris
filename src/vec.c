@@ -172,9 +172,6 @@ vec_str_add_obj (vec_t * v, unsigned char * more)
   memcpy (v->stuff + ((v->num_stuff - 1) * sizeof (char *)),
           &obj, sizeof (char *));
 
-  unsigned char * new_obj;
-  new_obj = vec_str_nth (v, v->num_stuff - 1);
-
   return 0;
 }
 
@@ -349,8 +346,6 @@ vec_str_cmp (vec_t * vec_0, vec_t * vec_1)
 int
 vec_str_sub (vec_t * vec_0, vec_t * vec_1)
 {
-  int ret;
-  
   int i, j;
   short * check;
 

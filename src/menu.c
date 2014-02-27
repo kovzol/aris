@@ -36,7 +36,7 @@ GtkWidget *
 construct_menu_item (conf_obj data, GCallback func,
 		     GtkWidget * parent, int * got_radio)
 {
-  GtkWidget * item, * image;
+  GtkWidget * item;
   char * path;
   int alloc_size;
 

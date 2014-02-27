@@ -23,9 +23,7 @@ char *
 process (unsigned char * conc, vec_t * prems, const char * rule, vec_t * vars,
 	 proof_t * proof)
 {
-  unsigned int i;
-  int ret;
-  unsigned char * tmp_str, * conclusion;
+  unsigned char * conclusion;
 
   conclusion = conc;
 

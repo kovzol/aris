@@ -132,8 +132,6 @@ init_app (int boolean, int verbose)
 int
 the_app_init_conn_pixbufs (aris_app * app)
 {
-  int i;
-
   INIT_CONN_PIXBUF (0, and_conn_xpm, AND);
   INIT_CONN_PIXBUF (1, or_conn_xpm, OR);
   INIT_CONN_PIXBUF (2, not_conn_xpm, NOT);
@@ -158,7 +156,7 @@ the_app_init_conn_pixbufs (aris_app * app)
 GdkPixbuf *
 the_app_get_conn_by_type (char * type)
 {
-  GdkPixbuf * ret;
+  GdkPixbuf * ret = NULL;
 
   if (!strcmp (type, AND))
     ret = the_app->conn_pixbufs[AND_CONN];
@@ -241,7 +239,7 @@ the_app_get_color_by_type (aris_app * app, char * type)
 char *
 the_app_get_color_by_index (aris_app * app, int index)
 {
-  char * ret;
+  char * ret = NULL;
 
   switch (index)
     {
@@ -283,7 +281,7 @@ the_app_get_color_by_index (aris_app * app, int index)
 int
 the_app_get_font_by_name (aris_app * app, char * name)
 {
-  int ret;
+  int ret = -1;
 
   if (!strcmp (name, _("Small")))
     ret = FONT_TYPE_SMALL;
@@ -450,8 +448,6 @@ the_app_set_focus (aris_proof * ap)
   else
     the_app->guis->tail = itm->prev;
 
-  item_t * h_itm = the_app->guis->head;
-
   itm->next = the_app->guis->head;
   itm->prev = NULL;
   the_app->guis->head->prev = itm;
@@ -614,7 +610,6 @@ ftp_send_cmd (GSocket * ftp_sock, const char * cmd)
 int
 ftp_get_response (GSocket * ftp_sock, int * port)
 {
-  char c;
   char response_buffer[2048], * buf_str;
   int ret_code;
 
@@ -658,7 +653,6 @@ int
 ftp_send (GSocket * ftp_sock, char * file_name, char * buffer)
 {
   int port;
-  int len, c;
   char * buf;
   int ret_chk;
 
@@ -765,8 +759,15 @@ ftp_connect (char * ip_addr)
   if (!ret_val)
     return NULL;
 
+  // I'm not sure what the response code is supposed to be here.
+  // I *think* 200
   int rc, ret_chk;
   rc = ftp_get_response (ret, NULL);
+  if (rc < 0)
+    {
+      FTP_QUIT (ret);
+      return NULL;
+    }
 
   ftp_send_cmd (ret, "USER anonymous");
   ret_chk = ftp_get_response (ret, NULL);

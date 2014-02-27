@@ -598,7 +598,6 @@ proc_dm (unsigned char * prem, unsigned char * conc, int mode_guess)
 	return _("There must be a quantifier after the negation.");
 
       unsigned char * cmp_str;
-      int oth_pos;
       unsigned char quant[S_CL + 1], oth_quant[S_CL + 1];
       unsigned char * var;
 
@@ -1124,7 +1123,7 @@ proc_dn (unsigned char * prem, unsigned char * conc)
   if (!tmp_str)
     return _("Double Negation constructed incorrectly.");
 
-  int pos, num_negs;
+  int pos;
   int oth_pos;
 
   pos = i;

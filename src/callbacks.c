@@ -478,7 +478,6 @@ gui_destroy (aris_proof * ap)
         return -1;
     }
 
-  int ret;
   the_app_rem_gui (ap);
   aris_proof_destroy (ap);
 
@@ -699,7 +698,6 @@ evaluate_line (aris_proof * ap, sentence * sen)
   item_t * ev_itr, * ret_chk;
   int ret;
   list_t * lines, * vars;
-  sen_data * tmp_sd;
 
   lines = init_list ();
   if (!lines)
@@ -995,9 +993,6 @@ gui_customize_show (GtkWidget * window)
       for (i = 0; i < conf_sizes[j]; i++)
         {
           GtkWidget * label;
-          conf_obj cur_obj;
-
-          cur_obj = conf_arrays[j][i];
 
           conf_arrays[j][i].widget = conf_arrays[j][i].value_func (&conf_arrays[j][i], 1);
           label = gtk_label_new (conf_arrays[j][i].label);
@@ -1131,7 +1126,6 @@ gui_customize_show (GtkWidget * window)
 
               for (i = 0; i < conf_sizes[j]; i++)
                 {
-                  GtkWidget * label;
                   conf_obj cur_obj;
                   char * print_str;
 
@@ -1253,8 +1247,6 @@ gui_submit_show (GtkWidget * window)
   gtk_container_add (GTK_CONTAINER (content), table);
   gtk_widget_show_all (table);
 
-  int response;
-
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
       const char * user_email, * instr_email;
@@ -1353,8 +1345,6 @@ menu_activated (aris_proof * ap, int menu_id)
   int ret;
   sentence * sen;
   int new_font, cur_font;
-  item_t * ev_itr;
-  int arb;
 
   if (menu_id >= CONF_MENU_SMALL && menu_id <= CONF_MENU_CUSTOM)
     {

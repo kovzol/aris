@@ -39,11 +39,11 @@
 //#define PRINT_ALLOC() {struct mallinfo mal = mallinfo (); fprintf (stderr, "%i: blks == %i\n", __LINE__, mal.uordblks); }
 #define PRINT_ALLOC()
 
-#define IS_LINE(s) (!strcmp (s,LINE_DATA) || !strcmp (s,ALT_LINE_DATA))
-#define IS_TEXT(s) (!strcmp (s,TEXT_DATA) || !strcmp (s,ALT_TEXT_DATA))
-#define IS_RULE(s) (!strcmp (s,RULE_DATA) || !strcmp (s,ALT_RULE_DATA))
-#define IS_REF(s) (!strcmp (s,REF_DATA) || !strcmp (s,ALT_REF_DATA))
-#define IS_FILE(s) (!strcmp (s,FILE_DATA) || !strcmp (s,ALT_FILE_DATA))
+#define IS_LINE(s) (!strcmp ((const char *)(s),LINE_DATA) || !strcmp ((const char *)(s),ALT_LINE_DATA))
+#define IS_TEXT(s) (!strcmp ((const char *)(s),TEXT_DATA) || !strcmp ((const char *)(s),ALT_TEXT_DATA))
+#define IS_RULE(s) (!strcmp ((const char *)(s),RULE_DATA) || !strcmp ((const char *)(s),ALT_RULE_DATA))
+#define IS_REF(s) (!strcmp ((const char *)(s),REF_DATA) || !strcmp ((const char *)(s),ALT_REF_DATA))
+#define IS_FILE(s) (!strcmp ((const char *)(s),FILE_DATA) || !strcmp ((const char *)(s),ALT_FILE_DATA))
 
 /* Gets the first attribute from an xml stream.
  *  input:
@@ -175,7 +175,7 @@ aio_open_prem (xmlTextReader * xml)
       if (IS_TEXT(name))
 	{
 	  IF_FREE (name);
-	  text = strdup (buffer);
+	  text = (unsigned char *) strdup ((const char *) buffer);
 
 	  free (buffer);
 	  buffer = aio_get_next_attribute (xml, &name);
@@ -235,12 +235,16 @@ aio_open_conc (xmlTextReader * xml)
 	{
 	  IF_FREE (name);
 
+          if (got_rule)
+            XML_ERR (NULL);
+
 	  // check for current rule.
 
 	  ret = sscanf ((const char *) buffer, "%i", &rule);
 	  if (ret != 1)
 	    XML_ERR (NULL);
 
+          got_rule = 1;
 	  free (buffer);
 	  buffer = aio_get_next_attribute (xml, &name);
 	  continue;
@@ -266,7 +270,7 @@ aio_open_conc (xmlTextReader * xml)
 	  refs = (short *) calloc (num_refs + 1, sizeof (int));
 	  CHECK_ALLOC (refs, NULL);
 
-	  char * ref_str = strdup (buffer);
+	  char * ref_str = strdup ((const char *) buffer);
 
 	  char * tok;
 	  tok = strtok (ref_str, ",");
@@ -290,14 +294,14 @@ aio_open_conc (xmlTextReader * xml)
 	  continue;
 	}
 
-      if (!strcmp (name, DEPTH_DATA))
+      if (!strcmp ((const char *) name, DEPTH_DATA))
 	{
 	  IF_FREE (name);
 
 	  if (got_depth)
 	    XML_ERR (NULL);
 
-	  ret = sscanf (buffer, "%i", &sen_depth);
+	  ret = sscanf ((const char *) buffer, "%i", &sen_depth);
 	  if (ret != 1)
 	    XML_ERR (NULL);
 
@@ -321,7 +325,7 @@ aio_open_conc (xmlTextReader * xml)
 	    }
 	  else
 	    {
-	      file = strdup (buffer);
+	      file = (unsigned char *) strdup ((const char *) buffer);
 	      CHECK_ALLOC (file, NULL);
 	    }
 
@@ -339,7 +343,7 @@ aio_open_conc (xmlTextReader * xml)
 	  if (got_text)
 	    XML_ERR (NULL);
 
-	  text = strdup (buffer);
+	  text = (unsigned char *) strdup ((const char *)buffer);
 	  CHECK_ALLOC (text, NULL);
 
 	  got_text = 1;
@@ -592,9 +596,9 @@ aio_open (const char * file_name)
   buffer = aio_get_first_attribute (xml, &name);
   if (buffer)
     {
-      if (!strcmp (name, MODE_DATA))
+      if (!strcmp ((const char *) name, MODE_DATA))
 	{
-	  if (!strcmp (buffer, "boolean"))
+	  if (!strcmp ((const char *) buffer, "boolean"))
 	    proof->boolean = 1;
 	}
     }

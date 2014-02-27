@@ -267,6 +267,7 @@ proc_cn (vec_t * prems, unsigned char * conc)
     case -3:
       return _("One of the conjuncts in the conclusion does not match up with a reference.");
     }
+  return _("Error");
 }
 
 char *
@@ -484,6 +485,7 @@ proc_ds (vec_t * prems, unsigned char * conc)
     case -3:
       return _("One of the references or conclusion does not match up with a disjunct.");
     }
+  return _("Error with Disjunctive Syllogism.");
 }
 
 char *
@@ -657,4 +659,5 @@ proc_cd (vec_t * prems, unsigned char * conc)
     case -3:
       return _("One of the consequences did not match a disjunct from the conclusion.");
     }
+  return _("Error with Constructive Dilemma.");
 }

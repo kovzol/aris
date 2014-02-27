@@ -110,7 +110,6 @@ rules_table *
 rules_table_init (int boolean)
 {
   rules_table * rt;
-  int i, mod;
 
   rt = (rules_table *) calloc (1, sizeof (rules_table));
   if (!rt)
@@ -550,17 +549,13 @@ rules_table_destroy_menu_item (sentence * sen)
   if (!SD(sen)->file)
     return 0;
 
-  GtkWidget * menu_item, * menu, * submenu;
+  GtkWidget * menu, * submenu;
   GList * gl, * gl_itr;
   gl = gtk_container_get_children (GTK_CONTAINER (SEN_PARENT (the_app->focused)->menubar));
   menu = g_list_nth_data (gl, RULES_MENU);
   submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu));
 
   gl_itr = gtk_container_get_children (GTK_CONTAINER (submenu));
-
-  GtkWidget * new_menu;
-
-  new_menu = gtk_menu_new ();
 
   for (; gl_itr; gl_itr = g_list_next (gl_itr))
     {

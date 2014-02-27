@@ -30,12 +30,12 @@
 int
 sexpr_id_chk (unsigned char * cur_ref, int * pf_id, vec_t * cur_sen_ids)
 {
-  int i, k, l, m;
+  int k, l, m;
   int valid, ret_chk;
   unsigned char * new_sen;
   int cur_len = cur_sen_ids->num_stuff;
 
-  i = k = l = m = 0;
+  k = l = m = 0;
   valid = 1;
 
   while (pf_id[k] != SEN_ID_END)
@@ -216,7 +216,6 @@ equiv_lemma (unsigned char * prem,
 	     int ** pf_ids)
 {
   int i, rc, j;
-  int init_pos, end_pos;
   vec_t * sen_ids;
 
   for (i = 0; prem[i]; i++)
@@ -229,9 +228,6 @@ equiv_lemma (unsigned char * prem,
 
       if (!rc)
 	continue;
-
-      init_pos = i;
-      end_pos = rc;
 
       rc = sexpr_id_chk (conc + i, pf_ids[1], sen_ids);
       if (rc == -1)
@@ -400,7 +396,7 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
       return _("Incorrect usage of lemma.");
     }
 
-  int k, l, m, valid, cur_len, pf_len;
+  int valid, cur_len, pf_len;
   short * check;
 
   check = (short *) calloc (prems->num_stuff + 1, sizeof (short));
@@ -430,7 +426,7 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
 
 	  cur_len = cur_sen_ids->num_stuff;
 
-	  unsigned char * cur_ref, * new_sen;
+	  unsigned char * cur_ref;
 	  cur_ref = (j < prems->num_stuff) ? vec_str_nth (prems, j) : conc;
 
 	  valid = sexpr_id_chk (cur_ref, pf_ids[i], cur_sen_ids);

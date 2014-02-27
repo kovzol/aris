@@ -545,7 +545,7 @@ sentence_resize_text (sentence * sen)
       pix = gtk_text_iter_get_pixbuf (&iter);
       if (pix)
         {
-          GdkPixbuf * new_pix, * old_pix;
+          GdkPixbuf * new_pix;
           char * val;
           val = (char *) g_object_get_data (G_OBJECT (pix), _("conn"));
 
@@ -1076,12 +1076,10 @@ sentence_key (sentence * sen, int key, int ctrl)
       item_t * dst;
       GtkTextIter pos, chk_pos, c_pos;
       gunichar o_char, c_char;
-      int got_par = 0, mod = 0, chk;
+      int got_par = 0;
 
       gtk_text_buffer_get_iter_at_mark (buffer, &pos,
                                         gtk_text_buffer_get_insert (buffer));
-      chk_pos = pos;
-
       switch (key)
         {
         case GDK_KEY_Up:
@@ -1121,6 +1119,7 @@ sentence_key (sentence * sen, int key, int ctrl)
                 printf ("Got Key Right\n");
             }
 
+          int chk;
           chk = (key == GDK_KEY_Left)
             ? gtk_text_iter_backward_char (&chk_pos)
             : gtk_text_iter_forward_char (&chk_pos);
@@ -1138,20 +1137,17 @@ sentence_key (sentence * sen, int key, int ctrl)
             {
               got_par = 1;
               pos = chk_pos;
-              mod = 0;
             }
 
           if (c_char == ')')
             {
               got_par = 2;
               pos = c_pos;
-              mod = -1;
             }
         }
           
       if (got_par)
         {
-          unsigned char * tmp_str = NULL;
           GtkTextIter oth_pos;
           unsigned char * sen_text;
           sen_text = sentence_get_text (sen);
@@ -1299,7 +1295,6 @@ sentence_copy_text (sentence * sen)
 
   GtkTextBuffer * buffer;
   GtkTextIter start, end;
-  int text_len;
   int i;
 
   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
@@ -1317,8 +1312,6 @@ sentence_copy_text (sentence * sen)
         {
           // Determine what this is, and add the
           // corresponding character to ret_str;
-          int alloc_size;
-          unsigned char * new_char;
           const char * val;
 
           val = (char *) g_object_get_data (G_OBJECT (pixbuf),
@@ -1393,7 +1386,7 @@ sentence_paste_text (sentence * sen)
       if (IS_TYPE_CONN (sen_text + i, gui_conns)
           || IS_TYPE_CONN (sen_text + i, cli_conns))
         {
-          GdkPixbuf * pix, * new_pix;
+          GdkPixbuf * pix;
 
           unsigned char * conn;
           int len;

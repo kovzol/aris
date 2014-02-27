@@ -89,8 +89,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  free (cur_conf_key);
 
 	  char * cmd, * key, tmp, * path;
-	  int mod, key_val;
-	  int st_pos, end_pos;
+	  int mod;
 
 	  cmd = (char *) calloc (conf_len, sizeof (char));
 	  CHECK_ALLOC (cmd, -1);
@@ -145,8 +144,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
       if (!strcmp (cur_conf_key, "grade"))
 	{
 	  free (cur_conf_key);
-	  int st_pos, end_pos;
-	  char * cmd, * key, * old_str;
+	  char * cmd, * key;
 
 	  cmd = (char *) calloc (conf_len, sizeof (char));
 	  CHECK_ALLOC (cmd, -1);
@@ -259,7 +257,6 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 void *
 conf_menu_value (conf_obj * obj, int get)
 {
-  void * ret;
 
   if (get)
     {

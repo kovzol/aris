@@ -112,13 +112,13 @@ int
 eval_proof (list_t * everything, vec_t * rets, int verbose)
 {
   item_t * sen_itr;
-  int got_prems, cur_line, num_correct;
+  int got_prems, cur_line;
   list_t * pf_vars;
   vec_t * sexpr_text;
   int ret;
 
   got_prems = 0;
-  num_correct = cur_line = 0;
+  cur_line = 0;
 
   pf_vars = init_list ();
   if (!pf_vars)
