@@ -1,4 +1,76 @@
+2014-02-28  Ian Dunn  <dunni@gnu.org>
+
+	* vec.c: Implemented error codes.
+
+	* undo.h (undo_sen): Removed.
+
+	* undo.c (undo_determine_op): Added comments.
+	(undo_op_remove): Same.
+	(undo_op_add): Same.
+	(undo_op_mod): Same.
+
+	* sen-parent.c (sen_parent_rem_sentence): Removed unneeded comments.
+
+	* sexpr-process.c: Implemented error codes.
+
+	* sexpr-process-quant.c: Implemented error codes.
+
+	* sexpr-process-infer.c: Implemented error codes.
+
+	* sexpr-process-equiv.c: Implemented error codes.
+
+	* sexpr-process-bool.c: Implemented error codes.
+
+	* rules-table.c (rules_table_set_lm): Implemented error codes.
+
+	* proof.c: Implemented error codes.
+
+	* menu.c (construct_menu_item): Cleaned up code.
+
+	* goal.c (goal_check_line): Changed die_spaces_die to
+	format_string.
+
+	* conf-file.c (config_default): Commented.
+
+	* callbacks.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+	Fixed up comments and implemented error codes.
+
+	* process.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+	Added comments and implemented error codes.
+	(get_generalities): Changed memory error return code to -1.
+
+	* sexpr-process-quant.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+
+	* sexpr-process-bool.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+
+	* sexpr-process.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+
+	* sexpr-process-equiv.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+
+	* sentence.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+	Implemented error codes.
+
+	* aris-proof.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+	Fixed up comments and implemented error codes.
+
+	* app.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
+	(the_app_submit): Implemented AEC_IO.
+	(ftp_get_response): Same.
+	(ftp_send): Same.
+
+	* typedef.h (ARIS_ERROR_CODES): Changed ERROR_CODE_MEMORY to AEC_MEM.
+	Added AEC_IO.
+
+	* aio.c: Added function comments.
+	Changed ERROR_CODE_MEMORY to AEC_MEM.
+
+	* sen-data.c (sen_data_evaluate): Correctly handles an invalid
+	proof file.
+	Implemented error codes across entire file.
+
 2014-02-27  Ian Dunn  <dunni@gnu.org>
+
+	* all: Updated copyright notice.
 
 	* configure.ac: Updated version number to 2.2.
 
