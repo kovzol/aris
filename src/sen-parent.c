@@ -176,15 +176,13 @@ sen_parent_set_font (sen_parent * sp, int new_font)
   font /= PANGO_SCALE;
 
   int i;
-  //GdkPixbuf * old_conns[NUM_CONNS];
-
   double w, h;
   w = h = 1.0;
 
   for (i = 0; i < NUM_CONNS; i++)
     {
-      //old_conns[i] = sp->conn_pixbufs[i];
-
+      // Contradiction and Tautology symbols are sized differently,
+      //  so scale them differently.
       if (i == 5 || i == 6)
 	{
 	  w = 1.0;
@@ -269,10 +267,6 @@ item_t *
 sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 {
   item_t * ev_itr, * target = NULL;
-  //int row_num;
-
-  //row_num = sentence_get_line_no (sen);
-  //row_num = sentence_get_grid_no (sen);
   target = ls_find (sp->everything, sen);
 
   // Only need to start this past the target sentence.
@@ -299,13 +293,8 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 	sen_parent_set_focus (sp, new_focus);
     }
 
-  //gtk_container_remove (GTK_CONTAINER (sp->container), sen->panel);
-
   ls_rem_obj (sp->everything, target);
   sentence_destroy (sen);
-
-  //gtk_grid_remove_row (GTK_GRID (sp->container), row_num);
-
 
   return new_focus;
 }
