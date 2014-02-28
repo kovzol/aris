@@ -898,9 +898,6 @@ aris_proof_copy (aris_proof * ap)
   if (ls_empty (ap->selected))
     ls_push_obj (ap->selected, (sentence *) SEN_PARENT (ap)->focused->value);
 
-  /* TODO: Make sure that if a sentence is selected, and then its parent is selected,
-     that the sentence is removed from selected. */
-
   for (sel_itr = ap->selected->head; sel_itr; sel_itr = sel_itr->next)
     {
       sentence * sen = sel_itr->value;
