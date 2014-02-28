@@ -855,7 +855,7 @@ main (int argc, char *argv[])
 	    {
 	      aris_proof * new_gui = aris_proof_init_from_proof (proof[c]);
 	      if (!new_gui)
-		return -1;
+                exit (EXIT_FAILURE);
 
 	      aris_proof_set_filename (new_gui, file_name[c]);
 	      new_gui->edited = 0;
@@ -863,7 +863,7 @@ main (int argc, char *argv[])
 
 	      ret = the_app_add_gui (new_gui);
 	      if (ret < 0)
-		return -1;
+                exit (EXIT_FAILURE);
 	    }
 
 	  gtk_widget_show_all (the_app->rt->window);
@@ -874,11 +874,11 @@ main (int argc, char *argv[])
 	  aris_proof * main_gui;
 	  main_gui = aris_proof_init ();
 	  if (!main_gui)
-	    return -1;
+            exit (EXIT_FAILURE);
 
 	  ret = the_app_add_gui (main_gui);
 	  if (ret < 0)
-	    return -1;
+            exit (EXIT_FAILURE);
 
 	  gtk_widget_show_all (the_app->rt->window);
 	  rules_table_align (the_app->rt, main_gui);
@@ -908,5 +908,5 @@ main (int argc, char *argv[])
 #endif
     }
 
-  return 0;
+  exit (EXIT_SUCCESS);
 }
