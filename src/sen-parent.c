@@ -268,12 +268,14 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 {
   item_t * ev_itr, * target = NULL;
   target = ls_find (sp->everything, sen);
+  int row_num;
+
+  row_num = sentence_get_line_no (sen);
 
   // Only need to start this past the target sentence.
   for (ev_itr = target->next; ev_itr; ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
-
       sentence_rem_ref (ev_sen, sen);
     }
 
@@ -295,6 +297,8 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 
   ls_rem_obj (sp->everything, target);
   sentence_destroy (sen);
+
+  gtk_grid_remove_row (GTK_GRID (sp->container), row_num);
 
   return new_focus;
 }
