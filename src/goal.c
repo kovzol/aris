@@ -56,7 +56,7 @@ goal_init (aris_proof * ap)
     {
       int ret;
       ret = goal_update_title (goal);
-      if (ret == -1)
+      if (ret == AEC_MEM)
 	return NULL;
     }
     
@@ -173,11 +173,11 @@ goal_check_line (goal_t * goal, sentence * sen)
   sen_text = sentence_get_text (sen);
   cmp_text = format_string (sen_text);
   if (!cmp_text)
-    return -1;
+    return AEC_MEM;
 
   int ret_check = check_text (cmp_text);
   if (ret_check < 0)
-    return -1;
+    return AEC_MEM;
 
   item_t * ev_itr;
   int is_valid = 1;
@@ -186,9 +186,9 @@ goal_check_line (goal_t * goal, sentence * sen)
        ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
-      unsigned char * ev_cmp_text = die_spaces_die (sentence_get_text (ev_sen));
+      unsigned char * ev_cmp_text = format_string (sentence_get_text (ev_sen));
       if (!ev_cmp_text)
-	return -1;
+	return AEC_MEM;
 
       if (!strcmp (ev_cmp_text, cmp_text))
 	{
@@ -218,7 +218,7 @@ goal_check_line (goal_t * goal, sentence * sen)
 	    }
 
 	  char * sb_text = (char *) calloc (30, sizeof (char *));
-	  CHECK_ALLOC (sb_text, -1);
+	  CHECK_ALLOC (sb_text, AEC_MEM);
 	  int offset = 0;
 	  offset += sprintf (sb_text, "The goal was met at line %i", ln);
 	  if (!is_valid)
@@ -271,8 +271,8 @@ goal_check_all (goal_t * goal)
        gl_itr != NULL; gl_itr = gl_itr->next)
     {
       ret_check = goal_check_line (goal, gl_itr->value);
-      if (ret_check == -1)
-	return -1;
+      if (ret_check == AEC_MEM)
+	return AEC_MEM;
     }
 
   return 0;
@@ -292,12 +292,12 @@ goal_add_line (goal_t * goal, sen_data * sd)
   sen = sentence_init (sd, (sen_parent *) goal,
 		       SEN_PARENT (goal)->everything->tail);
   if (!sen)
-    return -1;
+    return AEC_MEM;
 
   item_t * itm;
   itm = ls_push_obj (SEN_PARENT (goal)->everything, sen);
   if (!itm)
-    return -1;
+    return AEC_MEM;
 
   gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (goal)->container), sen->panel,
 			   NULL, GTK_POS_BOTTOM, 1, 1);
@@ -309,7 +309,7 @@ goal_add_line (goal_t * goal, sen_data * sd)
   int ret;
   ret = aris_proof_set_changed (goal->parent, 1, ui);
   if (ret < 0)
-    return -1;
+    return AEC_MEM;
 
   return 0;
 }
@@ -344,7 +344,7 @@ goal_rem_line (goal_t * goal)
 
   ret = aris_proof_set_changed (goal->parent, 1, ui);
   if (ret < 0)
-    return -1;
+    return AEC_MEM;
 
   return 0;
 }
@@ -362,7 +362,7 @@ goal_update_title (goal_t * goal)
   char * base_name, * new_title;
 
   new_title = calloc (strlen (goal->parent->cur_file) + 20, sizeof (char));
-  CHECK_ALLOC (new_title, -1);
+  CHECK_ALLOC (new_title, AEC_MEM);
 
   file = g_file_new_for_path (goal->parent->cur_file);
   base_name = g_file_get_basename (file);
