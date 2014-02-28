@@ -175,10 +175,9 @@ goal_check_line (goal_t * goal, sentence * sen)
   if (!cmp_text)
     return -1;
 
-  int ret_check = check_text (sen_text);
+  int ret_check = check_text (cmp_text);
   if (ret_check < 0)
     return -1;
-
 
   item_t * ev_itr;
   int is_valid = 1;
