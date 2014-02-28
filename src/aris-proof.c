@@ -170,18 +170,18 @@ aris_proof_post_init (aris_proof * ap)
 
   sd = SEN_DATA_DEFAULT (1, 0, 0);
   if (!sd)
-    return -1;
+    return AEC_MEM;
 
   sen = sentence_init (sd, (sen_parent *) ap, NULL);
   if (!sen)
-    return -1;
+    return AEC_MEM;
 
   gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
                            sen->panel, NULL, GTK_POS_BOTTOM, 1, 1);
 
   item_t * itm = ls_push_obj (SEN_PARENT (ap)->everything, sen);
   if (!itm)
-    return -1;
+    return AEC_MEM;
 
   ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
 
@@ -431,7 +431,7 @@ aris_proof_set_changed (aris_proof * ap, int changed, undo_info ui)
   int pos = 0;
 
   new_title = (char *) calloc (strlen (title) + 4, sizeof (char));
-  CHECK_ALLOC (new_title, -1);
+  CHECK_ALLOC (new_title, AEC_MEM);
   pos = sprintf (new_title, "%s", title);
   if (changed && !ap->edited)
     {
@@ -483,8 +483,8 @@ aris_proof_adjust_lines (aris_proof * ap, item_t * itm, int mod)
       old_ln = sentence_get_line_no (ev_sen);
       new_line_no = old_ln + line_mod;
       ret = sentence_update_line_no (ev_sen, new_line_no);
-      if (ret == -1)
-        return -1;
+      if (ret == AEC_MEM)
+        return AEC_MEM;
 
       int i;
 
@@ -766,14 +766,14 @@ aris_proof_remove_sentence (aris_proof * ap, sentence * sen)
 
   item_t * target = sen_parent_rem_sentence ((sen_parent *) ap, sen);
   if (!target)
-    return -1;
+    return AEC_MEM;
 
   if (ap->fin_prem == target)
     ap->fin_prem = SEN_PARENT (ap)->focused;
 
   int ret = aris_proof_adjust_lines (ap, target, -1);
   if (ret < 0)
-    return -1;
+    return AEC_MEM;
 
   return 0;
 }
@@ -825,9 +825,9 @@ aris_proof_set_filename (aris_proof * ap, const char * filename)
   char * new_title, * base_name;
 
   new_title = (char *) calloc (strlen (filename) + 12, sizeof (char));
-  CHECK_ALLOC (new_title, -1);
+  CHECK_ALLOC (new_title, AEC_MEM);
   ap->cur_file = strdup (filename);
-  CHECK_ALLOC (ap->cur_file, -1);
+  CHECK_ALLOC (ap->cur_file, AEC_MEM);
 
   GFile * file = g_file_new_for_path (filename);
   base_name = g_file_get_basename (file);
@@ -839,8 +839,8 @@ aris_proof_set_filename (aris_proof * ap, const char * filename)
 
   int ret;
   ret = goal_update_title (ap->goal);
-  if (ret == -1)
-    return -1;
+  if (ret == AEC_MEM)
+    return AEC_MEM;
 
   return 0;
 }
@@ -870,7 +870,7 @@ aris_proof_copy (aris_proof * ap)
     {
       ap->yanked = init_list ();
       if (!ap->yanked)
-        return -1;
+        return AEC_MEM;
     }
 
   /* Here is what should be happening:
@@ -886,13 +886,13 @@ aris_proof_copy (aris_proof * ap)
 
   sel_list = init_list ();
   if (!sel_list)
-    return -1;
+    return AEC_MEM;
 
   if (!ap->selected)
     {
       ap->selected = init_list ();
       if (!ap->selected)
-        return -1;
+        return AEC_MEM;
     }
 
   if (ls_empty (ap->selected))
@@ -924,7 +924,7 @@ aris_proof_copy (aris_proof * ap)
 
           itm = ls_push_obj (sel_list, ev_sen);
           if (!itm)
-            return -1;
+            return AEC_MEM;
         }
     }
 
@@ -946,7 +946,7 @@ aris_proof_copy (aris_proof * ap)
   vec_t * sub_lines;
   sub_lines = init_vec (sizeof (int));
   if (!sub_lines)
-    return -1;
+    return AEC_MEM;
 
   item_t * n_itr;
   for (sel_itr = sel_list->head; sel_itr;)
@@ -965,7 +965,7 @@ aris_proof_copy (aris_proof * ap)
           int sub_line = sd->line_num, rc;
           rc = vec_add_obj (sub_lines, &sub_line);
           if (rc < 0)
-            return -1;
+            return AEC_MEM;
         }
       else if (sel_itr->prev && SEN_DEPTH(sen) < SEN_DEPTH(sel_itr->prev->value))
         {
@@ -996,7 +996,7 @@ aris_proof_copy (aris_proof * ap)
 
       ret_chk = ls_push_obj (ap->yanked, sd);
       if (!ret_chk)
-        return -1;
+        return AEC_MEM;
 
       n_itr = sel_itr->next;
       //free (sel_itr);
@@ -1028,8 +1028,8 @@ aris_proof_kill (aris_proof * ap)
 {
   int ret_chk;
   ret_chk = aris_proof_copy (ap);
-  if (ret_chk == -1)
-    return -1;
+  if (ret_chk == AEC_MEM)
+    return AEC_MEM;
   
   item_t * sel_itr = ap->yanked->head;
 
@@ -1037,11 +1037,11 @@ aris_proof_kill (aris_proof * ap)
   list_t * ls, * sen_ls;
   ls = init_list ();
   if (!ls)
-    return -1;
+    return AEC_MEM;
 
   sen_ls = init_list ();
   if (!sen_ls)
-    return -1;
+    return AEC_MEM;
 
   item_t * push_chk;
 
@@ -1064,11 +1064,11 @@ aris_proof_kill (aris_proof * ap)
       undo_sd = sentence_copy_to_data (sen);
       push_chk = ls_push_obj (ls, undo_sd);
       if (!push_chk)
-        return -1;
+        return AEC_MEM;
 
       push_chk = ls_push_obj (sen_ls, sen);
       if (!push_chk)
-        return -1;
+        return AEC_MEM;
     }
 
   item_t * n_itr;
@@ -1077,8 +1077,8 @@ aris_proof_kill (aris_proof * ap)
     {
       sentence * sen = sel_itr->value;
       ret_chk = aris_proof_remove_sentence (ap, sen);
-      if (ret_chk == -1)
-        return -1;
+      if (ret_chk == AEC_MEM)
+        return AEC_MEM;
       if (ret_chk == 1)
         return 1;
       n_itr = sel_itr->next;
@@ -1089,12 +1089,12 @@ aris_proof_kill (aris_proof * ap)
 
   ui = undo_info_init (ap, ls, UIT_REM_SEN);
   if (ui.type == -1)
-    return -1;
+    return AEC_MEM;
 
   int ret;
   ret = aris_proof_set_changed (ap, 1, ui);
   if (ret < 0)
-    return -1;
+    return AEC_MEM;
 
   return 0;
 }
@@ -1114,7 +1114,7 @@ aris_proof_yank (aris_proof * ap)
   list_t * ls;
   ls = init_list ();
   if (!ls)
-    return -1;
+    return AEC_MEM;
 
   item_t * yank_itr;
   int ret, line_num;
@@ -1139,22 +1139,28 @@ aris_proof_yank (aris_proof * ap)
 
       sen = aris_proof_create_sentence (ap, sd, 0);
       if (!sen)
-        return -1;
+        return AEC_MEM;
       ls_push_obj (ls, sentence_copy_to_data (sen));
     }
 
   undo_info ui;
   ui = undo_info_init (ap, ls, UIT_ADD_SEN);
   if (ui.type == -1)
-    return -1;
+    return AEC_MEM;
 
   ret = aris_proof_set_changed (ap, 1, ui);
   if (ret < 0)
-    return -1;
+    return AEC_MEM;
 
   return 0;
 }
 
+/* Clear a proof's list of selected sentences.
+ *  input:
+ *    ap - the proof that owns the sentences.
+ *  output:
+ *    0 on success.
+ */
 int
 aris_proof_clear_selected (aris_proof * ap)
 {
@@ -1179,16 +1185,30 @@ aris_proof_clear_selected (aris_proof * ap)
   return 0;
 }
 
+/* Add a sentence to the list of selected sentences.
+ *  input:
+ *    ap - the aris proof that owns the sentence.
+ *    sen - the sentence to remove from the list of selected sentences.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 aris_proof_select_sentence (aris_proof * ap, sentence * sen)
 {
   item_t * push_chk;
   push_chk = ls_push_obj (ap->selected, sen);
   if (!push_chk)
-    return -1;
+    return AEC_MEM;
   return 0;
 }
 
+/* Remove a sentence from the list of selected sentences.
+ *  input:
+ *    ap - the aris proof that owns the sentence.
+ *    sen - the sentence to remove from the list of selected sentences.
+ *  output:
+ *    0 on success.
+ */
 int
 aris_proof_deselect_sentence (aris_proof * ap, sentence * sen)
 {
@@ -1247,11 +1267,6 @@ aris_proof_toggle_boolean_mode (aris_proof * ap)
   else
     aris_proof_set_sb (ap, _("Boolean mode disabled."));
 
-  /*
-  if (!ap->edited)
-    aris_proof_set_changed (ap, 0);
-  */
-
   return 0;
 }
 
@@ -1297,14 +1312,14 @@ aris_proof_import_proof (aris_proof * ap)
 
   proof = aio_open (filename);
   if (!proof)
-    return -1;
+    return AEC_MEM;
 
   item_t * ev_itr, * pf_itr, * ev_conc = NULL;
   int ref_num = 0;
   short * refs;
 
   refs = (short *) calloc (proof->everything->num_stuff, sizeof (int));
-  CHECK_ALLOC (refs, -1);
+  CHECK_ALLOC (refs, AEC_MEM);
 
   for (pf_itr = proof->everything->head; pf_itr;
        pf_itr = pf_itr->next)
@@ -1349,7 +1364,7 @@ aris_proof_import_proof (aris_proof * ap)
 
           sen_chk = aris_proof_create_sentence (ap, sd, 1);
           if (!sen_chk)
-            return -1;
+            return AEC_MEM;
           ln = sentence_get_line_no (sen_chk);
           refs[ref_num++] = (short) ln;
         }
@@ -1398,11 +1413,11 @@ aris_proof_import_proof (aris_proof * ap)
           sd = sen_data_init (-1, RULE_LM, pf_text, refs,
                               0, filename, 0, DEPTH_DEFAULT, NULL);
           if (!sd)
-            return -1;
+            return AEC_MEM;
 
           sen_chk = aris_proof_create_sentence (ap, sd, 1);
           if (!sen_chk)
-            return -1;
+            return AEC_MEM;
         }
     }
 
@@ -1449,8 +1464,8 @@ aris_proof_undo_stack_push (aris_proof * ap, undo_info ui)
     rc = aris_proof_undo_stack_pop (ap);
 
   rc = vec_add_obj (ap->undo_stack, &ui);
-  if (rc == -1)
-    return -1;
+  if (rc == AEC_MEM)
+    return AEC_MEM;
 
   ap->undo_pt++;
 
@@ -1528,6 +1543,12 @@ aris_proof_undo (aris_proof * ap, int undo)
   return rc;
 }
 
+/* Convert an aris proof to a LaTeX file.
+ *  input:
+ *    ap - the aris proof object to convert.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 aris_proof_to_latex (aris_proof * ap)
 {
