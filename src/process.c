@@ -606,7 +606,7 @@ check_quants (const unsigned char * chk_str)
 	{
 	  chk_sides = check_sides_quant (chk_str + j, j);
 	  if (chk_sides < 0)
-	    return -1;
+	    return AEC_MEM;
 
 	  if (!chk_sides)
 	    return 0;
@@ -644,7 +644,7 @@ get_gen (unsigned char * in_str, int in_pos, unsigned char ** out_str)
     }
 
   *out_str = (unsigned char *) calloc (i - in_pos + 1, sizeof (char));
-  CHECK_ALLOC (*out_str, -1);
+  CHECK_ALLOC (*out_str, AEC_MEM);
 
   strncpy (*out_str, in_str + in_pos, i - in_pos);
   (*out_str)[i - in_pos] = '\0';
@@ -658,9 +658,9 @@ get_gen (unsigned char * in_str, int in_pos, unsigned char ** out_str)
  *    vec - receives the generalities.
  *  output:
  *    on success - the number of generalities.
- *    on error - -1
+ *    on error - -3
  *    if wrong connective given - -2
- *    memory error - -3
+ *    memory error - -1
  */
 int
 get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
@@ -677,15 +677,15 @@ get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
 
   conn_pos = 0;
   pos = get_gen (chk_str, conn_pos, &lsen);
-  if (pos == -1)
-    return -3;
+  if (pos == AEC_MEM)
+    return AEC_MEM;
 
   // Confirm that the first part wasn't the entire sentence.
 
   if (pos >= c_len - 1)
     {
       free (lsen);
-      return -1;
+      return -3;
     }
 
   // Check for the connective.
@@ -700,9 +700,9 @@ get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
 	{
 	  ret = vec_str_add_obj (vec, chk_str);
 	  if (ret < 0)
-	    return -3;
+	    return AEC_MEM;
 
-	  return -1;
+	  return -3;
 	}
     }
   else
@@ -718,7 +718,7 @@ get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
 
   ret = vec_str_add_obj (vec, lsen);
   if (ret < 0)
-    return -3;
+    return AEC_MEM;
   free (lsen);
   lsen = NULL;
 
@@ -740,12 +740,12 @@ get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
       conn_pos = pos + conn_len;
 
       pos = get_gen (chk_str, conn_pos, &rsen);
-      if (pos == -1)
-	return -3;
+      if (pos == AEC_MEM)
+	return AEC_MEM;
 
       ret = vec_str_add_obj (vec, rsen);
       if (ret < 0)
-	return -3;
+	return AEC_MEM;
     }
 
   return (int) vec->num_stuff;
@@ -768,7 +768,7 @@ check_text (unsigned char * text)
     return -2;
 
   unsigned char * eval_text = strdup (text);
-  CHECK_ALLOC (eval_text, -1);
+  CHECK_ALLOC (eval_text, AEC_MEM);
 
   int paren_check = 0, conn_check = 0, quant_check = 0;
   paren_check = check_parens (eval_text);
@@ -841,8 +841,8 @@ check_generalities (unsigned char * text)
       if (strstr (text, ELM) || strchr (text, '=') || strchr (text, '<'))
 	{
 	  ret_chk = check_infix (text, 1);
-	  if (ret_chk == -1)
-	    return -1;
+	  if (ret_chk == AEC_MEM)
+	    return AEC_MEM;
 
 	  if (ret_chk == 0)
 	    return 0;
@@ -852,8 +852,8 @@ check_generalities (unsigned char * text)
     }
 
   tmp_pos = get_gen (text, 0, &tmp_str);
-  if (tmp_pos == -1)
-    return -1;
+  if (tmp_pos == AEC_MEM)
+    return AEC_MEM;
 
   if (!strcmp (tmp_str, text))
     {
@@ -888,11 +888,11 @@ check_generalities (unsigned char * text)
 	{
 	  tmp_str = elim_par (text);
 	  if (!tmp_str)
-	    return -1;
+	    return AEC_MEM;
 
 	  ret_chk = check_generalities (tmp_str);
-	  if (ret_chk == -1)
-	    return -1;
+	  if (ret_chk == AEC_MEM)
+	    return AEC_MEM;
 	  free (tmp_str);
 	  return ret_chk;
 	}
@@ -900,8 +900,8 @@ check_generalities (unsigned char * text)
       if (text[0] != '(')
 	{
 	  ret_chk = check_symbols (text, 1);
-	  if (ret_chk == -1)
-	    return -1;
+	  if (ret_chk == AEC_MEM)
+	    return AEC_MEM;
 
 	  if (ret_chk == -2)
 	    return -5;
@@ -918,20 +918,20 @@ check_generalities (unsigned char * text)
 
   gens = init_vec (sizeof (char *));
   if (!gens)
-    return -1;
+    return AEC_MEM;
 
   conn[0] = '\0';
   gg = get_generalities (text, conn, gens);
-  if (gg == -3)
-    return -1;
+  if (gg == AEC_MEM)
+    return AEC_MEM;
 
   if (gens->num_stuff == 1 || gens->num_stuff == 0)
     {
       destroy_str_vec (gens);
 
       int ret_chk = check_symbols (text, 1);
-      if (ret_chk == -1)
-	return -1;
+      if (ret_chk == AEC_MEM)
+	return AEC_MEM;
 
       if (ret_chk == -2)
 	return -5;
@@ -961,8 +961,8 @@ check_generalities (unsigned char * text)
     {
       cur_gen = vec_str_nth (gens, i);
       ret_chk = check_generalities (cur_gen);
-      if (ret_chk == -1)
-	return -1;
+      if (ret_chk == AEC_MEM)
+	return AEC_MEM;
 
       if (ret_chk != 0)
 	{
@@ -1072,14 +1072,14 @@ check_symbols (unsigned char * in_str, int pred)
 	    case ')':
 	    case ',':
 	      tmp_str = (unsigned char *) calloc (cur_pos - pos + 1, sizeof (char));
-	      CHECK_ALLOC (tmp_str, -1);
+	      CHECK_ALLOC (tmp_str, AEC_MEM);
 
 	      strncpy (tmp_str, in_str + pos, cur_pos - pos);
 	      tmp_str[cur_pos - pos] = '\0';
 
 	      ret_chk = check_symbols (tmp_str, 0);
-	      if (ret_chk == -1)
-		return -1;
+	      if (ret_chk == AEC_MEM)
+		return AEC_MEM;
 
 	      free (tmp_str);
 	      if (ret_chk == -2)
@@ -1171,7 +1171,7 @@ check_infix (unsigned char * in_str, int pred)
       sym_str = (unsigned char *) strstr (in_str, sym);
 
       lsen = (unsigned char *) calloc (sym_str - in_str + 1, sizeof (char));
-      CHECK_ALLOC (lsen, -1);
+      CHECK_ALLOC (lsen, AEC_MEM);
 
       strncpy (lsen, in_str, sym_str - in_str);
       lsen[sym_str - in_str] = '\0';
@@ -1183,16 +1183,16 @@ check_infix (unsigned char * in_str, int pred)
       int ret_chk;
 
       ret_chk = check_symbols (lsen, 0);
-      if (ret_chk == -1)
-	return -1;
+      if (ret_chk == AEC_MEM)
+	return AEC_MEM;
 
       free (lsen);
       if (ret_chk == -2)
 	return -2;
 
       ret_chk = check_symbols (rsen, 0);
-      if (ret_chk == -1)
-	return -1;
+      if (ret_chk == AEC_MEM)
+	return AEC_MEM;
 
       if (ret_chk == -2)
 	return -2;
@@ -1284,7 +1284,7 @@ convert_sexpr (unsigned char * in_str)
   conn[0] = '\0';
 
   gg = get_generalities (in_str, conn, gg_vec);
-  if (gg == -3)
+  if (gg == AEC_MEM)
     return NULL;
 
   int i;
@@ -1768,7 +1768,7 @@ get_pred_func_args (unsigned char * in_str, int in_pos,
     i++;
 
   *sym = (unsigned char *) calloc (i + 1, sizeof (char));
-  CHECK_ALLOC (*sym, -1);
+  CHECK_ALLOC (*sym, AEC_MEM);
   strncpy (*sym, in_str, i);
   (*sym)[i] = '\0';
 
@@ -1778,12 +1778,12 @@ get_pred_func_args (unsigned char * in_str, int in_pos,
 
   tmp_pos = parse_parens (in_str, i, &tmp_str);
   if (tmp_pos == AEC_MEM)
-    return -1;
+    return AEC_MEM;
 
   unsigned char * elim_str;
   elim_str = elim_par (tmp_str);
   if (!elim_str)
-    return -1;
+    return AEC_MEM;
   free (tmp_str);
 
   i = 0;
@@ -1799,7 +1799,7 @@ get_pred_func_args (unsigned char * in_str, int in_pos,
 	{
 	  tmp_pos = parse_parens (elim_str, i, &tmp_str);
 	  if (tmp_pos == AEC_MEM)
-	    return -1;
+	    return AEC_MEM;
 
 	  free (tmp_str);
 	  i = tmp_pos + 1;
@@ -1811,14 +1811,14 @@ get_pred_func_args (unsigned char * in_str, int in_pos,
 	  unsigned char * new_arg;
 
 	  new_arg = (unsigned char *) calloc (i - pos + 1, sizeof (char));
-	  CHECK_ALLOC (new_arg, -1);
+	  CHECK_ALLOC (new_arg, AEC_MEM);
 
 	  strncpy (new_arg, elim_str + pos, i - pos);
 	  new_arg[i - pos] = '\0';
 
 	  ret_check = vec_str_add_obj (args, new_arg);
 	  if (ret_check < 0)
-	    return -1;
+	    return AEC_MEM;
 
 	  free (new_arg);
 	  if (elim_str[i] == '\0')
