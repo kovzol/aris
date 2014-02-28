@@ -122,11 +122,11 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
 
   pf_vars = init_list ();
   if (!pf_vars)
-    return -1;
+    return AEC_MEM;
 
   sexpr_text = init_vec (sizeof (char *));
   if (!sexpr_text)
-    return -1;
+    return AEC_MEM;
 
   for (sen_itr = everything->head; sen_itr; sen_itr = sen_itr->next)
     {
@@ -134,8 +134,8 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
       sd = sen_itr->value;
 
       ret = sd_convert_sexpr (sd);
-      if (ret == -1)
-	return -1;
+      if (ret == AEC_MEM)
+	return AEC_MEM;
       if (ret == -2)
 	continue;
     }
@@ -156,7 +156,7 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
 				   everything);
 
       if (!ret_chk)
-	return -1;
+	return AEC_MEM;
 
       if (verbose)
 	{
@@ -194,8 +194,8 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
       if (rets)
 	{
 	  ret = vec_str_add_obj (rets, ret_chk);
-	  if (ret == -1)
-	    return -1;
+	  if (ret == AEC_MEM)
+	    return AEC_MEM;
 	}
       if (verbose)
 	printf ("%i: %s\n", sd->line_num, ret_chk);
@@ -205,7 +205,7 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
 	{
 	  ret = sexpr_collect_vars_to_proof (pf_vars, sd->sexpr, arb);
 	  if (ret < 0)
-	    return -1;
+	    return AEC_MEM;
 	}
     }
 
@@ -260,7 +260,7 @@ convert_proof_latex (proof_t * proof, const char * filename)
 
       text = convert_sd_latex (sd);
       if (!text)
-	return -1;
+	return AEC_MEM;
 
       fprintf (file, "\t\\prmline{%i}{%s}\\\\\n", sd->line_num, text);
       free (text);
@@ -275,7 +275,7 @@ convert_proof_latex (proof_t * proof, const char * filename)
 
       text = convert_sd_latex (sd);
       if (!text)
-	return -1;
+	return AEC_MEM;
 
       const char * rule = sd->subproof ? "assume" : rules_list[sd->rule];
 
