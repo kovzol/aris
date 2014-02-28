@@ -376,7 +376,7 @@ the_app_read_config_file (aris_app * app)
  *  input:
  *   path - the path to the configuration file.
  *  output:
- *   0 on success, -2 on read error.
+ *   0 on success, -2 on read error, -1 on memory error.
  */
 int
 the_app_make_default_config_file (char * path)
@@ -391,13 +391,20 @@ the_app_make_default_config_file (char * path)
     }
 
   unsigned char * conf_def;
-
   conf_def = config_default ();
+  if (!conf_def)
+    return AEC_MEM;
 
-  int len;
+  int len, rc;
   len = strlen (conf_def);
 
-  fwrite (conf_def, 1, len, config_file);
+  rc = fwrite (conf_def, 1, len, config_file);
+  if (rc != len)
+    {
+      perror ("default_config_file_fwrite");
+      return -2;
+    }
+
   fclose (config_file);
 
   return 0;
@@ -413,14 +420,14 @@ int
 the_app_set_focus (aris_proof * ap)
 {
   if (!ap)
-    return -1;
+    return AEC_MEM;
 
   the_app->focused = ap;
 
   item_t * itm;
   itm = ls_find (the_app->guis, ap);
   if (!itm)
-    return -1;
+    return AEC_MEM;
 
   // This is already the first element,
   // so no need to re-order the elements.
@@ -462,7 +469,7 @@ the_app_add_gui (aris_proof * ap)
   item_t * itm;
   itm = ls_ins_obj (the_app->guis, ap, the_app->guis->tail);
   if (!itm)
-    return -1;
+    return AEC_MEM;
 
   gtk_window_set_icon (GTK_WINDOW (SEN_PARENT (ap)->window), the_app->icon);
   gtk_window_set_icon (GTK_WINDOW (SEN_PARENT (ap->goal)->window), the_app->icon);
@@ -470,7 +477,7 @@ the_app_add_gui (aris_proof * ap)
   int ret;
   ret = the_app_set_focus (ap);
   if (ret < 0)
-    return -1;
+    return AEC_MEM;
 
   return 0;
 }
@@ -520,13 +527,15 @@ int
 app_quit ()
 {
   item_t * g_itr, * ng_itr;
+  int rc;
 
   for (g_itr = the_app->guis->head; g_itr; g_itr = ng_itr)
     {
       ng_itr = g_itr->next;
 
-      if (gui_destroy ((aris_proof *) g_itr->value) < 0)
-	return -1;
+      rc = gui_destroy ((aris_proof *) g_itr->value);
+      if (rc < 0)
+        return -1;
 
       g_itr->next = g_itr->prev = g_itr->value = NULL;
       free (g_itr);
@@ -544,6 +553,14 @@ app_quit ()
   return 0;
 }
 
+/* Sets the color with index INDEX to the specified RGB values.
+ *  input:
+ *    app - the main application object.
+ *    index - the index of the color to setup.
+ *    red, green, blue - the RGB values of the new color ([0,255]).
+ *  output:
+ *    0 on success.
+ */
 int
 app_set_color (aris_app * app, int index, int red, int green, int blue)
 {
@@ -563,8 +580,9 @@ app_set_color (aris_app * app, int index, int red, int green, int blue)
   return 0;
 }
 
-// Thanks to the developers of the inetutils package for this next part.
-// The ftp utility's source code was very helpful with this.
+/* Thanks to the developers of the inetutils package for this next part.
+ * The ftp utility's source code was very helpful with this.
+ */
 
 /* Send a command to an ftp server.
  *  input:
@@ -596,7 +614,7 @@ int
 ftp_get_response (GSocket * ftp_sock, int * port)
 {
   char response_buffer[2048], * buf_str;
-  int ret_code;
+  int ret_code, rc;
 
   buf_str = response_buffer;
 
@@ -609,7 +627,9 @@ ftp_get_response (GSocket * ftp_sock, int * port)
     }
 
   *buf_str = '\0';
-  sscanf (response_buffer, "%i", &ret_code);
+  rc = sscanf (response_buffer, "%i", &ret_code);
+  if (rc != 1)
+    return AEC_IO;
 
   if (port)
     {
@@ -650,7 +670,7 @@ ftp_send (GSocket * ftp_sock, char * file_name, char * buffer)
 		       NULL);
   if (!sock)
     {
-      return -2;
+      return AEC_IO;
     }
 
   ftp_send_cmd (ftp_sock, "PASV");
@@ -658,7 +678,7 @@ ftp_send (GSocket * ftp_sock, char * file_name, char * buffer)
   if (ret_chk != 227)
     {
       FTP_QUIT (ftp_sock);
-      return -2;
+      return AEC_IO;
     }
 
   GSocketAddress * in_addr;
@@ -670,7 +690,7 @@ ftp_send (GSocket * ftp_sock, char * file_name, char * buffer)
   ret_val = g_socket_connect (sock, in_addr, NULL, NULL);
   if (!ret_val)
     {
-      return -2;
+      return AEC_IO;
     }
 
   char * abuf;
@@ -688,7 +708,7 @@ ftp_send (GSocket * ftp_sock, char * file_name, char * buffer)
   if (ret_chk != 150)
     {
       FTP_QUIT (ftp_sock);
-      return -2;
+      return AEC_IO;
     }
 
   while (*buf)
@@ -705,7 +725,7 @@ ftp_send (GSocket * ftp_sock, char * file_name, char * buffer)
   if (ret_chk != 226)
     {
       FTP_QUIT (ftp_sock);
-      return -2;
+      return AEC_IO;
     }
 
   return 0;
@@ -823,7 +843,7 @@ the_app_submit (const char * user_email, const char * instr_email,
   char * email_base;
 
   email_base = (char *) calloc (strlen (user_email), sizeof (char));
-  CHECK_ALLOC (email_base, -1);
+  CHECK_ALLOC (email_base, AEC_MEM);
 
   ret_chk = sscanf (user_email, "%[^@]@", email_base);
   if (ret_chk != 1)
@@ -835,7 +855,7 @@ the_app_submit (const char * user_email, const char * instr_email,
   char * dir_file_name, * dir_buffer;
 
   dir_file_name = (char *) calloc (strlen (email_base) + 11, sizeof (char));
-  CHECK_ALLOC (dir_file_name, -1);
+  CHECK_ALLOC (dir_file_name, AEC_MEM);
   sprintf (dir_file_name, "%s.directive", email_base);
 
   int dir_pos = 0;
@@ -843,7 +863,7 @@ the_app_submit (const char * user_email, const char * instr_email,
   int alloc_size = strlen (user_email) + strlen (instr_email) + 16;
 
   dir_buffer = (char *) calloc (alloc_size + 3, sizeof (char));
-  CHECK_ALLOC (dir_buffer, -1);
+  CHECK_ALLOC (dir_buffer, AEC_MEM);
 
   dir_pos += sprintf (dir_buffer, "user: %s\ninstr: %s\n",
 		      user_email, instr_email);
@@ -862,7 +882,7 @@ the_app_submit (const char * user_email, const char * instr_email,
       base_name = g_file_get_basename (file);
 
       base = (char *) calloc (strlen (base_name), sizeof (char));
-      CHECK_ALLOC (base, -1);
+      CHECK_ALLOC (base, AEC_MEM);
 
       sscanf (base_name, "%[^.].tle", base);
       free (base_name);
@@ -870,7 +890,7 @@ the_app_submit (const char * user_email, const char * instr_email,
       ap_file_name = (char *) calloc (strlen (email_base)
 				      + strlen (base) + 6,
 				      sizeof (char));
-      CHECK_ALLOC (ap_file_name, -1);
+      CHECK_ALLOC (ap_file_name, AEC_MEM);
       sprintf (ap_file_name, "%s-%s.tle", base, email_base);
 
       free (base);
@@ -884,21 +904,43 @@ the_app_submit (const char * user_email, const char * instr_email,
 	{
 	  free (ap_file_name);
 	  perror (NULL);
-	  return -2;
+	  return AEC_IO;
 	}
 
       GET_LEN (ap_file, len);
 
       ap_buffer = (char *) calloc (len + 1, sizeof (char));
-      CHECK_ALLOC (ap_buffer, -1);
+      CHECK_ALLOC (ap_buffer, AEC_MEM);
 
-      fread (ap_buffer, 1, len, ap_file);
+      ret_chk = fread (ap_buffer, 1, len, ap_file);
+      if (ret_chk != len)
+        {
+          free (ap_buffer);
+          free (dir_buffer);
+          free (email_base);
+          free (dir_file_name);
+          free (ap_file_name);
+          fclose (ap_file);
+          FTP_QUIT (ftp_file);
+          return AEC_IO;
+        }
       ap_buffer[len] = '\0';
       fclose (ap_file);
 
       ret_chk = ftp_send (ftp_file, ap_file_name, ap_buffer);
-      if (ret_chk == -1)
-	return -1;
+      if (ret_chk == AEC_MEM)
+	return AEC_MEM;
+
+      if (ret_chk == AEC_IO)
+        {
+          free (ap_buffer);
+          free (dir_buffer);
+          free (email_base);
+          free (dir_file_name);
+          free (ap_file_name);
+          FTP_QUIT (ftp_file);
+          return AEC_IO;
+        }
 
       free (ap_buffer);
 
@@ -917,8 +959,15 @@ the_app_submit (const char * user_email, const char * instr_email,
   free (email_base);
 
   ret_chk = ftp_send (ftp_file, dir_file_name, dir_buffer);
-  if (ret_chk == -1)
-    return -1;
+  if (ret_chk == AEC_MEM)
+    return AEC_MEM;
+  if (ret_chk == AEC_IO)
+    {
+      free (dir_file_name);
+      free (dir_buffer);
+      FTP_QUIT (ftp_file);
+      return AEC_IO;
+    }
 
   free (dir_file_name);
   free (dir_buffer);
