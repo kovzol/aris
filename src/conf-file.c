@@ -28,7 +28,6 @@
 #include "menu.h"
 #include "app.h"
 
-
 #define READ_GRADE_ENT(c,s,k,a) if (!strcmp (c,s)) { if (a) { free (a); a = NULL; } a = strdup (k); }
 
 /* Reads from the configuration file.
@@ -63,8 +62,8 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	break;
 
       tmp_pos = parse_parens (buffer, pos, &cur_conf);
-      if (tmp_pos == -1)
-	return -1;
+      if (tmp_pos == AEC_MEM)
+	return AEC_MEM;
 
       if (tmp_pos < 0)
 	return -2;
@@ -79,7 +78,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
       unsigned char * cur_conf_key;
 
       cur_conf_key = (unsigned char *) calloc (cur_pos, sizeof (char));
-      CHECK_ALLOC (cur_conf_key, -1);
+      CHECK_ALLOC (cur_conf_key, AEC_MEM);
 
       strncpy (cur_conf_key, cur_conf + 1, cur_pos - 1);
       cur_conf_key[cur_pos - 1] = '\0';
@@ -92,13 +91,22 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  int mod;
 
 	  cmd = (char *) calloc (conf_len, sizeof (char));
-	  CHECK_ALLOC (cmd, -1);
+	  CHECK_ALLOC (cmd, AEC_MEM);
 
 	  key = (char *) calloc (conf_len, sizeof (char));
-	  CHECK_ALLOC (key, -1);
+	  CHECK_ALLOC (key, AEC_MEM);
 
-	  sscanf (cur_conf, "(key-cmd \'%[^\']\' \'%[^\']\')",
-		  cmd, key);
+	  ret_chk = sscanf (cur_conf, "(key-cmd \'%[^\']\' \'%[^\']\')",
+                            cmd, key);
+          // This is a mal-formed configuration, so skip it.
+          if (ret_chk != 2)
+            {
+              free (cmd);
+              free (key);
+              free (cur_conf);
+              pos = tmp_pos + 2;
+              continue;
+            }
 
 	  // Parse key (c+s+s = Ctrl + Shift + s)
 	  mod = 0;
@@ -128,7 +136,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 
 	  path = (char *) calloc (strlen (cmd) + strlen (WIN_PATH) + 4,
 				  sizeof (char));
-	  CHECK_ALLOC (path, -1);
+	  CHECK_ALLOC (path, AEC_MEM);
 
 	  sprintf (path, "<%s>/%s", WIN_PATH, cmd);
 	  free (cmd);
@@ -148,13 +156,14 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  char * cmd, * key;
 
 	  cmd = (char *) calloc (conf_len, sizeof (char));
-	  CHECK_ALLOC (cmd, -1);
+	  CHECK_ALLOC (cmd, AEC_MEM);
 
 	  key = (char *) calloc (conf_len, sizeof (char));
-	  CHECK_ALLOC (key, -1);
+	  CHECK_ALLOC (key, AEC_MEM);
 
 	  ret_chk = sscanf (cur_conf, "(grade \'%[^\']\' \'%[^\']\')",
                             cmd, key);
+          // This is a mal-formed configuration, so skip it.
           if (ret_chk != 2)
             {
               free (cmd);
@@ -186,7 +195,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  char * type;
 
 	  type = (char *) calloc (strlen (cur_conf), sizeof (char));
-	  CHECK_ALLOC (type, -1);
+	  CHECK_ALLOC (type, AEC_MEM);
 
 	  ret_chk = sscanf (cur_conf, "(font-size \'%[^\']\' \'%i\')",
 			    type, &def_font);
@@ -201,7 +210,11 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  int font_type;
 	  font_type = the_app_get_font_by_name (app, type);
           if (font_type == -1)
-            continue;
+            {
+              free (cur_conf);
+              pos = tmp_pos + 2;
+              continue;
+            }
 
 	  if (app->fonts[font_type])
 	    pango_font_description_free (app->fonts[font_type]);
@@ -221,7 +234,7 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  int r,g,b, c_hex;
 
 	  cur_color = (char *) calloc (conf_len, sizeof (char));
-	  CHECK_ALLOC (cur_color, -1);
+	  CHECK_ALLOC (cur_color, AEC_MEM);
 
 	  ret_chk = sscanf (cur_conf, "(color-pref \'%[^\']\' \'%x\')",
 			    cur_color, &c_hex);
@@ -488,6 +501,12 @@ conf_color_value (conf_obj * obj, int get)
     }
 }
 
+/* Creates a string that contains the default configuration.
+ *  input:
+ *    none
+ *  output:
+ *    The default configuration string, or NULL on a memory error.
+ */
 unsigned char *
 config_default ()
 {
