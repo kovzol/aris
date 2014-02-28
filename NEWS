@@ -1,10 +1,29 @@
 This NEWS file records important changes.
 
-  Copyright (C) 2012, 2013 Ian Dunn.
+  Copyright (C) 2012, 2013, 2014 Ian Dunn.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
+
+
+2.2
+
+  * Added undo/redo functionality.
+
+  * Fixed up a lot of bugs in copy/cut/paste.
+
+  * Fixed up several bugs in configuration file loading.
+
+  * Added support for comments.
+
+  * Added LaTeX export option.
+
+  * Changed default colors for sentences and references.
+
+  * Updated to GTK+ 3.
+
+  * Fixed up processing bugs.
 
 2.1.1
 
