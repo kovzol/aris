@@ -116,7 +116,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   // Set the data components.
 
   ret = sentence_update_line_no (sen, ln);
-  if (ret == -1)
+  if (ret == AEC_MEM)
     return NULL;
 
   sentence_set_rule (sen, sd->rule);
@@ -138,7 +138,7 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
     return NULL;
 
   ret = sentence_update_refs (sen);
-  if (ret == -1)
+  if (ret == AEC_MEM)
     return NULL;
 
   sen->reference = 0;
@@ -271,7 +271,7 @@ sentence_copy_to_data (sentence * sen)
   sd = (sen_data *) calloc (1, sizeof (sen_data));
   CHECK_ALLOC (sd, NULL);
   ret = sen_data_copy (SD(sen), sd);
-  if (ret == -1)
+  if (ret == AEC_MEM)
     return NULL;
 
   return sd;
@@ -306,7 +306,7 @@ sentence_set_line_no (sentence * sen, int new_line_no)
 
   //The length of any number in base 10 will be log10(n) + 1
   new_label = (char *) calloc ((int)label_len + 2, sizeof (char));
-  CHECK_ALLOC (new_label, -1);
+  CHECK_ALLOC (new_label, AEC_MEM);
 
   sp_chk = sprintf (new_label, "%i", new_line_no);
   if (sp_chk != (int) label_len + 1)
@@ -337,8 +337,8 @@ sentence_update_line_no (sentence * sen, int new)
   old = SD(sen)->line_num;
 
   rc = sentence_set_line_no (sen, new);
-  if (rc == -1)
-    return -1;
+  if (rc == AEC_MEM)
+    return AEC_MEM;
 
   // The next part isn't necessary for a new sentence.
   if (old == 0)
@@ -377,7 +377,7 @@ sentence_update_line_no (sentence * sen, int new)
       lbl_len = strlen (label);
 
       file_name = (char *) calloc (lbl_len, sizeof (char));
-      CHECK_ALLOC (file_name, -1);
+      CHECK_ALLOC (file_name, AEC_MEM);
 
       chk = sscanf (label, "%i - %s", &line_num, file_name);
       if (chk != 2)
@@ -393,7 +393,7 @@ sentence_update_line_no (sentence * sen, int new)
 
       alloc_size = log10 (line_num) + strlen (file_name) + 4;
       new_label = (char *) calloc (alloc_size + 1, sizeof (char));
-      CHECK_ALLOC (new_label, -1);
+      CHECK_ALLOC (new_label, AEC_MEM);
 
       sprintf (new_label, "%i - %s", line_num, file_name);
       free (file_name);
@@ -418,7 +418,7 @@ sentence_refresh_refs (sentence * sen)
   
   SD(sen)->refs = (short *) calloc (sen->references->num_stuff + 1,
                                     sizeof (short));
-  CHECK_ALLOC (SD(sen)->refs, -1);
+  CHECK_ALLOC (SD(sen)->refs, AEC_MEM);
 
   item_t * itm;
   int i = 0;
@@ -445,7 +445,7 @@ sentence_add_ref (sentence * sen, sentence * ref)
   item_t * itm;
   itm = ls_push_obj (sen->references, ref);
   if (!itm)
-    return -1;
+    return AEC_MEM;
 
   sentence_refresh_refs (sen);
 
@@ -505,7 +505,7 @@ sentence_update_refs (sentence * sen)
                   item_t * ret;
                   ret = ls_push_obj (sen->references, ref_sen);
                   if (!ret)
-                    return -1;
+                    return AEC_MEM;
 
                   break;
                 }
@@ -785,7 +785,7 @@ sentence_out (sentence * sen)
 {
   sen_parent * sp = sen->parent;
   if (!sp)
-    return -1;
+    return AEC_MEM;
 
   GtkTextBuffer * buffer;
   GtkTextIter start, end;
@@ -816,7 +816,7 @@ sentence_out (sentence * sen)
  *  input:
  *    sen - the sentence that has just been selected.
  *  output:
- *    0 on success, -1 on error, -2 on memory error.
+ *    0 on success, -2 on error, -1 on memory error.
  */
 int
 select_reference (sentence * sen)
@@ -832,7 +832,7 @@ select_reference (sentence * sen)
     printf ("Selecting reference.\n");
 
   if (!sp->focused || SEN_PREM(sp->focused->value))
-    return -1;
+    return -2;
 
   sentence * fcs_sen;
   fcs_sen = sp->focused->value;
@@ -841,7 +841,7 @@ select_reference (sentence * sen)
     {
       if (the_app->verbose)
         printf ("Must select reference that comes before focused.\n");
-      return -1;
+      return -2;
     }
 
   sentence * ref_sen = sen;
@@ -889,7 +889,7 @@ select_reference (sentence * sen)
       ui.type = -1;
       ret = aris_proof_set_changed ((aris_proof *) sp, 1, ui);
       if (ret < 0)
-        return -2;
+        return AEC_MEM;
     }
 
   return 0;
@@ -1175,7 +1175,7 @@ sentence_key (sentence * sen, int key, int ctrl)
               tmp_pos = reverse_parse_parens (sen_text, offset,
                                               NULL);
               if (tmp_pos == AEC_MEM)
-                return -1;
+                return AEC_MEM;
             }
 
           GtkTextIter semi;
@@ -1402,7 +1402,7 @@ sentence_paste_text (sentence * sen)
             }
 
           conn = (unsigned char *) calloc (len + 1, sizeof (char));
-          CHECK_ALLOC (conn, -1);
+          CHECK_ALLOC (conn, AEC_MEM);
           
           strncpy (conn, sen_text + i, len);
           conn[len] = '\0';
@@ -1550,7 +1550,7 @@ sentence_text_changed (sentence * sen)
   undo_info ui;
   ui = undo_info_init_one (NULL, sen, UIT_MOD_TEXT);
   if (ui.type == -1)
-    return -1;
+    return AEC_MEM;
 
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {
@@ -1558,7 +1558,7 @@ sentence_text_changed (sentence * sen)
 
       ret = aris_proof_set_changed (ARIS_PROOF (sp), 1, ui);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
 
@@ -1586,7 +1586,7 @@ sentence_text_changed (sentence * sen)
 
       ret = aris_proof_set_changed (GOAL (sp)->parent, 1, ui);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       item_t * mod_itm;
       sentence * mod_sen;
@@ -1710,7 +1710,7 @@ sentence_set_text (sentence * sen, unsigned char * text)
   SD(sen)->text = strdup (text);
 
   if (!SD(sen)->text)
-    return -1;
+    return AEC_MEM;
   return 0;
 }
 
