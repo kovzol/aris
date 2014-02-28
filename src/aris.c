@@ -1,6 +1,6 @@
 /* The GNU Aris program.
 
-   Copyright (C) 2012, 2013 Ian Dunn.
+   Copyright (C) 2012, 2013, 2014 Ian Dunn.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ void
 version ()
 {
   printf ("%s - %s\n", PACKAGE_NAME, VERSION);
-  printf ("Copyright (C) 2012, 2013 Ian Dunn.\n");
+  printf ("Copyright (C) 2012, 2013, 2014 Ian Dunn.\n");
   printf ("License GPLv3: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n");
   printf ("This is free software: you are free to change and redistribute it.\n");
   printf ("There is NO WARRANTY, to the extent premitted by the law.\n");
