@@ -690,6 +690,7 @@ proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, v
       ln_sen = prem_0;
     }
 
+  c_scope = c_var = NULL;
   c_scope = sexpr_elim_quant (conc, c_quant, &c_var);
   if (!c_scope)
     return NULL;
