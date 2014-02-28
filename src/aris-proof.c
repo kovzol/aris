@@ -903,6 +903,7 @@ aris_proof_copy (aris_proof * ap)
 
   for (sel_itr = ap->selected->head; sel_itr; sel_itr = sel_itr->next)
     {
+      REPORT ();
       sentence * sen = sel_itr->value;
       ls_push_obj (sel_list, sen);
 
@@ -943,6 +944,8 @@ aris_proof_copy (aris_proof * ap)
    *  always be the current subproof's line.
    */
 
+  REPORT ();
+
   vec_t * sub_lines;
   sub_lines = init_vec (sizeof (int));
   if (!sub_lines)
@@ -958,7 +961,11 @@ aris_proof_copy (aris_proof * ap)
       sen = sel_itr->value;
       sd = sentence_copy_to_data (sen);
       if (!sd)
-        return -1;
+        return ERROR_CODE_MEMORY;
+
+      REPORT ();
+
+      fprintf (stderr, "sen->depth == %i\n", SEN_DEPTH (sen));
 
       if (SEN_SUB(sen))
         {
@@ -972,8 +979,12 @@ aris_proof_copy (aris_proof * ap)
           vec_pop_obj (sub_lines);
         }
 
+      REPORT ();
+
       // This clears up potential problems with subproofs.
       sd->depth = sub_lines->num_stuff;
+
+      REPORT ();
 
       if (sd->depth > 0)
         {
@@ -999,6 +1010,13 @@ aris_proof_copy (aris_proof * ap)
         return -1;
 
       n_itr = sel_itr->next;
+      //free (sel_itr);
+      sel_itr = n_itr;
+    }
+
+  for (sel_itr = sel_list->head; sel_itr;)
+    {
+      n_itr = sel_itr->next;
       free (sel_itr);
       sel_itr = n_itr;
     }
@@ -1019,6 +1037,7 @@ aris_proof_copy (aris_proof * ap)
 int
 aris_proof_kill (aris_proof * ap)
 {
+  REPORT ();
   int ret_chk;
   ret_chk = aris_proof_copy (ap);
   if (ret_chk == -1)
@@ -1041,6 +1060,8 @@ aris_proof_kill (aris_proof * ap)
   /* Since refs will be changing, set up undo information and
    *  the list of sentences before removing anything.
    */
+
+  REPORT ();
 
   for (; sel_itr; sel_itr = sel_itr->next)
     {
@@ -1066,6 +1087,8 @@ aris_proof_kill (aris_proof * ap)
 
   item_t * n_itr;
 
+  REPORT ();
+
   for (sel_itr = sen_ls->head; sel_itr;)
     {
       sentence * sen = sel_itr->value;
@@ -1080,9 +1103,13 @@ aris_proof_kill (aris_proof * ap)
     }
   free (sen_ls);
 
+  REPORT ();
+
   ui = undo_info_init (ap, ls, UIT_REM_SEN);
   if (ui.type == -1)
     return -1;
+
+  REPORT ();
 
   int ret;
   ret = aris_proof_set_changed (ap, 1, ui);
