@@ -153,12 +153,20 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  key = (char *) calloc (conf_len, sizeof (char));
 	  CHECK_ALLOC (key, -1);
 
-	  sscanf (cur_conf, "(grade \'%[^\']\' \'%[^\']\')",
-		  cmd, key);
+	  ret_chk = sscanf (cur_conf, "(grade \'%[^\']\' \'%[^\']\')",
+                            cmd, key);
+          if (ret_chk != 2)
+            {
+              free (cmd);
+              free (key);
+              free (cur_conf);
+              pos = tmp_pos + 2;
+              continue;
+            }
 
-	  READ_GRADE_ENT (cmd, "ip", key, app->ip_addr);
-	  READ_GRADE_ENT (cmd, "pass", key, app->grade_pass);
-	  READ_GRADE_ENT (cmd, "dir", key, app->grade_dir);
+	  READ_GRADE_ENT (cmd, "Grade IP", key, app->ip_addr);
+	  READ_GRADE_ENT (cmd, "Grade Password", key, app->grade_pass);
+	  READ_GRADE_ENT (cmd, "Grade Directory", key, app->grade_dir);
 
 	  free (cmd);
 	  free (key);
@@ -186,11 +194,14 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  if (ret_chk != 2)
 	    {
 	      free (cur_conf);
-	      return -2;
+              pos = tmp_pos + 2;
+              continue;
 	    }
 
 	  int font_type;
 	  font_type = the_app_get_font_by_name (app, type);
+          if (font_type == -1)
+            continue;
 
 	  if (app->fonts[font_type])
 	    pango_font_description_free (app->fonts[font_type]);
@@ -219,7 +230,8 @@ conf_file_read (const unsigned char * buffer, aris_app * app)
 	  if (ret_chk != 2)
 	    {
 	      free (cur_color);
-	      return -2;
+              pos = tmp_pos + 2;
+              continue;
 	    }
 
 	  int cur;
@@ -359,22 +371,7 @@ conf_grade_value (conf_obj * obj, int get)
       char * ret;
       const char * text;
 
-      const char * key;
-
-      switch (obj->id)
-	{
-	case 0:
-	  key = "ip";
-	  break;
-	case 1:
-	  key = "pass";
-	  break;
-	case 2:
-	  key = "dir";
-	  break;
-	default:
-	  return NULL;
-	}
+      const char * key = obj->label;
 
       text = gtk_entry_get_text (GTK_ENTRY (obj->widget));
 
@@ -472,10 +469,7 @@ conf_color_value (conf_obj * obj, int get)
       g = color.green * 255;
       b = color.blue * 255;
 
-      cur_type = (char *) calloc (strlen (obj->label), sizeof (char));
-      CHECK_ALLOC (cur_type, NULL);
-
-      sscanf (obj->label, "%s", cur_type);
+      cur_type = strdup (obj->label);
 
       char * ret;
       int alloc_size;
