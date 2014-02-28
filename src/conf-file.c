@@ -423,16 +423,18 @@ conf_font_value (conf_obj * obj, int get)
       size = (char *) calloc (lbl_len, sizeof (char));
       CHECK_ALLOC (size, NULL);
 
+      /*
       ret_chk = sscanf (obj->label, "Font %s Preset", size);
       if (ret_chk != 1)
 	strcpy (size, _("Default"));
+      */
+      size = obj->label;
 
       alloc_size = strlen (size) + 16 + (int) log10 ((double) val) + 1;
       ret = (char *) calloc (alloc_size + 1 , sizeof (char));
       CHECK_ALLOC (ret, NULL);
 
       sprintf (ret, "(font-size \'%s\' %i)\n", size, val);
-      free (size);
       return ret;
     }
 }
