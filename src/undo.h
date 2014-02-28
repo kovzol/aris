@@ -56,6 +56,5 @@ undo_op undo_determine_op (int undo, int type);
 int undo_op_remove (aris_proof * ap, undo_info * ui);
 int undo_op_add (aris_proof * ap, undo_info * ui);
 int undo_op_mod (aris_proof * ap, undo_info * ui);
-void undo_sen (int undo, aris_proof * ap, item_t * itm, sentence * sen, sen_data * sd);
 
 #endif /*  ARIS_UNDO_H  */
