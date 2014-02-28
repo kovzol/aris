@@ -10,6 +10,7 @@
 	(undo_op_mod): Same.
 
 	* sen-parent.c (sen_parent_rem_sentence): Removed unneeded comments.
+	Replaced call to gtk_grid_remove_row.
 
 	* sexpr-process.c: Implemented error codes.
 
