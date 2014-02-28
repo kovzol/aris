@@ -510,7 +510,7 @@ rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
 
   sen->proof = aio_open (filename);
   if (!sen->proof)
-    return -1;
+    return AEC_MEM;
 
   if (the_app->focused)
     {
@@ -522,7 +522,7 @@ rules_table_set_lm (rules_table * rt, sentence * sen, char * filename)
       ln = sentence_get_line_no (sen);
       alloc_size = file_len + 4 + (int) log10 (ln);
       label = (char *) calloc (alloc_size + 1, sizeof (char));
-      CHECK_ALLOC (label, -1);
+      CHECK_ALLOC (label, AEC_MEM);
       sprintf (label, "%i - %s", ln, SD(sen)->file);
       menu_item = gtk_menu_item_new_with_label (label);
 
