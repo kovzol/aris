@@ -1,5 +1,5 @@
 AC_PREREQ(2.60)
-AC_INIT([GNU Aris], [2.1.1], [bug-aris@gnu.org])
+AC_INIT([GNU Aris], [2.2], [bug-aris@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 
@@ -28,7 +28,7 @@ AC_PROG_INSTALL
 
 # Check for gtk+-2.0
 
-PKG_CHECK_MODULES([GTK], [gtk+-3.0 >= 3])
+PKG_CHECK_MODULES([GTK], [gtk+-3.0 >= 3.2])
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
