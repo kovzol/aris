@@ -1,3 +1,255 @@
+2014-02-27  Ian Dunn  <dunni@gnu.org>
+
+	* configure.ac: Updated version number to 2.2.
+
+	* callbacks.c (menu_activated): Added LaTeX export
+	functionality.
+
+	* aris-proof.c (aris_proof_copy): Destroys sel_list after
+	finished.
+	(aris_proof_to_latex): Created to convert an Aris Proof to
+	LaTeX.
+
+	* sexpr-process-misc (proc_in): Correctly handles the error of
+	no preceding universal quantifier.
+
+	* app.c (init_app): Set colors and fonts to NULL.
+	(the_app_get_color_by_type): Checks through configuration
+	objects.
+	(the_app_get_color_by_index): Same.
+	(the_app_get_font_by_name): Same.
+	(the_app_read_config_file): Fixed up.
+
+	* conf-file.h (conf_obj_types): Fixed ordering.
+	(display_conf): Changed default conclusion and reference
+	color.
+
+	* conf-file.c (conf_file_read): Fixed reading in of
+	configuration files.
+	Fixed reading of grade data.
+	(conf_grade_value): Fixed writing of grade data.
+
+	* goal.c (goal_check_line): Implements format_string.
+
+	* aris.c (parse_args): Implements format_string.
+
+	* aio.c: Cleaned up code.
+
+	* sexpr-process-quant.c: Checks for ERROR_CODE_MEMORY after
+	parse_parens.
+
+	* sexpr-process-equiv.c: Checks for ERROR_CODE_MEMORY after
+	parse_parens.
+
+	* sexpr-process-bool.c: Checks for ERROR_CODE_MEMORY after
+	parse_parens.
+
+	* sexpr-process.c: Checks for ERROR_CODE_MEMORY after
+	parse_parens.
+
+	* typedef.h: Added error code enumeration.
+
+	* sen-data.c (sen_convert_sexpr): Implements format_string.
+	(sen_data_evaluate): Implements format_string.
+	(convert_sd_latex): Doesn't check text.
+
+	* process.c (remove_comment): Added to strip comments from a
+	string.
+	(format_string): Calls remove_comment and die_spaces_die.
+	(parse_parens): Calls parse_tags.
+	(reverse_parse_parens): Returns -1 on memory error.
+	(check_text): No longer handles spaces.
+
+	* sentence.c (sentence_key): Fixed up iterator problem.
+	(sentence_text_changed): Added support for comments.
+	(sentence_gui_init): Initializes comment hi-lighting.
+	(sentence_copy_text): Copies over comments as well.
+
+2014-02-26  Ian Dunn  <dunni@gnu.org>
+
+	* vec.c: Cleaned up code.
+
+	* sexpr-process-misc.c: Cleaned up code.
+
+	* sexpr-process-infer.c: Cleaned up code.
+
+	* sexpr-process-equiv.c: Cleaned up code.
+
+	* sexpr-process.c: Cleaned up code.
+
+	* sentence.c: Cleaned up code.
+	(sentence_key): Set to ignore single control key.
+
+	* rules-table.c: Cleaned up code.
+
+	* proof.c: Cleaned up code.
+
+	* process.c: Cleaned up code.
+
+	* process-main.c: Cleaned up code.
+
+	* menu.c: Cleaned up code.
+
+	* conf-file.c: Cleaned up code.
+
+	* callbacks.c: Cleaned up code.
+
+	* app.c: Cleaned up code.
+
+	* aio.c: Cleaned up code.
+
+	* sen-parent.c (sen_parent_rem_sentence): Removed call to
+	gtk_grid_remove_row.
+
+	* undo.h: Added, and moved in undo_info functions.
+
+	* undo.c (undo_info_init): Moved here.
+	(undo_info_init_one): Same.
+	(undo_info_destroy): Same.
+	(undo_determine_op): Determines the necessary operation
+	for undo/redo.
+	(undo_op_remove): Undoes an operation by removing a sentence.
+	(undo_op_add): Undoes an operation by adding a sentence.
+	(undo_op_mod): Undoes a modification operation.
+
+	* aris-proof.c (aris_proof_yank): Uses actual insertion data
+	rather than copied data for undo information.
+	(aris_proof_undo): Modified to implement undo_determine_op.
+
+2014-02-25  Ian Dunn  <dunni@gnu.org>
+
+	* sentence.c (sentence_set_selected): Fixed up selecting a
+	sentence and its parent.
+
+2014-02-08  Ian Dunn  <dunni@gnu.org>
+
+	* aris.c (main): Freed up unused file names.
+
+	* aris-proof.c (aris_proof_copy): Fixed up copying of
+	subproofs.
+
+	* callbacks.c: Fixed up indenting.
+
+2013-12-14  Ian Dunn  <dunni@gnu.org>
+
+	* aris-proof.c (aris_proof_set_filename): Copies the new
+	filename into the cur_file member.
+
+2013-12-11  Ian Dunn  <dunni@gnu.org>
+
+	* conf-file.h: Added LaTeX export option to proofs.
+
+	* list.h (ls_empty): Checks whether or not a list is empty.
+
+	* aris-proof.h (aris_proof_clear_selected): Clears selected
+	list.
+	(aris_proof_select_sentence): Adds a sentence to the list of
+	selected sentences.
+	(aris_proof_deselect_sentence): Removes a sentence from the
+	list of selected sentences.
+
+	* sentence.c; Implemented REF_END.
+	(select_sentence): Implemented aris_proof_select_sentence.
+	No longer selects entire subproof.
+	(sentence_key): Clears the parent's list of selected
+	sentences.
+
+	* sen-data.c: Implemented REF_END.
+
+	* proof.c: Implemented REF_END.
+
+	* aio.c: Implemented REF_END.
+
+	* aris-proof.c: Implemented REF_END.
+	(aris_proof_copy): Fixed up and accounts for subproofs.
+	(aris_proof_kill): Uses ap->yanked for kill list.
+	(aris_proof_yank): Correctly reconstructs subproofs.
+
+	* sen-data.h: Added REF_END constant.
+	Changed REF_END to zero.
+
+	* callbacks.c (gui_save): Adds .tle to file name if not
+	present.
+
+2013-12-10  Ian Dunn  <dunni@gnu.org>
+
+	* callbacks.c (evaluate_line): Refreshes the sentence's
+	references before evaluation.
+
+2013-12-09  Ian Dunn  <dunni@gnu.org>
+
+	* vec.c: Fixed up formatting.
+
+	* rules.h: Changed mouse over text for free and bound variable
+	substitution.
+
+	* app.c (app_set_color): Added to update the colors of the
+	app.
+
+	* conf-file.c (conf_file_read): Calls app_set_color when a
+	color has been read.
+
+	* process.h (ISGOOD): Handles nil object.
+
+	* sexpr-process-equiv.c (recurse_mode): Fixed up handling
+	of idempotence.
+
+	* sexpr-process.c (sexpr_get_generalities): Handles
+	quantifiers correctly.
+
+	* sen-parent.c (sen_parent_set_font): Fixed up formatting.
+	(sen_parent_children_set_bg_color): Added to set the colors
+	of a sentence parent and its children.
+
+	* nil-conn.xpm: Fixed up nil object.
+
+	* elm-conn.xpm: Fixed up element of predicate.
+
+	* sentence.c (sentence_resize_text): Removed unused argument.
+	(sentence_set_bg_color): Added to automatically set correct
+	colors.
+
+	* aris-proof.c: Fixed up formatting.
+
+	* proof.c (convert_proof_latex): Changed argument to take
+	filename instead of file object.
+	(convert_proof_latex): Changed some formatting aspects.
+
+	* sen-data.c (convert_sd_latex): Moved to here.
+
+	* aris.c (convert_sd_latex): Moved to sen-data.c.
+	(convert_proof_latex): Moved to proof.c.
+
+2013-12-06  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-misc.c (proc_in): Fixed up return check.
+
+2013-12-05  Ian Dunn  <dunni@gnu.org>
+
+	* pound.h (IS_DARK): Added to determine whether a color
+	is dark or not.
+
+	* callbacks.c (evaluate_line): Inserts sentences into lines
+	even if they do not convert correctly.
+
+	* proof.c (proof_destroy): Fixed up list destruction.
+
+	* sen-data.c (sen_data_evaluate): Cleaned up some comments.
+
+	* sentence.c (sentence_add_ref): Implements refresh_refs.
+	(sentence_rem_ref): Same.
+	(sentence_copy_to_data): Same.
+	(sentence_set_bg): Sets the font color to light or dark
+	depending on the background.
+
+	* sentence.h (sentence_refresh_refs): Added to update refs
+	member from references.
+
+2013-12-01  Ian Dunn  <dunni@gnu.org>
+
+	* sen-parent.c (sen_parent_rem_sentence): Changed
+	sentence_get_line_no to sentence_get_grid_no.
+
 2013-11-22  Ian Dunn  <dunni@gnu.org>
 
 	* aio.c (aio_write_line_num): Writes the line number member
