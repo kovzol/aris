@@ -458,7 +458,13 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
           proof = aio_open (sd->file);
           if (!proof)
-            return NULL;
+            {
+              *ret_val = VALUE_TYPE_ERROR;
+              destroy_str_vec (refs);
+              destroy_vec (vars);
+              return _("Unable to open lemma file.");
+            }
+
           main_conns = current_conns;
         }
     }
