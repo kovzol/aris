@@ -163,14 +163,6 @@ sentence_btn_press (GtkWidget * widget, GdkEventButton * event, gpointer data)
 G_MODULE_EXPORT gboolean
 sentence_btn_release (GtkWidget * widget, GdkEventButton * event, gpointer data)
 {
-  /*
-  if (event->state == 0)
-    {
-      aris_proof_clear_selected (the_app->focused);
-      return TRUE;
-    }
-  */
-
   if (event->state == (GDK_CONTROL_MASK | GDK_BUTTON1_MASK) && event->button == 1)
     {
       // Only want to do anything if the ctrl key is pressed.
@@ -205,11 +197,6 @@ sentence_key_press (GtkWidget * widget, GdkEventKey * event, gpointer data)
   int prop;
 
   sen = (sentence *) data;
-
-  /*
-  if (event->state == 0 && event->keyval != 0)
-    aris_proof_clear_selected (the_app->focused);
-  */
 
   ctrl = event->state & GDK_CONTROL_MASK;
   prop = sentence_key (sen, event->keyval, ctrl);
@@ -532,12 +519,6 @@ gui_open (GtkWidget * window)
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser), FALSE);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
 
-  // There's a bug around here.
-  // First time, it happened in here.
-  // It tried loading the dialog, but didn't get far enough.
-  // free(): invalid pointer 874f10
-  // gtk_dialog_run
-
   if (gtk_dialog_run (GTK_DIALOG (file_chooser)) == GTK_RESPONSE_ACCEPT)
     {
       char * filename;
@@ -662,22 +643,22 @@ gui_save (aris_proof * ap, int save_as)
 
       proof = aris_proof_to_proof (ap);
       if (!proof)
-        return -1;
+        return AEC_MEM;
 
       ret = aio_save (proof, fname);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       undo_info ui;
       ui.type = -1;
 
       ret = aris_proof_set_changed (ap, 0, ui);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       ret = aris_proof_set_filename (ap, fname);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       free (fname);
     }
@@ -701,11 +682,11 @@ evaluate_line (aris_proof * ap, sentence * sen)
 
   lines = init_list ();
   if (!lines)
-    return -1;
+    return AEC_MEM;
 
   vars = init_list ();
   if (!vars)
-    return -1;
+    return AEC_MEM;
 
   int sen_ln;
   sen_ln = sentence_get_line_no (sen);
@@ -720,8 +701,8 @@ evaluate_line (aris_proof * ap, sentence * sen)
         break;
 
       conv_check = sd_convert_sexpr (SD(ev_sen));
-      if (conv_check == -1)
-        return -1;
+      if (conv_check == AEC_MEM)
+        return AEC_MEM;
 
       ret = sentence_can_select_as_ref (sen, ev_sen);
       if (ret == ln && conv_check == 0)
@@ -734,13 +715,13 @@ evaluate_line (aris_proof * ap, sentence * sen)
                      || rule == RULE_SQ)
             ? 0 : 1;
           ret = sexpr_collect_vars_to_proof (vars, SD(ev_sen)->sexpr, arb);
-          if (ret == -1)
-            return -1;
+          if (ret == AEC_MEM)
+            return AEC_MEM;
         }
 
       ret_chk = ls_push_obj (lines, SD(ev_sen));
       if (!ret_chk)
-        return -1;
+        return AEC_MEM;
     }
 
   sentence_refresh_refs (sen);
@@ -748,7 +729,7 @@ evaluate_line (aris_proof * ap, sentence * sen)
   char * ret_str;
   ret_str = sen_data_evaluate (SD(sen), &ret, vars, lines);
   if (!ret_str)
-    return -1;
+    return AEC_MEM;
 
   sentence_set_value (sen, ret);
   aris_proof_set_sb (ap, ret_str);
@@ -775,8 +756,8 @@ evaluate_proof (aris_proof * ap)
     {
       sen = ev_itr->value;
       ret = evaluate_line (ap, sen);
-      if (ret == -1)
-        return -1;
+      if (ret == AEC_MEM)
+        return AEC_MEM;
     }
 
   /*
@@ -786,8 +767,8 @@ evaluate_proof (aris_proof * ap)
   */
 
   ret = goal_check_all (ap->goal);
-  if (ret == -1)
-    return -1;
+  if (ret == AEC_MEM)
+    return AEC_MEM;
 
   return 0;
 }
@@ -946,8 +927,10 @@ gui_help ()
 
   if (!ret)
     {
-      gtk_show_uri (NULL, "http://www.gnu.org/software/aris/manual/",
-                    GDK_CURRENT_TIME, NULL);
+      ret = gtk_show_uri (NULL, "http://www.gnu.org/software/aris/manual/",
+                          GDK_CURRENT_TIME, NULL);
+      if (!ret)
+        return -1;
     }
 
   return 0;
@@ -1103,7 +1086,7 @@ gui_customize_show (GtkWidget * window)
           alloc_size += strlen (getenv ("HOMEDRIVE")) + 1;
 #endif
           path = (char *) calloc (alloc_size + 1, sizeof (char));
-          CHECK_ALLOC (path, -1);
+          CHECK_ALLOC (path, AEC_MEM);
 
 #ifdef WIN32
           path_pos += sprintf (path, "%s\\", getenv ("HOMEDRIVE"));
@@ -1257,7 +1240,7 @@ gui_submit_show (GtkWidget * window)
 
       entries = (struct submit_ent *) calloc (the_app->guis->num_stuff + 1,
                                                sizeof (struct submit_ent));
-      CHECK_ALLOC (entries, -1);
+      CHECK_ALLOC (entries, AEC_MEM);
 
       GList * gl;
       i = 0;
@@ -1373,7 +1356,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_SAVE:
       ret = gui_save (ap, 0);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       aris_proof_set_sb (ap, _("Proof Saved."));
       break;
@@ -1381,7 +1364,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_SAVE_AS:
       ret = gui_save (ap, 1);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       aris_proof_set_sb (ap, _("Proof Saved."));
       break;
@@ -1415,7 +1398,7 @@ menu_activated (aris_proof * ap, int menu_id)
       // gtk_text_layout_free_line_display
       sen = aris_proof_create_new_prem (ap);
       if (!sen)
-        return -1;
+        return AEC_MEM;
 
       aris_proof_set_sb (ap, _("Premise Created."));
       break;
@@ -1423,7 +1406,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_ADD_CONC:
       sen = aris_proof_create_new_conc (ap);
       if (!sen)
-        return -1;
+        return AEC_MEM;
 
       aris_proof_set_sb (ap, _("Conclusion Created."));
       break;
@@ -1431,7 +1414,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_ADD_SUB:
       sen = aris_proof_create_new_sub (ap);
       if (!sen)
-        return -1;
+        return AEC_MEM;
 
       aris_proof_set_sb (ap, _("Subproof Created."));
       break;
@@ -1439,7 +1422,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_END_SUB:
       sen = aris_proof_end_sub (ap);
       if (!sen)
-        return -1;
+        return AEC_MEM;
 
       aris_proof_set_sb (ap, _("Subproof Ended."));
       break;
@@ -1447,7 +1430,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_UNDO:
       ret = aris_proof_undo (ap, 1);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       if (ret == 0)
         aris_proof_set_sb (ap, _("Undo!"));
@@ -1458,7 +1441,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_REDO:
       ret = aris_proof_undo (ap, 0);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       if (ret == 0)
         aris_proof_set_sb (ap, _("Redo!"));
@@ -1470,7 +1453,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_COPY:
       ret = aris_proof_copy (ap);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       aris_proof_set_sb (ap, _("Sentence Copied."));
       break;
@@ -1478,7 +1461,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_KILL:
       ret = aris_proof_kill (ap);
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       if (ret == 1)
         aris_proof_set_sb (ap, _("The first sentence can not be killed."));
@@ -1570,7 +1553,7 @@ menu_activated (aris_proof * ap, int menu_id)
     case CONF_MENU_CONTENTS:
       ret = gui_help ();
       if (ret < 0)
-        return -1;
+        return AEC_MEM;
 
       aris_proof_set_sb (ap, _("Displaying Help."));
       break;
