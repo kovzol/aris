@@ -1527,3 +1527,45 @@ aris_proof_undo (aris_proof * ap, int undo)
   rc = op (ap, ui);
   return rc;
 }
+
+int
+aris_proof_to_latex (aris_proof * ap)
+{
+  proof_t * proof;
+  proof = aris_proof_to_proof (ap);
+  if (!proof)
+    return ERROR_CODE_MEMORY;
+
+  GtkFileFilter * file_filter;
+  file_filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name (file_filter, "LaTeX Files");
+  gtk_file_filter_add_pattern (file_filter, "*.tex");
+
+  char * filename;
+  GtkWidget * file_chooser;
+  file_chooser =
+    gtk_file_chooser_dialog_new (_("Select a file to Save to..."),
+                                 GTK_WINDOW (SEN_PARENT (ap)->window),
+                                 GTK_FILE_CHOOSER_ACTION_SAVE,
+                                 "_Cancel", GTK_RESPONSE_CANCEL,
+                                 "_Save", GTK_RESPONSE_ACCEPT,
+                                 NULL);
+  gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (file_chooser),
+                                        FALSE);
+  gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (file_chooser), TRUE);
+  gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER (file_chooser), TRUE);
+  gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (file_chooser), file_filter);
+  if (gtk_dialog_run (GTK_DIALOG (file_chooser)) == GTK_RESPONSE_ACCEPT)
+    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
+
+  gtk_widget_destroy (file_chooser);
+
+  int rc;
+  rc = convert_proof_latex (proof, filename);
+  if (rc == ERROR_CODE_MEMORY)
+    return ERROR_CODE_MEMORY;
+
+  proof_destroy (proof);
+
+  return 0;
+}

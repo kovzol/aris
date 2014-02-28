@@ -94,5 +94,6 @@ int aris_proof_undo_stack_pop (aris_proof * ap);
 
 int aris_proof_undo (aris_proof * ap, int undo);
 
+int aris_proof_to_latex (aris_proof * ap);
 
 #endif /*  ARIS_PROOF_H  */

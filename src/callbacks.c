@@ -1391,6 +1391,9 @@ menu_activated (aris_proof * ap, int menu_id)
        * Convert the aris proof to a proof object.
        * proof_convert_latex (proof, filename);
        */
+      ret = aris_proof_to_latex (ap);
+      if (ret == ERROR_CODE_MEMORY)
+        return ERROR_CODE_MEMORY;
       break;
 
     case CONF_MENU_CLOSE:
