@@ -132,7 +132,13 @@ undo_info_destroy (undo_info ui)
   ui.ls = NULL;
 }
 
-
+/* Determines the required operation based on the initial operation and undo/redo.
+ *  input:
+ *    undo - 1 if this is an undo operation, 0 if it is a redo.
+ *    type - the type of the operation that created this event.
+ *  output:
+ *    the operation required to reverse the old one.
+ */
 undo_op
 undo_determine_op (int undo, int type)
 {
@@ -156,32 +162,20 @@ undo_determine_op (int undo, int type)
   return op;
 }
 
-void
-undo_sen (int undo, aris_proof * ap, item_t * itm, sentence * sen, sen_data * sd)
-{
-  if (undo)
-    {
-      SEN_PARENT (ap)->focused = itm;
-      aris_proof_remove_sentence (ap, sen);
-    }
-  else
-    {
-      if (itm)
-        itm = itm->prev;
-      else
-        itm = SEN_PARENT (ap)->everything->tail;
-      SEN_PARENT (ap)->focused = itm;
-      aris_proof_create_sentence (ap, sd, 0);
-    }
-}
-
+/* Undo operation to remove a set of sentences.
+ *  input:
+ *    ap - the aris proof on which to operate.
+ *    ui - the undo info object that contains the undo information.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 undo_op_remove (aris_proof * ap, undo_info * ui)
 {
   list_t * ls;
   ls = init_list ();
   if (!ls)
-    return -1;
+    return AEC_MEM;
 
   item_t * itm, * ui_itr;
   int ln;
@@ -210,6 +204,13 @@ undo_op_remove (aris_proof * ap, undo_info * ui)
   return 0;
 }
 
+/* Undo operation to add sentences back in to a proof.
+ *  input:
+ *    ap - the aris proof on which to operate.
+ *    ui - the undo info object that contains the undo information.
+ *  output:
+ *    0 on success.
+ */
 int
 undo_op_add (aris_proof * ap, undo_info * ui)
 {
@@ -242,6 +243,13 @@ undo_op_add (aris_proof * ap, undo_info * ui)
   return 0;
 }
 
+/* Undo operation for text modification.
+ *  input:
+ *    ap - the aris proof on which to operate.
+ *    ui - the undo information object that contains the undo information.
+ *  output:
+ *    0 on success.
+ */
 int
 undo_op_mod (aris_proof * ap, undo_info * ui)
 {
@@ -266,6 +274,7 @@ undo_op_mod (aris_proof * ap, undo_info * ui)
 
 
       unsigned char * old_text = strdup (sentence_get_text (sen));
+      CHECK_ALLOC (old_text, AEC_MEM);
       SEN_PARENT(ap)->undo = 1;
       int ret = sentence_set_text (sen, sd->text);
       if (ret == -1)
@@ -273,6 +282,7 @@ undo_op_mod (aris_proof * ap, undo_info * ui)
 
       free (sd->text);
       sd->text = strdup (old_text);
+      CHECK_ALLOC (sd->text, AEC_MEM);
       free (old_text);
 
       buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (sen->entry));
