@@ -148,19 +148,19 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
   if (old_sd->text)
     {
       new_sd->text = strdup (old_sd->text);
-      CHECK_ALLOC (new_sd->text, -1);
+      CHECK_ALLOC (new_sd->text, AEC_MEM);
     }
 
   if (old_sd->file)
     {
       new_sd->file = strdup (old_sd->file);
-      CHECK_ALLOC (new_sd->file, -1);
+      CHECK_ALLOC (new_sd->file, AEC_MEM);
     }
 
   if (old_sd->sexpr)
     {
       new_sd->sexpr = strdup (old_sd->sexpr);
-      CHECK_ALLOC (new_sd->sexpr, -1);
+      CHECK_ALLOC (new_sd->sexpr, AEC_MEM);
     }
 
   new_sd->refs = NULL;
@@ -178,13 +178,13 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
         len++;
 
       new_sd->refs = (short*) calloc (len + 1, sizeof (short));
-      CHECK_ALLOC (new_sd->refs, -1);
+      CHECK_ALLOC (new_sd->refs, AEC_MEM);
       memcpy (new_sd->refs, old_sd->refs, sizeof(short)*(len+1));
     }
   else
     {
       new_sd->refs = (short*) calloc (1, sizeof(short));
-      CHECK_ALLOC (new_sd->refs, -1);
+      CHECK_ALLOC (new_sd->refs, AEC_MEM);
       new_sd->refs[0] = REF_END;
     }
 
@@ -192,13 +192,13 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
     {
       len = old_sd->depth;
       new_sd->indices = (int*) calloc (len + 1, sizeof (int));
-      CHECK_ALLOC (new_sd->indices, -1);
+      CHECK_ALLOC (new_sd->indices, AEC_MEM);
       memcpy (new_sd->indices, old_sd->indices, sizeof(int)*(len+1));
     }
   else
     {
       new_sd->indices = (int*) calloc (1, sizeof (int));
-      CHECK_ALLOC (new_sd->indices, -1);
+      CHECK_ALLOC (new_sd->indices, AEC_MEM);
       new_sd->indices[0] = -1;
     }
 
@@ -225,18 +225,18 @@ sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
       unsigned char * tmp_str, * sexpr_sen;
       tmp_str = format_string (text);
       if (!tmp_str)
-        return -1;
+        return AEC_MEM;
 
       ret = check_text (tmp_str);
-      if (ret == -1)
-        return -1;
+      if (ret == AEC_MEM)
+        return AEC_MEM;
 
       if (ret != 0)
         return -2;
 
       sexpr_sen = convert_sexpr (tmp_str);
       if (!sexpr_sen)
-        return -1;
+        return AEC_MEM;
       free (tmp_str);
       *sexpr = sexpr_sen;
     }
@@ -287,7 +287,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
   int ret;
   ret = check_text (text);
-  if (ret == -1)
+  if (ret == AEC_MEM)
     return NULL;
 
   *ret_val = VALUE_TYPE_ERROR;
@@ -345,7 +345,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
       unsigned char * tmp_ref_str = format_string (ref_data->text);
 
       ret = check_text (tmp_ref_str);
-      if (ret == -1)
+      if (ret == AEC_MEM)
         return NULL;
       free (tmp_ref_str);
 
@@ -361,7 +361,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
       ref_text = ref_data->sexpr;
 
       ret = vec_str_add_obj (refs, ref_text);
-      if (ret == -1)
+      if (ret == AEC_MEM)
         return NULL;
 
       if (ref_data->subproof)
@@ -402,7 +402,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
               ref_text = sen_0->sexpr;
 
               ret = vec_str_add_obj (refs, ref_text);
-              if (ret == -1)
+              if (ret == AEC_MEM)
                 return NULL;
             }
           else if (sd->rule == RULE_SP)
@@ -422,13 +422,13 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
     {
       variable * var = var_itr->value;
       ret = vec_add_obj (vars, var);
-      if (ret == -1)
+      if (ret == AEC_MEM)
         return NULL;
     }
 
   char * fin_text;
   ret = sen_convert_sexpr (sd->text, &(sd->sexpr));
-  if (ret == -1)
+  if (ret == AEC_MEM)
     return NULL;
 
   fin_text = sd->sexpr;
@@ -448,7 +448,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
             return NULL;
 
           ret = parse_thy (sd->file, proof);
-          if (ret == -1)
+          if (ret == AEC_MEM)
             return NULL;
         }
       else
