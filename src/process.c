@@ -105,6 +105,12 @@ die_spaces_die (unsigned char * in_str)
   return ret_str;
 }
 
+/* Removes a comment from the end of a string.
+ *  input:
+ *    in_str - the string from which to remove a comment.
+ *  output:
+ *    The string without the comment, or NULL on memory error.
+ */
 unsigned char *
 remove_comment (unsigned char * in_str)
 {
@@ -127,6 +133,12 @@ remove_comment (unsigned char * in_str)
   return ret_str;
 }
 
+/* Strips a comment, and removes the spaces from a string.
+ *  input:
+ *    in_str - the string to format.
+ *  output:
+ *    The formatted string, or NULL on memory error.
+ */
 unsigned char *
 format_string (unsigned char * in_str)
 {
@@ -262,8 +274,8 @@ parse_tags (const unsigned char * in_str, const int init_pos,
  *    out_str - receives the parentheses construct, including parentheses.
  *  output:
  *    on success - the position of the closing parentheses in the input string.
- *    on error - -1.
- *    on memory error - -2.
+ *    on error - -2.
+ *    on memory error - -1.
  */
 int
 parse_parens (const unsigned char * in_str, const int init_pos,
@@ -279,8 +291,8 @@ parse_parens (const unsigned char * in_str, const int init_pos,
  *    out_str - receives the parentheses construct, including parentheses.
  *  output:
  *    on success - the position of the opening parentheses in the input string.
- *    on error - -1.
- *    on memory error - -2.
+ *    on error - -2.
+ *    on memory error - -1.
  */
 int
 reverse_parse_parens (const unsigned char * in_str, const int init_pos, unsigned char ** out_str)
