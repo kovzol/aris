@@ -131,7 +131,7 @@ proc_mp (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc)
   unsigned char * lsen, * rsen;
 
   ftc = sexpr_find_top_connective (con_sen, S_CON, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
 
   if (ftc < 0)
@@ -170,7 +170,7 @@ proc_ad (unsigned char * prem, unsigned char * conc)
     return NULL;
 
   gg = sexpr_get_generalities (conc, S_OR, gg_vec);
-  if (gg == -1)
+  if (gg == AEC_MEM)
     return NULL;
 
   if (gg == 1)
@@ -203,7 +203,7 @@ proc_sm (unsigned char * prem, unsigned char * conc)
     return  NULL;
 
   gg = sexpr_get_generalities (prem, S_AND, gg_vec);
-  if (gg == -1)
+  if (gg == AEC_MEM)
     return NULL;
 
   if (gg == 1)
@@ -242,7 +242,7 @@ proc_cn (vec_t * prems, unsigned char * conc)
     return NULL;
 
   gg = sexpr_get_generalities (conc, S_AND, gg_vec);
-  if (gg == -1)
+  if (gg == AEC_MEM)
     return NULL;
 
   if (gg == 1)
@@ -253,7 +253,7 @@ proc_cn (vec_t * prems, unsigned char * conc)
 
   int cmp_chk;
   cmp_chk = vec_str_cmp (prems, gg_vec);
-  if (cmp_chk == -1)
+  if (cmp_chk == AEC_MEM)
     return NULL;
 
   destroy_str_vec (gg_vec);
@@ -307,7 +307,7 @@ proc_hs (vec_t * prems, unsigned char * conc)
       cur_prem = vec_str_nth (prems, i);
 
       ftc_chk = sexpr_find_top_connective (cur_prem, S_CON, &lsen, &rsen);
-      if (ftc_chk == -1)
+      if (ftc_chk == AEC_MEM)
 	return NULL;
 
       if (ftc_chk < 0)
@@ -422,7 +422,7 @@ proc_ds (vec_t * prems, unsigned char * conc)
     return NULL;
 
   gg = sexpr_get_generalities (dis_ref, S_OR, gg_vec);
-  if (gg == -1)
+  if (gg == AEC_MEM)
     return NULL;
 
   if (gg == 1)
@@ -470,7 +470,7 @@ proc_ds (vec_t * prems, unsigned char * conc)
     return NULL;
 
   ret_chk = vec_str_cmp (gg_vec, not_refs);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   destroy_str_vec (gg_vec);
@@ -495,7 +495,7 @@ proc_ex (unsigned char * conc)
   unsigned char * lsen, * rsen;
 
   ftc = sexpr_find_top_connective (conc, S_OR, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
 
   if (ftc < 0)
@@ -552,7 +552,7 @@ proc_cd (vec_t * prems, unsigned char * conc)
     return NULL;
 
   conc_gg = sexpr_get_generalities (conc, S_OR, conc_gg_vec);
-  if (conc_gg == -1)
+  if (conc_gg == AEC_MEM)
     return NULL;
 
   if (conc_gg == 1)
@@ -583,7 +583,7 @@ proc_cd (vec_t * prems, unsigned char * conc)
       cur_ref = vec_str_nth (prems, i);
 
       ftc_chk = sexpr_find_top_connective (cur_ref, S_CON, &lsen, &rsen);
-      if (ftc_chk == -1)
+      if (ftc_chk == AEC_MEM)
 	return NULL;
 
       if (ftc_chk < 0)
@@ -612,7 +612,7 @@ proc_cd (vec_t * prems, unsigned char * conc)
     return NULL;
 
   ref_gg = sexpr_get_generalities (dis_ref, S_OR, ref_gg_vec);
-  if (ref_gg == -1)
+  if (ref_gg == AEC_MEM)
     return NULL;
 
   if (ref_gg == 1)
@@ -627,11 +627,11 @@ proc_cd (vec_t * prems, unsigned char * conc)
   int ants_ret_chk, cons_ret_chk;
 
   ants_ret_chk = vec_str_cmp (ref_gg_vec, ants);
-  if (ants_ret_chk == -1)
+  if (ants_ret_chk == AEC_MEM)
     return NULL;
 
   cons_ret_chk = vec_str_cmp (conc_gg_vec, cons);
-  if (cons_ret_chk == -1)
+  if (cons_ret_chk == AEC_MEM)
     return NULL;
 
   destroy_str_vec (conc_gg_vec);

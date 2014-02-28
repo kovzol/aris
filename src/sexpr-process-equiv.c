@@ -54,11 +54,11 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 
   gens_0 = init_vec (sizeof (char *));
   if (!gens_0)
-    return -1;
+    return AEC_MEM;
 
   gens_1 = init_vec (sizeof (char *));
   if (!gens_1)
-    return -1;
+    return AEC_MEM;
 
   unsigned char conn_0[S_CL + 1], conn_1[S_CL + 1];
 
@@ -66,12 +66,12 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
   conn_1[0] = '\0';
 
   gg_0 = sexpr_get_generalities (sen_0, conn_0, gens_0);
-  if (gg_0 == -1)
-    return -1;
+  if (gg_0 == AEC_MEM)
+    return AEC_MEM;
 
   gg_1 = sexpr_get_generalities (sen_1, conn_1, gens_1);
-  if (gg_1 == -1)
-    return -1;
+  if (gg_1 == AEC_MEM)
+    return AEC_MEM;
 
   if (mode == 0)
     {
@@ -103,12 +103,12 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
       unsigned char * car_0, * car_1, * cdr_0, * cdr_1;
 
       pos0 = sexpr_str_car_cdr (sen_0, &car_0, &cdr_0);
-      if (pos0 == -1)
-	return -1;
+      if (pos0 == AEC_MEM)
+	return AEC_MEM;
 
       pos1 = sexpr_str_car_cdr (sen_1, &car_1, &cdr_1);
-      if (pos1 == -1)
-	return -1;
+      if (pos1 == AEC_MEM)
+	return AEC_MEM;
 
       // Check for a negation.
       if (!strcmp (car_0, S_NOT) && !strcmp (car_1, S_NOT))
@@ -118,8 +118,8 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 
 	  int ret;
 	  ret = recurse_mode (cdr_0, cdr_1, mode);
-	  if (ret == -1)
-	    return -1;
+	  if (ret == AEC_MEM)
+	    return AEC_MEM;
 
 	  free (cdr_0); free(cdr_1);
 
@@ -142,8 +142,8 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 
 	  int cmp;
 	  cmp = recurse_mode (cdr_0, cdr_1, mode);
-	  if (cmp == -1)
-	    return -1;
+	  if (cmp == AEC_MEM)
+	    return AEC_MEM;
 
 	  free (cdr_0); free(cdr_1);
 
@@ -183,8 +183,8 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
       else
 	cmp = vec_str_sub (gens_1, gens_0);
 
-      if (cmp == -1)
-	return -1;
+      if (cmp == AEC_MEM)
+	return AEC_MEM;
 
       if (cmp == 0)
 	{
@@ -211,8 +211,8 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 	continue;
 
       ret = recurse_mode (cur_0, cur_1, mode);
-      if (ret == -1)
-	return -1;
+      if (ret == AEC_MEM)
+	return AEC_MEM;
 
       if (ret != 0)
 	{
@@ -371,7 +371,7 @@ proc_im (unsigned char * prem, unsigned char * conc)
   unsigned char * lsen, * rsen, * n_lsen;
 
   ftc = sexpr_find_top_connective (tmp_str, S_OR, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
 
   free (tmp_str);
@@ -499,7 +499,7 @@ proc_dm (unsigned char * prem, unsigned char * conc, int mode_guess)
 
       conn[0] = '\0';
       gg = sexpr_get_generalities (elim_sen, conn, gg_vec);
-      if (gg == -1)
+      if (gg == AEC_MEM)
 	return NULL;
       free (elim_sen);
 
@@ -687,7 +687,7 @@ proc_as (unsigned char * prem, unsigned char * conc)
 
   int ret_chk;
   ret_chk = sexpr_find_unmatched (ln_sen, sh_sen, &li, &si);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   int tmp_pos;
@@ -750,7 +750,7 @@ proc_co (unsigned char * prem, unsigned char * conc)
 {
   int ret_chk;
   ret_chk = recurse_mode (prem, conc, 0);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   switch (ret_chk)
@@ -772,7 +772,7 @@ proc_id (unsigned char * prem, unsigned char * conc)
 
   int ret_chk;
   ret_chk = recurse_mode (ln_sen, sh_sen, 1);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   switch (ret_chk)
@@ -834,7 +834,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
       mc[0] = '\0';
 
       ftc = sexpr_find_top_connective (tmp_str, mc, &lsen, &rsen);
-      if (ftc == -1)
+      if (ftc == AEC_MEM)
 	return NULL;
       free (tmp_str);
 
@@ -864,7 +864,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 
       rc[0] = '\0';
       r_gg = sexpr_get_generalities (rsen, rc, rsens);
-      if (r_gg == -1)
+      if (r_gg == AEC_MEM)
 	return NULL;
       free (rsen);
 
@@ -954,7 +954,7 @@ proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 	return NULL;
 
       gg = sexpr_get_generalities (scope, conn, gg_vec);
-      if (gg == -1)
+      if (gg == AEC_MEM)
 	return NULL;
       free (scope);
 
@@ -1044,7 +1044,7 @@ proc_eq (unsigned char * prem, unsigned char * conc)
 
   lsen = rsen = NULL;
   ftc = sexpr_find_top_connective (tmp_str, S_BIC, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
   free (tmp_str);
 
@@ -1235,7 +1235,7 @@ proc_ep (unsigned char * prem, unsigned char * conc)
 
   int ret_chk;
   ret_chk = sexpr_find_unmatched (and_sen, con_sen, &ai, &ci);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   ai--;
@@ -1260,7 +1260,7 @@ proc_ep (unsigned char * prem, unsigned char * conc)
 
   lsen = rsen = NULL;
   ftc = sexpr_find_top_connective (tmp_str, S_CON, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
   free (tmp_str);
 
@@ -1279,7 +1279,7 @@ proc_ep (unsigned char * prem, unsigned char * conc)
     return NULL;
 
   ftc = sexpr_get_generalities (lsen, S_AND, a_sens);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
   free (lsen);
 
@@ -1384,7 +1384,7 @@ proc_sb (unsigned char * prem, unsigned char * conc)
 
       int ret_chk;
       ret_chk = sexpr_find_unmatched (ln_sen, sh_sen, &li, &si);
-      if (ret_chk == -1)
+      if (ret_chk == AEC_MEM)
 	return NULL;
 
       if (li < 0)
@@ -1409,7 +1409,7 @@ proc_sb (unsigned char * prem, unsigned char * conc)
   tconn[0] = '\0';
   t_lsen = t_rsen = NULL;
   ftc = sexpr_find_top_connective (tmp_str, tconn, &t_lsen, &t_rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
 
   free (tmp_str);
@@ -1436,7 +1436,7 @@ proc_sb (unsigned char * prem, unsigned char * conc)
   conn[0] = '\0';
   lsen = rsen = NULL;
   ftc = sexpr_find_top_connective (t_rsen, conn, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
   free (t_rsen);
   if (rsen)  free (rsen);

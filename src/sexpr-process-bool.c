@@ -129,7 +129,7 @@ proc_bi (unsigned char * prem, unsigned char * conc)
 
       int ret_chk;
       ret_chk = sexpr_find_unmatched (ln_sen, sh_sen, &li, &si);
-      if (ret_chk == -1)
+      if (ret_chk == AEC_MEM)
 	return NULL;
 
       if (li < 0)
@@ -160,7 +160,7 @@ proc_bi (unsigned char * prem, unsigned char * conc)
   lsen = rsen = NULL;
 
   ftc = sexpr_find_top_connective (tmp_str, conn, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
   free (tmp_str);
 
@@ -270,7 +270,7 @@ proc_bd (unsigned char * prem, unsigned char * conc)
     return NULL;
 
   gg = sexpr_get_generalities (tmp_str, conn, gens);
-  if (gg == -1)
+  if (gg == AEC_MEM)
     return NULL;
   free (tmp_str);
 
@@ -370,7 +370,7 @@ proc_bn (unsigned char * prem, unsigned char * conc)
   conn[0] = '\0';
 
   ftc = sexpr_find_top_connective (tmp_str, conn, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
   free (tmp_str);
 

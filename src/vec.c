@@ -123,11 +123,7 @@ vec_add_obj (vec_t * v, const void * more)
       v->alloc_space *= 2;
 
       v->stuff = realloc (v->stuff, v->alloc_space * v->size_stuff);
-      if (!v->stuff)
-        {
-          perror (NULL);
-          return -1;
-        }
+      CHECK_ALLOC (v->stuff, AEC_MEM);
     }
 
   memcpy (v->stuff + ((v->num_stuff - 1) * v->size_stuff),
@@ -153,20 +149,12 @@ vec_str_add_obj (vec_t * v, unsigned char * more)
       v->alloc_space *= 2;
 
       v->stuff = realloc (v->stuff, v->alloc_space * sizeof (char *));
-      if (!v->stuff)
-        {
-          perror (NULL);
-          return -1;
-        }
+      CHECK_ALLOC (v->stuff, AEC_MEM);
     }
 
   unsigned char * obj;
   obj = (unsigned char *) calloc (strlen (more) + 1, sizeof (char));
-  if (!obj)
-    {
-      perror (NULL);
-      return -1;
-    }
+  CHECK_ALLOC (obj, AEC_MEM);
 
   strcpy (obj, more);
   memcpy (v->stuff + ((v->num_stuff - 1) * sizeof (char *)),
@@ -203,11 +191,7 @@ vec_clear (vec_t * vec)
   vec->num_stuff = 0;
   vec->alloc_space = 1;
   vec->stuff = calloc (1, vec->size_stuff);
-  if (!vec->stuff)
-    {
-      perror (NULL);
-      return -1;
-    }
+  CHECK_ALLOC (vec->stuff, AEC_MEM);
   return 0;
 }
 
@@ -284,11 +268,7 @@ vec_str_cmp (vec_t * vec_0, vec_t * vec_1)
   short * check;
 
   check = (short *) calloc (vec_1->num_stuff, sizeof (short));
-  if (!check)
-    {
-      perror (NULL);
-      return -1;
-    }
+  CHECK_ALLOC (check, AEC_MEM);
 
   for (i = 0; i < vec_0->num_stuff; i++)
     {
@@ -350,11 +330,7 @@ vec_str_sub (vec_t * vec_0, vec_t * vec_1)
   short * check;
 
   check = (short *) calloc (vec_0->num_stuff, sizeof (short));
-  if (!check)
-    {
-      perror (NULL);
-      return -1;
-    }
+  CHECK_ALLOC (check, AEC_MEM);
 
   for (i = 0; i < vec_1->num_stuff; i++)
     {

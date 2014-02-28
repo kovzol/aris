@@ -33,11 +33,11 @@ help_fv (unsigned char * eq_sen, unsigned char * oth_sen, unsigned char * conc)
 
   args = init_vec (sizeof (char *));
   if (!args)
-    return -1;
+    return AEC_MEM;
 
   cmp = sexpr_get_pred_args (eq_sen, &pred, args);
-  if (cmp == -1)
-    return -1;
+  if (cmp == AEC_MEM)
+    return AEC_MEM;
   free (pred);
 
   if (cmp != 2)
@@ -83,7 +83,7 @@ help_fv (unsigned char * eq_sen, unsigned char * oth_sen, unsigned char * conc)
 
   cons_sen = (unsigned char *) calloc (strlen (oth_sen) + strlen (conc_var) + 1,
 				       sizeof (char));
-  CHECK_ALLOC (cons_sen, -1);
+  CHECK_ALLOC (cons_sen, AEC_MEM);
 
   strncpy (cons_sen, oth_sen, i - cmp);
   cons_pos = i - cmp;
@@ -94,8 +94,8 @@ help_fv (unsigned char * eq_sen, unsigned char * oth_sen, unsigned char * conc)
 
   int ret_chk;
   ret_chk = help_fv (eq_sen, cons_sen, conc);
-  if (ret_chk == -1)
-    return -1;
+  if (ret_chk == AEC_MEM)
+    return AEC_MEM;
 
   free (cons_sen);
   if (ret_chk == 0 || ret_chk == 1)
@@ -213,7 +213,7 @@ proc_ug (unsigned char * prem, unsigned char * conc, vec_t * vars)
   int ret_chk;
 
   ret_chk = sexpr_quant_infer (conc, prem, S_UNV, 1, vars);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   if (ret_chk == 0)
@@ -229,7 +229,7 @@ proc_ui (unsigned char * prem, unsigned char * conc)
 {
   int ret_chk;
   ret_chk = sexpr_quant_infer (prem, conc, S_UNV, 0, NULL);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   if (ret_chk == 0)
@@ -243,7 +243,7 @@ proc_eg (unsigned char * prem, unsigned char * conc)
 {
   int ret_chk;
   ret_chk = sexpr_quant_infer (conc, prem, S_EXL, 0, NULL);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   if (ret_chk == 0)
@@ -257,7 +257,7 @@ proc_ei (unsigned char * prem, unsigned char * conc, vec_t * vars)
 {
   int ret_chk;
   ret_chk = sexpr_quant_infer (prem, conc, S_EXL, 2, vars);
-  if (ret_chk == -1)
+  if (ret_chk == AEC_MEM)
     return NULL;
 
   if (ret_chk == 0)
@@ -273,7 +273,7 @@ proc_bv (unsigned char * prem, unsigned char * conc)
 {
   int i, pi, ci;
   i = find_difference (prem, conc);
-  if (i == -1)
+  if (i == AEC_MEM)
     return NO_DIFFERENCE;
 
   pi = ci = i;
@@ -358,7 +358,7 @@ proc_bv (unsigned char * prem, unsigned char * conc)
     return NULL;
 
   tmp_p = sexpr_get_quant_vars (p_str, p_vars);
-  if (tmp_p == -1)
+  if (tmp_p == AEC_MEM)
     return NULL;
   free (p_str);
 
@@ -366,7 +366,7 @@ proc_bv (unsigned char * prem, unsigned char * conc)
   int cmp;
 
   tmp_p = sexpr_replace_var (p_scope, c_var, p_var, p_vars, &oth_sen);
-  if (tmp_p == -1)
+  if (tmp_p == AEC_MEM)
     return NULL;
 
   destroy_vec (p_vars);
@@ -464,7 +464,7 @@ proc_nq (unsigned char * prem, unsigned char * conc)
     return NULL;
 
   gqv = sexpr_get_quant_vars (tmp_str, offsets);
-  if (gqv == -1)
+  if (gqv == AEC_MEM)
     return NULL;
   free (tmp_str);
   destroy_vec (offsets);
@@ -568,7 +568,7 @@ proc_pr (unsigned char * prem, unsigned char * conc)
     return NULL;
 
   gg = sexpr_get_generalities (scope, conn, gg_vec);
-  if (gg == -1)
+  if (gg == AEC_MEM)
     return NULL;
   free (scope);
 
@@ -616,7 +616,7 @@ proc_pr (unsigned char * prem, unsigned char * conc)
 	break;
 
       ret_chk = vec_str_add_obj (var_gens, cur_gen);
-      if (ret_chk == -1)
+      if (ret_chk == AEC_MEM)
 	return NULL;
     }
 
@@ -633,7 +633,7 @@ proc_pr (unsigned char * prem, unsigned char * conc)
 	}
 
       ret_chk = vec_str_add_obj (nul_gens, cur_gen);
-      if (ret_chk == -1)
+      if (ret_chk == AEC_MEM)
 	return NULL;
     }
 
@@ -716,7 +716,7 @@ proc_ii (unsigned char * conc)
     return NULL;
 
   gpa = sexpr_get_pred_args (conc, &pred, args);
-  if (gpa == -1)
+  if (gpa == AEC_MEM)
     return NULL;
 
   if (gpa != 2 || strcmp (pred, "="))
@@ -758,11 +758,11 @@ proc_fv (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc)
       int ret_0, ret_1;
 
       ret_0 = help_fv (prem_0, prem_1, conc);
-      if (ret_0 == -1)
+      if (ret_0 == AEC_MEM)
 	return NULL;
 
       ret_1 = help_fv (prem_1, prem_0, conc);
-      if (ret_1 == -1)
+      if (ret_1 == AEC_MEM)
 	return NULL;
 
       if (ret_0 == 0 || ret_1 == 0)
@@ -787,7 +787,7 @@ proc_fv (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc)
 
   int ret;
   ret = help_fv (eq_sen, oth_sen, conc);
-  if (ret == -1)
+  if (ret == AEC_MEM)
     return NULL;
 
   if (ret == 0)

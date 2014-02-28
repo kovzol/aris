@@ -128,8 +128,8 @@ sexpr_id_chk (unsigned char * cur_ref, int * pf_id, vec_t * cur_sen_ids)
 
 	default:
 	  ret_chk = sexpr_get_part (cur_ref, l, &new_sen);
-	  if (ret_chk == -1)
-	    return -1;
+	  if (ret_chk == AEC_MEM)
+	    return AEC_MEM;
 
 	  l = ret_chk;
 	  int got_it = 0;
@@ -160,12 +160,12 @@ sexpr_id_chk (unsigned char * cur_ref, int * pf_id, vec_t * cur_sen_ids)
 
 	      sen_id new_sen_id;
 	      new_sen_id.sen = strdup (new_sen);
-	      CHECK_ALLOC (new_sen_id.sen, -1);
+	      CHECK_ALLOC (new_sen_id.sen, AEC_MEM);
 	      new_sen_id.id = pf_id[k];
 
 	      ret_chk = vec_add_obj (cur_sen_ids, &new_sen_id);
 	      if (ret_chk < 0)
-		return -1;
+		return AEC_MEM;
 	    }
 	  else
 	    {
@@ -223,15 +223,15 @@ equiv_lemma (unsigned char * prem,
       sen_ids = init_vec (sizeof (sen_id));
 
       rc = sexpr_id_chk (prem + i, pf_ids[0], sen_ids);
-      if (rc == -1)
-	return -1;
+      if (rc == AEC_MEM)
+	return AEC_MEM;
 
       if (!rc)
 	continue;
 
       rc = sexpr_id_chk (conc + i, pf_ids[1], sen_ids);
-      if (rc == -1)
-	return -1;
+      if (rc == AEC_MEM)
+	return AEC_MEM;
 
       if (!rc)
 	{
@@ -336,7 +336,7 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
 	break;
 
       ret_chk = sen_convert_sexpr (sd->text, &sexpr);
-      if (ret_chk == -1)
+      if (ret_chk == AEC_MEM)
 	return NULL;
 
       ret_chk = vec_str_add_obj (pf_sens, sexpr);
@@ -359,7 +359,7 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
 
       sd = itr->value;
       ret_chk = sen_convert_sexpr (sd, &sexpr);
-      if (ret_chk == -1)
+      if (ret_chk == AEC_MEM)
 	return NULL;
 
       ret_chk = vec_str_add_obj (pf_sens, sexpr);
@@ -381,14 +381,14 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
   for (i = 0; i < pf_sens->num_stuff; i++)
     {
       ret_chk = sexpr_get_ids (vec_str_nth (pf_sens, i), &pf_ids[i], pf_sen_ids);
-      if (ret_chk == -1)
+      if (ret_chk == AEC_MEM)
 	return NULL;
     }
 
   if (proof->boolean)
     {
       ret_chk = equiv_lemma (vec_str_nth (prems, 0), conc, pf_ids);
-      if (ret_chk == -1)
+      if (ret_chk == AEC_MEM)
 	return NULL;
 
       if (!ret_chk)
@@ -480,7 +480,7 @@ proc_sp (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc)
 
   lsen = rsen = NULL;
   ftc = sexpr_find_top_connective (conc, S_CON, &lsen, &rsen);
-  if (ftc == -1)
+  if (ftc == AEC_MEM)
     return NULL;
 
   if (ftc < 0)
@@ -535,7 +535,7 @@ proc_sq (unsigned char * conc, vec_t * vars)
     return NULL;
 
   gpa = sexpr_get_quant_vars (conc, offsets);
-  if (gpa == -1)
+  if (gpa == AEC_MEM)
     return NULL;
   destroy_vec (offsets);
 
@@ -552,7 +552,7 @@ proc_sq (unsigned char * conc, vec_t * vars)
     return NULL;
 
   gpa = sexpr_get_pred_args (scope, &pred, args);
-  if (gpa == -1)
+  if (gpa == AEC_MEM)
     return NULL;
   free (pred);
   free (scope);
@@ -566,7 +566,7 @@ proc_sq (unsigned char * conc, vec_t * vars)
   if (!args_0)
     return NULL;
   gpa = sexpr_get_pred_args (arg_0, &pred, args_0);
-  if (gpa == -1)
+  if (gpa == AEC_MEM)
     return NULL;
 
   gpa = !strcmp (pred, "v");
@@ -616,7 +616,7 @@ proc_sq (unsigned char * conc, vec_t * vars)
 	return NULL;
 
       gpa = sexpr_get_pred_args (tmp_arg, &pred, args_1);
-      if (gpa == -1)
+      if (gpa == AEC_MEM)
 	return NULL;
 
       if (gpa == 0)
@@ -713,7 +713,7 @@ proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, v
     return NULL;
 
   chk = sexpr_get_quant_vars (conc, var_offs);
-  if (chk == -1)
+  if (chk == AEC_MEM)
     return NULL;
 
   if (chk == 0)
@@ -732,7 +732,7 @@ proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, v
   sprintf (z_var, "(z %s)", c_var);
 
   chk = sexpr_replace_var (c_scope, z_var, c_var, var_offs, &z_scope);
-  if (chk == -1)
+  if (chk == AEC_MEM)
     return NULL;
   free (z_var);
 
@@ -743,7 +743,7 @@ proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, v
   sprintf (s_var, "(s %s)", c_var);
 
   chk = sexpr_replace_var (c_scope, s_var, c_var, var_offs, &s_scope);
-  if (chk == -1)
+  if (chk == AEC_MEM)
     return NULL;
   free (s_var);
 
