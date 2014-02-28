@@ -150,7 +150,7 @@ proc_bi (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str;
 
   tmp_pos = parse_parens (ln_sen, li, &tmp_str);
-  if (tmp_pos == ERROR_CODE_MEMORY)
+  if (tmp_pos == AEC_MEM)
     return NULL;
 
   int ftc;
@@ -256,7 +256,7 @@ proc_bd (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str;
 
   tmp_pos = parse_parens (ln_sen, i, &tmp_str);
-  if (tmp_pos == ERROR_CODE_MEMORY)
+  if (tmp_pos == AEC_MEM)
     return NULL;
   t_len = strlen (tmp_str);
 
@@ -361,7 +361,7 @@ proc_bn (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str;
 
   tmp_pos = parse_parens (ln_sen, i, &tmp_str);
-  if (tmp_pos == ERROR_CODE_MEMORY)
+  if (tmp_pos == AEC_MEM)
     return NULL;
 
   int ftc;
@@ -447,7 +447,7 @@ proc_sn (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str, * elm_str;
 
   tmp_pos = parse_parens (ln_sen, i, &tmp_str);
-  if (tmp_pos == ERROR_CODE_MEMORY)
+  if (tmp_pos == AEC_MEM)
     return NULL;
 
   elm_str = sexpr_elim_not (tmp_str);

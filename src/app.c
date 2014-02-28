@@ -83,17 +83,18 @@ init_app (int boolean, int verbose)
 
   int ret_chk;
 
-  // Might change this to do the following:
-  // 1. Load default configuration
-  // 2. CHECK user configuration file.
-  // 3.  If it checks out, load it.
-  // 4.  Otherwise, don't do anything with it.
+  // Initialize the fonts and background colors.
 
   int i;
   for (i = 0; i < NUM_FONT_TYPES; i++)
     app->fonts[i] = NULL;
   for (i = 0; i < NUM_BG_COLORS; i++)
     app->bg_colors[i] = NULL;
+
+  /* First, read the default configuration.
+   * This way, if there are any problems reading the user's
+   *   configuration, then there will already be one in place.
+   */
 
   ret_chk = the_app_read_default_config (app);
   if (ret_chk == -1)
@@ -276,6 +277,12 @@ the_app_get_font_by_name (aris_app * app, char * name)
   return ret;
 }
 
+/* Read the default configuration.
+ *  input:
+ *    app - the main application structure.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 the_app_read_default_config (aris_app * app)
 {
@@ -284,8 +291,8 @@ the_app_read_default_config (aris_app * app)
   unsigned char * conf_def = config_default ();
 
   ret_chk = conf_file_read (conf_def, app);
-  if (ret_chk == -1)
-    return -1;
+  if (ret_chk == AEC_MEM)
+    return AEC_MEM;
 
   return 0;
 }
@@ -312,7 +319,7 @@ the_app_read_config_file (aris_app * app)
   alloc_size += strlen (getenv ("HOMEDRIVE")) + 1;
 #endif
   path = (char *) calloc (alloc_size + 1, sizeof (char));
-  CHECK_ALLOC (path, -1);
+  CHECK_ALLOC (path, AEC_MEM);
 
 #ifdef WIN32
   path_pos += sprintf (path, "%s\\", getenv ("HOMEDRIVE"));

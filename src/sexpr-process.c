@@ -43,8 +43,8 @@ sexpr_get_part (unsigned char * in_str, unsigned int init_pos, unsigned char ** 
     {
     case '(':
       tmp_pos = parse_parens (in_str, init_pos, out_str);
-      if (tmp_pos == ERROR_CODE_MEMORY)
-	return ERROR_CODE_MEMORY;
+      if (tmp_pos == AEC_MEM)
+	return AEC_MEM;
 
       fin_pos = tmp_pos + 1;
       break;
@@ -152,8 +152,8 @@ sexpr_str_car_cdr (unsigned char * in_str,
   tmp_pos += 1;
 
   tmp_pos = parse_parens (in_str, tmp_pos, cdr);
-  if (tmp_pos == ERROR_CODE_MEMORY)
-    return ERROR_CODE_MEMORY;
+  if (tmp_pos == AEC_MEM)
+    return AEC_MEM;
 
   if (tmp_pos < 0)
     return -2;
@@ -399,8 +399,8 @@ find_unmatched_o_paren (unsigned char * in_str, int in_pos)
 	{
 	  unsigned char * tmp_str;
 	  pos = reverse_parse_parens (in_str, pos, &tmp_str);
-	  if (pos == ERROR_CODE_MEMORY)
-	    return ERROR_CODE_MEMORY;
+	  if (pos == AEC_MEM)
+	    return AEC_MEM;
 	  free (tmp_str);
 	}
       else if (in_str[pos] == '(')
@@ -430,11 +430,11 @@ sexpr_find_unmatched (unsigned char * sen_a, unsigned char * sen_b,
   a = *ai;  b = *bi;
 
   tmp_a = parse_parens (sen_a, a, &a_str);
-  if (tmp_a == ERROR_CODE_MEMORY)
+  if (tmp_a == AEC_MEM)
     return -1;
 
   tmp_b = parse_parens (sen_b, b, &b_str);
-  if (tmp_b == ERROR_CODE_MEMORY)
+  if (tmp_b == AEC_MEM)
     return -1;
 
   while (!strcmp (a_str, b_str))
@@ -449,11 +449,11 @@ sexpr_find_unmatched (unsigned char * sen_a, unsigned char * sen_b,
 	break;
 
       tmp_a = parse_parens (sen_a, a, &a_str);
-      if (tmp_a == ERROR_CODE_MEMORY)
+      if (tmp_a == AEC_MEM)
 	return -1;
 
       tmp_b = parse_parens (sen_b, b, &b_str);
-      if (tmp_b == ERROR_CODE_MEMORY)
+      if (tmp_b == AEC_MEM)
 	return -1;
     }
 
@@ -674,8 +674,8 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
 	break;
 
       tmp_0 = parse_parens (elm_sen, q_pos + 1, &str_0);
-      if (tmp_0 == ERROR_CODE_MEMORY)
-	return ERROR_CODE_MEMORY;
+      if (tmp_0 == AEC_MEM)
+	return AEC_MEM;
 
       if (elim_sen[1] != '(')
 	{
@@ -685,8 +685,8 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
 	}
 
       tmp_1 = parse_parens (elim_sen, 1, &str_1);
-      if (tmp_1 == ERROR_CODE_MEMORY)
-	return ERROR_CODE_MEMORY;
+      if (tmp_1 == AEC_MEM)
+	return AEC_MEM;
 
       cmp = !strcmp (str_0, str_1);
       free (str_0);
@@ -725,8 +725,8 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
   if (elim_sen[e_pos] == '(')
     {
       q_pos = parse_parens (elim_sen, e_pos, &new_var);
-      if (q_pos == ERROR_CODE_MEMORY)
-	return ERROR_CODE_MEMORY;
+      if (q_pos == AEC_MEM)
+	return AEC_MEM;
     }
   else
     {

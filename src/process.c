@@ -246,7 +246,7 @@ parse_tags (const unsigned char * in_str, const int init_pos,
       // Allocate enough room for out_str,
       // and copy the parentheses construct from in_str.
       *out_str = (unsigned char*) calloc (tag_pos - init_pos + 2, sizeof (char));
-      CHECK_ALLOC (*out_str, ERROR_CODE_MEMORY);
+      CHECK_ALLOC (*out_str, AEC_MEM);
       strncpy (*out_str, in_str + init_pos, tag_pos - init_pos + 1);
       (*out_str)[tag_pos - init_pos + 1] = '\0';
     }
@@ -309,7 +309,7 @@ reverse_parse_parens (const unsigned char * in_str, const int init_pos, unsigned
   //Allocate enough memory, then copy the memory into tmp_str.
   in_len = strlen ((const char *) in_str);
   tmp_str = (unsigned char *) calloc (in_len, sizeof (char));
-  CHECK_ALLOC (tmp_str, ERROR_CODE_MEMORY);
+  CHECK_ALLOC (tmp_str, AEC_MEM);
   strncpy (tmp_str, in_str, init_pos);
   tmp_str[init_pos] = '\0';
 
@@ -361,7 +361,7 @@ reverse_parse_parens (const unsigned char * in_str, const int init_pos, unsigned
     {
       //Allocate space for out_str.
       *out_str = (unsigned char *) calloc (init_pos - paren_pos + 2, sizeof (char));
-      CHECK_ALLOC (*out_str, ERROR_CODE_MEMORY);
+      CHECK_ALLOC (*out_str, AEC_MEM);
 
       //When this is all finished, o_str will point to the string that is needed.
       strncpy (*out_str, in_str + paren_pos, init_pos - paren_pos + 1);
@@ -1578,7 +1578,7 @@ infix_to_prefix (unsigned char * in_str)
 	  unsigned char * tmp_str;
 
 	  tmp_pos = parse_parens (in_str, i, &tmp_str);
-	  if (tmp_pos == ERROR_CODE_MEMORY)
+	  if (tmp_pos == AEC_MEM)
 	    return NULL;
 
 	  free (tmp_str);
@@ -1688,7 +1688,7 @@ infix_to_prefix_func (unsigned char * in_str)
 	  unsigned char * tmp_str;
 
 	  tmp_pos = parse_parens (in_str, i, &tmp_str);
-	  if (tmp_pos == ERROR_CODE_MEMORY)
+	  if (tmp_pos == AEC_MEM)
 	    return NULL;
 
 	  free (tmp_str);
@@ -1777,7 +1777,7 @@ get_pred_func_args (unsigned char * in_str, int in_pos,
   int tmp_pos;
 
   tmp_pos = parse_parens (in_str, i, &tmp_str);
-  if (tmp_pos == ERROR_CODE_MEMORY)
+  if (tmp_pos == AEC_MEM)
     return -1;
 
   unsigned char * elim_str;
@@ -1798,7 +1798,7 @@ get_pred_func_args (unsigned char * in_str, int in_pos,
       if (elim_str[i] == '(')
 	{
 	  tmp_pos = parse_parens (elim_str, i, &tmp_str);
-	  if (tmp_pos == ERROR_CODE_MEMORY)
+	  if (tmp_pos == AEC_MEM)
 	    return -1;
 
 	  free (tmp_str);

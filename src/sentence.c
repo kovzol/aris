@@ -1174,7 +1174,7 @@ sentence_key (sentence * sen, int key, int ctrl)
             {
               tmp_pos = reverse_parse_parens (sen_text, offset,
                                               NULL);
-              if (tmp_pos == ERROR_CODE_MEMORY)
+              if (tmp_pos == AEC_MEM)
                 return -1;
             }
 

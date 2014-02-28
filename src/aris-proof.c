@@ -958,7 +958,7 @@ aris_proof_copy (aris_proof * ap)
       sen = sel_itr->value;
       sd = sentence_copy_to_data (sen);
       if (!sd)
-        return ERROR_CODE_MEMORY;
+        return AEC_MEM;
 
       if (SEN_SUB(sen))
         {
@@ -1534,7 +1534,7 @@ aris_proof_to_latex (aris_proof * ap)
   proof_t * proof;
   proof = aris_proof_to_proof (ap);
   if (!proof)
-    return ERROR_CODE_MEMORY;
+    return AEC_MEM;
 
   GtkFileFilter * file_filter;
   file_filter = gtk_file_filter_new ();
@@ -1562,8 +1562,8 @@ aris_proof_to_latex (aris_proof * ap)
 
   int rc;
   rc = convert_proof_latex (proof, filename);
-  if (rc == ERROR_CODE_MEMORY)
-    return ERROR_CODE_MEMORY;
+  if (rc == AEC_MEM)
+    return AEC_MEM;
 
   proof_destroy (proof);
 

@@ -56,7 +56,7 @@ typedef void * (* conf_obj_value_func) (conf_obj * obj, int get);
 #define CHECK_ALLOC(o,r) if (!o) {perror (NULL); return r; }
 
 enum ERROR_CODES {
-  ERROR_CODE_MEMORY = -1
+  AEC_MEM = -1
 };
 
 #endif /*  ARIS_TYPE_DEF_H  */

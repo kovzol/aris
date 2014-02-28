@@ -16,7 +16,6 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -96,6 +95,11 @@ aio_get_next_attribute (xmlTextReader * xml, xmlChar ** name)
 }
 
 /* Write the line number of a sentence object to an XML stream.
+ *  input:
+ *    xml - the XML stream to which to write.
+ *    sd - the sentence data object that holds the information being written.
+ *  output:
+ *    the results of the write.
  */
 int
 aio_write_line_num (xmlTextWriter * xml, sen_data * sd)
@@ -103,11 +107,16 @@ aio_write_line_num (xmlTextWriter * xml, sen_data * sd)
   int ret;
   ret = xmlTextWriterWriteFormatAttribute (xml, XML_CAST(ALT_LINE_DATA),
 					   "%i", sd->line_num);
-  if (ret < 0) XML_ERR (-1);
+  if (ret < 0) XML_ERR (AEC_MEM);
   return ret;
 }
 
 /* Write the text of a sentence object to an XML stream.
+ *  input:
+ *    xml - the XML stream to which to write.
+ *    sd - the sentence data object that holds the information being written.
+ *  output:
+ *    the results of the write.
  */
 int
 aio_write_text (xmlTextWriter * xml, sen_data * sd)
@@ -120,6 +129,11 @@ aio_write_text (xmlTextWriter * xml, sen_data * sd)
 }
 
 /* Write the rule of a sentence object to an XML stream.
+ *  input:
+ *    xml - the XML stream to which to write.
+ *    sd - the sentence data object that holds the information being written.
+ *  output:
+ *    the results of the write.
  */
 int
 aio_write_rule (xmlTextWriter * xml, sen_data * sd)
@@ -132,6 +146,11 @@ aio_write_rule (xmlTextWriter * xml, sen_data * sd)
 }
 
 /* Save a goal to an XML stream.
+ *  input:
+ *    xml - the XML stream to which to write.
+ *    text - the goal text to be written.
+ *  output:
+ *    the results of the write.
  */
 int
 aio_save_goal (xmlTextWriter * xml, unsigned char * text)
@@ -723,8 +742,6 @@ aio_open (const char * file_name)
       ret = xmlTextReaderRead (xml);
       if (ret < 0) XML_ERR (NULL);
     }
-
-  
 
   ret = xmlTextReaderRead (xml);
   if (ret < 0) XML_ERR (NULL);

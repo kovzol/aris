@@ -387,7 +387,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                 return NULL;
 
               ret = check_text (tmp_ref_str);
-              if (ret == ERROR_CODE_MEMORY)
+              if (ret == AEC_MEM)
                 return NULL;
               free (tmp_ref_str);
 

@@ -295,11 +295,11 @@ proc_bv (unsigned char * prem, unsigned char * conc)
   unsigned char * p_str, * c_str;
 
   tmp_p = parse_parens (prem, pi, &p_str);
-  if (tmp_p == ERROR_CODE_MEMORY)
+  if (tmp_p == AEC_MEM)
     return NULL;
 
   tmp_c = parse_parens (conc, ci, &c_str);
-  if (tmp_c == ERROR_CODE_MEMORY)
+  if (tmp_c == AEC_MEM)
     return NULL;
 
   if (!c_str || !p_str)
@@ -442,7 +442,7 @@ proc_nq (unsigned char * prem, unsigned char * conc)
   int tmp_pos;
 
   tmp_pos = parse_parens (ln_sen, li, &tmp_str);
-  if (tmp_pos == ERROR_CODE_MEMORY)
+  if (tmp_pos == AEC_MEM)
     return NULL;
 
   if (!tmp_str)
@@ -541,7 +541,7 @@ proc_pr (unsigned char * prem, unsigned char * conc)
     return _("Prenex constructed incorrectly.");
 
   tmp_pos = parse_parens (sh_sen, i - 1, &tmp_str);
-  if (tmp_pos == ERROR_CODE_MEMORY)
+  if (tmp_pos == AEC_MEM)
     return NULL;
 
   if (!tmp_str)
