@@ -330,7 +330,7 @@ the_app_read_config_file (aris_app * app)
   conf_file = fopen (path, "r+");
   if (!conf_file)
     {
-      perror (NULL);
+      perror ("load_config_file");
       return -2;
     }
   free (path);
