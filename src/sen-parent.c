@@ -243,11 +243,6 @@ sen_parent_ins_sentence (sen_parent * sp, sen_data * sd,
   if (!sen)
     return NULL;
 
-  /*
-  if (sp->type == SEN_PARENT_TYPE_PROOF && !SEN_PREM(sen))
-    new_order = sentence_get_line_no (sen);
-  */
-
   int new_ord;
 
   itm = ls_ins_obj (sp->everything, sen, fcs);
@@ -255,19 +250,24 @@ sen_parent_ins_sentence (sen_parent * sp, sen_data * sd,
 
   if (fcs)
     {
+      GtkWidget * attach_next;
+      if (SEN_PREM (fcs->value) && !sd->premise)
+        attach_next = sp->separator;
+      else
+        attach_next = SENTENCE (fcs->value)->panel;
+
       gtk_container_child_get (GTK_CONTAINER (sp->container),
-                               SENTENCE(fcs->value)->panel,
+                               attach_next,
                                "top-attach", &new_ord, NULL);
       gtk_grid_insert_row (GTK_GRID (sp->container), new_ord + 1);
       gtk_grid_attach_next_to (GTK_GRID (sp->container), sen->panel,
-                               SENTENCE (fcs->value)->panel, GTK_POS_BOTTOM,
+                               attach_next, GTK_POS_BOTTOM,
                                1, 1);
     }
   else
     {
       gtk_grid_attach (GTK_GRID (sp->container), sen->panel, 0, 0, 1, 1);
     }
-  //gtk_grid_attach (GTK_GRID (sp->container), sen->panel, 0, new_order, 1, 1);
 
   gtk_widget_show_all (sen->panel);
 

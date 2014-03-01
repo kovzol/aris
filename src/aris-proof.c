@@ -185,10 +185,8 @@ aris_proof_post_init (aris_proof * ap)
 
   ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
 
-  /*
   gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
                            SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM, 1, 1);
-  */
 
   // Clear the undo stack.
   ap->undo_pt = -1;
@@ -276,11 +274,9 @@ aris_proof_init_from_proof (proof_t * proof)
             return NULL;
 
           ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
-            /*
           gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
                                    SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM,
                                    1, 1);
-            */
           first = 0;
         }
       else
@@ -561,7 +557,6 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
   sentence * sen;
   item_t * itm, * fcs;
   item_t * foc_1, * foc_2;
-  int new_order;
 
   // Is the new sentence a premise?
 
@@ -584,11 +579,6 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
       exit (EXIT_FAILURE);
     }
 
-  new_order = sentence_get_line_no (fcs->value);
-
-  // Increment this, since non-premises are attached at their line number + 1;
-  if (!sd->premise)  new_order++;
-
   if (sd->depth == -1)
     {
       sd->depth = SEN_DEPTH(fcs->value) - 1;
@@ -600,7 +590,7 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
         sd->depth++;
     }
 
-  itm = sen_parent_ins_sentence ((sen_parent *) ap, sd, fcs, new_order);
+  itm = sen_parent_ins_sentence ((sen_parent *) ap, sd, fcs, 0);
   if (!itm)
     return NULL;
 
