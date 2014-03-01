@@ -118,6 +118,11 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
         gtk_label_set_text (GTK_LABEL (sen->rule_box),
                             "gl");
     }
+  else if (SEN_SUB (sen))
+    {
+      gtk_label_set_text (GTK_LABEL (sen->rule_box),
+                          "sf");
+    }
 
   if (sd->text)
     {
