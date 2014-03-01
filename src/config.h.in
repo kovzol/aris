@@ -79,6 +79,9 @@
 /* Version number of package */
 #undef VERSION
 
+/* "Used when compiling for Windows" */
+#undef WIN32
+
 /* Define to 1 if on MINIX. */
 #undef _MINIX
 
