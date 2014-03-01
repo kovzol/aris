@@ -89,6 +89,7 @@ sen_parent_init (sen_parent * sp, const char * title,
 
   // Initialize the main container.
   sp->container = gtk_grid_new ();
+  gtk_orientable_set_orientation (GTK_ORIENTABLE (sp->container), GTK_ORIENTATION_VERTICAL);
   gtk_grid_set_row_spacing (GTK_GRID (sp->container), 4);
   gtk_container_add (GTK_CONTAINER (sp->viewport), sp->container);
   gtk_container_set_focus_vadjustment (GTK_CONTAINER (sp->container), f_adj);
@@ -242,14 +243,31 @@ sen_parent_ins_sentence (sen_parent * sp, sen_data * sd,
   if (!sen)
     return NULL;
 
+  /*
   if (sp->type == SEN_PARENT_TYPE_PROOF && !SEN_PREM(sen))
     new_order = sentence_get_line_no (sen);
+  */
+
+  int new_ord;
 
   itm = ls_ins_obj (sp->everything, sen, fcs);
   sp->focused = itm;
 
-  gtk_grid_insert_row (GTK_GRID (sp->container), new_order);
-  gtk_grid_attach (GTK_GRID (sp->container), sen->panel, 0, new_order, 1, 1);
+  if (fcs)
+    {
+      gtk_container_child_get (GTK_CONTAINER (sp->container),
+                               SENTENCE(fcs->value)->panel,
+                               "top-attach", &new_ord, NULL);
+      gtk_grid_insert_row (GTK_GRID (sp->container), new_ord + 1);
+      gtk_grid_attach_next_to (GTK_GRID (sp->container), sen->panel,
+                               SENTENCE (fcs->value)->panel, GTK_POS_BOTTOM,
+                               1, 1);
+    }
+  else
+    {
+      gtk_grid_attach (GTK_GRID (sp->container), sen->panel, 0, 0, 1, 1);
+    }
+  //gtk_grid_attach (GTK_GRID (sp->container), sen->panel, 0, new_order, 1, 1);
 
   gtk_widget_show_all (sen->panel);
 
@@ -268,9 +286,10 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
 {
   item_t * ev_itr, * target = NULL;
   target = ls_find (sp->everything, sen);
+  /*
   int row_num;
-
   row_num = sentence_get_line_no (sen);
+  */
 
   // Only need to start this past the target sentence.
   for (ev_itr = target->next; ev_itr; ev_itr = ev_itr->next)
@@ -298,7 +317,7 @@ sen_parent_rem_sentence (sen_parent * sp, sentence * sen)
   ls_rem_obj (sp->everything, target);
   sentence_destroy (sen);
 
-  gtk_grid_remove_row (GTK_GRID (sp->container), row_num);
+  //gtk_grid_remove_row (GTK_GRID (sp->container), row_num);
 
   return new_focus;
 }

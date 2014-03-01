@@ -185,8 +185,10 @@ aris_proof_post_init (aris_proof * ap)
 
   ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
 
+  /*
   gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
                            SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM, 1, 1);
+  */
 
   // Clear the undo stack.
   ap->undo_pt = -1;
@@ -274,10 +276,11 @@ aris_proof_init_from_proof (proof_t * proof)
             return NULL;
 
           ap->fin_prem = SEN_PARENT (ap)->focused = SEN_PARENT (ap)->everything->head;
-
+            /*
           gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
                                    SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM,
                                    1, 1);
+            */
           first = 0;
         }
       else
