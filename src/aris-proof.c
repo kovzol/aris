@@ -725,7 +725,14 @@ aris_proof_create_new_sub (aris_proof * ap)
 sentence *
 aris_proof_end_sub (aris_proof * ap)
 {
-  if (SEN_DEPTH(SEN_PARENT (ap)->focused->value) == 0)
+  item_t * fcs = SEN_PARENT (ap)->focused;  
+
+  if (SEN_DEPTH(fcs->value) == 0)
+    return NULL;
+
+  // Need to prevent a subproof from being cut in two.
+  if (fcs && fcs->next 
+      && SEN_DEPTH (fcs->next->value) == SEN_DEPTH (fcs->value))
     return NULL;
 
   sentence * sen;
