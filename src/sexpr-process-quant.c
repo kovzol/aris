@@ -394,9 +394,6 @@ proc_nq (unsigned char * prem, unsigned char * conc)
   p_len = strlen (prem);
   c_len = strlen (conc);
 
-  fprintf (stderr, "prem == '%s'\n", prem);
-  fprintf (stderr, "conc == '%s'\n", conc);
-
   if (p_len > c_len)
     {
       ln_sen = prem;  l_len = p_len;
