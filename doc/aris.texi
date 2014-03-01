@@ -250,6 +250,8 @@ Hitting @kbd{Ctrl+P} adds a premise to the proof.  A premise will always be adde
 
 Pressing @kbd{Ctrl+B} adds a subproof to the proof.  When in a subproof, a conclusion will always be added within the subproof.  The first line of a subproof does not require a rule, but instead acts as a premise.  Pressing @kbd{Ctrl+D} ends the current subproof.  This creates a new conclusion just after the subproof.
 
+To undo a command, simply press @kbd{Ctrl+Z}.  This will undo the last text modification, insertion, or deletion.  In the case of several insertions or several deletions, undo will undo all of them.  To undo an undo, press @kbd{Ctrl+Y}, or redo.
+
 @node Selecting
 @section Selecting Sentences
 
@@ -264,7 +266,7 @@ Aris expects a certain form of syntax.  Most of the connectives are infix, which
 
 Aris expects that all predicates start with an uppercase character.  Aris also expects that all function symbols begin with a lower case character.  After this, Aris will except any combination of upper case letters, lower case letters, numbers, or @samp{_}.
 
-To assist in understanding the proofs, Aris also allows for comments in sentences.  To make a comment, simply insert a @samp{;}.  Aris will ignore everything after a @samp{;} when evaluating a sentence.
+To assist in understanding the proofs, Aris also allows for comments in sentences.  To make a comment, simply insert a @samp{;}.  Aris will ignore everything after a @samp{;} when evaluating a sentence.  This way, plaintext can be written into sentences.
 
 @node Menu Options
 @chapter Menu Options
@@ -302,6 +304,9 @@ Save the current proof.
 @itemx @kbd{CTRL+SHIFT+S}
 Save the current proof under a different name.
 
+@item @samp{Export to LaTeX...}
+Export the current proof to a LaTeX file.
+
 @item @samp{Close}
 @itemx @kbd{CTRL+W}
 Close the current proof.
@@ -326,13 +331,21 @@ Begin a new subproof after the current line if it is a conclusion, or at the sta
 @itemx @kbd{CTRL+D}
 End the current subproof, if there is one.  Otherwise, this doesn't do anything.  This is unavailable in boolean mode, since subproofs can't be used.
 
+@item @samp{Undo}
+@itemx @kbd{CTRL+Z}
+Undo the last modification to the current proof.  On a new file, this does nothing.
+
+@item @samp{Redo}
+@itemx @kbd{CTRL+Y}
+Undo an undo operation.  If no undo has been made, then this does nothing.
+
 @item @samp{Copy Line}
 @itemx @kbd{CTRL+G}
 Copy the current line.
 
 @item @samp{Kill Line}
 @itemx @kbd{CTRL+K}
-Kill, or cut, the current line.
+Kill, or cut, the current line.  This removes the line from the proof.
 
 @item @samp{Insert Line}
 @itemx @kbd{CTRL+I}

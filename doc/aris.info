@@ -1,4 +1,4 @@
-This is aris.info, produced by makeinfo version 5.1 from aris.texi.
+This is aris.info, produced by makeinfo version 5.2 from aris.texi.
 
 This manual is for GNU Aris, the logical proof program.
 
@@ -858,6 +858,11 @@ of a subproof does not require a rule, but instead acts as a premise.
 Pressing 'Ctrl+D' ends the current subproof.  This creates a new
 conclusion just after the subproof.
 
+   To undo a command, simply press 'Ctrl+Z'.  This will undo the last
+text modification, insertion, or deletion.  In the case of several
+insertions or several deletions, undo will undo all of them.  To undo an
+undo, press 'Ctrl+Y', or redo.
+
 
 File: aris.info,  Node: Selecting,  Next: Syntax,  Prev: Adding,  Up: Basic Usage
 
@@ -893,6 +898,11 @@ negation is one exception to this.
 Aris also expects that all function symbols begin with a lower case
 character.  After this, Aris will except any combination of upper case
 letters, lower case letters, numbers, or '_'.
+
+   To assist in understanding the proofs, Aris also allows for comments
+in sentences.  To make a comment, simply insert a ';'.  Aris will ignore
+everything after a ';' when evaluating a sentence.  This way, plaintext
+can be written into sentences.
 
 
 File: aris.info,  Node: Menu Options,  Next: Rules Index,  Prev: Basic Usage,  Up: Top
@@ -939,6 +949,9 @@ assigned a key command.
 'CTRL+SHIFT+S'
      Save the current proof under a different name.
 
+'Export to LaTeX...'
+     Export the current proof to a LaTeX file.
+
 'Close'
 'CTRL+W'
      Close the current proof.
@@ -969,13 +982,24 @@ assigned a key command.
      do anything.  This is unavailable in boolean mode, since subproofs
      can't be used.
 
+'Undo'
+'CTRL+Z'
+     Undo the last modification to the current proof.  On a new file,
+     this does nothing.
+
+'Redo'
+'CTRL+Y'
+     Undo an undo operation.  If no undo has been made, then this does
+     nothing.
+
 'Copy Line'
 'CTRL+G'
      Copy the current line.
 
 'Kill Line'
 'CTRL+K'
-     Kill, or cut, the current line.
+     Kill, or cut, the current line.  This removes the line from the
+     proof.
 
 'Insert Line'
 'CTRL+I'
@@ -2103,80 +2127,80 @@ File: aris.info,  Node: other,  Prev: instance,  Up: Isabelle/Isar
 
 
 Tag Table:
-Node: Top25644
-Node: Introduction26897
-Node: Terms27429
-Node: Options36039
-Node: Basic Usage37524
-Node: Startup37909
-Node: Connectives38536
-Node: Adding39033
-Node: Selecting39843
-Node: Syntax40823
-Node: Menu Options41360
-Node: Proof Windows42019
-Node: Rules Table44731
-Node: Other Key Shortcuts45882
-Node: Rules Index46744
-Node: Inference Rules47292
-Node: mp47682
-Node: ad48206
-Node: sm48772
-Node: cn49261
-Node: hs49943
-Node: ds50698
-Node: ex51100
-Node: cd51383
-Node: Equivalence Rules51620
-Node: im52168
-Node: dm52476
-Node: as52715
-Node: co53291
-Node: id53709
-Node: dt54000
-Node: eq54382
-Node: dn54816
-Node: ep55127
-Node: sb55352
-Node: Recursion55589
-Node: Predicate Rules56483
-Node: ug56949
-Node: ui57476
-Node: eg57828
-Node: ei58190
-Node: bv58708
-Node: nq59340
-Node: pr59746
-Node: ii60200
-Node: fv60433
-Node: Boolean Rules60752
-Node: bi61272
-Node: bn61648
-Node: bd61978
-Node: sn62370
-Node: Miscellaneous Rules62586
-Node: lm62794
-Node: sp63974
-Node: sq64254
-Node: in64561
-Node: Customization64858
-Node: Dialog65265
-Node: Config File66537
-Node: Submission67974
-Node: Sequence Logic69673
-Node: Axioms70288
-Node: Induction71569
-Node: Interoperability71879
-Node: Isabelle/Isar72184
-Node: fun72994
-Node: type_synonym73153
-Node: lemma/theorem73304
-Node: case73666
-Node: primrec73797
-Node: definition73931
-Node: datatype74075
-Node: class74213
-Node: instance74343
-Node: other74476
+Node: Top25645
+Node: Introduction26898
+Node: Terms27430
+Node: Options36040
+Node: Basic Usage37525
+Node: Startup37910
+Node: Connectives38537
+Node: Adding39034
+Node: Selecting40086
+Node: Syntax41066
+Node: Menu Options41852
+Node: Proof Windows42511
+Node: Rules Table45549
+Node: Other Key Shortcuts46700
+Node: Rules Index47562
+Node: Inference Rules48110
+Node: mp48500
+Node: ad49024
+Node: sm49590
+Node: cn50079
+Node: hs50761
+Node: ds51516
+Node: ex51918
+Node: cd52201
+Node: Equivalence Rules52438
+Node: im52986
+Node: dm53294
+Node: as53533
+Node: co54109
+Node: id54527
+Node: dt54818
+Node: eq55200
+Node: dn55634
+Node: ep55945
+Node: sb56170
+Node: Recursion56407
+Node: Predicate Rules57301
+Node: ug57767
+Node: ui58294
+Node: eg58646
+Node: ei59008
+Node: bv59526
+Node: nq60158
+Node: pr60564
+Node: ii61018
+Node: fv61251
+Node: Boolean Rules61570
+Node: bi62090
+Node: bn62466
+Node: bd62796
+Node: sn63188
+Node: Miscellaneous Rules63404
+Node: lm63612
+Node: sp64792
+Node: sq65072
+Node: in65379
+Node: Customization65676
+Node: Dialog66083
+Node: Config File67355
+Node: Submission68792
+Node: Sequence Logic70491
+Node: Axioms71106
+Node: Induction72387
+Node: Interoperability72697
+Node: Isabelle/Isar73002
+Node: fun73812
+Node: type_synonym73971
+Node: lemma/theorem74122
+Node: case74484
+Node: primrec74615
+Node: definition74749
+Node: datatype74893
+Node: class75031
+Node: instance75161
+Node: other75294
 
 End Tag Table
