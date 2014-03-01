@@ -1,16 +1,22 @@
 2014-03-01  Ian Dunn  <dunni@gnu.org>
 
+	* sentence.c (sentence_init): Added rules box identifier for
+	subproofs.
+
 	* aris-proof.c (aris_proof_post_init): Replaced the separator.
 	(aris_proof_create_sentence): Ignores new_order parameter of
 	sen_parent_ins_sentence.
 	(aris_proof_init_from_proof): Replaced the separator.
+	(aris_proof_end_sub): Prevents a subproof from being cut in
+	half.
 
 	* sen-parent.c (sen_parent_ins_sentence): Accounts for the
 	separator in proofs.
 
 2014-02-28  Ian Dunn  <dunni@gnu.org>
 
-	* pound.h (INIT_FONT): Changed font type to 'DejaVu Sans Mono'.
+	* pound.h (INIT_FONT): Changed font type to
+	'DejaVu Sans Mono'.
 
 	* vec.c: Implemented error codes.
 
@@ -23,7 +29,8 @@
 	(undo_op_add): Same.
 	(undo_op_mod): Same.
 
-	* sen-parent.c (sen_parent_rem_sentence): Removed unneeded comments.
+	* sen-parent.c (sen_parent_rem_sentence): Removed unneeded
+	comments.
 	Replaced call to gtk_grid_remove_row.
 	Removed it again, might replace it when 3.10 hits mainstream.
 	(sen_parent_ins_sentence): Uses the top-attach of the focused
@@ -88,7 +95,8 @@
 	(ftp_get_response): Same.
 	(ftp_send): Same.
 
-	* typedef.h (ARIS_ERROR_CODES): Changed ERROR_CODE_MEMORY to AEC_MEM.
+	* typedef.h (ARIS_ERROR_CODES): Changed ERROR_CODE_MEMORY to
+	AEC_MEM.
 	Added AEC_IO.
 
 	* aio.c: Added function comments.
