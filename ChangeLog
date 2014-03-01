@@ -1,3 +1,13 @@
+2014-03-01  Ian Dunn  <dunni@gnu.org>
+
+	* aris-proof.c (aris_proof_post_init): Replaced the separator.
+	(aris_proof_create_sentence): Ignores new_order parameter of
+	sen_parent_ins_sentence.
+	(aris_proof_init_from_proof): Replaced the separator.
+
+	* sen-parent.c (sen_parent_ins_sentence): Accounts for the
+	separator in proofs.
+
 2014-02-28  Ian Dunn  <dunni@gnu.org>
 
 	* pound.h (INIT_FONT): Changed font type to 'DejaVu Sans Mono'.
@@ -5,6 +15,8 @@
 	* vec.c: Implemented error codes.
 
 	* undo.h (undo_sen): Removed.
+	(UNDO_OP): Removed.
+	(UNDO_INFO_TYPE): Removed UIT_ADD_GOAL and UIT_REM_GOAL.
 
 	* undo.c (undo_determine_op): Added comments.
 	(undo_op_remove): Same.
@@ -35,6 +47,8 @@
 
 	* goal.c (goal_check_line): Changed die_spaces_die to
 	format_string.
+	(goal_add_line): Removed UIT_ADD_GOAL undo_info item.
+	(goal_rem_line): Removed UIT_REM_GOAL undo_info item.
 
 	* conf-file.c (config_default): Commented.
 
@@ -67,6 +81,7 @@
 	Fixed up comments and implemented error codes.
 	(aris_proof_post_init): Doesn't attach separator.
 	(aris_proof_init_from_proof): Same.
+	(aris_proof_undo): Removed check for UIT_REM_GOAL and UIT_ADD_GOAL.
 
 	* app.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
 	(the_app_submit): Implemented AEC_IO.
