@@ -1,5 +1,8 @@
 2014-03-01  Ian Dunn  <dunni@gnu.org>
 
+	* conf-file.h (main_menu_conf): Changed export label to
+	'Export to LaTeX...'.
+
 	* sentence.c (sentence_init): Added rules box identifier for
 	subproofs.
 
@@ -9,6 +12,8 @@
 	(aris_proof_init_from_proof): Replaced the separator.
 	(aris_proof_end_sub): Prevents a subproof from being cut in
 	half.
+	(aris_proof_to_latex): Checks for a valid filename before
+	exporting.
 
 	* sen-parent.c (sen_parent_ins_sentence): Accounts for the
 	separator in proofs.
