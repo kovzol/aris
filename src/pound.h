@@ -39,7 +39,7 @@
 // Fonts
 #define FONT_TYPE PangoFontDescription *
 #define INIT_FONT(f,s) f = pango_font_description_new ();  \
-  pango_font_description_set_family (f, "Arial"); \
+  pango_font_description_set_family (f, "DejaVu Sans Mono"); \
   pango_font_description_set_variant (f, PANGO_VARIANT_NORMAL); \
   pango_font_description_set_style (f, PANGO_STYLE_NORMAL);  \
   pango_font_description_set_size (f, s * PANGO_SCALE);
@@ -61,6 +61,8 @@
   n->blue = (double) 1.0 - c->blue;		\
   n->alpha = (double) 1.0;			\
 }
+// 63% green, 14% blue, 23% red.
+// So says a smart person.
 #define IS_DARK(c) (((c->red + c->green + c->blue) / 3.0) < 0.5)
 
 /*
