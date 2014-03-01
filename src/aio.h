@@ -44,6 +44,9 @@
 #define ALT_REF_DATA "r"
 #define ALT_FILE_DATA "f"
 
+#define VER_DATA "version"
+#define FILE_VER 1.0
+
 // Convienence type casts
 
 #define CSTD_CAST (const char *)

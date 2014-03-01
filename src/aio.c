@@ -38,11 +38,11 @@
 //#define PRINT_ALLOC() {struct mallinfo mal = mallinfo (); fprintf (stderr, "%i: blks == %i\n", __LINE__, mal.uordblks); }
 #define PRINT_ALLOC()
 
-#define IS_LINE(s) (!strcmp ((const char *)(s),LINE_DATA) || !strcmp ((const char *)(s),ALT_LINE_DATA))
-#define IS_TEXT(s) (!strcmp ((const char *)(s),TEXT_DATA) || !strcmp ((const char *)(s),ALT_TEXT_DATA))
-#define IS_RULE(s) (!strcmp ((const char *)(s),RULE_DATA) || !strcmp ((const char *)(s),ALT_RULE_DATA))
-#define IS_REF(s) (!strcmp ((const char *)(s),REF_DATA) || !strcmp ((const char *)(s),ALT_REF_DATA))
-#define IS_FILE(s) (!strcmp ((const char *)(s),FILE_DATA) || !strcmp ((const char *)(s),ALT_FILE_DATA))
+#define IS_LINE(s) (!strcmp (CSTD_CAST (s),LINE_DATA) || !strcmp (CSTD_CAST (s),ALT_LINE_DATA))
+#define IS_TEXT(s) (!strcmp (CSTD_CAST (s),TEXT_DATA) || !strcmp (CSTD_CAST (s),ALT_TEXT_DATA))
+#define IS_RULE(s) (!strcmp (CSTD_CAST (s),RULE_DATA) || !strcmp (CSTD_CAST (s),ALT_RULE_DATA))
+#define IS_REF(s) (!strcmp (CSTD_CAST (s),REF_DATA) || !strcmp (CSTD_CAST (s),ALT_REF_DATA))
+#define IS_FILE(s) (!strcmp (CSTD_CAST (s),FILE_DATA) || !strcmp (CSTD_CAST (s),ALT_FILE_DATA))
 
 /* Gets the first attribute from an xml stream.
  *  input:
@@ -191,7 +191,7 @@ aio_open_prem (xmlTextReader * xml)
 	{
 	  IF_FREE (name);
 
-	  ret = sscanf ((const char *) buffer, "%i", &line_num);
+	  ret = sscanf (CSTD_CAST (buffer), "%i", &line_num);
 	  if (ret != 1) XML_ERR (NULL);
 
 	  free (buffer);
@@ -202,7 +202,7 @@ aio_open_prem (xmlTextReader * xml)
       if (IS_TEXT(name))
 	{
 	  IF_FREE (name);
-	  text = (unsigned char *) strdup ((const char *) buffer);
+	  text = (unsigned char *) strdup (CSTD_CAST (buffer));
 
 	  free (buffer);
 	  buffer = aio_get_next_attribute (xml, &name);
@@ -427,6 +427,9 @@ aio_save (proof_t * proof, const char * file_name)
   ret = xmlTextWriterWriteFormatAttribute (xml, XML_CAST(MODE_DATA),
 					   "%s", mode);
 
+  ret = xmlTextWriterWriteFormatAttribute (xml, XML_CAST (VER_DATA),
+                                           "%f", FILE_VER);
+
   ret = xmlTextWriterStartElement (xml, XML_CAST(GOAL_TAG));
   if (ret < 0) XML_ERR (-1);
 
@@ -614,11 +617,18 @@ aio_open (const char * file_name)
   buffer = aio_get_first_attribute (xml, &name);
   if (buffer)
     {
-      if (!strcmp ((const char *) name, MODE_DATA))
+      if (!strcmp (CSTD_CAST (name), MODE_DATA))
 	{
 	  if (!strcmp ((const char *) buffer, "boolean"))
 	    proof->boolean = 1;
 	}
+
+      if (!strcmp (CSTD_CAST (name), VER_DATA))
+        {
+          int ver_num;
+          sscanf (CSTD_CAST (buffer), "%i", &ver_num);
+          // Decide what to do with it.
+        }
     }
 
   IF_FREE (name);

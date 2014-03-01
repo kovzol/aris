@@ -1,5 +1,11 @@
 2014-03-01  Ian Dunn  <dunni@gnu.org>
 
+	* aio.h (VER_TAG): Added for versioning files.
+	(FILE_VER): Set to 1.0.
+
+	* aio.c (aio_save): Added version number to file format.
+	(aio_open): Same.
+
 	* conf-file.h (main_menu_conf): Changed export label to
 	'Export to LaTeX...'.
 
