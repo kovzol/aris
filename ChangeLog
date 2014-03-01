@@ -50,6 +50,12 @@
 
 	* sentence.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
 	Implemented error codes.
+	(comment_pred): Removed.
+	(sentence_init): Added rules labels for premises and goals.
+	(sentence_gui_init): Changed comment color to foreground
+	instead of background.
+	Removed it completely.
+	(sentence_text_changed): Removed special handling of comments.
 
 	* aris-proof.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
 	Fixed up comments and implemented error codes.
