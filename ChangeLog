@@ -1,5 +1,7 @@
 2014-02-28  Ian Dunn  <dunni@gnu.org>
 
+	* pound.h (INIT_FONT): Changed font type to 'DejaVu Sans Mono'.
+
 	* vec.c: Implemented error codes.
 
 	* undo.h (undo_sen): Removed.
@@ -11,6 +13,9 @@
 
 	* sen-parent.c (sen_parent_rem_sentence): Removed unneeded comments.
 	Replaced call to gtk_grid_remove_row.
+	Removed it again, might replace it when 3.10 hits mainstream.
+	(sen_parent_ins_sentence): Uses the top-attach of the focused
+	sentence.
 
 	* sexpr-process.c: Implemented error codes.
 
@@ -56,9 +61,12 @@
 	instead of background.
 	Removed it completely.
 	(sentence_text_changed): Removed special handling of comments.
+	(sentence_paste_text): Does not convert comment text.
 
 	* aris-proof.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
 	Fixed up comments and implemented error codes.
+	(aris_proof_post_init): Doesn't attach separator.
+	(aris_proof_init_from_proof): Same.
 
 	* app.c: Changed ERROR_CODE_MEMORY to AEC_MEM.
 	(the_app_submit): Implemented AEC_IO.
