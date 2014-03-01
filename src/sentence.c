@@ -224,6 +224,7 @@ sentence_gui_init (sentence * sen)
 
   gtk_text_tag_table_add (table, tag);
 
+  /*
   tag = gtk_text_tag_new ("comment");
   g_object_set (G_OBJECT (tag), "foreground-rgba",
                 the_app->bg_colors[BG_COLOR_SEL], NULL);
@@ -232,6 +233,7 @@ sentence_gui_init (sentence * sen)
   GtkTextIter end;
   gtk_text_buffer_get_end_iter (buffer, &end);
   gtk_text_buffer_apply_tag (buffer, tag, &end, &end);
+  */
 }
 
 /* Destroys a sentence.
@@ -1483,67 +1485,6 @@ sentence_text_changed (sentence * sen)
   sen_text = sentence_get_text (sen);
   old_len = strlen (sen_text);
   diff_pos = find_difference (sen_text, (unsigned char *) text);
-
-  {
-    //TODO: Check for semi-colon and set mark.
-    if (text_len > old_len)
-      {
-        if (text[text_len - 1] == ';')
-          {
-            GtkTextIter cur_pos;
-            gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
-                                              gtk_text_buffer_get_insert (buffer));
-          
-            if (sen->mark)
-              {
-                gtk_text_buffer_get_iter_at_mark (buffer, &semi, sen->mark);
-
-                int mark_off, cur_off;
-                mark_off = gtk_text_iter_get_offset (&semi);
-                cur_off = gtk_text_iter_get_offset (&cur_pos);
-
-                if (cur_off < mark_off)
-                  {
-                    gtk_text_buffer_move_mark (buffer, sen->mark, &cur_pos);
-                  }
-              }
-            else
-              {
-                sen->mark = gtk_text_mark_new (SEMI_NAME, TRUE);
-                gtk_text_buffer_add_mark (buffer, sen->mark, &cur_pos);
-              }
-
-            GtkTextIter mark_iter, end_iter;
-            gtk_text_buffer_get_iter_at_mark (buffer, &mark_iter, sen->mark);
-            gtk_text_buffer_get_end_iter (buffer, &end_iter);
-            gtk_text_iter_backward_char (&mark_iter);
-
-            gtk_text_buffer_apply_tag_by_name (buffer, "comment", &mark_iter, &end_iter);
-          }
-        else if (sen->mark)
-          {
-            GtkTextIter cur_pos;
-            gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
-                                              gtk_text_buffer_get_insert (buffer));
-            gtk_text_buffer_get_iter_at_mark (buffer, &semi, sen->mark);
-
-            GtkTextIter end_iter;
-            gtk_text_buffer_get_end_iter (buffer, &end_iter);
-            gtk_text_iter_backward_char (&semi);
-
-            gtk_text_buffer_apply_tag_by_name (buffer, "comment", &semi, &end_iter);
-          }
-      }
-    else
-      {
-        if (text[diff_pos] == ';')
-          {
-            GtkTextIter cur_pos;
-            gtk_text_buffer_get_iter_at_mark (buffer, &cur_pos,
-                                              gtk_text_buffer_get_insert (buffer));
-          }
-      }
-  }
 
   undo_info ui;
   ui = undo_info_init_one (NULL, sen, UIT_MOD_TEXT);
