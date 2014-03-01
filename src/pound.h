@@ -61,9 +61,8 @@
   n->blue = (double) 1.0 - c->blue;		\
   n->alpha = (double) 1.0;			\
 }
-// 63% green, 14% blue, 23% red.
-// So says a smart person.
-#define IS_DARK(c) (((c->red + c->green + c->blue) / 3.0) < 0.5)
+
+#define IS_DARK(c) (((c->red * 0.63 + c->green + c->blue) / 3.0) < 0.5)
 
 /*
 #ifdef GdkRGBA
