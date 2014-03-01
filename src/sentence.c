@@ -42,17 +42,6 @@ static char * sen_values[6] = {"media-playback-stop",
                                "tools-check-spelling",
                                "list-add"};
 
-// GTextCharPredicate for determining the location of the comment.
-static gboolean
-comment_predicate (gunichar ch, gpointer user_data)
-{
-  if (ch == SEN_COMMENT_CHAR)
-    return TRUE;
-  else
-    return FALSE;
-}
-
-
 /* Initializes a sentence
  *  input:
  *    sd  - sentence data to initialize from.
@@ -120,6 +109,11 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
     return NULL;
 
   sentence_set_rule (sen, sd->rule);
+  if (SEN_PREM (sen))
+    {
+      gtk_label_set_text (GTK_LABEL (sen->rule_box),
+                          "pr");
+    }
 
   if (sd->text)
     {
@@ -227,8 +221,8 @@ sentence_gui_init (sentence * sen)
   gtk_text_tag_table_add (table, tag);
 
   tag = gtk_text_tag_new ("comment");
-  g_object_set (G_OBJECT (tag), "background-rgba",
-                the_app->bg_colors[BG_COLOR_GOOD], NULL);
+  g_object_set (G_OBJECT (tag), "foreground-rgba",
+                the_app->bg_colors[BG_COLOR_SEL], NULL);
   gtk_text_tag_table_add (table, tag);
 
   GtkTextIter end;
