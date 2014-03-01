@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="Q"/>
+  <goal t="R"/>
+ </goals>
+ <premises>
+  <entry n="1" t="P $ Q ; A basic example"/>
+  <entry n="2" t="P"/>
+  <entry n="3" t="(P &amp; Q) $ R  ; A less basic example"/>
+ </premises>
+ <conclusions>
+  <entry n="4" l="0" r="1,2" d="0" t="Q"/>
+  <entry n="5" l="3" r="2,4" d="0" t="P &amp; Q"/>
+  <entry n="6" l="0" r="3,5" d="0" t="R"/>
+ </conclusions>
+</proof>
