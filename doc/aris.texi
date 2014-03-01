@@ -264,6 +264,8 @@ Aris expects a certain form of syntax.  Most of the connectives are infix, which
 
 Aris expects that all predicates start with an uppercase character.  Aris also expects that all function symbols begin with a lower case character.  After this, Aris will except any combination of upper case letters, lower case letters, numbers, or @samp{_}.
 
+To assist in understanding the proofs, Aris also allows for comments in sentences.  To make a comment, simply insert a @samp{;}.  Aris will ignore everything after a @samp{;} when evaluating a sentence.
+
 @node Menu Options
 @chapter Menu Options
 
