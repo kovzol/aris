@@ -119,7 +119,7 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
    NULL, CONF_OBJ_MENU, CONF_MENU_SAVE_AS, conf_menu_value,
    "document-save-as", "c+s+s"},
 
-  {N_("Export to LaTeX"), N_("Export this proof to a LaTeX file."),
+  {N_("Export to LaTeX..."), N_("Export this proof to a LaTeX file."),
    NULL, CONF_OBJ_MENU, CONF_MENU_EXPORT_LATEX, conf_menu_value,
    "document-save-as", NULL},
 
