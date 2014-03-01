@@ -1366,7 +1366,7 @@ sentence_copy_text (sentence * sen)
 int
 sentence_paste_text (sentence * sen)
 {
-  int i;
+  int i, found_comment = 0;
 
   GtkTextBuffer * buffer;
   GtkTextIter end;
@@ -1378,8 +1378,12 @@ sentence_paste_text (sentence * sen)
 
   for (i = 0; sen_text[i]; i++)
     {
-      if (IS_TYPE_CONN (sen_text + i, gui_conns)
-          || IS_TYPE_CONN (sen_text + i, cli_conns))
+      if (sen_text[i] == ';')
+        found_comment = 1;
+
+      if ((IS_TYPE_CONN (sen_text + i, gui_conns)
+           || IS_TYPE_CONN (sen_text + i, cli_conns))
+          && found_comment == 0)
         {
           GdkPixbuf * pix;
 
