@@ -111,8 +111,12 @@ sentence_init (sen_data * sd, sen_parent * sp, item_t * fcs)
   sentence_set_rule (sen, sd->rule);
   if (SEN_PREM (sen))
     {
-      gtk_label_set_text (GTK_LABEL (sen->rule_box),
-                          "pr");
+      if (sp->type == SEN_PARENT_TYPE_PROOF)
+        gtk_label_set_text (GTK_LABEL (sen->rule_box),
+                            "pr");
+      else
+        gtk_label_set_text (GTK_LABEL (sen->rule_box),
+                            "gl");
     }
 
   if (sd->text)
