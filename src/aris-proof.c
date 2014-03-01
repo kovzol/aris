@@ -1557,7 +1557,7 @@ aris_proof_to_latex (aris_proof * ap)
   gtk_file_filter_set_name (file_filter, "LaTeX Files");
   gtk_file_filter_add_pattern (file_filter, "*.tex");
 
-  char * filename;
+  char * filename = NULL;
   GtkWidget * file_chooser;
   file_chooser =
     gtk_file_chooser_dialog_new (_("Select a file to Save to..."),
@@ -1575,6 +1575,9 @@ aris_proof_to_latex (aris_proof * ap)
     filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (file_chooser));
 
   gtk_widget_destroy (file_chooser);
+
+  if (!filename)
+    return 0;
 
   int rc;
   rc = convert_proof_latex (proof, filename);
