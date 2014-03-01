@@ -1529,8 +1529,6 @@ aris_proof_undo (aris_proof * ap, int undo)
   ap->undo_pt += (undo) ? -1 : 1;
 
   if (!ui
-      || ui->type == UIT_ADD_GOAL
-      || ui->type == UIT_REM_GOAL
       || ui->type == -1)
     return 1;
 

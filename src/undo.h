@@ -22,19 +22,9 @@
 
 #include "typedef.h"
 
-enum UNDO_OP {
-  UNDO_ADD_SEN = 0,
-  UNDO_REM_SEN,
-  UNDO_ADD_GOAL,
-  UNDO_REM_GOAL,
-  UNDO_MOD_TEXT
-};
-
 enum UNDO_INFO_TYPE {
   UIT_ADD_SEN = 0,
   UIT_REM_SEN,
-  UIT_ADD_GOAL,
-  UIT_REM_GOAL,
   UIT_MOD_TEXT
 };
 
