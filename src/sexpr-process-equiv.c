@@ -38,6 +38,11 @@
 #include "sexpr-process.h"
 #include "vec.h"
 
+enum {
+  MODE_CO = 0,
+  MODE_ID
+};
+
 /*
  * mode - 0 for commutativity, 1 for idempotence.
  * In Idempotence, sen_0 is the larger sentence, sen_1 the shorter.
@@ -73,7 +78,7 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
   if (gg_1 == AEC_MEM)
     return AEC_MEM;
 
-  if (mode == 0)
+  if (mode == MODE_CO)
     {
       if (gg_0 != gg_1)
 	{
@@ -90,6 +95,7 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 	}
     }
 
+  // If the larger sentence has no top connective.
   if (gg_0 == 1)
     {
       destroy_str_vec (gens_0); destroy_str_vec (gens_1);
@@ -165,7 +171,7 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
   con_1 = 1;
   if (strcmp (conn_1, S_AND) && strcmp (conn_1, S_OR))
     {
-      if (!(mode == 1 && conn_1[0] == '\0'))
+      if (!(mode == MODE_ID && conn_1[0] == '\0'))
 	con_1 = 0;
     }
 
@@ -178,7 +184,7 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
   if (con_0 && con_1)
     {
       int cmp;
-      if (mode == 0)
+      if (mode == MODE_CO)
 	cmp = vec_str_cmp (gens_0, gens_1);
       else
 	cmp = vec_str_sub (gens_1, gens_0);
@@ -191,7 +197,7 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 	  return 0;
 	}
-      else if (mode == 1 && gg_0 != gg_1)
+      else if (mode == MODE_ID && gg_0 != gg_1)
 	{
 	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
 	  return -2;
@@ -749,7 +755,7 @@ char *
 proc_co (unsigned char * prem, unsigned char * conc)
 {
   int ret_chk;
-  ret_chk = recurse_mode (prem, conc, 0);
+  ret_chk = recurse_mode (prem, conc, MODE_CO);
   if (ret_chk == AEC_MEM)
     return NULL;
 
@@ -771,7 +777,7 @@ proc_id (unsigned char * prem, unsigned char * conc)
   sen_put_len (prem, conc, &sh_sen, &ln_sen);
 
   int ret_chk;
-  ret_chk = recurse_mode (ln_sen, sh_sen, 1);
+  ret_chk = recurse_mode (ln_sen, sh_sen, MODE_ID);
   if (ret_chk == AEC_MEM)
     return NULL;
 

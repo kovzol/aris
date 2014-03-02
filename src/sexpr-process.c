@@ -72,36 +72,14 @@ sexpr_get_part (unsigned char * in_str, unsigned int init_pos, unsigned char ** 
   return fin_pos;
 }
 
-unsigned char *
-sexpr_car (unsigned char * in_str)
-{
-  unsigned char * out_str;
-  int pos;
-  pos = sexpr_get_part (in_str, 1, &out_str);
-  if (pos == AEC_MEM)
-    return NULL;
-
-  return out_str;
-}
-
-unsigned char *
-sexpr_cdr (unsigned char * in_str)
-{
-  unsigned char * out_str, * car;
-  int pos, len;
-  pos = sexpr_get_part (in_str, 1, &car);
-  if (pos == AEC_MEM)
-    return NULL;
-
-  len = strlen (in_str);
-  out_str = (unsigned char *) calloc (len - pos + 1, sizeof (char));
-  CHECK_ALLOC (out_str, NULL);
-
-  sprintf (out_str, "(%s", in_str + pos + 1);
-
-  return out_str;
-}
-
+/* Split a string into its car and cdr.
+ *  input:
+ *    in_str - the string to be split.
+ *    car - a pointer to a string that receives the car of in_str.
+ *    cdr - a vector that receives the cdr of in_str.
+ *  output:
+ *    the size of cdr on success, or -1 on memory error.
+ */
 int
 sexpr_car_cdr (unsigned char * in_str,
 	       unsigned char ** car,
@@ -136,6 +114,14 @@ sexpr_car_cdr (unsigned char * in_str,
   return cdr->num_stuff;
 }
 
+/* Split a string into its car and cdr.
+ *  input:
+ *    in_str - the string to be split.
+ *    car - a pointer to a string that receives the car of in_str.
+ *    cdr - a string that receives the cdr of in_str.
+ *  output:
+ *    0 on success, -1 on memory error.
+ */
 int
 sexpr_str_car_cdr (unsigned char * in_str,
 		   unsigned char ** car,
@@ -192,6 +178,20 @@ sen_put_len (unsigned char * in0,
     }
 }
 
+/* A helper function to construct another sentence.
+ * This is implemented in the equivalence functions, to construct what
+ *  the other sentence should be.
+ *  input:
+ *    main_str - the original string.
+ *    init_pos - the initial position in main_str from which to begin copying.
+ *                This is usually the position returned from find_difference. 
+ *    fin_pos  - the final position from which to copy.
+ *    alloc_size - the estimated size of the returned string.
+ *    template - the template to use to construct the new sentence.
+ *    rest     - the strings to use to construct the new sentence.
+ *  output:
+ *    the constructed sentence on success, NULL on memory error.
+ */
 unsigned char *
 construct_other (unsigned char * main_str,
 		 int init_pos,
@@ -302,9 +302,11 @@ sexpr_get_generalities (unsigned char * in_str, unsigned char * conn, vec_t * ve
       return 1;
     }
 
-  if (tmp_conn[0] == '(')
+  if (tmp_conn[0] == '('
+      || !IS_SBIN_CONN (tmp_conn))
     {
-      vec_pop_obj (vec);
+      // CLEAR vec.
+      vec_str_clear (vec);
       vec_str_add_obj (vec, in_str);
       return 1;
     }

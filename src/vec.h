@@ -41,6 +41,7 @@ int vec_add_obj (vec_t * v , const void * more);
 int vec_str_add_obj (vec_t * v, unsigned char * more);
 void vec_pop_obj (vec_t * v);
 int vec_clear (vec_t * vec);
+int vec_str_clear (vec_t * vec);
 void * vec_nth (vec_t * vec, int n);
 unsigned char * vec_str_nth (vec_t * vec, int n);
 int vec_find (vec_t * vec, void * obj);

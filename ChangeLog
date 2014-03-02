@@ -1,3 +1,23 @@
+2014-03-02  Ian Dunn  <dunni@gnu.org>
+
+	* sexpr-process-equiv.c: Added defines for recurse_mode modes.
+	(recurse_mode): Implemented mode definitions.
+	(proc_id): Same.
+	(proc_co): Same.
+
+	* sexpr-process.c (sexpr_get_generalities): Clear out vector after finding
+	invalid connective.
+	(sexpr_car): Removed.
+	(sexpr_cdr): Removed.
+	(sexpr_car_cdr): Added comments.
+	(sexpr_str_car_cdr): Same.
+	(construct_other): Same.
+
+	* process.h (IS_SBIN_CONN): Checks whether a string is a
+	binary sexpr connective.
+
+	* vec.c (vec_str_clear): Added.
+
 2014-03-01  Ian Dunn  <dunni@gnu.org>
 
 	* aio.h (VER_TAG): Added for versioning files.

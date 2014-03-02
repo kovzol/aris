@@ -47,8 +47,14 @@
 			|| !strncmp (s,CON,CL)	\
 			|| !strncmp (s,BIC,CL))
 
+#define IS_SBIN_CONN(s) (!strncmp (s,S_AND,S_CL)            \
+                         || !strncmp (s,S_OR,S_CL)          \
+                         || !strncmp (s,S_CON,S_CL)         \
+                         || !strncmp (s,S_BIC,S_CL))
+
 #define ISCONN(s) IS_TYPE_CONN (s, main_conns)
 
+// Used in check_sides
 #define ISGOOD(s) (!strncmp (s, UNV, CL)     \
 		   || !strncmp (s, EXL, CL)  \
 		   || *(s) == '('	     \

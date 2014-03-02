@@ -195,6 +195,33 @@ vec_clear (vec_t * vec)
   return 0;
 }
 
+/* Clears a string vector.
+ *  input:
+ *    vec - the vector to clear.
+ *  output:
+ *    0 on success, -1 on error.
+ */
+int
+vec_str_clear (vec_t * vec)
+{
+  // If vec is empty, then just return.
+  if (!vec || !vec->stuff)
+    return 0;
+
+  int i;
+  for (i = 0; i < vec->num_stuff; i++)
+    {
+      unsigned char * cur_str;
+      cur_str = vec_str_nth (vec, i);
+
+      if (cur_str)
+        free (cur_str);
+      cur_str = NULL;
+    }
+
+  return vec_clear (vec);
+}
+
 /* Gets the nth element of a vector.
  *  input:
  *    vec - the vector.
@@ -360,6 +387,9 @@ vec_str_sub (vec_t * vec_0, vec_t * vec_1)
     {
       if (!check[i])
         {
+          unsigned char * cur_i;
+          cur_i = vec_str_nth (vec_0, i);
+          fprintf (stderr, "cur[%i] == '%s'\n", i, cur_i);
           free (check);
           return -3;
         }
