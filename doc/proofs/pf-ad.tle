@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="(A | B) | C"/>
+  <goal t="A | (B | C)"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A | B"/>
+  <entry n="2" t="A"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="1" r="1" d="0" t="(A | B) | C"/>
+  <entry n="4" l="1" r="2" d="0" t="A | (B | C)"/>
+ </conclusions>
+</proof>
