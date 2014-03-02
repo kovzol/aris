@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="A | ~A"/>
+  <goal t="(A &amp; B) | ~(A &amp; B)"/>
+  <goal t="@x(P(x) $ Q(x)) | ~@x(P(x) $ Q(x))"/>
+ </goals>
+ <premises>
+  <entry n="1" t=""/>
+ </premises>
+ <conclusions>
+  <entry n="2" l="6" r="" d="0" t="A | ~A"/>
+  <entry n="3" l="6" r="" d="0" t="(A &amp; B) | ~(A &amp; B)"/>
+  <entry n="4" l="6" r="" d="0" t="@x(P(x) $ Q(x)) | ~@x(P(x) $ Q(x))"/>
+ </conclusions>
+</proof>

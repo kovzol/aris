@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="A"/>
+  <goal t="B"/>
+  <goal t="A | B"/>
+  <goal t="B | C"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A &amp; B ; A basic example"/>
+  <entry n="2" t="(A | B) &amp; (B | C) ; A less basic example"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="2" r="1" d="0" t="A"/>
+  <entry n="4" l="2" r="1" d="0" t="B"/>
+  <entry n="5" l="2" r="2" d="0" t="A | B"/>
+  <entry n="6" l="2" r="2" d="0" t="B | C"/>
+ </conclusions>
+</proof>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="A &amp; B"/>
+  <goal t="(A &amp; B) &amp; (C | D)"/>
+  <goal t="A &amp; B &amp; (C | D)"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A"/>
+  <entry n="2" t="B"/>
+  <entry n="3" t="C | D"/>
+ </premises>
+ <conclusions>
+  <entry n="4" l="3" r="1,2" d="0" t="A &amp; B"/>
+  <entry n="5" l="3" r="3,4" d="0" t="(A &amp; B) &amp; (C | D)"/>
+  <entry n="6" l="3" r="1,2,3" d="0" t="A &amp; B &amp; (C | D)"/>
+ </conclusions>
+</proof>

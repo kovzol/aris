@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="C | D"/>
+  <goal t="C | D | F"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A | B"/>
+  <entry n="2" t="A $ C"/>
+  <entry n="3" t="B $ D"/>
+  <entry n="4" t="A | B | E"/>
+  <entry n="5" t="E $ F"/>
+ </premises>
+ <conclusions>
+  <entry n="6" l="7" r="1,2,3" d="0" t="C | D"/>
+  <entry n="7" l="7" r="2,3,4,5" d="0" t="C | D | F"/>
+ </conclusions>
+</proof>
