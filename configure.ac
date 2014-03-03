@@ -10,8 +10,6 @@ AC_ARG_PROGRAM
 
 AC_CANONICAL_HOST
 
-PKG_PROG_PKG_CONFIG
-
 # Check for windows
 case "${host}" in
         *mingw32*) WIN32="yes" ;;
@@ -26,7 +24,11 @@ AC_USE_SYSTEM_EXTENSIONS
 
 AC_PROG_INSTALL
 
-# Check for gtk+-2.0
+# Check for pkg-config
+
+PKG_PROG_PKG_CONFIG
+
+# Check for gtk+-3.0
 
 PKG_CHECK_MODULES([GTK], [gtk+-3.0 >= 3.2])
 AC_SUBST(GTK_CFLAGS)
@@ -38,6 +40,7 @@ PKG_CHECK_MODULES([XML], [libxml-2.0 >= 2.6])
 AC_SUBST(XML_CFLAGS)
 AC_SUBST(XML_LIBS)
 
+## This really only works when compiling from source.
 AC_DEFINE_UNQUOTED([HELP_FILE], "file://`pwd`/doc/aris/index.html", [The help HTML file path])
 
 if test "$WIN32" = "yes"; then

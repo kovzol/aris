@@ -1,5 +1,8 @@
 2014-03-02  Ian Dunn  <dunni@gnu.org>
 
+	* configure.ac: Moved configure check for pkg-config to just
+	before actual package checks.
+
 	* sexpr-process-equiv.c: Added defines for recurse_mode modes.
 	(recurse_mode): Implemented mode definitions.
 	(proc_id): Same.
