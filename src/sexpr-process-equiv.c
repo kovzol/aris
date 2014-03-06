@@ -1187,7 +1187,7 @@ proc_ep (unsigned char * prem, unsigned char * conc)
 
   // Count number of conditionals in each sentence.
 
-  int i, c_cons, p_cons;
+  int i, c_cons = 0, p_cons = 0;
 
   for (i = 0; i < p_len; i++)
     {
@@ -1293,7 +1293,7 @@ proc_ep (unsigned char * prem, unsigned char * conc)
     {
       destroy_str_vec (a_sens);
       free (rsen);
-      return _("There must be a conjunctions in the conjunction sentence.");
+      return _("Exportation constructed incorrectly.");
     }
 
   /* Construct what should be the other sentence. */

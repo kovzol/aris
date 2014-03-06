@@ -1,5 +1,7 @@
 2014-03-06  Ian Dunn  <dunni@gnu.org>
 
+	* sexpr-process-equiv.c (proc_ep): Fixed processing bug.
+
 	* aio.c (aio_save): Version line only writes two digits.
 
 	* Makefile.am: Fixed up linker flags, and cleaned up.
