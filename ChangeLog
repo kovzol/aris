@@ -1,3 +1,7 @@
+2014-03-06  Ian Dunn  <dunni@gnu.org>
+
+	* Makefile.am: Fixed up linker flags, and cleaned up.
+
 2014-03-02  Ian Dunn  <dunni@gnu.org>
 
 	* configure.ac: Moved configure check for pkg-config to just
