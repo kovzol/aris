@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="A(a) &amp; #y(P(y) &amp; Q(y))"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A(a) &amp; #x(P(x) &amp; Q(x))  ;; This rule is fairly straight forward."/>
+  <entry n="2" t="@x@y(P(x,y))"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="22" r="1" d="0" t="A(a) &amp; #y(P(y) &amp; Q(y))"/>
+  <entry n="4" l="22" r="2" d="0" t="@x@x(P(x,x))  ;; This is syntactically incorrect."/>
+ </conclusions>
+</proof>

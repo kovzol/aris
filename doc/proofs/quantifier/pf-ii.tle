@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="a = a"/>
+  <goal t="f(c) = f(c)"/>
+  <goal t="a + b = a + b"/>
+ </goals>
+ <premises>
+  <entry n="1" t=""/>
+ </premises>
+ <conclusions>
+  <entry n="2" l="25" r="" d="0" t="a = a"/>
+  <entry n="3" l="25" r="" d="0" t="f(c) = f(c)"/>
+  <entry n="4" l="25" r="" d="0" t="a + b = a + b"/>
+ </conclusions>
+</proof>

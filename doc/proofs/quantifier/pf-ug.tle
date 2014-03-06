@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="@x(U(x))"/>
+ </goals>
+ <premises>
+  <entry n="1" t="@x(U(x) &amp; (D(x)))"/>
+  <entry n="2" t="P(a)"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="19" r="1" d="0" t="U(g) &amp; D(g)"/>
+  <entry n="4" l="2" r="3" d="0" t="U(g)"/>
+  <entry n="5" l="18" r="4" d="0" t="@x(U(x))    ;; Since the variable was introduced from a conclusion,&#10;&#9;&#9;it is considered to be arbitrary."/>
+  <entry n="6" l="18" r="2" d="0" t="@x(P(x))  ;;  Since 'a' was introduced in a premise, it is not arbitrary."/>
+ </conclusions>
+</proof>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="@x(P(x) &amp; Q(x)) &amp; (A &amp; B)"/>
+  <goal t="A(a) &amp; (#z(T(z) &amp; F(z)) &amp; (P &amp; Q))"/>
+  <goal t="@y(E(y) | L(y) | C | W)"/>
+  <goal t="#u(I(u) | P(u) | O | K)"/>
+ </goals>
+ <premises>
+  <entry n="1" t="@x(P(x) &amp; Q(x) &amp; A &amp; B) ;; A basic example of Prenex."/>
+  <entry n="2" t="A(a) &amp; #z(T(z) &amp; F(z) &amp; P &amp; Q)"/>
+  <entry n="3" t="@y(E(y) | L(y)) | (C | W)"/>
+  <entry n="4" t="#u(I(u) | P(u)) | (O | K)"/>
+ </premises>
+ <conclusions>
+  <entry n="5" l="24" r="1" d="0" t="@x(P(x) &amp; Q(x)) &amp; (A &amp; B)"/>
+  <entry n="6" l="24" r="2" d="0" t="A(a) &amp; (#z(T(z) &amp; F(z)) &amp; (P &amp; Q))"/>
+  <entry n="7" l="24" r="3" d="0" t="@y(E(y) | L(y) | C | W)"/>
+  <entry n="8" l="24" r="4" d="0" t="#u(I(u) | P(u) | O | K)"/>
+ </conclusions>
+</proof>

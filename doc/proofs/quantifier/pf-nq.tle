@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="P(a)"/>
+  <goal t="(P(a) &amp; P(b)) | (R(m) $ S(m))"/>
+  <goal t="P"/>
+  <goal t="P(a) &amp; Q(s)"/>
+  <goal t="@y(P)"/>
+ </goals>
+ <premises>
+  <entry n="1" t="@x@y@z(P(a))  ;; A basic example."/>
+  <entry n="2" t="@x(P(a) &amp; P(b)) | (R(m) $ S(m))  ;; A little more complicated."/>
+  <entry n="3" t="@x(P)  ;; An even more basic example."/>
+  <entry n="4" t="P(a) &amp; @x(Q(s))  ;; On a sentence part."/>
+ </premises>
+ <conclusions>
+  <entry n="5" l="23" r="1" d="0" t="P(a)"/>
+  <entry n="6" l="23" r="2" d="0" t="(P(a) &amp; P(b)) | (R(m) $ S(m))"/>
+  <entry n="7" l="23" r="3" d="0" t="P"/>
+  <entry n="8" l="23" r="4" d="0" t="P(a) &amp; Q(s)"/>
+  <entry n="9" l="23" r="7" d="0" t="@y(P)"/>
+ </conclusions>
+</proof>

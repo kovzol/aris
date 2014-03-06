@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="#x(P(x) &amp; R(x))"/>
+ </goals>
+ <premises>
+  <entry n="1" t="P(a) &amp; R(a)"/>
+ </premises>
+ <conclusions>
+  <entry n="2" l="20" r="1" d="0" t="#x(P(x) &amp; R(x))  ;; That's all there really is to this rule."/>
+  <entry n="3" l="20" r="1" d="0" t="#x(P(x) &amp; R(a))  ;; One need not replace every instance of the variable."/>
+ </conclusions>
+</proof>

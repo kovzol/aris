@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="P(a)"/>
+  <goal t="P(b)"/>
+ </goals>
+ <premises>
+  <entry n="1" t="#x(P(x))  ;; A basic example"/>
+  <entry n="2" t="R(w)  ;; Introduces the variable 'w'."/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="21" r="1" d="0" t="P(a)"/>
+  <entry n="4" l="-1" r="" d="1" t="#x(Z(x))"/>
+  <entry n="5" l="21" r="4" d="1" t="Z(b)"/>
+  <entry n="6" l="21" r="1" d="0" t="P(b)  ;; Since the variable was introduced within a subproof,&#10;&#9;  it it not considred used outside of it."/>
+  <entry n="7" l="21" r="1" d="0" t="P(w)  ;; This won't work, since 'w' was already used in the current scope."/>
+ </conclusions>
+</proof>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="P(a) $ Q(a)"/>
+  <goal t="B(a)"/>
+  <goal t="B(b)"/>
+ </goals>
+ <premises>
+  <entry n="1" t="@x(P(x) $ Q(x))"/>
+  <entry n="2" t="@x(A(x) &amp; @y(B(y)))"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="19" r="1" d="0" t="P(a) $ Q(a)"/>
+  <entry n="4" l="19" r="2" d="0" t="A(b) &amp; @y(B(y))"/>
+  <entry n="5" l="2" r="4" d="0" t="@y(B(y))"/>
+  <entry n="6" l="19" r="5" d="0" t="B(a)"/>
+  <entry n="7" l="19" r="5" d="0" t="B(b)"/>
+ </conclusions>
+</proof>
