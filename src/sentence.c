@@ -1496,13 +1496,14 @@ sentence_text_changed (sentence * sen)
   diff_pos = find_difference (sen_text, (unsigned char *) text);
 
   undo_info ui;
-  ui = undo_info_init_one (NULL, sen, UIT_MOD_TEXT);
-  if (ui.type == -1)
-    return AEC_MEM;
 
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {
       int ret;
+
+      ui = undo_info_init_one (NULL, sen, UIT_MOD_TEXT);
+      if (ui.type == -1)
+        return AEC_MEM;
 
       ret = aris_proof_set_changed (ARIS_PROOF (sp), 1, ui);
       if (ret < 0)
@@ -1532,6 +1533,8 @@ sentence_text_changed (sentence * sen)
       // Otherwise, it's a goal.
       int ret;
 
+      // Don't initialize this, since undo/redo isn't set up for goals.
+      ui.type = -1;
       ret = aris_proof_set_changed (GOAL (sp)->parent, 1, ui);
       if (ret < 0)
         return AEC_MEM;

@@ -1525,8 +1525,7 @@ aris_proof_undo (aris_proof * ap, int undo)
 
   ap->undo_pt += (undo) ? -1 : 1;
 
-  if (!ui
-      || ui->type == -1)
+  if (!ui || ui->type == -1)
     return 1;
 
   int rc;
