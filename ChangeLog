@@ -1,5 +1,7 @@
 2014-03-06  Ian Dunn  <dunni@gnu.org>
 
+	* typedef.h (CHECK_ALLOC): Enclosed object in parentheses.
+
 	* sentence.c (sentence_text_changed): Don't add any undo
 	information for goals.
 
