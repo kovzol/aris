@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="B"/>
+  <goal t="A"/>
+ </goals>
+ <premises>
+  <entry n="1" t="B &amp; !"/>
+  <entry n="2" t="A | ^"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="31" r="1" d="0" t="B"/>
+  <entry n="4" l="31" r="2" d="0" t="A"/>
+ </conclusions>
+</proof>
