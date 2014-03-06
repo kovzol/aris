@@ -529,6 +529,41 @@ check_conns (const unsigned char * chk_str)
   return 1;
 }
 
+/* Gets a variable from a quantifier.
+ *  input:
+ *    quant_str - a string that points to the position just after a quantifier.
+ *    quant_var - a pointer to a string that will receive the variable.
+ *  output:
+ *    The length of the variable on success.
+ */
+int
+get_quant_var (const unsigned char * quant_str, unsigned char ** quant_var)
+{
+  int i, len = 0;
+  for (i = 0; quant_str[i]; i++)
+    {
+      if (quant_str[i] == '('
+	  || !strncmp (quant_str + i, EXL, CL)
+	  || !strncmp (quant_str + i, UNV, CL)
+	  || !strncmp (quant_str + i, NOT, NL))
+	break;
+
+      if (i == 0 && !islower (quant_str[i]))
+        return -2;
+
+      if (!islower (quant_str[i]) && !isdigit (quant_str[i]))
+        return -2;
+    }
+
+  len = i;
+  (*quant_var) = (unsigned char *) calloc (len + 1, sizeof (char));
+  CHECK_ALLOC (*quant_var, AEC_MEM);
+
+  strncpy (*quant_var, quant_str, len);
+
+  return len;
+}
+
 /* Checks that a quantifier is next to a bound variable and parenthesis.
  *  input:
  *    chk_str - the string to check.
@@ -611,6 +646,10 @@ check_quants (const unsigned char * chk_str)
   chk_len = strlen ((const char *) chk_str);
 
   int chk_sides, j;
+  vec_t * var_vec;
+  var_vec = init_vec (sizeof (char *));
+  if (!var_vec)
+    return AEC_MEM;
 
   for (j = 0; j < chk_len - CL + 1; j++)
     {
@@ -621,9 +660,43 @@ check_quants (const unsigned char * chk_str)
 	    return AEC_MEM;
 
 	  if (!chk_sides)
-	    return 0;
+            {
+              destroy_str_vec (var_vec);
+              return 0;
+            }
+
+          unsigned char * tmp_var;
+          chk_sides = get_quant_var (chk_str + j + CL, &tmp_var);
+          if (chk_sides == AEC_MEM)
+            return AEC_MEM;
+
+          chk_sides = vec_str_add_obj (var_vec, tmp_var);
+          if (chk_sides < 0)
+            return AEC_MEM;
+
+          free (tmp_var);
 	}
     }
+
+  for (j = 0; j < var_vec->num_stuff; j++)
+    {
+      int k;
+      for (k = 0; k < var_vec->num_stuff; k++)
+        {
+          if (j == k)
+            continue;
+          if (!strcmp (vec_str_nth (var_vec, j), vec_str_nth (var_vec, k)))
+            break;
+        }
+      if (k != var_vec->num_stuff)
+        break;
+    }
+
+  chk_sides = (j == var_vec->num_stuff);
+  destroy_str_vec (var_vec);
+
+  if (!chk_sides)
+    return 0;
 
   //No errors, so return true.
   return 1;
