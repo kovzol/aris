@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="R $ B"/>
+ </goals>
+ <premises>
+  <entry n="1" t="R $ A"/>
+  <entry n="2" t="A $ B"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="0" r="" d="1" t="R"/>
+  <entry n="4" l="0" r="1,3" d="1" t="A"/>
+  <entry n="5" l="0" r="2,4" d="1" t="B"/>
+  <entry n="6" l="28" r="3" d="0" t="R $ B"/>
+ </conclusions>
+</proof>
