@@ -21,15 +21,15 @@ bin_PROGRAMS = aris
 
 AM_CFLAGS = $(CFLAGS) $(GTK_CFLAGS) $(XML_CFLAGS)
 AM_CFLAGS += -DARIS_GUI
-AM_LDFLAGS = $(LDFLAGS) $(GTK_LIBS) $(XML_LIBS)
-AM_LDFLAGS += -lm
+aris_LDADD = $(LDFLAGS) $(GTK_LIBS) $(XML_LIBS)
+aris_LDADD += -lm
 
 
 if WIN32
 AM_CFLAGS += \
         -mms-bitfields
 
-AM_LDFLAGS += \
+aris_LDFLAGS = \
         -Wl,-subsystem,windows
 endif
 
