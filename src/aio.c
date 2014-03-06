@@ -428,7 +428,7 @@ aio_save (proof_t * proof, const char * file_name)
 					   "%s", mode);
 
   ret = xmlTextWriterWriteFormatAttribute (xml, XML_CAST (VER_DATA),
-                                           "%f", FILE_VER);
+                                           "%1.1f", FILE_VER);
 
   ret = xmlTextWriterStartElement (xml, XML_CAST(GOAL_TAG));
   if (ret < 0) XML_ERR (-1);
