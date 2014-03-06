@@ -23,7 +23,11 @@ This NEWS file records important changes.
 
   * Updated to GTK+ 3.
 
-  * Fixed up processing bugs.
+  * Fixed up several processing bugs.
+
+  * Fixed up compilation bugs.
+
+  * Added example proofs.
 
 2.1.1
 
