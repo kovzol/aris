@@ -438,19 +438,27 @@ proc_nq (unsigned char * prem, unsigned char * conc)
   unsigned char * tmp_str;
   int tmp_pos;
 
-  tmp_pos = parse_parens (ln_sen, li, &tmp_str);
-  if (tmp_pos == AEC_MEM)
-    return NULL;
-
-  if (!tmp_str)
+  if (li >= 0)
     {
-      return _("Null Quantifier constructed incorrectly.");
+      tmp_pos = parse_parens (ln_sen, li, &tmp_str);
+      if (tmp_pos == AEC_MEM)
+        return NULL;
+
+      if (!tmp_str)
+        return _("Null Quantifier constructed incorrectly.");
+    }
+  else
+    {
+      tmp_pos = l_len - 1;
+      tmp_str = strdup (ln_sen);
+      CHECK_ALLOC (tmp_str, NULL);
     }
 
   unsigned char * scope, * var, quant[S_CL + 1];
   scope = sexpr_elim_quant (tmp_str, quant, &var);
   if (!scope)
     return NULL;
+
   free (var);
 
   int gqv;
@@ -479,6 +487,7 @@ proc_nq (unsigned char * prem, unsigned char * conc)
   oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
   CHECK_ALLOC (oth_sen, NULL);
 
+  li = (li < 0) ? 0 : li;
   strncpy (oth_sen, ln_sen, li);
   oth_pos = li;
 

@@ -137,7 +137,7 @@ sexpr_str_car_cdr (unsigned char * in_str,
 
   tmp_pos += 1;
 
-  tmp_pos = parse_parens (in_str, tmp_pos, cdr);
+  tmp_pos = sexpr_get_part (in_str, tmp_pos, cdr);
   if (tmp_pos == AEC_MEM)
     return AEC_MEM;
 
@@ -511,7 +511,6 @@ unsigned char *
 sexpr_elim_quant (unsigned char * in_str, unsigned char * quant,
 		  unsigned char ** var)
 {
-
   int tmp_pos, ret_chk;
   unsigned char * tmp_str, * car;
 

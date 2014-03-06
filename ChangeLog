@@ -1,5 +1,11 @@
 2014-03-06  Ian Dunn  <dunni@gnu.org>
 
+	* sexpr-process-quant.c (proc_nq): Fixed up to allow for a
+	scope of a single atomic sentence.
+
+	* sexpr-process.c (sexpr_str_car_cdr): Modified to allow for
+	a cdr with a single atomic sentence.
+
 	* process.c (get_quant_var): Gets a quantifier variable.
 	(check_quants): Implements get_quant_var to check the
 	quantifier variables.
