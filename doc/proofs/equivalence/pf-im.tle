@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="~A | B"/>
+  <goal t="~A | (~B | C)"/>
+  <goal t="A &amp; (~B | C)"/>
+  <goal t="C $ D"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A $ B ; A basic example"/>
+  <entry n="2" t="A $ (B $ C) ; An example of recursion"/>
+  <entry n="3" t="A &amp; (B $ C) ; An example of operating on a sentence part"/>
+  <entry n="4" t="~C | D"/>
+ </premises>
+ <conclusions>
+  <entry n="5" l="8" r="1" d="0" t="~A | B"/>
+  <entry n="6" l="8" r="2" d="0" t="~A | (~B | C)"/>
+  <entry n="7" l="8" r="3" d="0" t="A &amp; (~B | C)"/>
+  <entry n="8" l="8" r="4" d="0" t="C $ D ; And back again"/>
+ </conclusions>
+</proof>

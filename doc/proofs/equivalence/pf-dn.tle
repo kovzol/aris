@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="~~~~~~D"/>
+  <goal t="~~D"/>
+  <goal t="~~D &amp; ~~~~~~N"/>
+ </goals>
+ <premises>
+  <entry n="1" t="D      ;; Basic example"/>
+  <entry n="2" t="D &amp; N  ;; Operating on a sentence part."/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="15" r="1" d="0" t="~~~~~~D"/>
+  <entry n="4" l="15" r="3" d="0" t="~~D"/>
+  <entry n="5" l="15" r="2" d="0" t="~~D &amp; ~~~~~~N"/>
+ </conclusions>
+</proof>

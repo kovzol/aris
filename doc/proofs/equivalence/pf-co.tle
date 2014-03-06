@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="(B | C) | A"/>
+  <goal t="(C | B) | A"/>
+  <goal t="A | (C | B)"/>
+  <goal t="R &amp; P &amp; Q"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A | (B | C) ;; First, let's use disjunctions"/>
+  <entry n="2" t="P &amp; Q &amp; R  ;; Next, conjunctions."/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="11" r="1" d="0" t="(B | C) | A"/>
+  <entry n="4" l="11" r="3" d="0" t="(C | B) | A"/>
+  <entry n="5" l="11" r="1" d="0" t="A | (C | B)"/>
+  <entry n="6" l="11" r="2" d="0" t="R &amp; P &amp; Q"/>
+  <entry n="7" l="11" r="1" d="0" t="(C | B) | A ;; This one isn't supposed to work.&#10;&#9;Since the top two parts were already flipped, recursion doesn't work."/>
+ </conclusions>
+</proof>

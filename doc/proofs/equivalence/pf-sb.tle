@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="A"/>
+  <goal t="P(a) &amp; Q(i)"/>
+  <goal t="A | (A &amp; C)"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A &amp; (A | B)  ;; A basic example"/>
+  <entry n="2" t="P(a) &amp; (Q(i) | (Q(i) &amp; A(q)))  ;; Operating on sentence parts."/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="17" r="1" d="0" t="A"/>
+  <entry n="4" l="17" r="2" d="0" t="P(a) &amp; Q(i)"/>
+  <entry n="5" l="17" r="3" d="0" t="A | (A &amp; C)"/>
+ </conclusions>
+</proof>

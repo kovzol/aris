@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="A"/>
+  <goal t="P(a)"/>
+  <goal t="P(a) &amp; f(a) : b"/>
+  <goal t="@x(R(x) &amp; H(x))"/>
+  <goal t="P(a) | P(a)"/>
+  <goal t="@x(R(x) &amp; H(x)) | @x(R(x) &amp; H(x))"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A &amp; A ;; Let's start with the simple one"/>
+  <entry n="2" t="P(a) &amp; P(a) ;; And now a little more complex"/>
+  <entry n="3" t="P(a) &amp; (f(a) : b &amp; f(a) : b &amp; f(a) : b)  ;; And the fun one."/>
+  <entry n="4" t="@x(R(x) &amp; R(x) &amp; H(x))  ;; And one with quantifiers."/>
+ </premises>
+ <conclusions>
+  <entry n="5" l="12" r="1" d="0" t="A"/>
+  <entry n="6" l="12" r="2" d="0" t="P(a)"/>
+  <entry n="7" l="12" r="3" d="0" t="P(a) &amp; f(a) : b"/>
+  <entry n="8" l="12" r="4" d="0" t="@x(R(x) &amp; H(x))"/>
+  <entry n="9" l="12" r="6" d="0" t="P(a) | P(a)"/>
+  <entry n="10" l="12" r="8" d="0" t="@x(R(x) &amp; H(x)) | @x(R(x) &amp; H(x))"/>
+ </conclusions>
+</proof>

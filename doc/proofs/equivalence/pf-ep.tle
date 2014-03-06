@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="(A &amp; B) $ C"/>
+  <goal t="X(a) &amp; ((X(y) &amp; Z(a)) $ Z(y))"/>
+  <goal t="K $ (J $ (M $ L))"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A $ (B $ C)  ;; A basic example of exportation."/>
+  <entry n="2" t="X(a) &amp; (X(y) $ (Z(a) $ Z(y)))  ;; A slightly more complex example."/>
+  <entry n="3" t="(K &amp; J &amp; M) $ L  ;; An example of exportation's generalization"/>
+ </premises>
+ <conclusions>
+  <entry n="4" l="16" r="1" d="0" t="(A &amp; B) $ C"/>
+  <entry n="5" l="16" r="2" d="0" t="X(a) &amp; ((X(y) &amp; Z(a)) $ Z(y))"/>
+  <entry n="6" l="16" r="3" d="0" t="K $ (J $ (M $ L))"/>
+ </conclusions>
+</proof>

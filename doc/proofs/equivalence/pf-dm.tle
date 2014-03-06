@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.000000">
+ <goals>
+  <goal t="~A | ~B"/>
+  <goal t="~~A &amp; ~B"/>
+  <goal t="~(C | D)"/>
+  <goal t="A(a) &amp; (~C(a) &amp; ~D(a))"/>
+  <goal t="#x(~P(x))"/>
+  <goal t="@z(~P(z) &amp; ~Q(z))"/>
+ </goals>
+ <premises>
+  <entry n="1" t="~(A &amp; B) ; Basic example"/>
+  <entry n="2" t="~(~A | B) ; A little more complicated"/>
+  <entry n="3" t="~C &amp; ~D ; The other direction"/>
+  <entry n="4" t="A(a) &amp; ~(C(a) | D(a)) ; Sentence part"/>
+  <entry n="5" t="~@x(P(x)) ; Basic example of quantifier DeMorgan"/>
+  <entry n="6" t="~#z(P(z) | Q(z)) ; A more complicated version."/>
+ </premises>
+ <conclusions>
+  <entry n="7" l="9" r="1" d="0" t="~A | ~B"/>
+  <entry n="8" l="9" r="2" d="0" t="~~A &amp; ~B"/>
+  <entry n="9" l="9" r="3" d="0" t="~(C | D)"/>
+  <entry n="10" l="9" r="4" d="0" t="A(a) &amp; (~C(a) &amp; ~D(a))"/>
+  <entry n="11" l="9" r="5" d="0" t="#x(~P(x))"/>
+  <entry n="12" l="9" r="6" d="0" t="@z(~(P(z) | Q(z)))"/>
+  <entry n="13" l="9" r="12" d="0" t="@z(~P(z) &amp; ~Q(z))"/>
+ </conclusions>
+</proof>

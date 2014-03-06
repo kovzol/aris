@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="A &amp; B &amp; C &amp; D &amp; E &amp; F"/>
+  <goal t="(A &amp; B &amp; C) &amp; (D &amp; E &amp; F)"/>
+  <goal t="(X | Y | Z) | (W | (J | K))"/>
+  <goal t="((X | Y) | Z) | (W | J | K)"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A &amp; (B &amp; C) &amp; (D &amp; (E &amp; F)) ;; First, using conjunctions"/>
+  <entry n="2" t="X | Y | Z | W | J | K  ;; Next, using disjunctions"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="10" r="1" d="0" t="A &amp; B &amp; C &amp; D &amp; E &amp; F"/>
+  <entry n="4" l="10" r="3" d="0" t="(A &amp; B &amp; C) &amp; (D &amp; E &amp; F)"/>
+  <entry n="5" l="10" r="2" d="0" t="(X | Y | Z) | (W | (J | K))"/>
+  <entry n="6" l="10" r="2" d="0" t="((X | Y) | Z) | (W | J | K)"/>
+ </conclusions>
+</proof>

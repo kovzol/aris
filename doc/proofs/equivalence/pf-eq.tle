@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="(A $ B) &amp; (B $ A)"/>
+  <goal t="@x((P(x) $ Q(x)) &amp; (Q(x) $ P(x)))"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A % B ;; A basic example"/>
+  <entry n="2" t="@x(P(x) % Q(x))  ;; A sentence part"/>
+ </premises>
+ <conclusions>
+  <entry n="3" l="14" r="1" d="0" t="(A $ B) &amp; (B $ A)"/>
+  <entry n="4" l="14" r="2" d="0" t="@x((P(x) $ Q(x)) &amp; (Q(x) $ P(x)))"/>
+ </conclusions>
+</proof>

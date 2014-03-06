@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<proof mode="standard" version="1.0">
+ <goals>
+  <goal t="(A &amp; B) | (A &amp; C)"/>
+  <goal t="((A &amp; B) | A) &amp; ((A &amp; B) | C)"/>
+  <goal t="#x(P(x)) | #x(Q(x)) | #x(R(x))"/>
+  <goal t="@x(A(x)) &amp; @x(B(x))"/>
+  <goal t="A(a) $ ((B(b) &amp; C(b)) | (B(b) &amp; D(b)))"/>
+ </goals>
+ <premises>
+  <entry n="1" t="A &amp; (B | C) ;; A basic example"/>
+  <entry n="2" t="#x(P(x) | Q(x) | R(x)) ;; Existentials distribute over disjunctions"/>
+  <entry n="3" t="@x(A(x) &amp; B(x)) ;; Universals distribute over conjunctions"/>
+  <entry n="4" t="A(a) $ (B(b) &amp; (C(b) | D(b)))  ;; A little more complex"/>
+ </premises>
+ <conclusions>
+  <entry n="5" l="13" r="1" d="0" t="(A &amp; B) | (A &amp; C)"/>
+  <entry n="6" l="13" r="5" d="0" t="((A &amp; B) | A) &amp; ((A &amp; B) | C)"/>
+  <entry n="7" l="13" r="2" d="0" t="#x(P(x)) | #x(Q(x)) | #x(R(x))"/>
+  <entry n="8" l="13" r="3" d="0" t="@x(A(x)) &amp; @x(B(x))"/>
+  <entry n="9" l="13" r="4" d="0" t="A(a) $ ((B(b) &amp; C(b)) | (B(b) &amp; D(b)))"/>
+ </conclusions>
+</proof>
