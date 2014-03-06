@@ -1,5 +1,11 @@
 2014-03-06  Ian Dunn  <dunni@gnu.org>
 
+	* sentence.c (select_reference): Doesn't allow subproofs to
+	select references.
+
+	* sen-data.c (sen_data_can_select_as_ref): Uses the actual
+	sentence data objects.
+
 	* sexpr-process-quant.c (proc_nq): Fixed up to allow for a
 	scope of a single atomic sentence.
 

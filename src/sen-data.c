@@ -543,7 +543,6 @@ sen_data_can_sel_as_ref (int sen_line, int * sen_indices,
     common_line *= -1;
 
   return common_line;
-
 }
 
 /* Determines whether a sentence can select another one - wrapper function.
@@ -558,9 +557,51 @@ sen_data_can_sel_as_ref (int sen_line, int * sen_indices,
 int
 sen_data_can_select_as_ref (sen_data * sen, sen_data * ref)
 {
-  return sen_data_can_sel_as_ref (sen->line_num, sen->indices,
-                                  ref->line_num, ref->indices,
-                                  ref->premise);
+  if (ref->line_num >= sen->line_num)
+    return 0;
+
+  if (sen->premise || sen->subproof)
+    return 0;
+
+  int entire;
+
+  // Get indices of each.
+  // This isn't necessary if the sentence is a premise, or if it has depth == zero.
+  if (ref->premise || ref->indices[0] == -1)
+    return ref->line_num;
+
+  int common_line;
+  int i;
+
+  common_line = 0;
+  for (i = 0; sen->indices[i] != -1 && ref->indices[i] != -1; i++)
+    {
+      if (sen->indices[i] != ref->indices[i])
+        break;
+    }
+
+  // If the set of the reference sentence's indices is a subset of
+  // the set of the focused sentence's indices, then the sentence can
+  // be selected as a reference.
+
+  if (ref->indices[i] == -1)
+    {
+      common_line = ref->line_num;
+      entire = 0;
+    }
+  else
+    {
+      common_line = ref->indices[i];
+      entire = 1;
+    }
+
+  if (ref->indices[i] != -1 && sen->indices[i] == -1)
+    entire = 1;
+
+  if (entire == 1)
+    common_line *= -1;
+
+  return common_line;
 }
 
 /* Converts sentence data to a LaTeX line.

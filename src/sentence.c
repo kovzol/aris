@@ -836,7 +836,7 @@ select_reference (sentence * sen)
   if (the_app->verbose)
     printf ("Selecting reference.\n");
 
-  if (!sp->focused || SEN_PREM(sp->focused->value))
+  if (!sp->focused || SEN_PREM(sp->focused->value) || SEN_SUB(sp->focused->value))
     return -2;
 
   sentence * fcs_sen;
