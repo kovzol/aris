@@ -277,6 +277,7 @@ aris_proof_init_from_proof (proof_t * proof)
           gtk_grid_attach_next_to (GTK_GRID (SEN_PARENT (ap)->container),
                                    SEN_PARENT (ap)->separator, NULL, GTK_POS_BOTTOM,
                                    1, 1);
+
           first = 0;
         }
       else
@@ -764,11 +765,13 @@ aris_proof_remove_sentence (aris_proof * ap, sentence * sen)
   if (sentence_get_line_no (sen) == 1)
     return 1;
 
+  int have_fin_prem = (ap->fin_prem->value == sen) ? 1 : 0;
+
   item_t * target = sen_parent_rem_sentence ((sen_parent *) ap, sen);
   if (!target)
     return AEC_MEM;
 
-  if (ap->fin_prem == target)
+  if (have_fin_prem)
     ap->fin_prem = SEN_PARENT (ap)->focused;
 
   int ret = aris_proof_adjust_lines (ap, target, -1);

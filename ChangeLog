@@ -1,5 +1,8 @@
 2014-03-06  Ian Dunn  <dunni@gnu.org>
 
+	* aris-proof.c (aris_proof_remove_sentence): Correctly
+	accounts for the removal of fin_prem.
+
 	* sentence.c (select_reference): Doesn't allow subproofs to
 	select references.
 
