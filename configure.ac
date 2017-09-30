@@ -47,5 +47,5 @@ if test "$WIN32" = "yes"; then
    AC_DEFINE([WIN32], [], ["Used when compiling for Windows"])
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile])
 AC_OUTPUT

@@ -16,4 +16,4 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 EXTRA_DIST = doc/aris.texi doc/aris.info doc/aris doc/proofs
-SUBDIRS = src
+SUBDIRS = src doc

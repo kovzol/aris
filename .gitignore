@@ -7,6 +7,7 @@ config.log
 config.status
 src/config.h
 autom4te.cache
+build-aux
 
 # Generated during build process
 *.o
@@ -14,5 +15,7 @@ src/aris
 src/.deps
 
 # Generated Documentation
-doc/*/aris/*.html
+doc/aris/*.html
 doc/aris.info
+doc/stamp-vti
+doc/version.texi
