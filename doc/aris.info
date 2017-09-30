@@ -1,4 +1,4 @@
-This is aris.info, produced by makeinfo version 5.2 from aris.texi.
+This is aris.info, produced by makeinfo version 6.4 from aris.texi.
 
 This manual is for GNU Aris, the logical proof program.
 
@@ -510,7 +510,7 @@ This manual is for GNU Aris, the logical proof program.
 
    This manual is for GNU Aris, the logical proof program.
 
-   This is edition 1.2, for 'aris' version 2.1.1
+   This is edition 1.3, for 'aris' version 2.2
 
 * Menu:
 
@@ -524,6 +524,7 @@ This manual is for GNU Aris, the logical proof program.
 * Submission::           Submitting proofs for grading.
 * Sequence Logic::       An overview of Sequence Logic.
 * Interoperability::     An explanation of interoperability.
+* Contributing::         How to contribute to everyone's favorite proof program
 
 
 File: aris.info,  Node: Introduction,  Next: Terms,  Prev: Top,  Up: Top
@@ -2023,7 +2024,7 @@ induction scheme is:
      Vx(P(z(x)) ^ (P(x) -> P(s(x)))) -> Vx(P(x))
 
 
-File: aris.info,  Node: Interoperability,  Prev: Sequence Logic,  Up: Top
+File: aris.info,  Node: Interoperability,  Next: Contributing,  Prev: Sequence Logic,  Up: Top
 
 10 Interoperability
 *******************
@@ -2124,83 +2125,112 @@ File: aris.info,  Node: other,  Prev: instance,  Up: Isabelle/Isar
 10.1.10 everything else
 -----------------------
 
+
+File: aris.info,  Node: Contributing,  Prev: Interoperability,  Up: Top
+
+11 Contributing
+***************
+
+Everyone no doubt wants to help out us weary developers with our work,
+so here's how you do it:
+
+  1. Check out the latest source from the git repo: 'git clone
+     https://git.savannah.gnu.org/git/aris.git'
+
+  2. Hack away and make your changes.  Commit them as you go, following
+     the coding standards of the GNU Project
+     (http://www.gnu.org/prep/standards/html_node/Change-Logs.html#Change-Logs)
+
+  3. Format patches for your changes using git format-patch
+     (https://git-scm.com/docs/git-format-patch).
+
+  4. Tar up the patches with 'tar czf aris-patches.tar.gz *.patch'.  (We
+     don't have a preference for compression algorithm; we just use gzip
+     here as an example.)
+
+  5. Email the tarball of patches to <bug-aris@gnu.org>.
+
+   If you just want to submit bug reports, that's fine, too.  Submit the
+report to <bug-aris@gnu.org>, and try to be as specific as possible.
+
 
 
 Tag Table:
 Node: Top25645
-Node: Introduction26898
-Node: Terms27430
-Node: Options36040
-Node: Basic Usage37525
-Node: Startup37910
-Node: Connectives38537
-Node: Adding39034
-Node: Selecting40086
-Node: Syntax41066
-Node: Menu Options41852
-Node: Proof Windows42511
-Node: Rules Table45549
-Node: Other Key Shortcuts46700
-Node: Rules Index47562
-Node: Inference Rules48110
-Node: mp48500
-Node: ad49024
-Node: sm49590
-Node: cn50079
-Node: hs50761
-Node: ds51516
-Node: ex51918
-Node: cd52201
-Node: Equivalence Rules52438
-Node: im52986
-Node: dm53294
-Node: as53533
-Node: co54109
-Node: id54527
-Node: dt54818
-Node: eq55200
-Node: dn55634
-Node: ep55945
-Node: sb56170
-Node: Recursion56407
-Node: Predicate Rules57301
-Node: ug57767
-Node: ui58294
-Node: eg58646
-Node: ei59008
-Node: bv59526
-Node: nq60158
-Node: pr60564
-Node: ii61018
-Node: fv61251
-Node: Boolean Rules61570
-Node: bi62090
-Node: bn62466
-Node: bd62796
-Node: sn63188
-Node: Miscellaneous Rules63404
-Node: lm63612
-Node: sp64792
-Node: sq65072
-Node: in65379
-Node: Customization65676
-Node: Dialog66083
-Node: Config File67355
-Node: Submission68792
-Node: Sequence Logic70491
-Node: Axioms71106
-Node: Induction72387
-Node: Interoperability72697
-Node: Isabelle/Isar73002
-Node: fun73812
-Node: type_synonym73971
-Node: lemma/theorem74122
-Node: case74484
-Node: primrec74615
-Node: definition74749
-Node: datatype74893
-Node: class75031
-Node: instance75161
-Node: other75294
+Node: Introduction26976
+Node: Terms27508
+Node: Options36118
+Node: Basic Usage37603
+Node: Startup37988
+Node: Connectives38615
+Node: Adding39112
+Node: Selecting40164
+Node: Syntax41144
+Node: Menu Options41930
+Node: Proof Windows42589
+Node: Rules Table45627
+Node: Other Key Shortcuts46778
+Node: Rules Index47640
+Node: Inference Rules48188
+Node: mp48578
+Node: ad49102
+Node: sm49668
+Node: cn50157
+Node: hs50839
+Node: ds51594
+Node: ex51996
+Node: cd52279
+Node: Equivalence Rules52516
+Node: im53064
+Node: dm53372
+Node: as53611
+Node: co54187
+Node: id54605
+Node: dt54896
+Node: eq55278
+Node: dn55712
+Node: ep56023
+Node: sb56248
+Node: Recursion56485
+Node: Predicate Rules57379
+Node: ug57845
+Node: ui58372
+Node: eg58724
+Node: ei59086
+Node: bv59604
+Node: nq60236
+Node: pr60642
+Node: ii61096
+Node: fv61329
+Node: Boolean Rules61648
+Node: bi62168
+Node: bn62544
+Node: bd62874
+Node: sn63266
+Node: Miscellaneous Rules63482
+Node: lm63690
+Node: sp64870
+Node: sq65150
+Node: in65457
+Node: Customization65754
+Node: Dialog66161
+Node: Config File67433
+Node: Submission68870
+Node: Sequence Logic70569
+Node: Axioms71184
+Node: Induction72465
+Node: Interoperability72775
+Node: Isabelle/Isar73101
+Node: fun73911
+Node: type_synonym74070
+Node: lemma/theorem74221
+Node: case74583
+Node: primrec74714
+Node: definition74848
+Node: datatype74992
+Node: class75130
+Node: instance75260
+Node: other75393
+Node: Contributing75512
 
 End Tag Table

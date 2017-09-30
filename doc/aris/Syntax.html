@@ -10,12 +10,12 @@ any later version published by the Free Software Foundation; with no
 Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
 Texts.  A copy of the license is included in the section entitled
 "GNU Free Documentation License". -->
-<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<!-- Created by GNU Texinfo 6.4, http://www.gnu.org/software/texinfo/ -->
 <head>
-<title>GNU Aris Manual: Syntax</title>
+<title>Syntax (GNU Aris Manual)</title>
 
-<meta name="description" content="GNU Aris Manual: Syntax">
-<meta name="keywords" content="GNU Aris Manual: Syntax">
+<meta name="description" content="Syntax (GNU Aris Manual)">
+<meta name="keywords" content="Syntax (GNU Aris Manual)">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
@@ -24,20 +24,20 @@ Texts.  A copy of the license is included in the section entitled
 <link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
 <link href="Basic-Usage.html#Basic-Usage" rel="up" title="Basic Usage">
 <link href="Menu-Options.html#Menu-Options" rel="next" title="Menu Options">
-<link href="Selecting.html#Selecting" rel="previous" title="Selecting">
+<link href="Selecting.html#Selecting" rel="prev" title="Selecting">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
 blockquote.smallquotation {font-size: smaller}
 div.display {margin-left: 3.2em}
 div.example {margin-left: 3.2em}
-div.indentedblock {margin-left: 3.2em}
 div.lisp {margin-left: 3.2em}
 div.smalldisplay {margin-left: 3.2em}
 div.smallexample {margin-left: 3.2em}
-div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
 div.smalllisp {margin-left: 3.2em}
-kbd {font-style:oblique}
+kbd {font-style: oblique}
 pre.display {font-family: inherit}
 pre.format {font-family: inherit}
 pre.menu-comment {font-family: serif}
@@ -46,10 +46,9 @@ pre.smalldisplay {font-family: inherit; font-size: smaller}
 pre.smallexample {font-size: smaller}
 pre.smallformat {font-family: inherit; font-size: smaller}
 pre.smalllisp {font-size: smaller}
-span.nocodebreak {white-space:nowrap}
-span.nolinebreak {white-space:nowrap}
-span.roman {font-family:serif; font-weight:normal}
-span.sansserif {font-family:sans-serif; font-weight:normal}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
 ul.no-bullet {list-style: none}
 -->
 </style>
@@ -57,11 +56,11 @@ ul.no-bullet {list-style: none}
 
 </head>
 
-<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<body lang="en">
 <a name="Syntax"></a>
 <div class="header">
 <p>
-Previous: <a href="Selecting.html#Selecting" accesskey="p" rel="previous">Selecting</a>, Up: <a href="Basic-Usage.html#Basic-Usage" accesskey="u" rel="up">Basic Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+Previous: <a href="Selecting.html#Selecting" accesskey="p" rel="prev">Selecting</a>, Up: <a href="Basic-Usage.html#Basic-Usage" accesskey="u" rel="up">Basic Usage</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
 </div>
 <hr>
 <a name="Aris-Syntax"></a>
@@ -70,6 +69,8 @@ Previous: <a href="Selecting.html#Selecting" accesskey="p" rel="previous">Select
 <p>Aris expects a certain form of syntax.  Most of the connectives are infix, which means that they are placed in between their arguments.  The negation is one exception to this.
 </p>
 <p>Aris expects that all predicates start with an uppercase character.  Aris also expects that all function symbols begin with a lower case character.  After this, Aris will except any combination of upper case letters, lower case letters, numbers, or &lsquo;<samp>_</samp>&rsquo;.
+</p>
+<p>To assist in understanding the proofs, Aris also allows for comments in sentences.  To make a comment, simply insert a &lsquo;<samp>;</samp>&rsquo;.  Aris will ignore everything after a &lsquo;<samp>;</samp>&rsquo; when evaluating a sentence.  This way, plaintext can be written into sentences.
 </p>
 
 

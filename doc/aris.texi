@@ -63,6 +63,7 @@ This is edition @value{EDITION}, for @code{aris} version @value{VERSION}
 * Submission::           Submitting proofs for grading.
 * Sequence Logic::       An overview of Sequence Logic.
 * Interoperability::     An explanation of interoperability.
+* Contributing::         How to contribute to everyone's favorite proof program
 @end menu
 
 @node Introduction
@@ -1270,5 +1271,30 @@ Lemmas and theorems are treated the same.  Lemmas end up as the goals of the pro
 
 @node other
 @subsection everything else
+
+@node Contributing
+@chapter Contributing
+
+Everyone no doubt wants to help out us weary developers with our work, so here's how you do it:
+
+@enumerate
+@item
+Check out the latest source from the git repo: @code{git clone https://git.savannah.gnu.org/git/aris.git}
+
+@item
+Hack away and make your changes.  Commit them as you go, following @uref{http://www.gnu.org/prep/standards/html_node/Change-Logs.html#Change-Logs ,the coding standards of the GNU Project}
+
+@item
+Format patches for your changes using @url{https://git-scm.com/docs/git-format-patch ,git format-patch}.
+
+@item
+Tar up the patches with @code{tar czf aris-patches.tar.gz *.patch}.  (We don't have a preference for compression algorithm; we just use gzip here as an example.)
+
+@item
+Email the tarball of patches to @email{bug-aris@@gnu.org}.
+
+@end enumerate
+
+If you just want to submit bug reports, that's fine, too.  Submit the report to @email{bug-aris@@gnu.org}, and try to be as specific as possible.
 
 @bye

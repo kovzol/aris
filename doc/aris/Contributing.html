@@ -12,19 +12,18 @@ Texts.  A copy of the license is included in the section entitled
 "GNU Free Documentation License". -->
 <!-- Created by GNU Texinfo 6.4, http://www.gnu.org/software/texinfo/ -->
 <head>
-<title>sq (GNU Aris Manual)</title>
+<title>Contributing (GNU Aris Manual)</title>
 
-<meta name="description" content="sq (GNU Aris Manual)">
-<meta name="keywords" content="sq (GNU Aris Manual)">
+<meta name="description" content="Contributing (GNU Aris Manual)">
+<meta name="keywords" content="Contributing (GNU Aris Manual)">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link href="index.html#Top" rel="start" title="Top">
 <link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
-<link href="Miscellaneous-Rules.html#Miscellaneous-Rules" rel="up" title="Miscellaneous Rules">
-<link href="in.html#in" rel="next" title="in">
-<link href="sp.html#sp" rel="prev" title="sp">
+<link href="index.html#Top" rel="up" title="Top">
+<link href="other.html#other" rel="prev" title="other">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
@@ -57,16 +56,31 @@ ul.no-bullet {list-style: none}
 </head>
 
 <body lang="en">
-<a name="sq"></a>
+<a name="Contributing"></a>
 <div class="header">
 <p>
-Next: <a href="in.html#in" accesskey="n" rel="next">in</a>, Previous: <a href="sp.html#sp" accesskey="p" rel="prev">sp</a>, Up: <a href="Miscellaneous-Rules.html#Miscellaneous-Rules" accesskey="u" rel="up">Miscellaneous Rules</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
+Previous: <a href="Interoperability.html#Interoperability" accesskey="p" rel="prev">Interoperability</a>, Up: <a href="index.html#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="index.html#SEC_Contents" title="Table of contents" rel="contents">Contents</a>]</p>
 </div>
 <hr>
-<a name="Sequence"></a>
-<h4 class="subsection">6.5.3 Sequence</h4>
+<a name="Contributing-1"></a>
+<h2 class="chapter">11 Contributing</h2>
 
-<p>This introduces a new sequence given a function.  The sequence introduced this way must not have been used, and the final argument of the given function must be the bound variable of the sentence.
+<p>Everyone no doubt wants to help out us weary developers with our work, so here&rsquo;s how you do it:
+</p>
+<ol>
+<li> Check out the latest source from the git repo: <code>git clone https://git.savannah.gnu.org/git/aris.git</code>
+
+</li><li> Hack away and make your changes.  Commit them as you go, following <a href="http://www.gnu.org/prep/standards/html_node/Change-Logs.html#Change-Logs">the coding standards of the GNU Project</a>
+
+</li><li> Format patches for your changes using <a href="https://git-scm.com/docs/git-format-patch">git format-patch</a>.
+
+</li><li> Tar up the patches with <code>tar czf aris-patches.tar.gz *.patch</code>.  (We don&rsquo;t have a preference for compression algorithm; we just use gzip here as an example.)
+
+</li><li> Email the tarball of patches to <a href="mailto:bug-aris@gnu.org">bug-aris@gnu.org</a>.
+
+</li></ol>
+
+<p>If you just want to submit bug reports, that&rsquo;s fine, too.  Submit the report to <a href="mailto:bug-aris@gnu.org">bug-aris@gnu.org</a>, and try to be as specific as possible.
 </p>
 
 

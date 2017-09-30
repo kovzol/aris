@@ -10,12 +10,12 @@ any later version published by the Free Software Foundation; with no
 Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
 Texts.  A copy of the license is included in the section entitled
 "GNU Free Documentation License". -->
-<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<!-- Created by GNU Texinfo 6.4, http://www.gnu.org/software/texinfo/ -->
 <head>
-<title>GNU Aris Manual: Proof Windows</title>
+<title>Proof Windows (GNU Aris Manual)</title>
 
-<meta name="description" content="GNU Aris Manual: Proof Windows">
-<meta name="keywords" content="GNU Aris Manual: Proof Windows">
+<meta name="description" content="Proof Windows (GNU Aris Manual)">
+<meta name="keywords" content="Proof Windows (GNU Aris Manual)">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
 <meta name="Generator" content="makeinfo">
@@ -24,20 +24,20 @@ Texts.  A copy of the license is included in the section entitled
 <link href="index.html#SEC_Contents" rel="contents" title="Table of Contents">
 <link href="Menu-Options.html#Menu-Options" rel="up" title="Menu Options">
 <link href="Rules-Table.html#Rules-Table" rel="next" title="Rules Table">
-<link href="Menu-Options.html#Menu-Options" rel="previous" title="Menu Options">
+<link href="Menu-Options.html#Menu-Options" rel="prev" title="Menu Options">
 <style type="text/css">
 <!--
 a.summary-letter {text-decoration: none}
+blockquote.indentedblock {margin-right: 0em}
+blockquote.smallindentedblock {margin-right: 0em; font-size: smaller}
 blockquote.smallquotation {font-size: smaller}
 div.display {margin-left: 3.2em}
 div.example {margin-left: 3.2em}
-div.indentedblock {margin-left: 3.2em}
 div.lisp {margin-left: 3.2em}
 div.smalldisplay {margin-left: 3.2em}
 div.smallexample {margin-left: 3.2em}
-div.smallindentedblock {margin-left: 3.2em; font-size: smaller}
 div.smalllisp {margin-left: 3.2em}
-kbd {font-style:oblique}
+kbd {font-style: oblique}
 pre.display {font-family: inherit}
 pre.format {font-family: inherit}
 pre.menu-comment {font-family: serif}
@@ -46,10 +46,9 @@ pre.smalldisplay {font-family: inherit; font-size: smaller}
 pre.smallexample {font-size: smaller}
 pre.smallformat {font-family: inherit; font-size: smaller}
 pre.smalllisp {font-size: smaller}
-span.nocodebreak {white-space:nowrap}
-span.nolinebreak {white-space:nowrap}
-span.roman {font-family:serif; font-weight:normal}
-span.sansserif {font-family:sans-serif; font-weight:normal}
+span.nolinebreak {white-space: nowrap}
+span.roman {font-family: initial; font-weight: normal}
+span.sansserif {font-family: sans-serif; font-weight: normal}
 ul.no-bullet {list-style: none}
 -->
 </style>
@@ -57,7 +56,7 @@ ul.no-bullet {list-style: none}
 
 </head>
 
-<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+<body lang="en">
 <a name="Proof-Windows"></a>
 <div class="header">
 <p>
@@ -90,6 +89,10 @@ Next: <a href="Rules-Table.html#Rules-Table" accesskey="n" rel="next">Rules Tabl
 <dd><p>Save the current proof under a different name.
 </p>
 </dd>
+<dt>&lsquo;<samp>Export to LaTeX...</samp>&rsquo;</dt>
+<dd><p>Export the current proof to a LaTeX file.
+</p>
+</dd>
 <dt>&lsquo;<samp>Close</samp>&rsquo;</dt>
 <dt><kbd>CTRL+W</kbd></dt>
 <dd><p>Close the current proof.
@@ -120,6 +123,16 @@ Next: <a href="Rules-Table.html#Rules-Table" accesskey="n" rel="next">Rules Tabl
 <dd><p>End the current subproof, if there is one.  Otherwise, this doesn&rsquo;t do anything.  This is unavailable in boolean mode, since subproofs can&rsquo;t be used.
 </p>
 </dd>
+<dt>&lsquo;<samp>Undo</samp>&rsquo;</dt>
+<dt><kbd>CTRL+Z</kbd></dt>
+<dd><p>Undo the last modification to the current proof.  On a new file, this does nothing.
+</p>
+</dd>
+<dt>&lsquo;<samp>Redo</samp>&rsquo;</dt>
+<dt><kbd>CTRL+Y</kbd></dt>
+<dd><p>Undo an undo operation.  If no undo has been made, then this does nothing.
+</p>
+</dd>
 <dt>&lsquo;<samp>Copy Line</samp>&rsquo;</dt>
 <dt><kbd>CTRL+G</kbd></dt>
 <dd><p>Copy the current line.
@@ -127,7 +140,7 @@ Next: <a href="Rules-Table.html#Rules-Table" accesskey="n" rel="next">Rules Tabl
 </dd>
 <dt>&lsquo;<samp>Kill Line</samp>&rsquo;</dt>
 <dt><kbd>CTRL+K</kbd></dt>
-<dd><p>Kill, or cut, the current line.
+<dd><p>Kill, or cut, the current line.  This removes the line from the proof.
 </p>
 </dd>
 <dt>&lsquo;<samp>Insert Line</samp>&rsquo;</dt>
