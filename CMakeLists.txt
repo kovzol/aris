@@ -59,11 +59,11 @@ add_executable(aris
         src/vec.c
         src/vec.h)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DARIS_GUI")
 configure_file(cmake/config.h.in config.h)
 find_package(LibXml2 REQUIRED)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DARIS_GUI")
-find_package(GTK3 REQUIRED)
-message(${GTK3_LIBRARIES})
+FIND_PACKAGE(PkgConfig REQUIRED)
+PKG_CHECK_MODULES(GTK3 REQUIRED gtk+-3.0)
 include_directories(src ${GTK3_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIR} ${LIBXML2_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(aris m ${LIBXML2_LIBRARY} ${GTK3_LIBRARIES} gio-2.0)
+
