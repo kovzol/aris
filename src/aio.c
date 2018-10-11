@@ -21,10 +21,15 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+
+#if defined(__MACH__)
+#include <stdlib.h>
+#else 
 #include <malloc.h>
+#endif
+
 #include <libxml/xmlwriter.h>
 #include <libxml/xmlreader.h>
-
 #include "aio.h"
 #include "var.h"
 #include "sen-data.h"
