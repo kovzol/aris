@@ -146,8 +146,12 @@ sentence_focus_out (GtkWidget * widget, GdkEvent * event, gpointer data)
 G_MODULE_EXPORT gboolean
 sentence_btn_press (GtkWidget * widget, GdkEventButton * event, gpointer data)
 {
-  if ((event->state == GDK_CONTROL_MASK && event->button == 1)
-      || (event->state == GDK_SHIFT_MASK && event->button == 1))
+  GdkModifierType modifiers;
+  modifiers = gtk_accelerator_get_default_mod_mask ();
+  /* https://developer.gnome.org/gtk3/stable/checklist-modifiers.html */
+
+  if ((((event->state & modifiers) == GDK_CONTROL_MASK) && event->button == 1)
+      || ((event->state & modifiers) == GDK_SHIFT_MASK) && event->button == 1)
     {
       return TRUE;
     }
@@ -163,7 +167,11 @@ sentence_btn_press (GtkWidget * widget, GdkEventButton * event, gpointer data)
 G_MODULE_EXPORT gboolean
 sentence_btn_release (GtkWidget * widget, GdkEventButton * event, gpointer data)
 {
-  if (event->state == (GDK_CONTROL_MASK | GDK_BUTTON1_MASK) && event->button == 1)
+  GdkModifierType modifiers;
+  modifiers = gtk_accelerator_get_default_mod_mask ();
+  /* https://developer.gnome.org/gtk3/stable/checklist-modifiers.html */
+
+  if ((event->state & modifiers) == GDK_CONTROL_MASK && event->button == 1)
     {
       // Only want to do anything if the ctrl key is pressed.
       sentence * sen = (sentence *) data;
@@ -172,7 +180,7 @@ sentence_btn_release (GtkWidget * widget, GdkEventButton * event, gpointer data)
       return TRUE;
     }
 
-  if (event->state == (GDK_SHIFT_MASK | GDK_BUTTON1_MASK) && event->button == 1)
+  if ((event->state & modifiers) == GDK_SHIFT_MASK && event->button == 1)
     {
       sentence * sen = (sentence *) data;
       select_sentence (sen);
