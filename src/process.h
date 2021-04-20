@@ -170,7 +170,7 @@ static struct connectives_list sexpr_conns = {
 
 // The main connectives.
 
-struct connectives_list main_conns;
+extern struct connectives_list main_conns;
 
 // Definitions.
 

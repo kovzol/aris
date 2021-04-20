@@ -671,6 +671,8 @@ ignoring unrecognized option: \"%c\" .\n",c);
   return 0;
 }
 
+aris_app *the_app;
+
 /* Main function. */
 int
 main (int argc, char *argv[])

@@ -106,6 +106,6 @@ int the_app_get_font_by_name (aris_app * app, char * name);
 
 int app_set_color (aris_app * app, int index, int red, int green, int blue);
 /* The main application */
-aris_app * the_app;
+extern aris_app * the_app;
 
 #endif /* ARIS_APP_H */

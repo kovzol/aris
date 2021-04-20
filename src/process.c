@@ -26,6 +26,9 @@
 #include <ctype.h>
 #include <math.h>
 
+
+struct connectives_list main_conns;
+
 /* Eliminates a negation from a string.
  *  input:
  *    not_str - the string from which to eliminate the negation.
