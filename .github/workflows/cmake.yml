@@ -49,7 +49,7 @@ jobs:
         shell: msys2 {0}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
     - name: Install Prerequisites
       uses: msys2/setup-msys2@v2
       with:
@@ -57,11 +57,11 @@ jobs:
         update: true
         install: >-
           base-devel
-          pkg-config
           mingw-w64-x86_64-cc
           mingw-w64-x86_64-gtk3
           mingw-w64-x86_64-make
           mingw-w64-x86_64-cmake
+          mingw-w64-x86_64-pkgconf
           mingw-w64-x86_64-libxml2
 
     - name: Create Build Environment
@@ -72,10 +72,49 @@ jobs:
       shell: bash
       run: |
         cd build
-        cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G "MinGW Makefiles" ..
+        cmake -G "MinGW Makefiles" ..
 
     - name: Build
       shell: bash
       run: |
         cd build
-        make
+        mingw32-make
+
+
+  win32:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Prerequisites
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW32
+        update: true
+        install: >-
+          base-devel
+          mingw-w64-i686-cc
+          mingw-w64-i686-gtk3
+          mingw-w64-i686-make
+          mingw-w64-i686-cmake
+          mingw-w64-i686-pkgconf
+          mingw-w64-i686-libxml2
+
+    - name: Create Build Environment
+      shell: bash
+      run: mkdir build
+
+    - name: Configure CMake
+      shell: bash
+      run: |
+        cd build
+        cmake -G "MinGW Makefiles" ..
+
+    - name: Build
+      shell: bash
+      run: |
+        cd build
+        mingw32-make
