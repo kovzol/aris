@@ -64,6 +64,7 @@ jobs:
           mingw-w64-x86_64-libxml2
 
     - name: Create Build Environment
+      shell: bash
       run: cmake -G "MinGW Makefiles" -E make_directory ${{github.workspace}}/build
 
     - name: Configure CMake
