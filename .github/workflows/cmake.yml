@@ -43,7 +43,7 @@ jobs:
 
 
   win64:
-    runs-on: windows-2022
+    runs-on: windows-2019
     defaults:
       run:
         shell: msys2 {0}
@@ -72,7 +72,7 @@ jobs:
       shell: bash
       run: |
         cd build
-        ls -alR /C/msys64
+        ls -alR /C
         cmake -DPKG_CONFIG_EXECUTABLE=c:/msys64/mingw64/bin/pkg-config.exe -G "MinGW Makefiles" ..
 
     - name: Build
