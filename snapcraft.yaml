@@ -1,4 +1,8 @@
 name: aris
+
+architectures:
+  - build-on: amd64
+
 base: core20
 version: '2.2'
 summary: A logical proof program
