@@ -3,9 +3,6 @@ base: core18
 version: '2.2'
 summary: A logical proof program
 license: GPL-3.0
-contact: zoltan@geogebra.org
-source-code: https://github.com/kovzol/aris.git
-website: https://www.gnu.org/software/aris/
 icon: src/icon.png
 
 description: |
