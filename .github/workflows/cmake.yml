@@ -103,6 +103,10 @@ jobs:
           mingw-w64-i686-pkgconf
           mingw-w64-i686-libxml2
 
+    - name: Update
+      shell: cmd
+      run: C:\Windows\system32\cmd.exe /D /S /C D:\a\_temp\setup-msys2\msys2.cmd -c "'pacman' '--noconfirm' '-Syuu' '--overwrite' '*'"
+
     - name: Create Build Environment
       shell: bash
       run: mkdir build
