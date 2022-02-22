@@ -43,13 +43,13 @@ jobs:
 
 
   win64:
-    runs-on: windows-latest
+    runs-on: windows-2022
     defaults:
       run:
         shell: msys2 {0}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Install Prerequisites
       uses: msys2/setup-msys2@v2
       with:
@@ -82,13 +82,13 @@ jobs:
 
 
   win32:
-    runs-on: windows-latest
+    runs-on: windows-2022
     defaults:
       run:
         shell: msys2 {0}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Install Prerequisites
       uses: msys2/setup-msys2@v2
       with:
