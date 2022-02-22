@@ -72,6 +72,7 @@ jobs:
       shell: bash
       run: |
         cd build
+        ls -alR /C/msys64
         cmake -DPKG_CONFIG_EXECUTABLE=c:/msys64/mingw64/bin/pkg-config.exe -G "MinGW Makefiles" ..
 
     - name: Build
