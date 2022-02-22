@@ -72,7 +72,7 @@ jobs:
       shell: bash
       run: |
         cd build
-        cmake -G "MinGW Makefiles" ..
+        cmake -DPKG_CONFIG_EXECUTABLE=c:/msys64/mingw64/bin/pkg-config.exe -G "MinGW Makefiles" ..
 
     - name: Build
       shell: bash
@@ -111,7 +111,7 @@ jobs:
       shell: bash
       run: |
         cd build
-        cmake -G "MinGW Makefiles" ..
+        cmake -DPKG_CONFIG_EXECUTABLE=c:/msys64/mingw32/bin/pkg-config.exe -G "MinGW Makefiles" ..
 
     - name: Build
       shell: bash
