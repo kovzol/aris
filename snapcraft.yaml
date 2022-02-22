@@ -1,5 +1,5 @@
 name: aris
-base: core18
+base: core20
 version: '2.2'
 summary: A logical proof program
 license: GPL-3.0
@@ -14,12 +14,12 @@ confinement: strict
 
 apps:
   aris:
-    command: bin/aris
+    command: usr/local/bin/aris
     plugs:
       - home
       - x11
     extensions:
-      - gnome-3-28
+      - kde-neon
 
 parts:
   aris:
