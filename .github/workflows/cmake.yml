@@ -43,7 +43,7 @@ jobs:
 
 
   win64:
-    runs-on: windows-2019
+    runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
@@ -65,24 +65,21 @@ jobs:
           mingw-w64-x86_64-libxml2
 
     - name: Create Build Environment
-      shell: bash
       run: mkdir build
 
     - name: Configure CMake
-      shell: bash
       run: |
         cd build
-        cmake -DPKG_CONFIG_EXECUTABLE=D:/a/_temp/msys64/mingw64/bin/pkg-config.exe -G "MinGW Makefiles" ..
+        cmake -G "MinGW Makefiles" ..
 
     - name: Build
-      shell: bash
       run: |
         cd build
         mingw32-make
 
 
   win32:
-    runs-on: windows-2022
+    runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
@@ -103,22 +100,15 @@ jobs:
           mingw-w64-i686-pkgconf
           mingw-w64-i686-libxml2
 
-    - name: Update
-      shell: cmd
-      run: C:\Windows\system32\cmd.exe /D /S /C D:\a\_temp\setup-msys2\msys2.cmd -c "'pacman' '--noconfirm' '-Syuu' '--overwrite' '*'"
-
     - name: Create Build Environment
-      shell: bash
       run: mkdir build
 
     - name: Configure CMake
-      shell: bash
       run: |
         cd build
-        cmake -DPKG_CONFIG_EXECUTABLE=D:/a/_temp/msys64/mingw32/bin/pkg-config.exe -G "MinGW Makefiles" ..
+        cmake -G "MinGW Makefiles" ..
 
     - name: Build
-      shell: bash
       run: |
         cd build
         mingw32-make
