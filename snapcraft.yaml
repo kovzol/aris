@@ -1,35 +1,104 @@
+# This configuration file is based on the gnome-3-38 extension,
+# but the build-enviroment settings had to be removed. Otherwise cmake
+# will be confused and will use the linker option
+# "-Wl,-rpath,/snap/gnome-3-38-2004-sdk/current/usr/lib/x86_64-linux-gnu:"
+# which results in the error messages
+# "/usr/bin/ld: /snap/gnome-3-38-2004-sdk/current/usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0: undefined reference to `pango_font_family_get_face'" and
+# "/usr/bin/ld: /snap/gnome-3-38-2004-sdk/current/usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0: undefined reference to `pango_font_map_get_family'".
+
 name: aris
-
-architectures:
-  - build-on: amd64
-
+# architectures:
+# - build-on: amd64
 base: core20
 version: '2.2'
 summary: A logical proof program
 license: GPL-3.0
 icon: src/icon.png
-
 description: |
   Aris supports propositional and predicate logic, Boolean algebra,
   and arithmetical logic in the form of abstract sequences (seqlog).
-
 grade: stable
 confinement: strict
-
 apps:
   aris:
     command: usr/local/bin/aris
     plugs:
-      - home
-      - x11
-    extensions:
-      - kde-neon
-
+    - desktop
+    - desktop-legacy
+    - gsettings
+    - opengl
+    - wayland
+    - x11
+    - home
+    command-chain:
+    - snap/command-chain/desktop-launch
 parts:
   aris:
-    build-packages: [cmake, build-essential, pkg-config, libgtk-3-dev, libxml2-dev]
+    build-packages:
+    - cmake
+    - build-essential
+    - pkg-config
+    - libgtk-3-dev
+    - libxml2-dev
     source: https://github.com/kovzol/aris.git
     plugin: cmake
     stage-packages:
-      - libgtk-3-0
-      - libxml2
+    - libgtk-3-0
+    - libxml2
+#    build-environment:
+#    - PATH: /snap/gnome-3-38-2004-sdk/current/usr/bin:$PATH
+#    - XDG_DATA_DIRS: $SNAPCRAFT_STAGE/usr/share:/snap/gnome-3-38-2004-sdk/current/usr/share:/usr/share:$XDG_DATA_DIRS
+#    - LD_LIBRARY_PATH: /snap/gnome-3-38-2004-sdk/current/lib/$SNAPCRAFT_ARCH_TRIPLET:/snap/gnome-3-38-2004-sdk/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:/snap/gnome-3-38-2004-sdk/current/usr/lib:/snap/gnome-3-38-2004-sdk/current/usr/lib/vala-current:/snap/gnome-3-38-2004-sdk/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+#    - PKG_CONFIG_PATH: /snap/gnome-3-38-2004-sdk/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig:/snap/gnome-3-38-2004-sdk/current/usr/lib/pkgconfig:/snap/gnome-3-38-2004-sdk/current/usr/share/pkgconfig:$PKG_CONFIG_PATH
+#    - GETTEXTDATADIRS: /snap/gnome-3-38-2004-sdk/current/usr/share/gettext-current:$GETTEXTDATADIRS
+#    - GDK_PIXBUF_MODULE_FILE: /snap/gnome-3-38-2004-sdk/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-current/loaders.cache
+#    - ACLOCAL_PATH: /snap/gnome-3-38-2004-sdk/current/usr/share/aclocal${ACLOCAL_PATH:+:$ACLOCAL_PATH}
+#    - PYTHONPATH: /snap/gnome-3-38-2004-sdk/current/usr/lib/python3.8:/snap/gnome-3-38-2004-sdk/current/usr/lib/python3/dist-packages${PYTHONPATH:+:$PYTHONPATH}
+  gnome-3-38-extension:
+    build-packages:
+    - gcc
+    build-snaps:
+    - gnome-3-38-2004-sdk/latest/stable
+    make-parameters:
+    - WITH_PYTHON=3.8
+    - PLATFORM_PLUG=gnome-3-38-2004
+    plugin: make
+    source: $SNAPCRAFT_EXTENSIONS_DIR/desktop
+    source-subdir: gnome
+assumes:
+- snapd2.43
+plugs:
+  desktop:
+    mount-host-font-cache: false
+  gnome-3-38-2004:
+    default-provider: gnome-3-38-2004
+    interface: content
+    target: $SNAP/gnome-platform
+  gtk-3-themes:
+    default-provider: gtk-common-themes
+    interface: content
+    target: $SNAP/data-dir/themes
+  icon-themes:
+    default-provider: gtk-common-themes
+    interface: content
+    target: $SNAP/data-dir/icons
+  sound-themes:
+    default-provider: gtk-common-themes
+    interface: content
+    target: $SNAP/data-dir/sounds
+environment:
+  GTK_USE_PORTAL: '1'
+  SNAP_DESKTOP_RUNTIME: $SNAP/gnome-platform
+hooks:
+  configure:
+    command-chain:
+    - snap/command-chain/hooks-configure-desktop
+    plugs:
+    - desktop
+layout:
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.0:
+    bind: $SNAP/gnome-platform/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.0
+  /usr/share/libdrm:
+    bind: $SNAP/gnome-platform/usr/share/libdrm
+  /usr/share/xml/iso-codes:
+    bind: $SNAP/gnome-platform/usr/share/xml/iso-codes
