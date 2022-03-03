@@ -7,8 +7,10 @@
 # "/usr/bin/ld: /snap/gnome-3-38-2004-sdk/current/usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0: undefined reference to `pango_font_map_get_family'".
 
 name: aris
-# architectures:
-# - build-on: amd64
+architectures:
+  - build-on: amd64
+  - build-on: armhf
+  - build-on: arm64
 base: core20
 version: '2.2'
 summary: A logical proof program
