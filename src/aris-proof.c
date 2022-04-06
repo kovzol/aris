@@ -42,6 +42,8 @@
 #include "vec.h"
 #include "undo.h"
 
+#include "sentence-screen-keyboard.h"
+
 #define SUBPROOFS_DISABLED 0
 
 // Main menu array.
