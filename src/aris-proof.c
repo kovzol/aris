@@ -298,6 +298,8 @@ aris_proof_init_from_proof (proof_t * proof)
 
   gtk_widget_show_all (SEN_PARENT (ap)->window);
   gtk_widget_grab_focus (((sentence *) SEN_PARENT (ap)->everything->head->value)->entry);
+   
+  init_sentence_screen_keyboard(&(ap->sp)); // Initialize the screen keyboard for logic operations
 
   return ap;
 }
