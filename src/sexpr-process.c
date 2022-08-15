@@ -1106,7 +1106,7 @@ sexpr_get_ids (unsigned char * sen, int ** ids, vec_t * sen_ids)
 
       if (isalnum (sen[i]))
 	{
-	  int k;
+	  int k = 0;
 	  int start, end;
 	  int new_id;
 

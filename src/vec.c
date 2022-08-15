@@ -37,7 +37,7 @@ init_vec (const unsigned int stuff_size)
   v = (vec_t *) calloc (1, sizeof (vec_t));
   if (!v)
     {
-      perror (NULL);
+      PERROR (NULL);
       return NULL;
     }
 
@@ -48,7 +48,8 @@ init_vec (const unsigned int stuff_size)
   v->stuff = calloc (1, stuff_size);
   if (!v->stuff)
     {
-      perror (NULL);
+      PERROR (NULL);
+      free (v);
       return NULL;
     }
 

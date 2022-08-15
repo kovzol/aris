@@ -58,7 +58,7 @@ rules_group_init (int num_rules, char * label, rules_table * parent)
   rg = (rules_group *) calloc (1, sizeof (rules_group));
   if (!rg)
     {
-      perror (NULL);
+      PERROR (NULL);
       return NULL;
     }
 
@@ -114,7 +114,7 @@ rules_table_init (int boolean)
   rt = (rules_table *) calloc (1, sizeof (rules_table));
   if (!rt)
     {
-      perror (NULL);
+      PERROR (NULL);
       return NULL;
     }
 
@@ -234,7 +234,7 @@ rule_toggled (int index)
 
 	  sentence_set_rule (sen, -1);
 
-	  undo_info ui;
+	  undo_info ui = { 0 };
 	  ui.type = -1;
 	  ret = aris_proof_set_changed (the_app->focused, 1, ui);
 	  if (ret < 0)
@@ -321,7 +321,7 @@ rule_toggled (int index)
 
       sentence_set_rule (sen, index);
 
-      undo_info ui;
+      undo_info ui = { 0 };
       ui.type = -1;
       ret = aris_proof_set_changed (the_app->focused, 1, ui);
       if (ret < 0)

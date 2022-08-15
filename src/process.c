@@ -29,6 +29,8 @@
 
 struct connectives_list main_conns;
 
+struct connectives_list main_conns = { 0 };
+
 /* Eliminates a negation from a string.
  *  input:
  *    not_str - the string from which to eliminate the negation.
@@ -399,7 +401,8 @@ check_parens (const unsigned char *chk_str)
     return 0;
 
   //Temporary strings for strstr.
-  unsigned char * o_str, * c_str;
+  unsigned char * o_str = (unsigned char *) !0;
+  unsigned char * c_str = (unsigned char *) !0;
 
   //Position indicators and helpers.
   unsigned int o_pos, c_pos, chk_pos;
@@ -718,6 +721,8 @@ get_gen (unsigned char * in_str, int in_pos, unsigned char ** out_str)
 {
   int i;
 
+  CHECK_ALLOC (in_str, -1);
+  
   for (i = in_pos; in_str[i] != '\0'; i++)
     {
       if (in_str[i] == '(')
@@ -1266,7 +1271,10 @@ check_infix (unsigned char * in_str, int pred)
 
       rsen = sym_str + strlen (sym);
       if (strstr (rsen, sym))
-	return -2;
+        {
+          free (lsen);
+          return -2;
+        }
 
       int ret_chk;
 
@@ -1933,7 +1941,8 @@ new_const (char * in_str)
 {
   int n, i;
   unsigned char * out_str;
-  int out_pos, alloc_size;
+  int out_pos = 0;
+  int alloc_size;
 
   sscanf (in_str, "%i", &n);
 

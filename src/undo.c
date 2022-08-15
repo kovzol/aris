@@ -90,7 +90,10 @@ undo_info_init_one (aris_proof * ap, sentence * sen, int type)
 
   sd = sentence_copy_to_data (sen);
   if (!sd)
-    return ret;
+    {
+      free (text);
+      return ret;
+    }
 
   if (sd->text)
     free (sd->text);
@@ -260,7 +263,7 @@ undo_op_mod (aris_proof * ap, undo_info * ui)
       sen_data * sd;
       GtkTextBuffer * buffer;
       int ln;
-      sentence * sen;
+      sentence * sen = 0;
 
       sd = (sen_data *) ui_itr->value;
 

@@ -37,7 +37,7 @@ init_list ()
   ls = (list_t *) calloc (1, sizeof (list_t));
   if (!ls)
     {
-      perror (NULL);
+      PERROR (NULL);
       return NULL;
     }
 
@@ -107,7 +107,7 @@ ls_ins_obj (list_t * ls, void * obj, item_t * it)
   ins_itm = (item_t *) calloc (1, sizeof (item_t));
   if (!ins_itm)
     {
-      perror (NULL);
+      PERROR (NULL);
       return NULL;
     }
   ins_itm->prev = ins_itm->next = NULL;

@@ -242,7 +242,7 @@ aio_open_conc (xmlTextReader * xml)
   int rule = -1, sen_depth = 0, line_num = 0;
   unsigned char * text, * file;
   text = file = NULL;
-  short * refs;
+  short * refs = 0;
   int i;
 
   got_rule = got_refs = got_depth = got_file = got_text = 0;

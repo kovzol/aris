@@ -604,6 +604,7 @@ isar_parse_theory (char * input_str)
   // next will be the name.
   // That's not exactly important though.
   // Mostly want the includes.
+  return 0;
 }
 
 int
@@ -1465,7 +1466,7 @@ isar_parse_fun (char * fun, char ** out_str)
 	pos += 14;
     }
 
-  int fun_pos;
+  int fun_pos = 0;
 
   //TODO: Calculate the ACTUAL size this should be.
 
@@ -1708,7 +1709,8 @@ isar_parse_theorem (char * thm, char ** out_str)
 int
 isar_parse_datatype (char * type, vec_t * constructors)
 {
-  int init_pos, pos;
+  int init_pos = 0;
+  int pos = 0;
   int i, chk;
 
   init_pos = 0;
@@ -1741,7 +1743,8 @@ isar_parse_primrec (char * prim, char ** out_str)
 int
 isar_parse_case (char * cs, char ** out_str)
 {
-  vec_t * pre, * post;
+  vec_t * pre = 0;
+  vec_t * post = 0;
   int i, pos, init_pos;
   char * var;
   int out_pos;
@@ -1782,7 +1785,7 @@ isar_parse_case (char * cs, char ** out_str)
       tmp_str[pos - init_pos] = '\0';
 
       // Process it, converting it to a notation aris will recognize.
-      char * new_str;
+      char * new_str = 0;
       //new_str = isar_convert (tmp_str);
       //if (!new_str)
       //  return -1;
@@ -2064,7 +2067,7 @@ parse_thy (char * filename, proof_t * proof)
   if (chk)
     {
       fclose (file);
-      perror (NULL);
+      PERROR (NULL);
       return -1;
     }
 
@@ -2074,7 +2077,7 @@ parse_thy (char * filename, proof_t * proof)
   if (chk)
     {
       fclose (file);
-      perror (NULL);
+      PERROR (NULL);
       return -1;
     }
 
@@ -2093,6 +2096,7 @@ parse_thy (char * filename, proof_t * proof)
   if (!ret_chk_str)
     {
       // Invalid .thy file, return an error.
+      free (buffer);
       return -2;
     }
 
@@ -2122,15 +2126,25 @@ parse_thy (char * filename, proof_t * proof)
 
   chk = get_std_seqs ();
   if (chk == -1)
-    return -1;
+    {
+      free (buffer);
+      return -1;
+    }
 
   refs = init_vec (sizeof (char *));
   if (!refs)
-    return -1;
+    {
+      free (buffer);
+      return -1;
+    }
 
   lms = init_vec (sizeof (char *));
   if (!lms)
-    return -1;
+    {
+      free (buffer);
+      destroy_vec (refs);
+      return -1;
+    }
 
   // After this, buf_pos will point to the position of 'begin'.
   buf_pos = strstr (buffer, "begin");
@@ -2138,6 +2152,9 @@ parse_thy (char * filename, proof_t * proof)
   if (strncmp (buf_pos, "begin", 5))
     {
       // Error stuff.
+      free (buffer);
+      destroy_vec (refs);
+      destroy_vec (lms);
       return -2;
     }
 

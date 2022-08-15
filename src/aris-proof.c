@@ -613,7 +613,7 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
 
   //fprintf (stderr, "create_sentence: sen->line_num == %i\n", sentence_get_line_no (sen));
 
-  undo_info ui;
+  undo_info ui = { 0 };
   ui.type = -1;
   if (undo)
     ui = undo_info_init_one (ap, sen, UIT_ADD_SEN);

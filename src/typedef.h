@@ -52,8 +52,18 @@ typedef void * (* conf_obj_value_func) (conf_obj * obj, int get);
 #define N_(String) String
 #endif
 
-#define REPORT() fprintf (stderr, "%s:%i reporting!\n", __FILE__, __LINE__);
-#define CHECK_ALLOC(o,r) if (!(o)) {perror (NULL); return r; }
+
+/* double expansion macro, needed to print debug info in PERROR
+   and CHECK_ALLOC */
+#define _S_(X) #X
+#define _S(X) _S_(X)
+
+#define PERROR(s) { REPORT (); perror(s); }
+#define REPORT() fprintf (stderr, "%s:%i reporting!\n", __FILE__, __LINE__)
+#define CHECK_ALLOC(o,r) if (!(o)) {                                    \
+    perror ("CHECK_ALLOC FAILED: " __FILE__ ", line " _S(__LINE__) );   \
+    exit (EXIT_FAILURE);                                                \
+  }
 
 enum ARIS_ERROR_CODES {
   AEC_MEM = -1, /* Memory Error */

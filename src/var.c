@@ -38,7 +38,7 @@ variable_init (unsigned char * text, int arbitrary)
   var = (variable *) calloc (1, sizeof (variable));
   if (!var)
     {
-      perror (NULL);
+      PERROR (NULL);
       return NULL;
     }
 
@@ -49,7 +49,8 @@ variable_init (unsigned char * text, int arbitrary)
       var->text = (unsigned char *) calloc (text_len + 1, sizeof (char));
       if (!var->text)
 	{
-	  perror (NULL);
+	  PERROR (NULL);
+          free (var);
 	  return NULL;
 	}
 

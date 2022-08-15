@@ -319,6 +319,7 @@ sentence_set_line_no (sentence * sen, int new_line_no)
       //There is an error, so exit the function.
       fprintf (stderr, "Print Error - \
 Unable to print the correct characters to a string.\n");
+      free (new_label);
       return -1;
     }
 
@@ -890,7 +891,7 @@ select_reference (sentence * sen)
 
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {
-      undo_info ui;
+      undo_info ui = { 0 };
       ui.type = -1;
       ret = aris_proof_set_changed ((aris_proof *) sp, 1, ui);
       if (ret < 0)
@@ -1495,7 +1496,7 @@ sentence_text_changed (sentence * sen)
   old_len = strlen (sen_text);
   diff_pos = find_difference (sen_text, (unsigned char *) text);
 
-  undo_info ui;
+  undo_info ui = { 0 };
 
   if (sp->type == SEN_PARENT_TYPE_PROOF)
     {

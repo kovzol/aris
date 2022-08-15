@@ -46,6 +46,8 @@
 #include "elm-conn.xpm"
 #include "nil-conn.xpm"
 
+aris_app * the_app = 0;
+
 // Macro to get the length of a file.
 
 #ifndef WIN32
@@ -77,7 +79,7 @@ init_app (int boolean, int verbose)
   aris_app * app = (aris_app *) calloc (1, sizeof (aris_app));
   if (!app)
     {
-      perror (NULL);
+      PERROR (NULL);
       return NULL;
     }
 
@@ -212,8 +214,8 @@ the_app_get_conn_by_type (char * type)
 int
 the_app_get_color_by_type (aris_app * app, char * type)
 {
-  int ret;
   int i;
+  int ret = 0;
   for (i = 4; i < NUM_DISPLAY_CONFS; i++)
     {
       if (!strcmp (type, display_conf[i].label))
@@ -337,7 +339,7 @@ the_app_read_config_file (aris_app * app)
   conf_file = fopen (path, "r+");
   if (!conf_file)
     {
-      perror ("load_config_file");
+      PERROR ("load_config_file");
       return -2;
     }
   free (path);
@@ -386,14 +388,17 @@ the_app_make_default_config_file (char * path)
   config_file = fopen (path, "w");
   if (!config_file)
     {
-      perror (NULL);
+      PERROR (NULL);
       return -2;
     }
 
   unsigned char * conf_def;
   conf_def = config_default ();
   if (!conf_def)
-    return AEC_MEM;
+    {
+      fclose (config_file);
+      return AEC_MEM;
+    }
 
   int len, rc;
   len = strlen (conf_def);
@@ -401,7 +406,8 @@ the_app_make_default_config_file (char * path)
   rc = fwrite (conf_def, 1, len, config_file);
   if (rc != len)
     {
-      perror ("default_config_file_fwrite");
+      PERROR ("default_config_file_fwrite");
+      fclose (config_file);
       return -2;
     }
 
@@ -849,6 +855,7 @@ the_app_submit (const char * user_email, const char * instr_email,
   if (ret_chk != 1)
     {
       printf ("Submission Error - please specify a valid email address.\n");
+      free (email_base);
       return -3;
     }
 
@@ -903,7 +910,7 @@ the_app_submit (const char * user_email, const char * instr_email,
       if (!ap_file)
 	{
 	  free (ap_file_name);
-	  perror (NULL);
+	  PERROR (NULL);
 	  return AEC_IO;
 	}
 

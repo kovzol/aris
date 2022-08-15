@@ -333,6 +333,7 @@ conf_menu_value (conf_obj * obj, int get)
 	}
       else
 	{
+          free (ret);
 	  ret = NULL;
 	}
 
@@ -441,6 +442,7 @@ conf_font_value (conf_obj * obj, int get)
       if (ret_chk != 1)
 	strcpy (size, _("Default"));
       */
+      free (size);
       size = obj->label;
 
       alloc_size = strlen (size) + 16 + (int) log10 ((double) val) + 1;

@@ -565,7 +565,7 @@ a maximum of 256 filenames can be specified, ignoring file \"%s\".\n", optarg);
                                                          sizeof (char));
               if (!ai->file_name[cur_file])
                 {
-                  perror (NULL);
+                  PERROR (NULL);
                   exit (EXIT_FAILURE);
                 }
 
@@ -638,7 +638,7 @@ a maximum of 256 filenames can be specified, ignoring file \"%s\".\n", optarg);
                                                            sizeof (char));
               if (!ai->latex_name[cur_latex])
                 {
-                  perror (NULL);
+                  PERROR (NULL);
                   exit (EXIT_FAILURE);
                 }
 
@@ -671,7 +671,7 @@ ignoring unrecognized option: \"%c\" .\n",c);
   return 0;
 }
 
-aris_app *the_app;
+extern aris_app *the_app;
 
 /* Main function. */
 int
@@ -763,7 +763,7 @@ a conclusion must be specified in evaluation mode.\n");
       proof = (proof_t **) calloc (cur_file, sizeof (proof_t *));
       if (!proof)
         {
-          perror (NULL);
+          PERROR (NULL);
           exit (EXIT_FAILURE);
         }
 

@@ -303,7 +303,7 @@ goal_add_line (goal_t * goal, sen_data * sd)
 			   NULL, GTK_POS_BOTTOM, 1, 1);
   gtk_widget_show_all (sen->panel);
 
-  undo_info ui;
+  undo_info ui = { 0 };
   ui.type = -1;
 
   int ret;
@@ -335,7 +335,7 @@ goal_rem_line (goal_t * goal)
       gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
     }
 
-  undo_info ui;
+  undo_info ui = { 0 };
   ui.type = -1;
 
   sen_parent_rem_sentence ((sen_parent *) goal, SEN_PARENT (goal)->focused->value);
@@ -369,5 +369,7 @@ goal_update_title (goal_t * goal)
 
   gtk_window_set_title (GTK_WINDOW (SEN_PARENT (goal)->window), new_title);
 
+  free (new_title);
+  
   return 0;
 }

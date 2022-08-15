@@ -651,22 +651,34 @@ gui_save (aris_proof * ap, int save_as)
 
       proof = aris_proof_to_proof (ap);
       if (!proof)
-        return AEC_MEM;
+        {
+          free (fname);
+          return AEC_MEM;
+        }
 
       ret = aio_save (proof, fname);
       if (ret < 0)
-        return AEC_MEM;
+        {
+          free (fname);
+          return AEC_MEM;
+        }
 
-      undo_info ui;
+      undo_info ui = { 0 };
       ui.type = -1;
 
       ret = aris_proof_set_changed (ap, 0, ui);
       if (ret < 0)
-        return AEC_MEM;
+        {
+          free (fname);
+          return AEC_MEM;
+        }
 
       ret = aris_proof_set_filename (ap, fname);
       if (ret < 0)
-        return AEC_MEM;
+        {
+          free (fname);
+          return AEC_MEM;
+        }
 
       free (fname);
     }
@@ -1084,7 +1096,8 @@ gui_customize_show (GtkWidget * window)
 
           FILE * conf_file;
           char * path, * home_dir;
-          int alloc_size, path_pos = 0;
+          int alloc_size = 0;
+          int path_pos = 0;
 
           home_dir = getenv ("HOME");
           if (!home_dir)
@@ -1105,7 +1118,7 @@ gui_customize_show (GtkWidget * window)
           conf_file = fopen (path, "w");
           if (!conf_file)
             {
-              perror (NULL);
+              PERROR (NULL);
               gtk_widget_destroy (dialog);
               return -2;
             }

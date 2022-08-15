@@ -40,17 +40,24 @@ proof_init ()
   proof_t * pf = (proof_t *) calloc (1, sizeof (proof_t));
   if (!pf)
     {
-      perror (NULL);
+      PERROR (NULL);
       return NULL;
     }
 
   pf->everything = init_list ();
   if (!pf->everything)
-    return NULL;
+    {
+      free (pf);
+      return NULL;
+    }
 
   pf->goals = init_list ();
   if (!pf->goals)
-    return NULL;
+    {
+      destroy_list (pf->everything);
+      free (pf);
+      return NULL;
+    }
 
   return pf;
 }
@@ -227,7 +234,7 @@ convert_proof_latex (proof_t * proof, const char * filename)
   file = fopen (filename, "w");
   if (!file)
     {
-      perror ("proof.c: ");
+      PERROR (NULL);
       exit (EXIT_FAILURE);
     }
 
