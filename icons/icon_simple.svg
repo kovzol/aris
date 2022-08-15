@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256mm"
+   height="256mm"
+   viewBox="0 0 256 256"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   sodipodi:docname="icon_simple.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.2102413"
+     inkscape:cx="416.18845"
+     inkscape:cy="684.92727"
+     inkscape:window-width="1341"
+     inkscape:window-height="744"
+     inkscape:window-x="25"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       aria-label="A"
+       id="text69"
+       style="font-size:282.222px;line-height:125%;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif';letter-spacing:0px;word-spacing:0px;fill:#800000;stroke:#000000;stroke-width:0.264583px">
+      <path
+         d="m 223.21786,222.16811 h -71.9666 v -5.64444 q 11.00666,-0.56445 15.52221,-2.54 4.51555,-1.97556 4.51555,-7.62 0,-5.36221 -7.05555,-21.16664 L 154.3557,160.92594 H 80.695763 q -1.128888,3.38666 -8.46666,20.03776 -7.337772,16.36887 -7.337772,23.98887 0,11.5711 19.755539,11.5711 v 5.64444 H 28.484695 v -5.64444 q 11.571102,-1.12889 19.473317,-13.54666 5.079996,-8.18444 10.442214,-20.88443 5.64444,-12.98221 6.491105,-14.67554 L 122.18239,31.386044 h 5.64444 l 68.57995,157.762086 q 7.05555,16.08666 12.41776,21.7311 5.36222,5.64444 14.39332,5.64444 z M 150.40459,149.63706 117.38462,72.308232 85.493536,149.63706 Z"
+         style="font-family:Kinnari;-inkscape-font-specification:Kinnari"
+         id="path174" />
+    </g>
+  </g>
+  <metadata
+     id="metadata556">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
