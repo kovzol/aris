@@ -850,6 +850,13 @@ select_reference (sentence * sen)
       return -2;
     }
 
+  if (validref_lines!=NULL && validref_lines[sentence_get_line_no (sen)] == 1 && validref_lines[sentence_get_line_no (fcs_sen) - 1] == 0)
+  {
+    if (the_app->verbose)
+      printf("Invalid reference to subproof. \n");
+    return -2;
+  }
+
   sentence * ref_sen = sen;
   int entire, ret;
 

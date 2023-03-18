@@ -645,6 +645,14 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
       gtk_widget_show (menu_item);
     }
   
+  line++;
+
+  if (validref_lines!=NULL && validref_lim-line <= 10)
+  {
+    validref_lim+=100;
+    validref_lines = realloc(validref_lines,validref_lim*sizeof(int));
+  }
+
   return sen;
 }
 
@@ -718,6 +726,17 @@ aris_proof_create_new_sub (aris_proof * ap)
   if (!sen)
     return NULL;
 
+  top++;
+  if (activesubp_stack == NULL ){
+    activesubp_stack = malloc(100*sizeof(int));
+  }
+  else if (stack_lim - top <= 5)
+  {
+    stack_lim+=25;
+    activesubp_stack = realloc(activesubp_stack,stack_lim*sizeof(int));
+  }
+  activesubp_stack[top] = line+1;
+
   sen_data_destroy (sd);
 
   return sen;
@@ -752,6 +771,14 @@ aris_proof_end_sub (aris_proof * ap)
   sen =  aris_proof_create_sentence (ap, sd, 1);
   if (!sen)
     return NULL;
+
+  if (validref_lines == NULL)
+  {
+    validref_lines = calloc(100,sizeof(int));
+  }
+  for (int i = activesubp_stack[top]; i <= line; i++)
+    validref_lines[i] = 1;
+  top--;
 
   sen_data_destroy (sd);
 
