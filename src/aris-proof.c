@@ -646,7 +646,7 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
     }
   
   line++;
-
+  validref_lines[line] = 0;
   if (validref_lines!=NULL && validref_lim-line <= 10)
   {
     validref_lim+=100;
