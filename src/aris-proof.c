@@ -645,6 +645,20 @@ aris_proof_create_sentence (aris_proof * ap, sen_data * sd, int undo)
       gtk_widget_show (menu_item);
     }
   
+  // Initialize the sentence in validref_lines
+
+  line++;
+  if (validref_lines != NULL)
+    validref_lines[line] = 0;
+
+  // Reallocate validref_lines if number of lines is close to validref_lim
+
+  if (validref_lines!=NULL && validref_lim-line <= 10)
+  {
+    validref_lim+=100;
+    validref_lines = realloc(validref_lines,validref_lim*sizeof(int));
+  }
+
   return sen;
 }
 
@@ -718,6 +732,21 @@ aris_proof_create_new_sub (aris_proof * ap)
   if (!sen)
     return NULL;
 
+  top++;                            // Increment top of activesubp_stack
+
+  // Allocate stack if NULL
+
+  if (activesubp_stack == NULL )
+  {
+    activesubp_stack = malloc(100*sizeof(int));
+  }
+  else if (stack_lim - top <= 5)    // Reallocate stack if close to stack_lim
+  {
+    stack_lim+=25;
+    activesubp_stack = realloc(activesubp_stack,stack_lim*sizeof(int));
+  }
+  activesubp_stack[top] = line+1;   // Push the line to the stack
+
   sen_data_destroy (sd);
 
   return sen;
@@ -752,6 +781,21 @@ aris_proof_end_sub (aris_proof * ap)
   sen =  aris_proof_create_sentence (ap, sd, 1);
   if (!sen)
     return NULL;
+
+  // Allocate validref_lines if NULL
+
+  if (validref_lines == NULL)
+  {
+    validref_lines = calloc(100,sizeof(int));
+  }
+
+  // Invalidate lines from the activesubp_stack 's top to the current line by setting to 1
+
+  for (int i = activesubp_stack[top]; i <= line; i++)
+    validref_lines[i] = 1;
+  
+  // Pop from activesubp_stack  
+  top--;  
 
   sen_data_destroy (sd);
 

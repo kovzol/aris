@@ -28,6 +28,16 @@
 #include "proof.h"
 #include "interop-isar.h"
 
+// Initializes Lists and Variables to disallow subproof referencing
+
+int * activesubp_stack = NULL;
+int * validref_lines = NULL;
+int top = -1;
+int line = 0;
+int validref_lim = 100;
+int stack_lim = 25;
+
+
 /* Initializes the sentence data.
  *  input:
  *    line_num - the line number to set to this sentence data.

@@ -850,6 +850,16 @@ select_reference (sentence * sen)
       return -2;
     }
 
+  // Disallow lines with indices in validref_lines equal 1 to be selected as reference
+  // And allow the line just after the subproof ends to select the subproof as reference
+
+  if (validref_lines!=NULL && validref_lines[sentence_get_line_no (sen)] == 1 && validref_lines[sentence_get_line_no (fcs_sen) - 1] == 0)
+  {
+    if (the_app->verbose)
+      printf("Invalid reference to subproof. \n");
+    return -2;
+  }
+
   sentence * ref_sen = sen;
   int entire, ret;
 
