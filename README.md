@@ -12,7 +12,7 @@ notice and this notice are preserved.
 ----
 ### Table of Contents
 - [Installation Guide](#installation-guide)
-  - [Build GNU-ARI through source](#build-gnu-ari-through-source)
+  - [Build GNU Aris through source](#build-gnu-aris-through-source)
 - [Contributing Guide](#contributing-guide)
   - [Getting Started](#getting-started)
   - [How to Contribute](#how-to-contribute)
@@ -21,26 +21,48 @@ notice and this notice are preserved.
 - [References](#references)
 
 ### Installation Guide
-#### Build GNU-ARI through source
-To build GNU Aris through source, follow the instructions given below:
+#### Build GNU Aris through source
+To build GNU Aris through source, follow the instructions given below. This should work on Linux, Mac or Windows (by using, for example, the MSYS2 toolchain and its MINGW64 environment):
 
-1. Clone the Aris repository from https://github.com/kovzol/aris using the command `git clone https://github.com/kovzol/aris`
+1. Clone the Aris repository from https://github.com/kovzol/aris using the command `git clone https://github.com/kovzol/aris`.
 
-2. Create a directory named build.
+2. Create a directory named **build** by entering `mkdir build`.
 
-3. Run the command `cmake ...`
+3. Change your working directory to this folder: `cd build`.
 
-4. Run the command `make`
+3. Run the command `cmake ..`. You should see something like this:
+```
+-- The C compiler identification is GNU 11.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found LibXml2: /usr/lib/x86_64-linux-gnu/libxml2.so (found version "2.9.13") 
+-- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.2") 
+-- Checking for module 'gtk+-3.0'
+--   Found gtk+-3.0, version 3.24.33
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/kovzol/workspace/aris/b
+```
 
-5. If you find this, that means you're done and ready to launch your aris from the source.
-![](https://paper-attachments.dropboxusercontent.com/s_9CA2A95225FBFB6C39417465DAA6CDC3851E677741EEA4E771571459D05051FA_1678791691570_image.png)
+4. Run the command `make`. You should see something like this at the end of the process:
+```
+[ 88%] Building C object CMakeFiles/aris.dir/src/undo.c.o
+[ 92%] Building C object CMakeFiles/aris.dir/src/var.c.o
+[ 96%] Building C object CMakeFiles/aris.dir/src/vec.c.o
+[100%] Linking C executable aris
+[100%] Built target aris
+```
 
-Step 6) Launch the Aris using ./aris
+5. Launch GNU Aris using `./aris`.
 
-#### Build GNUI-ARIS through snap
+For further instructions on building and installation, refer to the INSTALL file.
+
+#### Run a precompiled binary of GNU Aris through snap
+
 To install GNU Aris through snap, visit https://snapcraft.io/aris and find the required distribution details according to your system. For example, for Linux machines, use `sudo snap install aris` to install the Aris and launch it with `aris`.
-
-For further instructions on building and installation, refer to the ./INSTALL file.
 
 ### Contributing Guide
 We welcome contributions to our project and thank you for taking the time to improve it. Here are some guidelines to follow when contributing:
