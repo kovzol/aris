@@ -818,6 +818,65 @@ sentence_out (sentence * sen)
   return 0;
 }
 
+/*  Validates reference selections when subproofs are involved
+ *  called inside select_reference
+ *   input:
+ *     sp - the sentence parent.
+ *     sen - the sentence that has just been selected.
+ *     fcs_sen - the focused sentence.
+ *     sen_line_num - the line number of sen
+ *     fcs_line_num - the line number of fcs
+ *   output:
+ *     0 if not valid
+ *     1 if valid
+ */
+
+int
+valid_ref (sen_parent * sp, sentence * sen, sentence * fcs_sen, int sen_line_num, int fcs_line_num)
+{
+  if (sentence_depth(sen) - sentence_depth(fcs_sen) >= 2)
+    {
+      if (the_app->verbose)
+        printf("Reference to nested subproof not allowed.\n");
+      return 0;
+    }
+  else if (sentence_depth(sen) - sentence_depth(fcs_sen) == 1)
+    { 
+      // Get the parent sentence of fcs_sen
+      sentence * trav_up = ls_nth(sp->everything, fcs_line_num -2)->value;
+      for (int s = fcs_line_num-1; s > sen_line_num; s--)
+        {
+        if (sentence_depth(sen) - sentence_depth(trav_up) > 0)
+          {
+            if (the_app->verbose)
+              printf("Invalid reference to subproof");
+            return 0;
+          }
+        // Get the parent sentence of fcs_sen
+        trav_up = ls_nth(sp->everything, s-2)->value;
+        }
+    }
+  else if (sentence_depth(sen) == sentence_depth(fcs_sen))
+    {
+      // Get the parent sentence of fcs_sen
+      sentence * trav_up = ls_nth(sp->everything, fcs_line_num -1)->value;
+      
+      for (int s = fcs_line_num; s > sen_line_num; s--)
+        {
+          if (sentence_depth(trav_up) - sentence_depth(sen) < 0)
+            {
+              if (the_app->verbose)
+                printf("Non-nested subproofs cannot reference each other");
+              return 0;
+            }
+          
+          // Get the parent sentence of fcs_sen
+          trav_up = ls_nth(sp->everything, s-2)->value;
+        }
+    }
+  return 1;
+}
+
 /* Selects a sentence as a reference.
  *  input:
  *    sen - the sentence that has just been selected.
@@ -842,24 +901,19 @@ select_reference (sentence * sen)
 
   sentence * fcs_sen;
   fcs_sen = sp->focused->value;
+  int sen_line_num = sentence_get_line_no (sen);
+  int fcs_line_num = sentence_get_line_no (fcs_sen);
 
-  if (sentence_get_line_no (sen) >= sentence_get_line_no (fcs_sen))
+  if (sen_line_num >= fcs_line_num)
     {
       if (the_app->verbose)
         printf ("Must select reference that comes before focused.\n");
       return -2;
     }
 
-  // Disallow lines with indices in validref_lines equal 1 to be selected as reference
-  // And allow the line just after the subproof ends to select the subproof as reference
-
-  if (validref_lines!=NULL && validref_lines[sentence_get_line_no (sen)] == 1 && validref_lines[sentence_get_line_no (fcs_sen) - 1] == 0)
-  {
-    if (the_app->verbose)
-      printf("Invalid reference to subproof. \n");
+  if (valid_ref(sp,sen,fcs_sen,sen_line_num,fcs_line_num) == 0)
     return -2;
-  }
-
+  
   sentence * ref_sen = sen;
   int entire, ret;
 

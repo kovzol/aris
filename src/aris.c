@@ -934,8 +934,5 @@ evaluate flag not specified in non-gui mode.\n");
 #endif
     }
 
-  free(validref_lines);
-  free(activesubp_stack);
-
   exit (EXIT_SUCCESS);
 }
