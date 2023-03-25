@@ -852,7 +852,7 @@ valid_ref (sen_parent * sp, sentence * sen, sentence * fcs_sen, int sen_line_num
               printf("Invalid reference to subproof");
             return 0;
           }
-        // Get the parent sentence of fcs_sen
+        // Get the parent sentence of s
         trav_up = ls_nth(sp->everything, s-2)->value;
         }
     }
@@ -870,7 +870,7 @@ valid_ref (sen_parent * sp, sentence * sen, sentence * fcs_sen, int sen_line_num
               return 0;
             }
           
-          // Get the parent sentence of fcs_sen
+          // Get the parent sentence of s
           trav_up = ls_nth(sp->everything, s-2)->value;
         }
     }
