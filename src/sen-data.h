@@ -27,15 +27,6 @@
 
 #define SD(o) ((sen_data *) o)
 
-//Lists and Variables to disallow subproof referencing
-
-extern int * activesubp_stack;  // Keeps track of the line numbers of active subproof
-extern int * validref_lines;    // Keeps track of referenceable lines and updates them during traversal down the proof
-extern int top;                 // top of activesubp_stack
-extern int line;                // Line number of current line during downward traversal
-extern int validref_lim;        // Max size of validref_lines
-extern int stack_lim;           // Max size of stack
-
 // Different value types.
 
 enum VALUE_TYPES {
