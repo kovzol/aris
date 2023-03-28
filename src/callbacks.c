@@ -476,6 +476,20 @@ gui_destroy (aris_proof * ap)
   the_app_rem_gui (ap);
   aris_proof_destroy (ap);
 
+  if (the_app->guis->num_stuff == 0)
+  { free(ap);
+    free(the_app->guis);
+    
+    the_app->focused = NULL;
+    
+    rules_table_destroy (the_app->rt);
+    
+    free (the_app->help_file);
+    free (the_app->working_dir);
+    
+    gtk_main_quit ();
+  }
+
   return 0;
 }
 
