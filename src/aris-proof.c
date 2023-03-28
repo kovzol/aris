@@ -1761,7 +1761,18 @@ void init_sentence_screen_keyboard(sen_parent *sp)
   g_signal_connect(G_OBJECT(button_elm), "button-press-event", G_CALLBACK(callback_elm_screen_keyboard), (gpointer)sp);
   GtkWidget *button_nil = init_button(sp, grid1, NIL, 5, 2);
   g_signal_connect(G_OBJECT(button_nil), "button-press-event", G_CALLBACK(callback_nil_screen_keyboard), (gpointer)sp);
-
   gtk_container_add(GTK_CONTAINER(window_sentence_screen_keyboard), grid1);
   gtk_widget_show_all(window_sentence_screen_keyboard);
+      
+  int x, y;
+  int width, ap_width;
+  int new_x;
+
+  gtk_window_get_position (GTK_WINDOW (sp->window), &x, &y);
+  gtk_window_get_size (GTK_WINDOW (sp->window), &ap_width, NULL);
+  gtk_window_get_size (GTK_WINDOW (window_sentence_screen_keyboard), &width, NULL);
+  
+  new_x = (width + 16 < x) ?  x + ap_width + 16: x ;
+
+  gtk_window_move (GTK_WINDOW (window_sentence_screen_keyboard), new_x, y);
 }
