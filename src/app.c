@@ -547,15 +547,6 @@ app_quit ()
       free (g_itr);
     }
 
-  free (the_app->guis);
-  the_app->focused = NULL;
-
-  rules_table_destroy (the_app->rt);
-  free (the_app->help_file);
-  free (the_app->working_dir);
-
-  gtk_main_quit ();
-
   return 0;
 }
 

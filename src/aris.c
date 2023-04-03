@@ -909,6 +909,8 @@ evaluate flag not specified in non-gui mode.\n");
           gtk_widget_show_all (the_app->rt->window);
           rules_table_align (the_app->rt, main_gui);
         }
+      
+      init_sentence_screen_keyboard(SEN_PARENT (the_app->focused));
 
       if (the_app->fonts[FONT_TYPE_CUSTOM])
         {
