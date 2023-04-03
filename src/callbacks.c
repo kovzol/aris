@@ -284,6 +284,7 @@ G_MODULE_EXPORT gboolean
 goal_delete (GtkWidget * widget, GdkEvent * event, gpointer data)
 {
   goal_t * goal = (goal_t *) data;
+  goal->toggle = 0;
   gtk_widget_hide (SEN_PARENT (goal)->window);
   return TRUE;
 }
@@ -296,7 +297,7 @@ G_MODULE_EXPORT gboolean
 goal_focus_in (GtkWidget * widget, GdkEvent * event, gpointer data)
 {
   goal_t * goal = (goal_t *) data;
-
+  goal->toggle = 1;
   the_app_set_focus (goal->parent);
 
   return FALSE;

@@ -152,7 +152,7 @@ aris_proof_init ()
 
   gtk_widget_show_all (SEN_PARENT (ap)->window);
    
-  init_sentence_screen_keyboard(&(ap->sp)); // Initialize the screen keyboard for logic operations
+  //init_sentence_screen_keyboard(&(ap->sp)); // Initialize the screen keyboard for logic operations
 
   return ap;
 }
@@ -299,7 +299,7 @@ aris_proof_init_from_proof (proof_t * proof)
   gtk_widget_show_all (SEN_PARENT (ap)->window);
   gtk_widget_grab_focus (((sentence *) SEN_PARENT (ap)->everything->head->value)->entry);
    
-  init_sentence_screen_keyboard(&(ap->sp)); // Initialize the screen keyboard for logic operations
+  //init_sentence_screen_keyboard(&(ap->sp)); // Initialize the screen keyboard for logic operations
 
   return ap;
 }
@@ -1656,6 +1656,15 @@ void callback_nil_screen_keyboard(GtkWidget *widget, GdkEvent *def_event, gpoint
 void callback_sentence_screen_keyboard(GtkWidget *widget, GdkEvent *def_event, gpointer *data, int type)
 {
   sen_parent *sp = (sen_parent *)data;
+  
+  if (the_app->focused)
+  {
+	  if (the_app->focused->goal->toggle)
+		  sp = SEN_PARENT (the_app->focused->goal);
+	  else
+		  sp = SEN_PARENT (the_app->focused);
+  }
+
   GdkEvent *event = gdk_event_new(GDK_KEY_PRESS);
 
   event->key.window = gtk_widget_get_window(sp->window);

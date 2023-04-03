@@ -30,6 +30,7 @@
 struct goal {
   sen_parent sp;
   aris_proof * parent;  // The parent of this goal.
+  int toggle;           // 1 if the goal window is toggled else 0
 };
 
 goal_t * goal_init (aris_proof * ag);
