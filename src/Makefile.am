@@ -82,6 +82,8 @@ aris_SOURCES +=			\
 	sen-parent.c		\
 	sentence.h		\
 	sentence.c		\
+	sentence-screen-keyboard.h	\
+	sentence-screen-keyboard.c	\
 	sexpr-process.h		\
 	sexpr-process.c		\
 	sexpr-process-bool.c  	\
