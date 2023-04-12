@@ -44,6 +44,8 @@ add_executable(aris
         src/sen-parent.h
         src/sentence.c
         src/sentence.h
+	src/sentence-screen-keyboard.h
+	src/sentence-screen-keyboard.c
         src/sexpr-process-bool.c
         src/sexpr-process-equiv.c
         src/sexpr-process-infer.c
