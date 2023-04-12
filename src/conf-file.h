@@ -37,6 +37,7 @@ enum CONF_OBJ_TYPES {
 enum CONF_MENU_ID {
   CONF_MENU_NEW=0,
   CONF_MENU_OPEN,
+  CONF_MENU_KEYBOARD_TOGGLE,
   CONF_MENU_SAVE,
   CONF_MENU_SAVE_AS,
   CONF_MENU_EXPORT_LATEX,
@@ -111,6 +112,8 @@ static conf_obj main_menu_conf[NUM_CONF_MENUS] = {
 
   {N_("Open"), N_("Open a proof."), NULL, CONF_OBJ_MENU, CONF_MENU_OPEN,
    conf_menu_value, "document-open", "c+o"},
+
+  {N_("Toggle Keyboard"), N_("On-screen Keyboard with symbols"), NULL, CONF_OBJ_MENU, CONF_MENU_KEYBOARD_TOGGLE, conf_menu_value, "toggle-keyboard", "c+s+k"},
 
   {N_("Save"), N_("Save the current proof."), NULL, CONF_OBJ_MENU,
    CONF_MENU_SAVE, conf_menu_value, "document-save", "c+s"},
@@ -321,7 +324,7 @@ enum MENU_ORDER {
 };
 
 enum MENU_SIZE {
-  FILE_MENU_SIZE = 9,
+  FILE_MENU_SIZE = 10,
   EDIT_MENU_SIZE = 11,
   PROOF_MENU_SIZE = 6,
   RULES_MENU_SIZE = 2,

@@ -831,6 +831,35 @@ gui_goal_check (aris_proof * ap)
   return 0;
 }
 
+
+/* Toggles the screen keyboard
+ * input :
+ *   ap - the currently focused aris proof.
+ * output:
+ *   0 on success.
+ *
+ */
+int
+gui_toggle_keyboard (aris_proof *ap)
+{
+  int vis;
+  vis = gtk_widget_get_visible (the_app->keyboard);
+
+  if (vis)
+  {
+    gtk_widget_hide (the_app->keyboard);
+    aris_proof_set_sb (ap, _("Screen Keyboard Hidden."));
+  }
+  else
+  {
+    gtk_widget_show_all (the_app->keyboard);
+    aris_proof_set_sb (ap, _("Screen Keyboard Shown."));
+  }
+
+  return 0;
+}
+
+
 /* Toggles the rules window.
  *  input:
  *    ap - the currently focused aris proof.
@@ -1387,6 +1416,10 @@ menu_activated (aris_proof * ap, int menu_id)
 
     case CONF_MENU_OPEN:
       ret = gui_open (SEN_PARENT (ap)->window);
+      break;
+
+    case CONF_MENU_KEYBOARD_TOGGLE:
+      gui_toggle_keyboard (ap);
       break;
 
     case CONF_MENU_SAVE:

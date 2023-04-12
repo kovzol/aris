@@ -359,6 +359,7 @@ aris_proof_create_menu (sen_parent * ap)
     (conf_obj[]) {
       main_menu_conf[CONF_MENU_NEW],
       main_menu_conf[CONF_MENU_OPEN],
+      main_menu_conf[CONF_MENU_KEYBOARD_TOGGLE],
       menu_separator,
       main_menu_conf[CONF_MENU_SAVE],
       main_menu_conf[CONF_MENU_SAVE_AS],
@@ -1737,12 +1738,18 @@ GtkWidget *init_button(sen_parent *sp, GtkWidget *grid, char *type, int r, int c
   return button;
 }
 
+void keyboard_delete(){
+	gtk_widget_hide (the_app->keyboard);
+}
+
 void init_sentence_screen_keyboard(sen_parent *sp)
 {
   GtkWidget *window_sentence_screen_keyboard = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  the_app->keyboard = window_sentence_screen_keyboard;
   gtk_window_set_title(GTK_WINDOW(window_sentence_screen_keyboard), "Keyboard");
   gtk_window_set_default_size(GTK_WINDOW(window_sentence_screen_keyboard), 150, 190);
   gtk_window_set_resizable(GTK_WINDOW(window_sentence_screen_keyboard), FALSE);
+  g_signal_connect (the_app->keyboard, "delete-event", G_CALLBACK (keyboard_delete),NULL);
 
   GtkWidget *grid1 = gtk_grid_new(); // Make a grid for the buttons
   gtk_grid_set_column_spacing((GtkGrid *)grid1, 5);

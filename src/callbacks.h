@@ -99,6 +99,8 @@ int evaluate_proof (aris_proof * ap);
 int gui_keydown (aris_proof * ap, unsigned int mask, unsigned int val);
 int gui_goal_check (aris_proof * ap);
 
+int gui_toggle_keyboard (aris_proof * ap);
+
 int gui_toggle_rules (aris_proof * ap);
 int gui_set_custom (GtkWidget * window, int cur_font);
 
