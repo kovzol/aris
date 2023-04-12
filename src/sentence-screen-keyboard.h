@@ -39,5 +39,5 @@
 
 void init_sentence_screen_keyboard(sen_parent *sp);
 void callback_sentence_screen_keyboard(GtkWidget *widget, GdkEvent * event, gpointer *data, int type);
-
+void align_keyboard (sen_parent *sp);
 #endif  /*  ARIS_SENTENCE_SCREEN_KEYBOARD_H  */

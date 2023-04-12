@@ -38,6 +38,7 @@
 #include "app.h"
 #include "aris-proof.h"
 #include "rules-table.h"
+#include "sentence-screen-keyboard.h"
 #endif
 
 // The options array for getopt_long.

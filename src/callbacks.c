@@ -35,6 +35,7 @@
 #include "list.h"
 #include "sentence.h"
 #include "sen-parent.h"
+#include "sentence-screen-keyboard.h"
 #include "config.h"
 #include "vec.h"
 #include "var.h"
@@ -853,6 +854,7 @@ gui_toggle_keyboard (aris_proof *ap)
   else
   {
     gtk_widget_show_all (the_app->keyboard);
+    align_keyboard( SEN_PARENT (ap) );
     aris_proof_set_sb (ap, _("Screen Keyboard Shown."));
   }
 
