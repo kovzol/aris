@@ -66,6 +66,7 @@ struct aris_app {
   list_t * guis;         // The list of guis in the application
   aris_proof * focused;  // The focused gui.
   rules_table * rt;      // The rules table.
+  GtkWidget * keyboard;  // The screen keyboard.
 
   char * working_dir;    // The working directory when aris was called.
   char * help_file;      // The help file location.
