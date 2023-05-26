@@ -1,6 +1,0 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource prefix="GNU-Aris/">
-        <file alias="Main.qml">/home/saksham/aris-qt/test/GNU-Aris/Main.qml</file>
-    </qresource>
-</RCC>
