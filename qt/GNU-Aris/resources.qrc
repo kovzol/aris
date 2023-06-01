@@ -8,5 +8,8 @@
         <file>assets/boolean.png</file>
         <file>assets/goal.png</file>
         <file>assets/save.png</file>
+        <file>assets/about.png</file>
+        <file>assets/help.png</file>
+        <file>assets/font.png</file>
     </qresource>
 </RCC>

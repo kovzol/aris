@@ -178,6 +178,32 @@ Window {
                     icon.source: "/assets/import.png"
                 }
 
+                ToolSeparator{
+                    orientation: Qt.Horizontal
+                }
+
+                ToolButton{
+                    text: qsTr("Font")
+                    icon.source: "/assets/font.png"
+                }
+
+                ToolSeparator{
+                    orientation: Qt.Horizontal
+                }
+
+                ToolButton{
+                    text: qsTr("Help")
+                    icon.source: "/assets/help.png"
+                }
+
+                ToolButton{
+                    text: qsTr("About")
+                    icon.source: "/assets/about.png"
+                    onClicked: {
+                        Qt.openUrlExternally("https://www.gnu.org/software/aris/")
+                    }
+                }
+
             }
 
         }
