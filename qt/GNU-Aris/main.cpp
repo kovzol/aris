@@ -6,10 +6,10 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    app.setWindowIcon(QIcon(":/icon_simple.svg"));
+    app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
 
     QQmlApplicationEngine engine;
-    const QUrl url(u"qrc:/GNU-Aris/Main.qml"_qs);
+    const QUrl url(u"qrc:/gnu-aris/Main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
         &app, [url](QObject *obj, const QUrl &objUrl) {
             if (!obj && url == objUrl)

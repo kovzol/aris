@@ -11,10 +11,8 @@ CppApplication {
     ]
 
     Group {
-        Qt.core.resourcePrefix: "GNU-Aris/"
+        Qt.core.resourcePrefix: "gnu-aris/"
         fileTags: ["qt.qml.qml", "qt.core.resource_data"]
-        files: [
-            "Main.qml",
-        ]
+        files: ["Main.qml"]
     }
 }
