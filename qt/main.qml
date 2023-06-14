@@ -52,12 +52,13 @@ Window {
                     hoverEnabled: true
                     ToolTip.visible: hovered
                     ToolTip.text: "Conjunction"
-
                     focusPolicy: Qt.NoFocus
+
                     onClicked: {
                         if (isTextArea(activeFocusItem))
                             activeFocusItem.insert(activeFocusItem.cursorPosition, text)
                     }
+
                 }
 
                 ToolButton{
@@ -291,6 +292,9 @@ Window {
                 ToolButton{
                     text: qsTr("Help")
                     icon.source: "/assets/help.png"
+                    onClicked: {
+                        Qt.openUrlExternally("https://www.gnu.org/software/aris/manual/aris.pdf")
+                    }
                 }
 
                 ToolButton{
@@ -331,6 +335,7 @@ Window {
         anchors.rightMargin: 20
 
         ListView{
+            id: listView
             model: proofDataID
             delegate: proofLineID
             Layout.fillWidth: true
@@ -338,14 +343,16 @@ Window {
             spacing: 10
             ScrollBar.vertical: ScrollBar{}
         }
+
     }
 
     ListModel{
         id: proofDataID
 
         ListElement{
-            line: 1 ; type: "premise"; sub: false; subStart: false; subEnd: false; indent: 0
+            line: 1 ; type: "premise"; sub: false; subStart: false; subEnd: false; indent: 0; refs: [ListElement{ num : -1}]
         }
+
 
     }
 
@@ -357,20 +364,40 @@ Window {
             width: parent.width
             Layout.fillWidth: true
 
+
+
             Button{
                 //Layout.leftMargin: indent
                 id: lineNumberID
                 height: theTextID.height
                 width: height
+                //focusPolicy: Qt.NoFocus
 
                 Text{
                     anchors.centerIn: parent
                     font.italic: true
                     text: line
                 }
+
+                onClicked: {
+                    if (listView.currentIndex <= index)
+                        console.log("Invalid Operation : Can only reference to smaller line numbers");
+                    else{
+                        //.append({"num":listView.currentIndex+1})
+                        //console.log(listView.currentIndex)
+                        for(var i = 0; i < proofDataID.get(listView.currentIndex).refs.count; i++){
+                            if (proofDataID.get(listView.currentIndex).refs.get(i).num === line){
+                                proofDataID.get(listView.currentIndex).refs.remove(i);
+                                return;
+                            }
+                        }
+                        proofDataID.get(listView.currentIndex).refs.append({num:line});
+                    }
+                        //activeFocusItem.insert(activeFocusItem.cursorPosition, text)
+                }
             }
 
-            TextArea{
+            TextField{
                 id: theTextID
                 height: font.pointSize + 10
                 Layout.leftMargin: indent
@@ -380,7 +407,19 @@ Window {
                 }
                 wrapMode: TextArea.Wrap
                 placeholderText: qsTr("Start Typing here...")
+                MouseArea{
+                    anchors.fill: parent
+//                    propagateComposedEvents: true
+                    onClicked: {
+                        listView.currentIndex = index;
+//                        mouse.accepted = false;
+//                        console.log("jjjj");
+                        parent.forceActiveFocus();
+                    }
+                }
             }
+
+
 
             Label{
                 id: ruleID
@@ -423,6 +462,19 @@ Window {
                                         ["Identity","Negation","Dominance","Symbol Negation"]
             }
 
+            Row{
+                Repeater{
+                    model: refs
+                    Button{
+                        visible: (num === -1)? false: true
+                        text: num
+                        onClicked: {
+                            refs.remove(index);
+                        }
+                    }
+                }
+            }
+
             Button{
                 id: plusID
                 height: theTextID.height
@@ -441,22 +493,21 @@ Window {
                     Action{
                         text: "Add Premise"
                         onTriggered: {
-                            proofDataID.insert(0,{"line": 1 , "type" : "premise"})
-                            updateLines()
-
+                            proofDataID.insert(0,{"line": 1 , "type" : "premise", "refs": [{ num : -1}]});
+                            updateLines();
                         }
                     }
                     Action{
                         text: "Add Conclusion"
                         onTriggered: {
-                            proofDataID.insert(index + 1,{"line": index +2, "type": "choose", "indent": indent, "sub": sub})
-                            updateLines()
+                            proofDataID.insert(index+1,{"line": index +2, "type": "choose", "indent": indent, "sub": sub, "refs": [{ num : -1}]});
+                            updateLines();
                         }
                     }
                     Action{
                         text: "Start Subproof"
                         onTriggered:{
-                            proofDataID.insert(index + 1,{"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20})
+                            proofDataID.append({"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20})
                             updateLines()
                         }
                     }
@@ -466,7 +517,7 @@ Window {
                             if (sub === false)
                                 console.log("Invalid Operation")
                             else{
-                                proofDataID.insert(index + 1,{"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20})
+                                proofDataID.append({"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20})
                                 updateLines()
                             }
                         }
