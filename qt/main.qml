@@ -397,7 +397,7 @@ Window {
                 }
             }
 
-            TextField{
+            TextArea{
                 id: theTextID
                 height: font.pointSize + 10
                 Layout.leftMargin: indent
@@ -407,15 +407,21 @@ Window {
                 }
                 wrapMode: TextArea.Wrap
                 placeholderText: qsTr("Start Typing here...")
+//                onTextEdited:{ listView.currentIndex = index}
                 MouseArea{
                     anchors.fill: parent
-//                    propagateComposedEvents: true
+                    propagateComposedEvents: true
                     onClicked: {
                         listView.currentIndex = index;
 //                        mouse.accepted = false;
 //                        console.log("jjjj");
                         parent.forceActiveFocus();
+//                        parent.focus = true;
+//                        acceptedButtons: Qt.NoButton
+//                        parent.focus = true;
+//                        focus = false;
                     }
+
                 }
             }
 
