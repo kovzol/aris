@@ -507,7 +507,7 @@ Window {
                     Action{
                         text: "Start Subproof"
                         onTriggered:{
-                            proofDataID.append({"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20})
+                            proofDataID.insert(index+1,{"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20})
                             updateLines()
                         }
                     }
@@ -517,7 +517,7 @@ Window {
                             if (sub === false)
                                 console.log("Invalid Operation")
                             else{
-                                proofDataID.append({"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20})
+                                proofDataID.insert(index+1,{"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20})
                                 updateLines()
                             }
                         }
