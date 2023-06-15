@@ -338,10 +338,14 @@ Window {
             id: listView
             model: proofDataID
             delegate: proofLineID
+            highlight: highlightID
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 10
             ScrollBar.vertical: ScrollBar{}
+            onCurrentItemChanged: {
+                currentItem.children[1].forceActiveFocus()
+            }
         }
 
     }
@@ -382,6 +386,12 @@ Window {
                 onClicked: {
                     if (listView.currentIndex <= index)
                         console.log("Invalid Operation : Can only reference to smaller line numbers");
+                    else if (proofDataID.get(listView.currentIndex).type === "premise")
+                        console.log("Invalid Operation: Current Line is a premise");
+                    else if (proofDataID.get(listView.currentIndex).subStart === true || proofDataID.get(listView.currentIndex).subEnd === true)
+                        console.log("Invalid Operation: subproof");
+                    else if (proofDataID.get(listView.currentIndex).indent < indent)
+                        console.log("Invalid Operation: invalid reference to subproof");
                     else{
                         //.append({"num":listView.currentIndex+1})
                         //console.log(listView.currentIndex)
@@ -501,6 +511,7 @@ Window {
                         onTriggered: {
                             proofDataID.insert(0,{"line": 1 , "type" : "premise", "refs": [{ num : -1}]});
                             updateLines();
+                            listView.currentIndex = 0;
                         }
                     }
                     Action{
@@ -508,13 +519,15 @@ Window {
                         onTriggered: {
                             proofDataID.insert(index+1,{"line": index +2, "type": "choose", "indent": indent, "sub": sub, "refs": [{ num : -1}]});
                             updateLines();
+                            listView.currentIndex = index + 1;
                         }
                     }
                     Action{
                         text: "Start Subproof"
                         onTriggered:{
-                            proofDataID.insert(index+1,{"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20})
-                            updateLines()
+                            proofDataID.insert(index+1,{"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20});
+                            updateLines();
+                            listView.currentIndex = index + 1;
                         }
                     }
                     Action{
@@ -523,8 +536,9 @@ Window {
                             if (sub === false)
                                 console.log("Invalid Operation")
                             else{
-                                proofDataID.insert(index+1,{"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20})
-                                updateLines()
+                                proofDataID.insert(index+1,{"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20});
+                                updateLines();
+                                listView.currentIndex = index + 1;
                             }
                         }
 
@@ -543,6 +557,15 @@ Window {
                     }
                 }
             }
+        }
+    }
+
+    Component{
+        id: highlightID
+        Rectangle{
+            width: parent.width
+            color: "wheat"
+            radius: 10
         }
     }
 
