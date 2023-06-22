@@ -6,13 +6,31 @@ import QtQuick.Dialogs
 
 Window {
     id: rootID
+
     width: 1200
     height: 700
     visible: true
     title: qsTr("GNU Aris")
 
+    // Updates Line Numbers after a add/delete operation in the Proof Area
+
+    function updateLines(item){
+
+        for (var i = 0; i < item.count; i++){
+            item.set(i,{"line":i+1})
+        }
+
+    }
+
+    // Checks if the item is a TextArea QML Type
+
+    function isTextArea(item){
+        return item instanceof TextArea
+    }
+
     Button{
         id: burgerMenu
+
         height: keyboardID.width
         width: keyboardID.width
 
@@ -31,12 +49,11 @@ Window {
         }
     }
 
-    function isTextArea(item){
-        return item instanceof TextArea
-    }
+    // On-Screen Keyboard
 
     Frame{
         id: keyboardID
+
         anchors.verticalCenter: parent.verticalCenter
 
         ToolBar{
@@ -44,187 +61,98 @@ Window {
             Column{
                 id: keyColID
 
-                ToolButton{
+                KeyButton{
                     id: conjunctionButton
+
                     text: "\u2227"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Conjunction"
-                    focusPolicy: Qt.NoFocus
-
-                    onClicked: {
-                        console.log("hi");
-                        console.log(activeFocusItem);
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-
-
-                    }
-
                 }
 
-                ToolButton{
+                KeyButton{
                     id: disjunctionButton
+
                     text: "\u2228"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Disjunction"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: negationButton
+
                     text: "\u00ac"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Negation"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: implicationButton
+
                     text: "\u2192"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Implication"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: biconditionalButton
+
                     text: "\u2194"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Bi-conditional"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: forAllButton
+
                     text: "\u2200"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "For all"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: thereExistsButton
+
                     text: "\u2203"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "There exists"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: tautologyButton
+
                     text: "\u22a4"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Tautology"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: contradictionButton
+
                     text: "\u22a5"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Contradiction"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: belongsToButton
+
                     text: "\u2208"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Belongs To"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
 
-                ToolButton{
+                KeyButton{
                     id: nullButton
+
                     text: "\u2205"
-
-                    hoverEnabled: true
-                    ToolTip.visible: hovered
                     ToolTip.text: "Null"
-
-                    focusPolicy: Qt.NoFocus
-                    onClicked: {
-                        if (isTextArea(activeFocusItem))
-                            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
-                    }
                 }
             }
         }
     }
 
+    // Drawer associated with the Burger Button
+
     Drawer{
         id: menuOptions
+
         width: drawerToolBar.implicitWidth
         height: rootID.height
         interactive: true
 
         ToolBar{
             id: drawerToolBar
+
             anchors.fill: parent
 
             ColumnLayout{
@@ -319,28 +247,33 @@ Window {
 
     FileDialog{
         id: fileDialogID
+
         title: "Choose the proof file"
         //selectFolder: false
     }
 
     FileDialog{
         id: saveAsID
+
         title: "Save As"
         fileMode: FileDialog.SaveFile
     }
 
     FontDialog{
         id: fontDialogID
+
         title: "Choose Font"
     }
 
     Dialog{
         id: goalDialogID
+
         title: "Goals"
         width: parent.width/2
         height: parent.height/2
         x: (parent.width - width)/2
         y: (parent.height - height)/2
+
         parent: Overlay.overlay
         focus: true
         modal: true
@@ -348,14 +281,17 @@ Window {
 
         ColumnLayout{
             id: goalAreaID
+
             anchors.fill: parent
 
             ListView{
                 model: goalDataID
                 delegate: goalLineID
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 spacing: 10
+
                 ScrollBar.vertical: ScrollBar{}
             }
 
@@ -381,6 +317,7 @@ Window {
 
             Rectangle{
                 id: goalLineNumID
+
                 height: goalTextID
                 width: height + 10
 
@@ -393,6 +330,7 @@ Window {
 
             TextField{
                 id: goalTextID
+
                 height: font.pointSize + 10
                 width: 200
                 Layout.fillWidth: true
@@ -406,6 +344,7 @@ Window {
 
             Button{
                 id: goalPlusID
+
                 height: goalTextID.height
 
                 Text{
@@ -419,6 +358,7 @@ Window {
 
                 Menu{
                     id: goalOptionsID
+
                     Action{
                         text: "Add Goal"
                         onTriggered: {
@@ -449,12 +389,5 @@ Window {
     }
 
     ProofArea{}
-    function updateLines(item){
-
-        for (var i = 0; i < item.count; i++){
-            item.set(i,{"line":i+1})
-        }
-
-    }
 
 }

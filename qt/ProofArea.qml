@@ -6,20 +6,26 @@ Item {
     anchors.fill: parent
     ColumnLayout{
         id: proofAreaID
-        anchors.fill: parent
-        anchors.leftMargin: keyboardID.width + 20
-        anchors.topMargin: 20
-        anchors.rightMargin: 20
+
+        anchors{
+            fill: parent
+            leftMargin: keyboardID.width + 20
+            topMargin: 20
+            rightMargin: 20
+        }
 
         ListView{
             id: listView
+
             model: proofDataID
             delegate: proofLineID
             highlight: highlightID
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 10
             ScrollBar.vertical: ScrollBar{}
+
             onCurrentItemChanged: {
                 currentItem.children[1].forceActiveFocus()
             }
@@ -34,7 +40,6 @@ Item {
             line: 1 ; type: "premise"; sub: false; subStart: false; subEnd: false; indent: 0; refs: [ListElement{ num : -1}]
         }
 
-
     }
 
     Component{
@@ -47,6 +52,7 @@ Item {
 
             Button{
                 id: lineNumberID
+
                 height: theTextID.height
                 width: height
 
@@ -79,14 +85,17 @@ Item {
 
             TextArea{
                 id: theTextID
+
                 height: font.pointSize + 10
                 Layout.leftMargin: indent
                 Layout.fillWidth: true
                 background: Rectangle{
                     color: "lightgrey"
                 }
+
                 wrapMode: TextArea.Wrap
                 placeholderText: qsTr("Start Typing here...")
+
                 MouseArea{
                     anchors.fill: parent
                     propagateComposedEvents: true
@@ -94,12 +103,13 @@ Item {
                         listView.currentIndex = index;
                         parent.forceActiveFocus();
                     }
-
                 }
+
             }
 
             Label{
                 id: ruleID
+
                 height: theTextID.height
                 width: 50
                 visible: (type === "choose")? false: true
@@ -109,10 +119,12 @@ Item {
                     font.italic: true
                     text: type
                 }
+
             }
 
             ComboBox{
                 id: chooseID
+
                 visible: (type === "choose")? true: false
                 height: theTextID.height
 
@@ -121,6 +133,7 @@ Item {
 
             ComboBox{
                 id: conclusionRuleID
+
                 visible: (type === "choose")? true: false
                 height: theTextID.height
 
@@ -140,20 +153,27 @@ Item {
             }
 
             Row{
+
                 Repeater{
+
                     model: refs
+
                     Button{
                         visible: (num === -1)? false: true
                         text: num
                         onClicked: {
                             refs.remove(index);
                         }
+
                     }
+
                 }
+
             }
 
             Button{
                 id: plusID
+
                 height: theTextID.height
 
                 Text{
@@ -167,6 +187,7 @@ Item {
 
                 Menu{
                     id: optionsID
+
                     Action{
                         text: "Add Premise"
                         onTriggered: {
@@ -175,6 +196,7 @@ Item {
                             listView.currentIndex = 0;
                         }
                     }
+
                     Action{
                         text: "Add Conclusion"
                         onTriggered: {
@@ -183,6 +205,7 @@ Item {
                             listView.currentIndex = index + 1;
                         }
                     }
+
                     Action{
                         text: "Start Subproof"
                         onTriggered:{
@@ -191,6 +214,7 @@ Item {
                             listView.currentIndex = index + 1;
                         }
                     }
+
                     Action{
                         text: "End Subproof"
                         onTriggered: {
@@ -223,6 +247,7 @@ Item {
 
     Component{
         id: highlightID
+
         Rectangle{
             width: parent.width
             color: "wheat"
