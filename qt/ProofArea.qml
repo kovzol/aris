@@ -83,7 +83,7 @@ Item {
                 }
             }
 
-            TextArea{
+            TextField{
                 id: theTextID
 
                 height: font.pointSize + 10
@@ -93,7 +93,7 @@ Item {
                     color: "lightgrey"
                 }
 
-                wrapMode: TextArea.Wrap
+//                wrapMode: TextArea.Wrap
                 placeholderText: qsTr("Start Typing here...")
 
                 MouseArea{
@@ -102,9 +102,13 @@ Item {
                     onClicked: {
                         listView.currentIndex = index;
                         parent.forceActiveFocus();
+                        parent.cursorPosition = parent.positionAt(mouseX, mouseY);
                     }
                 }
 
+                onAccepted: {
+                    plusID.clicked()
+                }
             }
 
             Label{

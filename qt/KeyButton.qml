@@ -13,7 +13,7 @@ ToolButton{
 
     onClicked: {
 
-        if (isTextArea(activeFocusItem))
+        if (isTextField(activeFocusItem))
             activeFocusItem.insert(activeFocusItem.cursorPosition, text)
 
     }

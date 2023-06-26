@@ -24,8 +24,8 @@ Window {
 
     // Checks if the item is a TextArea QML Type
 
-    function isTextArea(item){
-        return item instanceof TextArea
+    function isTextField(item){
+        return item instanceof TextField
     }
 
     Button{
@@ -249,7 +249,7 @@ Window {
         id: fileDialogID
 
         title: "Choose the proof file"
-        //selectFolder: false
+         //selectFolder: false
     }
 
     FileDialog{
