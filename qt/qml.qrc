@@ -3,5 +3,8 @@
         <file>main.qml</file>
         <file>ProofArea.qml</file>
         <file>KeyButton.qml</file>
+        <file>KeyGroup.qml</file>
+        <file>DrawerTools.qml</file>
+        <file>GoalLine.qml</file>
     </qresource>
 </RCC>

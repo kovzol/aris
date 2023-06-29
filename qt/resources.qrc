@@ -11,5 +11,6 @@
         <file>assets/export.png</file>
         <file>assets/boolean.png</file>
         <file>assets/about.png</file>
+        <file>assets/eval.png</file>
     </qresource>
 </RCC>
