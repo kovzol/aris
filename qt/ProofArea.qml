@@ -33,14 +33,14 @@ Item {
 
     }
 
-    ListModel{
-        id: proofDataID
+//    ListModel{
+//        id: proofDataID
 
-        ListElement{
-            line: 1 ; type: "premise"; sub: false; subStart: false; subEnd: false; indent: 0; refs: [ListElement{ num : -1}]
-        }
+//        ListElement{
+//            line: 1 ; type: "premise"; sub: false; subStart: false; subEnd: false; indent: 0; refs: [ListElement{ num : -1}]
+//        }
 
-    }
+//    }
 
     Component{
         id: proofLineID
@@ -108,6 +108,10 @@ Item {
 
                 onAccepted: {
                     plusID.clicked()
+                }
+
+                onTextChanged: {
+                    model.text = text;
                 }
             }
 

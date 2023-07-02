@@ -12,7 +12,7 @@ Window {
     visible: true
     title: qsTr("GNU Aris")
 
-    // Updates Line Numbers after a add/delete operation in the Proof Area
+    // Function to update Line Numbers after a add/delete operation in the Proof Area
 
     function updateLines(item){
 
@@ -22,10 +22,16 @@ Window {
 
     }
 
-    // Checks if the item is a TextArea QML Type
+    // Function to check if the item is a TextArea QML Type
 
     function isTextField(item){
         return item instanceof TextField
+    }
+
+    function fillWrap(){
+        for (var i = 0; i < proofDataID.count; i++){
+            Wrapper.bodyText =proofDataID.get(i).text;
+        }
     }
 
     // Burger Button
@@ -137,6 +143,15 @@ Window {
         ListElement{
             line: 1
         }
+    }
+
+    ListModel{
+        id: proofDataID
+
+        ListElement{
+            line: 1 ; type: "premise"; sub: false; subStart: false; subEnd: false; indent: 0; text: ""; refs: [ListElement{ num : -1}]
+        }
+
     }
 
     ProofArea{}

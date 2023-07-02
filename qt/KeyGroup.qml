@@ -97,7 +97,9 @@ ToolBar{
             ToolTip.visible: hovered
             ToolTip.text: "Evaluate Proof"
 
-//                    onClicked: {}
+                    onClicked: {
+                        fillWrap();
+                    }
         }
     }
 }
