@@ -98,7 +98,11 @@ ToolBar{
             ToolTip.text: "Evaluate Proof"
 
                     onClicked: {
+                        Wrapper.clearData();
                         fillWrap();
+                        Wrapper.computeIndices();
+                        Wrapper.computeRules();
+                        Wrapper.displayData();
                     }
         }
     }

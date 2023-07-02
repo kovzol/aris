@@ -7,26 +7,31 @@ class Wrapper : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString bodyText READ bodyText WRITE setBodyText NOTIFY bodyTextChanged)
-    Q_PROPERTY(bool evalResult READ evalResult WRITE setEvalResult NOTIFY evalResultChanged)
+
 public:
     explicit Wrapper(QObject *parent = nullptr);
-
-    QString bodyText() const;
-    void setBodyText(const QString &newBodyText);
-
-    bool evalResult() const;
-    void setEvalResult(bool newEvalResult);
+    Q_INVOKABLE void displayData();
+    Q_INVOKABLE void clearData();
+    Q_INVOKABLE void textAppend(const QString &text);
+    Q_INVOKABLE void ruleAppend(const QString &rule);
+    Q_INVOKABLE void refsAppend(const int i, const int &ref);
+    Q_INVOKABLE void depthAppend(const int &indent);
+    Q_INVOKABLE void computeIndices();
+    Q_INVOKABLE void computeRules();
 
 signals:
 
-    void bodyTextChanged();
-    void evalResultChanged();
+
 
 private:
-    QString m_bodyText;
     QStringList m_body;
-    bool m_evalResult;
+    QStringList m_rules;
+    QList<bool> m_premise;
+    QList<bool> m_subproof;
+    QList<QList<int>> m_indices;
+    QList<QList<int>> m_refs;
+    QList<int> m_depth;
+    QList<int> rules;
 };
 
 #endif // WRAPPER_H

@@ -142,6 +142,7 @@ Item {
             ComboBox{
                 id: conclusionRuleID
 
+                // TODO: Fix visibility and width
                 visible: (type === "choose")? true: false
                 height: theTextID.height
 
@@ -149,8 +150,13 @@ Item {
                 ToolTip.visible: hovered
                 ToolTip.text: currentText
 
+                //type: currentText
+                onActivated: {
+                    type = currentText;
+                }
+
                 model:  (chooseID.currentText === "Inference")?
-                            ["modus ponens", "addition", "simplification", "conjunction", "hypothetical syllogism", "disjunctive syllogism", "excluded middle", "constructive dilemma"]:
+                            ["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"]:
                             (chooseID.currentText === "Equivalence")?
                                 ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence","Distribution","Equivalence","Double Negation", "Exportation", "Subsumption"]:
                                 (chooseID.currentText === "Predicate")?
@@ -217,7 +223,7 @@ Item {
                     Action{
                         text: "Start Subproof"
                         onTriggered:{
-                            proofDataID.insert(index+1,{"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20});
+                            proofDataID.insert(index+1,{"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20, "refs": [{num : -1}]});
                             updateLines(proofDataID);
                             listView.currentIndex = index + 1;
                         }
@@ -229,7 +235,7 @@ Item {
                             if (sub === false)
                                 console.log("Invalid Operation")
                             else{
-                                proofDataID.insert(index+1,{"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20});
+                                proofDataID.insert(index+1,{"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20, "refs": [{num : -1}]});
                                 updateLines(proofDataID);
                                 listView.currentIndex = index + 1;
                             }

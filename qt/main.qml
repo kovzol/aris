@@ -30,7 +30,14 @@ Window {
 
     function fillWrap(){
         for (var i = 0; i < proofDataID.count; i++){
-            Wrapper.bodyText =proofDataID.get(i).text;
+            var item_i = proofDataID.get(i);
+            Wrapper.textAppend(item_i.text);
+            Wrapper.ruleAppend(item_i.type);
+            Wrapper.depthAppend(item_i.indent);
+            for (var ii = 0; ii < item_i.refs.count; ii++){
+//                console.log(proofDataID.get(i).refs.get(ii).num);
+                Wrapper.refsAppend(i,item_i.refs.get(ii).num);
+            }
         }
     }
 
