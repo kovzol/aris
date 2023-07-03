@@ -1,10 +1,22 @@
 #include "wrapper.h"
+
+#include "test.h"
+#include "proof.h"
+//#include "process.h"
+#include "typedef.h"
+#include "sen-data.h"
+#include "list.h"
+#include "vec.h"
+
 #include <QDebug>
+#include <iostream>
 
 Wrapper::Wrapper(QObject *parent)
     : QObject{parent}
 {
-
+    qDebug() << f();
+//    std::cout << "hi";
+//    qDebug() << test_proof_t();
 }
 
 void Wrapper::displayData()
@@ -21,7 +33,7 @@ void Wrapper::displayData()
             qDebug() << m_indices[i][ii] ;
         }
     }
-
+    checkProof();
 }
 
 void Wrapper::clearData()
@@ -157,5 +169,74 @@ void Wrapper::computeRules()
 
         rules.push_back(val);
     }
+}
+
+int Wrapper::test_proof_t()
+{
+    proof_t * proof;
+    proof = proof_init();
+
+    if (!proof)
+        return 0;
+    return 1;
+}
+
+int Wrapper::checkProof()
+{
+    proof_t * proof;
+    sen_data * sd;
+    item_t * itm;
+    sd = (sen_data *) calloc (1, sizeof (sen_data));
+
+    proof = proof_init ();
+    if (!proof){
+        free(sd);
+        return -10;
+    }
+
+    for (int i = 0; i < rules.size(); i++){
+        sd->line_num = i+1;
+        qDebug() << "rules";
+        sd->rule = -1;
+        qDebug() << "depth" ;
+        sd->depth = 0;
+        qDebug() << "indices";
+        int ind[m_indices[i].size()];
+        for (int ii = 0; i < m_indices[i].size();ii++){
+            ind[ii] = m_indices[i][ii];
+        }
+        int hmm[3] = {-1,0,0};
+        sd->indices = hmm;
+        qDebug() << "premise";
+        sd->premise = 1;
+        qDebug() << "subproof";
+        sd->subproof = 0;
+        qDebug() << "text";
+//        unsigned char * lol = (unsigned char *) m_body[i].toLocal8Bit().data();
+//        unsigned char * lol = (unsigned char *)"";
+        unsigned char  lol[1] = {'A'};
+        sd->text = lol;
+        qDebug() << "refs";
+        short r[m_refs[i].size()];
+        qDebug() << "ok";
+//        for (int ii = 0; i < m_refs[i].size();ii++){
+//            r[ii] = m_refs[i][ii];
+//        }
+        qDebug() << "hmm";
+        short k[1] = {-1};
+        sd->refs = k;
+        itm = ls_ins_obj (proof->everything, sd, proof->everything->tail);
+        if (!itm)
+            qDebug() << "oh no";
+    }
+    qDebug() << "SD initialized succesfully" ;
+//    proof->boolean = 0;
+    vec_t * rets;
+    rets = init_vec(m_body.size());
+
+    qDebug() << "proof evals to : " << proof_eval(proof,rets,1);
+
+    free(sd);
+    return 1;
 }
 

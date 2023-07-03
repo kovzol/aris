@@ -1,0 +1,50 @@
+#ifndef AIO_H
+#define AIO_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <stdlib.h>
+#include "typedef.h"
+
+// Tags for the xml files.
+#define HEADER "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+#define PROOF_TAG "proof"
+#define GOAL_TAG "goals"
+#define PREMISE_TAG "premises"
+#define CONCLUSION_TAG "conclusions"
+#define GOAL_ENTRY "goal"
+#define SENTENCE_ENTRY "entry"
+#define LINE_DATA "line"
+#define TEXT_DATA "text"
+#define RULE_DATA "rule"
+#define REF_DATA "ref"
+#define FILE_DATA "file"
+#define DEPTH_DATA "d"
+#define MODE_DATA "mode"
+
+#define ALT_LINE_DATA "n"
+#define ALT_TEXT_DATA "t"
+#define ALT_RULE_DATA "l"
+#define ALT_REF_DATA "r"
+#define ALT_FILE_DATA "f"
+
+#define VER_DATA "version"
+#define FILE_VER 1.0
+
+// Convienence type casts
+
+#define CSTD_CAST (const char *)
+#define CXML_CAST (const xmlChar *)
+#define CUNS_CAST (const unsigned char *)
+#define STD_CAST (char *)
+#define XML_CAST(o) ((xmlChar *)o)
+#define UNS_CAST (unsigned char *)
+
+int aio_save (proof_t * proof, const char * file_name);
+proof_t * aio_open (const char * file_name);
+#ifdef __cplusplus
+}
+#endif
+
+#endif // AIO_H

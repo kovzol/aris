@@ -18,6 +18,8 @@ public:
     Q_INVOKABLE void depthAppend(const int &indent);
     Q_INVOKABLE void computeIndices();
     Q_INVOKABLE void computeRules();
+    Q_INVOKABLE int test_proof_t();
+    Q_INVOKABLE int checkProof();
 
 signals:
 
