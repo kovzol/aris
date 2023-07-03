@@ -523,6 +523,7 @@ check_conns (const unsigned char * chk_str)
                   || chk_str[j-1] == '('
                   || (j >= NL && !strncmp (chk_str + j - NL, NOT, NL))
                   || (j >= CL && IS_BIN_CONN (chk_str + j - CL))))
+
                 return 0;
 
             // Right side

@@ -166,6 +166,8 @@ void Wrapper::computeRules()
             val = 33;
         else if (temp == "Symbol Negation")
             val = 34;
+        else
+            val = -1;
 
         rules.push_back(val);
     }
@@ -184,45 +186,57 @@ int Wrapper::test_proof_t()
 int Wrapper::checkProof()
 {
     proof_t * proof;
-    sen_data * sd;
-    item_t * itm;
-    sd = (sen_data *) calloc (1, sizeof (sen_data));
 
     proof = proof_init ();
     if (!proof){
-        free(sd);
+//        free(sd);
         return -10;
     }
 
     for (int i = 0; i < rules.size(); i++){
+        sen_data * sd;
+        item_t * itm;
+        sd = (sen_data *) calloc (1, sizeof (sen_data));
+
         sd->line_num = i+1;
-        qDebug() << "rules";
-        sd->rule = -1;
-        qDebug() << "depth" ;
-        sd->depth = 0;
-        qDebug() << "indices";
+//        qDebug() << "rules";
+        sd->rule = rules[i];
+//        qDebug() << "depth" ;
+        sd->depth = m_depth[i];
+//        qDebug() << "indices";
         int ind[m_indices[i].size()];
         for (int ii = 0; i < m_indices[i].size();ii++){
             ind[ii] = m_indices[i][ii];
         }
-        int hmm[3] = {-1,0,0};
-        sd->indices = hmm;
-        qDebug() << "premise";
-        sd->premise = 1;
-        qDebug() << "subproof";
-        sd->subproof = 0;
-        qDebug() << "text";
-//        unsigned char * lol = (unsigned char *) m_body[i].toLocal8Bit().data();
-//        unsigned char * lol = (unsigned char *)"";
-        unsigned char  lol[1] = {'A'};
-        sd->text = lol;
-        qDebug() << "refs";
-        short r[m_refs[i].size()];
-        qDebug() << "ok";
+//        int hmm[3] = {-1,0,0};
+        sd->indices = ind;
+//        qDebug() << "premise";
+        sd->premise = (m_premise[i])?1:0;
+//        qDebug() << "subproof";
+        sd->subproof = (m_subproof[i])?1:0;
+//        qDebug() << "text";
+//        unsigned char * lol = ;
+//        qDebug() << m_body[i];
+
+        std::string buff = m_body[i].toStdString();
+//        qDebug() << buff;
+//        char * temp =(char *) malloc(sizeof(char *));
+        char *temp = buff.data();
+
+//        const char * temp = buff.c_str();
+//        for (int ii = 0; ii < m_body[i].size(); ii++){
+//            lol[ii] = temp[ii];
+//        }
+//        qDebug() << lol;
+        sd->text = (unsigned char *) temp;
+//        qDebug() << sd->text;
+//        qDebug() << "refs";
+//        short r[m_refs[i].size()];
+//        qDebug() << "ok";
 //        for (int ii = 0; i < m_refs[i].size();ii++){
 //            r[ii] = m_refs[i][ii];
 //        }
-        qDebug() << "hmm";
+//        qDebug() << "hmm";
         short k[1] = {-1};
         sd->refs = k;
         itm = ls_ins_obj (proof->everything, sd, proof->everything->tail);
@@ -230,13 +244,13 @@ int Wrapper::checkProof()
             qDebug() << "oh no";
     }
     qDebug() << "SD initialized succesfully" ;
-//    proof->boolean = 0;
+    proof->boolean = 0;
     vec_t * rets;
     rets = init_vec(m_body.size());
 
     qDebug() << "proof evals to : " << proof_eval(proof,rets,1);
 
-    free(sd);
+//    free(sd);
     return 1;
 }
 

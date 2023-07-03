@@ -282,14 +282,9 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         }
     }
 
-    unsigned char lol[1] = {'A'};
-    sd->text = lol;
-
     unsigned char * text;
     text = format_string (sd->text);
-
-//    printf("%s\n",text);
-//    printf("%d\n",strlen(text));
+    main_conns = cli_conns;
 
     int ret;
     ret = check_text (text);
@@ -297,8 +292,6 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         return NULL;
 
     *ret_val = VALUE_TYPE_ERROR;
-    printf("%d\n",ret);
-    printf("%d conns\n",check_conns(lol));
     switch (ret)
     {
     case 0:
