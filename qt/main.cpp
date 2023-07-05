@@ -2,6 +2,7 @@
 #include <QQmlContext>
 #include <QQmlApplicationEngine>
 #include <QIcon>
+#include <QQuickStyle>
 #include "wrapper.h"
 
 
@@ -16,7 +17,7 @@ int main(int argc, char *argv[])
     Wrapper theWrap;
 
     QQmlApplicationEngine engine;
-
+    QQuickStyle::setStyle("Fusion");
     engine.rootContext()->setContextProperty("Wrapper",&theWrap);
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));

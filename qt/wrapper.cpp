@@ -1,6 +1,6 @@
 #include "wrapper.h"
 
-#include "test.h"
+//#include "test.h"
 #include "proof.h"
 //#include "process.h"
 #include "typedef.h"
@@ -14,7 +14,7 @@
 Wrapper::Wrapper(QObject *parent)
     : QObject{parent}
 {
-    qDebug() << f();
+//    qDebug() << f();
 //    std::cout << "hi";
 //    qDebug() << test_proof_t();
 }
@@ -78,9 +78,9 @@ void Wrapper::computeIndices()
     QList<int> parent_subproof;
     for (int i = 0; i < m_rules.size(); i++){
         m_indices.push_back({});
-        for (int ii = 0; ii < parent_subproof.size(); ii++){
-        m_indices[i].push_back(parent_subproof[ii]);
-        }
+        for (const int subp: parent_subproof)
+            m_indices[i].push_back(subp);
+
         if (m_rules[i] == "subproof")
             parent_subproof.push_back(i + 1);
         if ( i < m_rules.size() -1 && m_depth[i + 1] < m_depth[i])
@@ -90,8 +90,7 @@ void Wrapper::computeIndices()
 
 void Wrapper::computeRules()
 {
-    for (int i = 0; i < m_rules.size(); i++){
-        QString temp = m_rules[i];
+    for (const QString &temp: m_rules){
         int val = -1;
 
         // TODO : Fix this ugly if-else later
@@ -189,54 +188,30 @@ int Wrapper::checkProof()
 
     proof = proof_init ();
     if (!proof){
-//        free(sd);
         return -10;
     }
-
     for (int i = 0; i < rules.size(); i++){
         sen_data * sd;
         item_t * itm;
         sd = (sen_data *) calloc (1, sizeof (sen_data));
 
         sd->line_num = i+1;
-//        qDebug() << "rules";
         sd->rule = rules[i];
-//        qDebug() << "depth" ;
         sd->depth = m_depth[i];
-//        qDebug() << "indices";
         int ind[m_indices[i].size()];
-        for (int ii = 0; i < m_indices[i].size();ii++){
+        for (int ii = 0; ii < m_indices[i].size(); ii++){
             ind[ii] = m_indices[i][ii];
         }
-//        int hmm[3] = {-1,0,0};
         sd->indices = ind;
-//        qDebug() << "premise";
         sd->premise = (m_premise[i])?1:0;
-//        qDebug() << "subproof";
         sd->subproof = (m_subproof[i])?1:0;
-//        qDebug() << "text";
-//        unsigned char * lol = ;
-//        qDebug() << m_body[i];
 
-        std::string buff = m_body[i].toStdString();
-//        qDebug() << buff;
-//        char * temp =(char *) malloc(sizeof(char *));
-        char *temp = buff.data();
+        unsigned char *temp;
+        temp = (unsigned char *) calloc((m_body[i].size()+1),sizeof(unsigned char));
+        memcpy( temp, m_body[i].toStdString().c_str() ,m_body[i].size());
+        sd->text = temp;
 
-//        const char * temp = buff.c_str();
-//        for (int ii = 0; ii < m_body[i].size(); ii++){
-//            lol[ii] = temp[ii];
-//        }
-//        qDebug() << lol;
-        sd->text = (unsigned char *) temp;
-//        qDebug() << sd->text;
-//        qDebug() << "refs";
-//        short r[m_refs[i].size()];
-//        qDebug() << "ok";
-//        for (int ii = 0; i < m_refs[i].size();ii++){
-//            r[ii] = m_refs[i][ii];
-//        }
-//        qDebug() << "hmm";
+        // TODO: Fix refs
         short k[1] = {-1};
         sd->refs = k;
         itm = ls_ins_obj (proof->everything, sd, proof->everything->tail);
@@ -250,7 +225,6 @@ int Wrapper::checkProof()
 
     qDebug() << "proof evals to : " << proof_eval(proof,rets,1);
 
-//    free(sd);
     return 1;
 }
 

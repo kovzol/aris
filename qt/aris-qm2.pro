@@ -1,4 +1,4 @@
-QT += quick widgets
+QT += quick widgets quickcontrols2
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -34,7 +34,7 @@ QML_IMPORT_PATH =
 QML_DESIGNER_IMPORT_PATH =
 
 # TODO : Include path for libxml
-
+#INCLUDEPATH += /usr/include/libxml2
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -55,3 +55,5 @@ HEADERS += \
     var.h \
     vec.h \
     wrapper.h
+
+#unix|win32: LIBS += -lxml2
