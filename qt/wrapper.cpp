@@ -184,47 +184,64 @@ int Wrapper::test_proof_t()
 
 int Wrapper::checkProof()
 {
-    proof_t * proof;
+    proof_t *proof;
 
     proof = proof_init ();
-    if (!proof){
+    if (!proof)
         return -10;
-    }
+
     for (int i = 0; i < rules.size(); i++){
-        sen_data * sd;
-        item_t * itm;
-        sd = (sen_data *) calloc (1, sizeof (sen_data));
+        sen_data *sd;
+        item_t *itm;
+        unsigned char *temp_text;
+        sd = (sen_data *) calloc (1, sizeof(sen_data));
+        int *ind = (int *) calloc(m_indices.size(), sizeof(int));
+        short *temp_refs = (short *) calloc(m_refs[i].size(), sizeof(short));
 
         sd->line_num = i+1;
         sd->rule = rules[i];
         sd->depth = m_depth[i];
-        int ind[m_indices[i].size()];
-        for (int ii = 0; ii < m_indices[i].size(); ii++){
-            ind[ii] = m_indices[i][ii];
-        }
-        sd->indices = ind;
         sd->premise = (m_premise[i])?1:0;
         sd->subproof = (m_subproof[i])?1:0;
 
-        unsigned char *temp;
-        temp = (unsigned char *) calloc((m_body[i].size()+1),sizeof(unsigned char));
-        memcpy( temp, m_body[i].toStdString().c_str() ,m_body[i].size());
-        sd->text = temp;
+        // Assign Indices
+        for (int ii = 0; ii < m_indices[i].size(); ii++)
+            ind[ii] = m_indices[i][ii];
+        sd->indices = ind;
 
-        // TODO: Fix refs
-        short k[1] = {-1};
-        sd->refs = k;
+        // TODO : Cross-check Unicodes
+        // Assign Text
+        temp_text = (unsigned char *) calloc((m_body[i].size()+1), sizeof(unsigned char));
+        memcpy(temp_text, m_body[i].toStdString().c_str(), m_body[i].size());
+        sd->text = temp_text;
+
+        // Assign references
+        if (m_refs[i].size() == 1)
+            temp_refs[0] = REF_END;
+        else{
+            for (int ii = 1; ii < m_refs[i].size(); ii++)
+                temp_refs[ii-1] = m_refs[i][ii];
+            temp_refs[m_refs[i].size()-1] = REF_END;
+        }
+        sd->refs = temp_refs;
+
+        // Insert into proof object
         itm = ls_ins_obj (proof->everything, sd, proof->everything->tail);
         if (!itm)
-            qDebug() << "oh no";
+            qDebug() << "proof: could not insert sen_data ";
     }
-    qDebug() << "SD initialized succesfully" ;
+    // TODO : Fix boolean
     proof->boolean = 0;
+
     vec_t * rets;
     rets = init_vec(m_body.size());
 
-    qDebug() << "proof evals to : " << proof_eval(proof,rets,1);
+    if (!proof_eval(proof,rets,1))
+        qDebug() << "Proof Evaluated Successfully";
+    else
+        qDebug() << "Memory Error";
 
+    free(proof);
     return 1;
 }
 

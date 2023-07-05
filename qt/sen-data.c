@@ -284,7 +284,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
     unsigned char * text;
     text = format_string (sd->text);
-    main_conns = cli_conns;
+//    main_conns = cli_conns;
 
     int ret;
     ret = check_text (text);
@@ -324,11 +324,9 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
     const char * rule = rules_list[sd->rule];
 
     vec_t * refs;
-
     refs = init_vec (sizeof (char *));
     if (!refs)
         return NULL;
-
     int i;
 
     for (i = 0; sd->refs[i] != REF_END; i++)
@@ -338,7 +336,6 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
         if (sd->refs[i] > lines->num_stuff)
             return NULL;
-
         cur_ref = ls_nth (lines, sd->refs[i] - 1);
         ref_data = cur_ref->value;
 
@@ -363,7 +360,6 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         ret = vec_str_add_obj (refs, ref_text);
         if (ret == AEC_MEM)
             return NULL;
-
         if (ref_data->subproof)
         {
             ret = sen_data_can_select_as_ref (sd, ref_data);

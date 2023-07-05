@@ -134,7 +134,6 @@ vec_str_add_obj (vec_t * v, unsigned char * more)
         v->stuff = realloc (v->stuff, v->alloc_space * sizeof (char *));
         CHECK_ALLOC (v->stuff, AEC_MEM);
     }
-
     unsigned char * obj;
     obj = (unsigned char *) calloc (strlen (more) + 1, sizeof (char));
     CHECK_ALLOC (obj, AEC_MEM);
@@ -142,7 +141,6 @@ vec_str_add_obj (vec_t * v, unsigned char * more)
     strcpy (obj, more);
     memcpy (v->stuff + ((v->num_stuff - 1) * sizeof (char *)),
            &obj, sizeof (char *));
-
     return 0;
 }
 
