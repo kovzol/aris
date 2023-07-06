@@ -21,9 +21,12 @@ public:
     Q_INVOKABLE int test_proof_t();
     Q_INVOKABLE int checkProof();
 
+    Q_PROPERTY(QString evalText READ evalText WRITE setEvalText NOTIFY evalTextChanged);
+    QString evalText() const;
+    void setEvalText(const QString &newEvalText);
+
 signals:
-
-
+    void evalTextChanged();
 
 private:
     QStringList m_body;
@@ -34,6 +37,7 @@ private:
     QList<QList<int>> m_refs;
     QList<int> m_depth;
     QList<int> rules;
+    QString m_evalText;
 };
 
 #endif // WRAPPER_H

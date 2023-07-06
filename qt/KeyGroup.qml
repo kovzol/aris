@@ -92,10 +92,17 @@ ToolBar{
         ToolButton{
             id: evalButton
 
-            icon.source: "/assets/eval.png"
+            icon {
+                source: "/assets/eval.png"
+                height: nullButton.height/2
+                width: nullButton.width/2
+            }
             hoverEnabled: true
             ToolTip.visible: hovered
-            ToolTip.text: "Evaluate Proof"
+            ToolTip.text: Wrapper.evalText
+            background: Rectangle{
+                color: (Wrapper.evalText === "Evaluate Proof")? "white": (Wrapper.evalText === "Correct!")? "green": "red"
+            }
 
                     onClicked: {
                         Wrapper.clearData();

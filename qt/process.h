@@ -115,6 +115,7 @@ static struct connectives_list gui_conns = {
   "\u2208",
   "\u2349",
   3, 2
+//    1, 1
 };
 
 

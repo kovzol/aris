@@ -504,6 +504,7 @@ check_conns (const unsigned char * chk_str)
 
     // TODO Fix CONNECTIVES Later
     main_conns = cli_conns;
+//    main_conns = gui_conns;
     //Get the length of chk_str.
     chk_len = strlen ((const char *) chk_str);
     int chk_sides, j;

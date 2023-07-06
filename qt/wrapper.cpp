@@ -12,7 +12,7 @@
 #include <iostream>
 
 Wrapper::Wrapper(QObject *parent)
-    : QObject{parent}
+    : QObject{parent}, m_evalText{"Evaluate Proof"}
 {
     //    qDebug() << f();
     //    std::cout << "hi";
@@ -152,7 +152,7 @@ void Wrapper::computeRules()
             val = 26;
         else if (temp == "Lemma")
             val = 27;
-        else if (temp == "subproof")
+        else if (temp == "subproof")    // TODO : Capitalise Everywhere
             val = 28;
         else if (temp == "Sequence")
             val = 29;
@@ -185,6 +185,7 @@ int Wrapper::test_proof_t()
 
 int Wrapper::checkProof()
 {
+    //TODO: GOALS
     proof_t *proof;
 
     proof = proof_init ();
@@ -243,6 +244,7 @@ int Wrapper::checkProof()
         qDebug() << "Memory Error";
 
     item_t * ev_itr;
+    int f = 0;
     ev_itr = proof->everything->head;
     for (int i = 0; i < rets->num_stuff; i++){
         char * cur_ret, * cur_line;
@@ -250,15 +252,31 @@ int Wrapper::checkProof()
         cur_line =(char *) ((sen_data *) ev_itr->value)->text;
 
         if (strcmp (cur_ret, CORRECT)){
-            qDebug() << "Error in line " << i << "- " << cur_line;
+            qDebug() << "Error in line " << i + 1 << "- " << cur_line;
+            setEvalText(QString("Error in line %1 - %2").arg(i+1).arg(cur_line));
+            f = 1;
             qDebug() << "  "<< cur_ret;
         }
-        else {
+        else
             qDebug() <<"Line " << i + 1 << ": " << CORRECT;
-        }
+
         ev_itr = ev_itr->next;
     }
+    if (!f) setEvalText("Correct!");
     free(proof);
     return 1;
 }
 
+
+QString Wrapper::evalText() const
+{
+    return m_evalText;
+}
+
+void Wrapper::setEvalText(const QString &newEvalText)
+{
+    if (m_evalText == newEvalText)
+        return;
+    m_evalText = newEvalText;
+    emit evalTextChanged();
+}
