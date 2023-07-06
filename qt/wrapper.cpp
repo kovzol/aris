@@ -2,7 +2,7 @@
 
 //#include "test.h"
 #include "proof.h"
-//#include "process.h"
+#include "process.h"
 #include "typedef.h"
 #include "sen-data.h"
 #include "list.h"
@@ -14,9 +14,9 @@
 Wrapper::Wrapper(QObject *parent)
     : QObject{parent}
 {
-//    qDebug() << f();
-//    std::cout << "hi";
-//    qDebug() << test_proof_t();
+    //    qDebug() << f();
+    //    std::cout << "hi";
+    //    qDebug() << test_proof_t();
 }
 
 void Wrapper::displayData()
@@ -24,13 +24,13 @@ void Wrapper::displayData()
     for (int i = 0; i < m_body.size(); i++){
         qDebug()<< i+ 1 <<" : text is  " << m_body[i] << " and rule is " << m_rules[i] << " and depth is "<< m_depth[i]<< " and subproof starter: " << m_subproof[i] << " and refs are: ";
         if (m_refs.size() > i){
-        for (int ii = 0; ii < m_refs[i].size(); ii++)
-            qDebug() << m_refs[i][ii] ;
+            for (int ii = 0; ii < m_refs[i].size(); ii++)
+                qDebug() << m_refs[i][ii] ;
         }
         qDebug() << " and indices are : " ;
         if (m_indices.size() > i){
-        for (int ii = 0; ii < m_indices[i].size(); ii++)
-            qDebug() << m_indices[i][ii] ;
+            for (int ii = 0; ii < m_indices[i].size(); ii++)
+                qDebug() << m_indices[i][ii] ;
         }
     }
     checkProof();
@@ -45,6 +45,7 @@ void Wrapper::clearData()
     m_indices.clear();
     m_depth.clear();
     m_refs.clear();
+    rules.clear();
 }
 
 void Wrapper::textAppend(const QString &text)
@@ -151,7 +152,7 @@ void Wrapper::computeRules()
             val = 26;
         else if (temp == "Lemma")
             val = 27;
-        else if (temp == "Subproof")
+        else if (temp == "subproof")
             val = 28;
         else if (temp == "Sequence")
             val = 29;
@@ -190,7 +191,7 @@ int Wrapper::checkProof()
     if (!proof)
         return -10;
 
-    for (int i = 0; i < rules.size(); i++){
+    for (int i = 0; i < m_body.size(); i++){
         sen_data *sd;
         item_t *itm;
         unsigned char *temp_text;
@@ -233,14 +234,30 @@ int Wrapper::checkProof()
     // TODO : Fix boolean
     proof->boolean = 0;
 
-    vec_t * rets;
-    rets = init_vec(m_body.size());
+    vec_t *rets;
+    rets = init_vec(sizeof(char *));
 
     if (!proof_eval(proof,rets,1))
         qDebug() << "Proof Evaluated Successfully";
     else
         qDebug() << "Memory Error";
 
+    item_t * ev_itr;
+    ev_itr = proof->everything->head;
+    for (int i = 0; i < rets->num_stuff; i++){
+        char * cur_ret, * cur_line;
+        cur_ret = (char *) vec_str_nth (rets, i);
+        cur_line =(char *) ((sen_data *) ev_itr->value)->text;
+
+        if (strcmp (cur_ret, CORRECT)){
+            qDebug() << "Error in line " << i << "- " << cur_line;
+            qDebug() << "  "<< cur_ret;
+        }
+        else {
+            qDebug() <<"Line " << i + 1 << ": " << CORRECT;
+        }
+        ev_itr = ev_itr->next;
+    }
     free(proof);
     return 1;
 }
