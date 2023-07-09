@@ -33,8 +33,16 @@ QML_IMPORT_PATH =
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH =
 
-# TODO : Include path for libxml
-INCLUDEPATH += /usr/include/libxml2
+# Path to mingw
+win32: MINGW64_ROOT = C:/msys64/mingw64
+
+# Include path for libxml
+unix: INCLUDEPATH += /usr/include/libxml2
+win32: INCLUDEPATH += $${MINGW64_ROOT}/include/libxml2
+
+# Lib for libxml
+unix: LIBS += -lxml2
+win32: LIBS += $${MINGW64_ROOT}/lib/libxml2.a
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -56,4 +64,3 @@ HEADERS += \
     vec.h \
     wrapper.h
 
-unix|win32: LIBS += -lxml2
