@@ -2,6 +2,7 @@
 #define WRAPPER_H
 
 #include <QObject>
+#include "typedef.h"
 
 class Wrapper : public QObject
 {
@@ -20,10 +21,12 @@ public:
     Q_INVOKABLE void computeRules();
     Q_INVOKABLE int test_proof_t();
     Q_INVOKABLE int checkProof();
+    Q_INVOKABLE void saveProof(const QString &name);
 
     Q_PROPERTY(QString evalText READ evalText WRITE setEvalText NOTIFY evalTextChanged);
     QString evalText() const;
     void setEvalText(const QString &newEvalText);
+    proof_t *genProof();
 
 signals:
     void evalTextChanged();

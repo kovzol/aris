@@ -102,6 +102,14 @@ Window {
 
         title: "Save As"
         fileMode: FileDialog.SaveFile
+        defaultSuffix: "tle"
+        onAccepted: {
+            Wrapper.clearData();
+            fillWrap();
+            Wrapper.computeIndices();
+            Wrapper.computeRules();
+            Wrapper.saveProof(selectedFile)
+        }
     }
 
     FontDialog{

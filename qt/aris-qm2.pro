@@ -34,7 +34,7 @@ QML_IMPORT_PATH =
 QML_DESIGNER_IMPORT_PATH =
 
 # TODO : Include path for libxml
-#INCLUDEPATH += /usr/include/libxml2
+INCLUDEPATH += /usr/include/libxml2
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -56,4 +56,4 @@ HEADERS += \
     vec.h \
     wrapper.h
 
-#unix|win32: LIBS += -lxml2
+unix|win32: LIBS += -lxml2

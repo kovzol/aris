@@ -7,6 +7,7 @@
 #include "sen-data.h"
 #include "list.h"
 #include "vec.h"
+#include "aio.h"
 
 #include <QDebug>
 #include <iostream>
@@ -185,12 +186,75 @@ int Wrapper::test_proof_t()
 
 int Wrapper::checkProof()
 {
-    //TODO: GOALS
+    proof_t *proof = genProof();
+
+    vec_t *rets;
+    rets = init_vec(sizeof(char *));
+
+    if (!proof_eval(proof,rets,1))
+        qDebug() << "Proof Evaluated Successfully";
+    else
+        qDebug() << "Memory Error";
+
+    item_t * ev_itr;
+    int f = 0;
+    ev_itr = proof->everything->head;
+    for (int i = 0; i < rets->num_stuff; i++){
+        char * cur_ret, * cur_line;
+        cur_ret = (char *) vec_str_nth (rets, i);
+        cur_line =(char *) ((sen_data *) ev_itr->value)->text;
+
+        if (strcmp (cur_ret, CORRECT)){
+            qDebug() << "Error in line " << i + 1 << "- " << cur_line;
+            setEvalText(QString("Error in line %1 - %2").arg(i+1).arg(cur_line));
+            f = 1;
+            qDebug() << "  "<< cur_ret;
+        }
+        else
+            qDebug() <<"Line " << i + 1 << ": " << CORRECT;
+
+        ev_itr = ev_itr->next;
+    }
+    if (!f) setEvalText("Correct!");
+    free(proof);
+    return 1;
+}
+
+void Wrapper::saveProof(const QString &name)
+{
+    proof_t *proof = genProof();
+
+    char *file_name = (char *) calloc((name.size()+1), sizeof(char));
+    memcpy(file_name, name.toStdString().c_str(), name.size());
+
+    if (aio_save(proof,(const char *) file_name) == 0)
+        qDebug() << "File Saved Successfully";
+    if (file_name)
+        free(file_name);
+}
+
+
+QString Wrapper::evalText() const
+{
+    return m_evalText;
+}
+
+void Wrapper::setEvalText(const QString &newEvalText)
+{
+    if (m_evalText == newEvalText)
+        return;
+    m_evalText = newEvalText;
+    emit evalTextChanged();
+}
+
+proof_t *Wrapper::genProof()
+{
+    //TODO : Goals
     proof_t *proof;
 
     proof = proof_init ();
     if (!proof)
-        return -10;
+        qDebug() << "Error Initializing Proof";
 
     for (int i = 0; i < m_body.size(); i++){
         sen_data *sd;
@@ -234,49 +298,5 @@ int Wrapper::checkProof()
     }
     // TODO : Fix boolean
     proof->boolean = 0;
-
-    vec_t *rets;
-    rets = init_vec(sizeof(char *));
-
-    if (!proof_eval(proof,rets,1))
-        qDebug() << "Proof Evaluated Successfully";
-    else
-        qDebug() << "Memory Error";
-
-    item_t * ev_itr;
-    int f = 0;
-    ev_itr = proof->everything->head;
-    for (int i = 0; i < rets->num_stuff; i++){
-        char * cur_ret, * cur_line;
-        cur_ret = (char *) vec_str_nth (rets, i);
-        cur_line =(char *) ((sen_data *) ev_itr->value)->text;
-
-        if (strcmp (cur_ret, CORRECT)){
-            qDebug() << "Error in line " << i + 1 << "- " << cur_line;
-            setEvalText(QString("Error in line %1 - %2").arg(i+1).arg(cur_line));
-            f = 1;
-            qDebug() << "  "<< cur_ret;
-        }
-        else
-            qDebug() <<"Line " << i + 1 << ": " << CORRECT;
-
-        ev_itr = ev_itr->next;
-    }
-    if (!f) setEvalText("Correct!");
-    free(proof);
-    return 1;
-}
-
-
-QString Wrapper::evalText() const
-{
-    return m_evalText;
-}
-
-void Wrapper::setEvalText(const QString &newEvalText)
-{
-    if (m_evalText == newEvalText)
-        return;
-    m_evalText = newEvalText;
-    emit evalTextChanged();
+    return proof;
 }
