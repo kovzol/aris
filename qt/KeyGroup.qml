@@ -104,13 +104,13 @@ ToolBar{
                 color: (Wrapper.evalText === "Evaluate Proof")? "white": (Wrapper.evalText === "Correct!")? "green": "red"
             }
 
-                    onClicked: {
-                        Wrapper.clearData();
-                        fillWrap();
-                        Wrapper.computeIndices();
-                        Wrapper.computeRules();
-                        Wrapper.displayData();
-                    }
+            onClicked: {
+                Wrapper.clearData();
+                fillWrap();
+                Wrapper.computeIndices();
+                Wrapper.computeRules();
+                Wrapper.displayData();
+            }
         }
     }
 }
