@@ -592,233 +592,233 @@ aio_open (const char * file_name)
     if (file_name == NULL)
         return NULL;
 
-//    proof_t * proof;
-//    xmlTextReader * xml;
+    proof_t * proof;
+    xmlTextReader * xml;
 
-//    proof = proof_init ();
-//    if (!proof)
-//        return NULL;
+    proof = proof_init ();
+    if (!proof)
+        return NULL;
 
-//    xml = xmlReaderForFile (file_name, NULL, 0);
-//    if (!xml) XML_ERR (NULL);
+    xml = xmlReaderForFile (file_name, NULL, 0);
+    if (!xml) XML_ERR (NULL);
 
-//    xmlChar * buffer, * name;
-//    int ret;
-//    int depth;
+    xmlChar * buffer, * name;
+    int ret;
+    int depth;
 
-//    name = NULL;
-//    ret = xmlTextReaderRead (xml);
+    name = NULL;
+    ret = xmlTextReaderRead (xml);
 
-//    if (ret < 0) XML_ERR (NULL);
+    if (ret < 0) XML_ERR (NULL);
 
-//    buffer = xmlTextReaderName (xml);
-//    if (!buffer) XML_ERR (NULL);
+    buffer = xmlTextReaderName (xml);
+    if (!buffer) XML_ERR (NULL);
 
-//    if (strcmp ((const char *) buffer, PROOF_TAG))
-//        XML_ERR (NULL);
+    if (strcmp ((const char *) buffer, PROOF_TAG))
+        XML_ERR (NULL);
 
-//    free (buffer);
+    free (buffer);
 
-//    buffer = aio_get_first_attribute (xml, &name);
-//    if (buffer)
-//    {
-//        if (!strcmp (CSTD_CAST (name), MODE_DATA))
-//        {
-//            if (!strcmp ((const char *) buffer, "boolean"))
-//                proof->boolean = 1;
-//        }
+    buffer = aio_get_first_attribute (xml, &name);
+    if (buffer)
+    {
+        if (!strcmp (CSTD_CAST (name), MODE_DATA))
+        {
+            if (!strcmp ((const char *) buffer, "boolean"))
+                proof->boolean = 1;
+        }
 
-//        if (!strcmp (CSTD_CAST (name), VER_DATA))
-//        {
-//            int ver_num;
-//            sscanf (CSTD_CAST (buffer), "%i", &ver_num);
-//            // Decide what to do with it.
-//        }
-//    }
+        if (!strcmp (CSTD_CAST (name), VER_DATA))
+        {
+            int ver_num;
+            sscanf (CSTD_CAST (buffer), "%i", &ver_num);
+            // Decide what to do with it.
+        }
+    }
 
-//    IF_FREE (name);
-//    IF_FREE (buffer);
+    IF_FREE (name);
+    IF_FREE (buffer);
 
-//    // Get the <goals> tag.
-//    ret = xmlTextReaderRead (xml);
-//    if (ret < 0) XML_ERR (NULL);
+    // Get the <goals> tag.
+    ret = xmlTextReaderRead (xml);
+    if (ret < 0) XML_ERR (NULL);
 
-//    ret = xmlTextReaderRead (xml);
-//    if (ret < 0) XML_ERR (NULL);
+    ret = xmlTextReaderRead (xml);
+    if (ret < 0) XML_ERR (NULL);
 
-//    buffer = xmlTextReaderName (xml);
-//    if (!buffer) XML_ERR (NULL);
+    buffer = xmlTextReaderName (xml);
+    if (!buffer) XML_ERR (NULL);
 
-//    if (strcmp ((const char *) buffer, GOAL_TAG))
-//        XML_ERR (NULL);
+    if (strcmp ((const char *) buffer, GOAL_TAG))
+        XML_ERR (NULL);
 
-//    free (buffer);
+    free (buffer);
 
-//    ret = xmlTextReaderRead (xml);
-//    if (ret < 0) XML_ERR (NULL);
+    ret = xmlTextReaderRead (xml);
+    if (ret < 0) XML_ERR (NULL);
 
-//    depth = xmlTextReaderDepth (xml);
-//    if (depth < 0) XML_ERR (NULL);
+    depth = xmlTextReaderDepth (xml);
+    if (depth < 0) XML_ERR (NULL);
 
-//    // Read the goals.
+    // Read the goals.
 
-//    // May be able to use xmlTextReaderIsEmptyElement()
-//    if (depth == 2)
-//    {
-//        while (ret == 1)
-//        {
-//            ret = xmlTextReaderRead (xml);
-//            if (ret < 0) XML_ERR (NULL);
+    // May be able to use xmlTextReaderIsEmptyElement()
+    if (depth == 2)
+    {
+        while (ret == 1)
+        {
+            ret = xmlTextReaderRead (xml);
+            if (ret < 0) XML_ERR (NULL);
 
-//            buffer = xmlTextReaderName (xml);
-//            if (!buffer) XML_ERR (NULL);
+            buffer = xmlTextReaderName (xml);
+            if (!buffer) XML_ERR (NULL);
 
-//            if (!strcmp ((const char *) buffer, GOAL_ENTRY))
-//            {
-//                free (buffer);
-//                buffer = aio_get_first_attribute (xml, &name);
-//                if (!buffer || !IS_TEXT(name))
-//                    XML_ERR (NULL);
+            if (!strcmp ((const char *) buffer, GOAL_ENTRY))
+            {
+                free (buffer);
+                buffer = aio_get_first_attribute (xml, &name);
+                if (!buffer || !IS_TEXT(name))
+                    XML_ERR (NULL);
 
-//                IF_FREE (name);
+                IF_FREE (name);
 
-//                item_t * ret_itm;
-//                ret_itm = ls_push_obj (proof->goals, buffer);
-//                if (!ret_itm)
-//                    return NULL;
-//            }
-//            else if (!strcmp ((const char *) buffer, GOAL_TAG))
-//            {
-//                ret = xmlTextReaderRead (xml);
-//                if (ret < 0) XML_ERR (NULL);
-//                free (buffer);
-//                break;
-//            }
-//            else
-//                XML_ERR (NULL);
+                item_t * ret_itm;
+                ret_itm = ls_push_obj (proof->goals, buffer);
+                if (!ret_itm)
+                    return NULL;
+            }
+            else if (!strcmp ((const char *) buffer, GOAL_TAG))
+            {
+                ret = xmlTextReaderRead (xml);
+                if (ret < 0) XML_ERR (NULL);
+                free (buffer);
+                break;
+            }
+            else
+                XML_ERR (NULL);
 
-//            ret = xmlTextReaderRead (xml);
-//            if (ret < 0) XML_ERR (NULL);
-//        }
-//    }
+            ret = xmlTextReaderRead (xml);
+            if (ret < 0) XML_ERR (NULL);
+        }
+    }
 
-//    /*** Read the Premises. ***/
+    /*** Read the Premises. ***/
 
-//    int line = 1;
+    int line = 1;
 
-//    ret = xmlTextReaderRead (xml);
-//    if (ret < 0) XML_ERR (NULL);
+    ret = xmlTextReaderRead (xml);
+    if (ret < 0) XML_ERR (NULL);
 
-//    buffer = xmlTextReaderName (xml);
-//    if (!buffer) XML_ERR (NULL);
+    buffer = xmlTextReaderName (xml);
+    if (!buffer) XML_ERR (NULL);
 
-//    if (strcmp ((const char *) buffer, PREMISE_TAG))
-//        XML_ERR (NULL);
+    if (strcmp ((const char *) buffer, PREMISE_TAG))
+        XML_ERR (NULL);
 
-//    free (buffer);
+    free (buffer);
 
-//    ret = xmlTextReaderRead (xml);
-//    if (ret < 0) XML_ERR (NULL);
+    ret = xmlTextReaderRead (xml);
+    if (ret < 0) XML_ERR (NULL);
 
-//    while (ret == 1)
-//    {
-//        ret = xmlTextReaderRead (xml);
-//        if (ret < 0) XML_ERR (NULL);
+    while (ret == 1)
+    {
+        ret = xmlTextReaderRead (xml);
+        if (ret < 0) XML_ERR (NULL);
 
-//        buffer = xmlTextReaderName (xml);
-//        if (!buffer) XML_ERR (NULL);
+        buffer = xmlTextReaderName (xml);
+        if (!buffer) XML_ERR (NULL);
 
-//        if (!strcmp ((const char *) buffer, SENTENCE_ENTRY))
-//        {
-//            free (buffer);
-//            sen_data * sd;
+        if (!strcmp ((const char *) buffer, SENTENCE_ENTRY))
+        {
+            free (buffer);
+            sen_data * sd;
 
-//            sd = aio_open_prem (xml);
-//            if (!sd)
-//                return NULL;
-//            sd->line_num = line++;
+            sd = aio_open_prem (xml);
+            if (!sd)
+                return NULL;
+            sd->line_num = line++;
 
-//            item_t * itm;
-//            itm = ls_push_obj (proof->everything, sd);
-//            if (!itm)
-//                return NULL;
-//        }
-//        else if (!strcmp ((const char *) buffer, PREMISE_TAG))
-//        {
-//            ret = xmlTextReaderRead (xml);
-//            if (ret < 0) XML_ERR (NULL);
-//            free (buffer);
-//            break;
-//        }
-//        else
-//        {
-//            XML_ERR (NULL);
-//        }
-//        ret = xmlTextReaderRead (xml);
-//        if (ret < 0) XML_ERR (NULL);
-//    }
+            item_t * itm;
+            itm = ls_push_obj (proof->everything, sd);
+            if (!itm)
+                return NULL;
+        }
+        else if (!strcmp ((const char *) buffer, PREMISE_TAG))
+        {
+            ret = xmlTextReaderRead (xml);
+            if (ret < 0) XML_ERR (NULL);
+            free (buffer);
+            break;
+        }
+        else
+        {
+            XML_ERR (NULL);
+        }
+        ret = xmlTextReaderRead (xml);
+        if (ret < 0) XML_ERR (NULL);
+    }
 
-//    ret = xmlTextReaderRead (xml);
-//    if (ret < 0) XML_ERR (NULL);
+    ret = xmlTextReaderRead (xml);
+    if (ret < 0) XML_ERR (NULL);
 
-//    buffer = xmlTextReaderName (xml);
-//    if (!buffer) XML_ERR (NULL);
+    buffer = xmlTextReaderName (xml);
+    if (!buffer) XML_ERR (NULL);
 
-//    if (strcmp ((const char *) buffer, CONCLUSION_TAG))
-//        XML_ERR (NULL);
+    if (strcmp ((const char *) buffer, CONCLUSION_TAG))
+        XML_ERR (NULL);
 
-//    free (buffer);
+    free (buffer);
 
-//    ret = xmlTextReaderRead (xml);
-//    if (ret < 0) XML_ERR (NULL);
+    ret = xmlTextReaderRead (xml);
+    if (ret < 0) XML_ERR (NULL);
 
-//    depth = xmlTextReaderDepth (xml);
-//    if (depth < 0) XML_ERR (NULL);
+    depth = xmlTextReaderDepth (xml);
+    if (depth < 0) XML_ERR (NULL);
 
-//    if (depth == 2)
-//    {
-//        while (1)
-//        {
-//            ret = xmlTextReaderRead (xml);
-//            if (ret < 0) XML_ERR (NULL);
+    if (depth == 2)
+    {
+        while (1)
+        {
+            ret = xmlTextReaderRead (xml);
+            if (ret < 0) XML_ERR (NULL);
 
-//            buffer = xmlTextReaderName (xml);
-//            if (!buffer) XML_ERR (NULL);
+            buffer = xmlTextReaderName (xml);
+            if (!buffer) XML_ERR (NULL);
 
-//            if (!strcmp ((const char *) buffer, CONCLUSION_TAG))
-//            {
-//                free (buffer);
-//                break;
-//            }
+            if (!strcmp ((const char *) buffer, CONCLUSION_TAG))
+            {
+                free (buffer);
+                break;
+            }
 
-//            int str_cmp = strcmp ((const char *) buffer, SENTENCE_ENTRY);
-//            free (buffer);
+            int str_cmp = strcmp ((const char *) buffer, SENTENCE_ENTRY);
+            free (buffer);
 
-//            if (str_cmp)
-//                continue;
+            if (str_cmp)
+                continue;
 
-//            sen_data * sd;
+            sen_data * sd;
 
-//            sd = aio_open_conc (xml);
-//            if (!sd)
-//                XML_ERR (NULL);
+            sd = aio_open_conc (xml);
+            if (!sd)
+                XML_ERR (NULL);
 
-//            int sub = 0, old_depth;
-//            old_depth = ((sen_data *) proof->everything->tail->value)->depth;
-//            if (sd->depth > old_depth)
-//                sub = 1;
+            int sub = 0, old_depth;
+            old_depth = ((sen_data *) proof->everything->tail->value)->depth;
+            if (sd->depth > old_depth)
+                sub = 1;
 
-//            sd->subproof = sub;
-//            sd->line_num = line++;
+            sd->subproof = sub;
+            sd->line_num = line++;
 
-//            item_t * itm;
-//            itm = ls_push_obj (proof->everything, sd);
-//            if (!itm)
-//                return NULL;
-//        }
-//    }
+            item_t * itm;
+            itm = ls_push_obj (proof->everything, sd);
+            if (!itm)
+                return NULL;
+        }
+    }
 
-//    xmlFreeTextReader (xml);
+    xmlFreeTextReader (xml);
 
-//    return proof;
+    return proof;
 }

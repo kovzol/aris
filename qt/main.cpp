@@ -4,6 +4,8 @@
 #include <QIcon>
 #include <QQuickStyle>
 #include "wrapper.h"
+#include "proofmodel.h"
+#include "proofline.h"
 
 
 int main(int argc, char *argv[])
@@ -19,6 +21,11 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Fusion");
     engine.rootContext()->setContextProperty("Wrapper",&theWrap);
+
+    // Register Types
+    qmlRegisterType<ProofModel>("proof.model",1,0,"ProofModel");
+    qmlRegisterType<ProofLine>("proof.line",1,0,"ProofLine");
+
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

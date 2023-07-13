@@ -12,6 +12,8 @@ SOURCES += \
         process-main.c \
         process.c \
         proof.c \
+        proofline.cpp \
+        proofmodel.cpp \
         sen-data.c \
         sexpr-process-bool.c \
         sexpr-process-equiv.c \
@@ -19,7 +21,6 @@ SOURCES += \
         sexpr-process-misc.c \
         sexpr-process-quant.c \
         sexpr-process.c \
-        test.c \
         var.c \
         vec.c \
         wrapper.cpp
@@ -57,10 +58,11 @@ HEADERS += \
     list.h \
     process.h \
     proof.h \
+    proofline.h \
+    proofmodel.h \
     rules.h \
     sen-data.h \
     sexpr-process.h \
-    test.h \
     typedef.h \
     var.h \
     vec.h \

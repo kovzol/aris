@@ -1,6 +1,4 @@
 #include "wrapper.h"
-
-//#include "test.h"
 #include "proof.h"
 #include "process.h"
 #include "typedef.h"
