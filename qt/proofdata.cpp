@@ -29,14 +29,6 @@ bool ProofData::setLineAt(int index, const ProofLine &proofLine)
     return true;
 }
 
-//QList<int> ProofData::refHelper(QVariantList rfs)
-//{
-//    QList<int> temp;
-//    for (QVariant x: qAsConst(rfs))
-//        temp.append(x.toInt());
-//    return temp;
-//}
-
 void ProofData::insertLine(int index,int a, QString b, QString c, bool d, bool e, bool f, int g, QList<int> h)
 {
     emit preLineInsert(index);

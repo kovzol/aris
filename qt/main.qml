@@ -12,17 +12,7 @@ Window {
     visible: true
     title: qsTr("GNU Aris")
 
-    // Function to update Line Numbers after a add/delete operation in the Proof Area
-
-    function updateLines(item){
-
-        for (var i = 0; i < item.count; i++){
-            item.set(i,{"pLine":i+1})
-        }
-
-    }
-
-    // Function to check if the item is a TextArea QML Type
+    // Function to check if the item is a TextField QML Type
 
     function isTextField(item){
         return item instanceof TextField
@@ -158,15 +148,6 @@ Window {
         ListElement{
             line: 1
         }
-    }
-
-    ListModel{
-        id: proofDataID
-
-        ListElement{
-            line: 1 ; type: "premise"; sub: false; subStart: false; subEnd: false; indent: 0; text: ""; refs: [ListElement{ num : -1}]
-        }
-
     }
 
     ProofArea{}

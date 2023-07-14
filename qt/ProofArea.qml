@@ -46,9 +46,10 @@ Item {
             width: parent.width
             Layout.fillWidth: true
 
-            property bool vis: (model.type === "choose")
             property var arr: model.refs
+            property bool vis: model.type === "premise"
 
+            // Line Number Button
             Button{
                 id: lineNumberID
 
@@ -61,6 +62,7 @@ Item {
                     text: model.line
                 }
 
+                // Add this button's line to the current line's references
                 onClicked: {
                     if (listView.currentIndex <= index)
                         console.log("Invalid Operation : Can only reference to smaller line numbers");
@@ -85,6 +87,7 @@ Item {
                 }
             }
 
+            // The Typing Area
             TextField{
                 id: theTextID
 
@@ -108,10 +111,12 @@ Item {
                     }
                 }
 
+                // Click the +/- button on pressing Enter
                 onAccepted: {
                     plusID.clicked()
                 }
 
+                // Implementation for Keyboard Macros
                 onTextChanged: {
                     // TODO: Improve implementation later
                     if (theTextID.length >= 2){
@@ -137,6 +142,7 @@ Item {
 //                    model.pText = text;
                 }
 
+                // Save Text inside Model
                 onEditingFinished: model.lText = text;
             }
 
@@ -145,7 +151,7 @@ Item {
 
                 height: theTextID.height
                 width: 50
-                visible: !vis
+                visible: vis
 
                 Text{
                     anchors.centerIn: parent
@@ -157,30 +163,35 @@ Item {
 
             }
 
+            // First ComboBox
             ComboBox{
                 id: chooseID
 
-                visible: vis
+                visible: !vis
                 height: theTextID.height
 
                 model: ["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]
             }
 
+            // Second ComboBox
             ComboBox{
                 id: conclusionRuleID
 
-                // TODO: Fix visibility and width
-                visible: vis
+                // TODO: Fix width maybe
+                visible: !vis
                 height: theTextID.height
 
                 hoverEnabled: true
                 ToolTip.visible: hovered
                 ToolTip.text: currentText
 
-                //type: currentText
+
                 onActivated: {
                     model.type = currentText;
+                    asteriskID.visible = false;
                 }
+
+
 
                 model:  (chooseID.currentText === "Inference")?
                             ["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"]:
@@ -193,6 +204,30 @@ Item {
                                         ["Identity","Negation","Dominance","Symbol Negation"]
             }
 
+
+            // Display Asterisk next to ComboBox if rule not chosen
+            Label{
+                id: asteriskID
+                text: "*"
+                font.bold: true
+
+                height: theTextID.height
+                width: 50
+                visible: (model.type !== "premise")
+
+                property string toolTipText: "Rule Not Chosen"
+                ToolTip.visible: toolTipText ? mID.containsMouse : false
+                ToolTip.text: toolTipText
+
+                MouseArea{
+                    id: mID
+                    anchors.fill: parent
+                    hoverEnabled: true
+                }
+            }
+
+
+            // Row of references
             Row{
 
                 Repeater{
@@ -215,6 +250,8 @@ Item {
 
             }
 
+
+            // The +/- Button
             Button{
                 id: plusID
 
@@ -288,6 +325,7 @@ Item {
         }
     }
 
+    // Background to highlight current line
     Component{
         id: highlightID
 
