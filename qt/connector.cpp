@@ -1,0 +1,154 @@
+#include "connector.h"
+#include "proof.h"
+#include "process.h"
+#include "typedef.h"
+#include "sen-data.h"
+#include "list.h"
+#include "vec.h"
+#include "aio.h"
+
+#include <QDebug>
+#include <iostream>
+
+Connector::Connector(QObject *parent)
+    : QObject{parent}, m_evalText{"Evaluate Proof"}
+{   
+    // Initialize rulesMap
+
+    rulesMap["premise"] = -1;                       rulesMap["Modus Ponens"] = 0;                   rulesMap["Addition"] = 1;
+    rulesMap["Simplification"] = 2;                 rulesMap["Conjunction"] = 3;                    rulesMap["Hypothetical Syllogism"] = 4;
+    rulesMap["Disjunctive Syllogism"] = 5;          rulesMap["Excluded middle"] = 6;                rulesMap["Constructive Dilemma"] = 7;
+    rulesMap["Implication"] = 8;                    rulesMap["DeMorgan"] = 9;                       rulesMap["Association"] = 10;
+    rulesMap["Commutativity"] = 11;                 rulesMap["Idempotence"] = 12;                   rulesMap["Distribution"] = 13;
+    rulesMap["Equivalence"] = 14;                   rulesMap["Double Negation"] = 15;               rulesMap["Exportation"] = 16;
+    rulesMap["Subsumption"] = 17;                   rulesMap["Universal Generalization"] = 18;      rulesMap["Universal Instantiation"] = 19;
+    rulesMap["Existential Generalization"] = 20;    rulesMap["Existential Instantiation"] = 21;     rulesMap["Bound Variable Substitution"] = 22;
+    rulesMap["Null Quantifier"] = 23;               rulesMap["Prenex"] = 24;                        rulesMap["Identity"] = 25;
+    rulesMap["Free Variable Substitution"] = 26;    rulesMap["Lemma"] = 27;                         rulesMap["subproof"] = 28;
+    rulesMap["Sequence"] = 29;                      rulesMap["Induction"] = 30;                     rulesMap["Identity"] = 31;
+    rulesMap["Negation"] = 32;                      rulesMap["Dominance"] = 33;                     rulesMap["Symbol Negation"] = 34;
+}
+
+QString Connector::evalText() const
+{
+    return m_evalText;
+}
+
+void Connector::setEvalText(const QString &newEvalText)
+{
+    if (m_evalText == newEvalText)
+        return;
+    m_evalText = newEvalText;
+    emit evalTextChanged();
+}
+
+void Connector::genIndices(const ProofData *toBeEval)
+{
+    m_indices.clear();
+    QList<int> parent_subproof;
+    for (int i = 0; i < toBeEval->lines().size(); i++){
+        m_indices.push_back({});
+        for (const int subp: parent_subproof)
+            m_indices[i].push_back(subp);
+
+        if (toBeEval->lines().at(i).pType == "subproof")
+            parent_subproof.push_back(i + 1);
+        if ( i < toBeEval->lines().size() -1 && toBeEval->lines().at(i + 1).pInd < toBeEval->lines().at(i).pInd)
+            parent_subproof.pop_back();
+    }
+}
+
+void Connector::genProof(const ProofData *toBeEval)
+{
+    cProof = proof_init();
+    genIndices(toBeEval);
+    for (int i = 0; i < toBeEval->lines().size(); i++){
+        sen_data *sd;
+        item_t *itm;
+        unsigned char *temp_text;
+        sd = (sen_data *) calloc (1, sizeof(sen_data));
+        int *ind = (int *) calloc(m_indices.size(), sizeof(int));
+        short *temp_refs = (short *) calloc(toBeEval->lines().at(i).pRefs.size(), sizeof(short));
+
+        sd->line_num = i+1;
+        sd->rule = rulesMap[toBeEval->lines().at(i).pType];
+        sd->depth = toBeEval->lines().at(i).pInd/20;
+        sd->premise = (sd->rule == -1)?1:0;
+        sd->subproof = (sd->rule == 28)?1:0;
+
+        // Assign Indices
+        for (int ii = 0; ii < m_indices[i].size(); ii++)
+            ind[ii] = m_indices[i][ii];
+        sd->indices = ind;
+
+        // TODO : Cross-check Unicodes
+        // Assign Text
+        temp_text = (unsigned char *) calloc((toBeEval->lines().at(i).pText.size()+1), sizeof(unsigned char));
+        memcpy(temp_text, toBeEval->lines().at(i).pText.toStdString().c_str(), toBeEval->lines().at(i).pText.size());
+        sd->text = temp_text;
+
+        // Assign references
+        if (toBeEval->lines().at(i).pRefs.size() == 1)
+            temp_refs[0] = REF_END;
+        else{
+            for (int ii = 1; ii < toBeEval->lines().at(i).pRefs.size(); ii++)
+                temp_refs[ii-1] = toBeEval->lines().at(i).pRefs.at(ii);
+            temp_refs[toBeEval->lines().at(i).pRefs.size()-1] = REF_END;
+        }
+        sd->refs = temp_refs;
+
+        // Insert into proof object
+        itm = ls_ins_obj (cProof->everything, sd, cProof->everything->tail);
+        if (!itm)
+            qDebug() << "proof: could not insert sen_data ";
+    }
+    // TODO : Fix boolean
+    cProof->boolean = 0;
+}
+
+int Connector::evalProof(const ProofData *toBeEval)
+{
+    genProof(toBeEval);
+    vec_t *rets;
+    rets = init_vec(sizeof(char *));
+
+    if (!proof_eval(cProof,rets,1))
+        qDebug() << "Proof Evaluated Successfully";
+    else
+        qDebug() << "Memory Error";
+
+    item_t * ev_itr;
+    int f = 0;
+    ev_itr = cProof->everything->head;
+    for (int i = 0; i < rets->num_stuff; i++){
+        char * cur_ret, * cur_line;
+        cur_ret = (char *) vec_str_nth (rets, i);
+        cur_line =(char *) ((sen_data *) ev_itr->value)->text;
+
+        if (strcmp (cur_ret, CORRECT)){
+            qDebug() << "Error in line " << i + 1 << "- " << cur_line;
+            setEvalText(QString("Error in line %1 - %2").arg(i+1).arg(cur_line));
+            f = 1;
+            qDebug() << "  "<< cur_ret;
+        }
+        else
+            qDebug() <<"Line " << i + 1 << ": " << CORRECT;
+
+        ev_itr = ev_itr->next;
+    }
+    if (!f) setEvalText("Correct!");
+    return 1;
+}
+
+void Connector::saveProof(const QString &name, const ProofData *toBeSaved)
+{
+    genProof(toBeSaved);
+
+    char *file_name = (char *) calloc((name.size()+1), sizeof(char));
+    memcpy(file_name, name.toStdString().c_str(), name.size());
+
+    if (aio_save(cProof,(const char *) file_name) == 0)
+        qDebug() << "File Saved Successfully";
+    if (file_name)
+        free(file_name);
+}

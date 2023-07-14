@@ -18,10 +18,7 @@ Item {
         ListView{
             id: listView
 
-            model: ProofModel{
-                id: proofModel
-                lines: theData
-            }
+            model: proofModel
             delegate: proofLineID
             highlight: highlightID
 
@@ -47,7 +44,7 @@ Item {
             Layout.fillWidth: true
 
             property var arr: model.refs
-            property bool vis: model.type === "premise"
+            property bool vis: model.type === "premise" || model.type === "subproof" || model.type === "sub-concl"
 
             // Line Number Button
             Button{
@@ -187,7 +184,7 @@ Item {
 
 
                 onActivated: {
-                    model.type = currentText;
+                    proofModel.setData(proofModel.index(listView.currentIndex,0),currentText,258)
                     asteriskID.visible = false;
                 }
 
@@ -213,7 +210,7 @@ Item {
 
                 height: theTextID.height
                 width: 50
-                visible: (model.type !== "premise")
+                visible: !vis
 
                 property string toolTipText: "Rule Not Chosen"
                 ToolTip.visible: toolTipText ? mID.containsMouse : false
@@ -280,7 +277,7 @@ Item {
                     Action{
                         text: "Add Conclusion"
                         onTriggered: {
-                            theData.insertLine(index + 1,index+2,"","choose",model.sub,model.subSt,model.subEnd,model.ind,[-1]);
+                            theData.insertLine(index + 1,index+2,"","choose",model.sub,false,false,model.ind,[-1]);
                             proofModel.updateLines();
                             listView.currentIndex = index + 1;
 

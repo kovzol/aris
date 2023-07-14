@@ -6,6 +6,7 @@ QT += quick widgets quickcontrols2
 
 SOURCES += \
         aio.c \
+        connector.cpp \
         interop-isar.c \
         list.c \
         main.cpp \
@@ -22,8 +23,7 @@ SOURCES += \
         sexpr-process-quant.c \
         sexpr-process.c \
         var.c \
-        vec.c \
-        wrapper.cpp
+        vec.c
 
 RESOURCES += qml.qrc \
     resources.qrc
@@ -54,6 +54,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     aio.h \
+    connector.h \
     interop-isar.h \
     list.h \
     process.h \
@@ -65,8 +66,7 @@ HEADERS += \
     sexpr-process.h \
     typedef.h \
     var.h \
-    vec.h \
-    wrapper.h
+    vec.h
 
 # Uncomment the below lines when compiling to webassembly
 

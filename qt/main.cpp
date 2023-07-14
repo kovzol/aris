@@ -3,9 +3,9 @@
 #include <QQmlApplicationEngine>
 #include <QIcon>
 #include <QQuickStyle>
-#include "wrapper.h"
 #include "proofmodel.h"
 #include "proofdata.h"
+#include "connector.h"
 
 
 int main(int argc, char *argv[])
@@ -16,16 +16,16 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
 
-    Wrapper theWrap;
     ProofData theData;
+    Connector cConnector;
 
     qmlRegisterType<ProofModel>("proof.model",1,0,"ProofModel");
     qmlRegisterUncreatableType<ProofData>("proof.model",1,0,"ProofData","Should not be created inside QML");
 
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Fusion");
-    engine.rootContext()->setContextProperty("Wrapper",&theWrap);
     engine.rootContext()->setContextProperty("theData",&theData);
+    engine.rootContext()->setContextProperty("cConnector",&cConnector);
 
 
 

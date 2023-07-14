@@ -99,17 +99,13 @@ ToolBar{
             }
             hoverEnabled: true
             ToolTip.visible: hovered
-            ToolTip.text: Wrapper.evalText
+            ToolTip.text: cConnector.evalText
             background: Rectangle{
-                color: (Wrapper.evalText === "Evaluate Proof")? "white": (Wrapper.evalText === "Correct!")? "green": "red"
+                color: (cConnector.evalText === "Evaluate Proof")? "white": (cConnector.evalText === "Correct!")? "green": "red"
             }
 
             onClicked: {
-                Wrapper.clearData();
-                fillWrap();
-                Wrapper.computeIndices();
-                Wrapper.computeRules();
-                Wrapper.displayData();
+                cConnector.evalProof(theData);
             }
         }
     }

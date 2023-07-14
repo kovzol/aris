@@ -3,6 +3,7 @@ import QtQuick.Window 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 import QtQuick.Dialogs
+import proof.model 1.0
 
 Window {
     id: rootID
@@ -18,18 +19,6 @@ Window {
         return item instanceof TextField
     }
 
-    function fillWrap(){
-        for (var i = 0; i < proofData.pmLines.count; i++){
-            var item_i = proofData.pmLines.get(i);
-            Wrapper.textAppend(item_i.text);
-            Wrapper.ruleAppend(item_i.type);
-            Wrapper.depthAppend(item_i.indent);
-            for (var ii = 0; ii < item_i.refs.count; ii++){
-//                console.log(proofDataID.get(i).refs.get(ii).num);
-                Wrapper.refsAppend(i,item_i.refs.get(ii).num);
-            }
-        }
-    }
 
     // Burger Button
 
@@ -94,11 +83,7 @@ Window {
         fileMode: FileDialog.SaveFile
         defaultSuffix: "tle"
         onAccepted: {
-            Wrapper.clearData();
-            fillWrap();
-            Wrapper.computeIndices();
-            Wrapper.computeRules();
-            Wrapper.saveProof(selectedFile)
+            cConnector.saveProof(selectedFile,theData)
         }
     }
 
@@ -148,6 +133,11 @@ Window {
         ListElement{
             line: 1
         }
+    }
+
+    ProofModel{
+        id: proofModel
+        lines: theData
     }
 
     ProofArea{}
