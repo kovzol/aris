@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
+import proof.model 1.0
 
 Item {
     anchors.fill: parent
@@ -17,7 +18,10 @@ Item {
         ListView{
             id: listView
 
-            model: proofDataID
+            model: ProofModel{
+                id: proofModel
+                lines: theData
+            }
             delegate: proofLineID
             highlight: highlightID
 
@@ -33,22 +37,17 @@ Item {
 
     }
 
-//    ListModel{
-//        id: proofDataID
-
-//        ListElement{
-//            line: 1 ; type: "premise"; sub: false; subStart: false; subEnd: false; indent: 0; refs: [ListElement{ num : -1}]
-//        }
-
-//    }
-
     Component{
         id: proofLineID
 
         RowLayout{
+            id: root_delegate
             spacing: 10
             width: parent.width
             Layout.fillWidth: true
+
+            property bool vis: (model.type === "choose")
+            property var arr: model.refs
 
             Button{
                 id: lineNumberID
@@ -59,26 +58,29 @@ Item {
                 Text{
                     anchors.centerIn: parent
                     font.italic: true
-                    text: line
+                    text: model.line
                 }
 
                 onClicked: {
                     if (listView.currentIndex <= index)
                         console.log("Invalid Operation : Can only reference to smaller line numbers");
-                    else if (proofDataID.get(listView.currentIndex).type === "premise")
+                    else if (proofModel.data(proofModel.index(listView.currentIndex,0),257) === "premise")
                         console.log("Invalid Operation: Current Line is a premise");
-                    else if (proofDataID.get(listView.currentIndex).subStart === true || proofDataID.get(listView.currentIndex).subEnd === true)
+                    else if (proofModel.data(proofModel.index(listView.currentIndex,0),260) === true || proofModel.data(proofModel.index(listView.currentIndex,0),261) === true)
                         console.log("Invalid Operation: subproof");
-                    else if (proofDataID.get(listView.currentIndex).indent < indent)
+                    else if (proofModel.data(proofModel.index(listView.currentIndex,0),262) < model.ind)
                         console.log("Invalid Operation: invalid reference to subproof");
                     else{
-                        for(var i = 0; i < proofDataID.get(listView.currentIndex).refs.count; i++){
-                            if (proofDataID.get(listView.currentIndex).refs.get(i).num === line){
-                                proofDataID.get(listView.currentIndex).refs.remove(i);
+                        var array = Array.from(proofModel.data(proofModel.index(listView.currentIndex,0),263));
+                        for(var i = 0; i < array.length; i++){
+                            if (array[i] === model.line){
+                                array.splice(i,1);
+                                proofModel.setData(proofModel.index(listView.currentIndex,0),array,263);
                                 return;
                             }
                         }
-                        proofDataID.get(listView.currentIndex).refs.append({num:line});
+                        array.push(model.line);
+                        proofModel.setData(proofModel.index(listView.currentIndex,0),array,263);
                     }
                 }
             }
@@ -87,7 +89,7 @@ Item {
                 id: theTextID
 
                 height: font.pointSize + 10
-                Layout.leftMargin: indent
+                Layout.leftMargin: model.ind
                 Layout.fillWidth: true
                 background: Rectangle{
                     color: "lightgrey"
@@ -95,7 +97,7 @@ Item {
 
 //                wrapMode: TextArea.Wrap
                 placeholderText: qsTr("Start Typing here...")
-
+                text: model.lText
                 MouseArea{
                     anchors.fill: parent
                     propagateComposedEvents: true
@@ -132,8 +134,10 @@ Item {
                         }
 
                     }
-                    model.text = text;
+//                    model.pText = text;
                 }
+
+                onEditingFinished: model.lText = text;
             }
 
             Label{
@@ -141,20 +145,22 @@ Item {
 
                 height: theTextID.height
                 width: 50
-                visible: (type === "choose")? false: true
+                visible: !vis
 
                 Text{
                     anchors.centerIn: parent
                     font.italic: true
-                    text: type
+                    text: model.type
                 }
+
+
 
             }
 
             ComboBox{
                 id: chooseID
 
-                visible: (type === "choose")? true: false
+                visible: vis
                 height: theTextID.height
 
                 model: ["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]
@@ -164,7 +170,7 @@ Item {
                 id: conclusionRuleID
 
                 // TODO: Fix visibility and width
-                visible: (type === "choose")? true: false
+                visible: vis
                 height: theTextID.height
 
                 hoverEnabled: true
@@ -173,7 +179,7 @@ Item {
 
                 //type: currentText
                 onActivated: {
-                    type = currentText;
+                    model.type = currentText;
                 }
 
                 model:  (chooseID.currentText === "Inference")?
@@ -191,13 +197,16 @@ Item {
 
                 Repeater{
 
-                    model: refs
+                    model: arr
 
                     Button{
-                        visible: (num === -1)? false: true
-                        text: num
+                        visible: (modelData === -1)? false: true
+                        text: modelData
                         onClicked: {
-                            refs.remove(index);
+                            var ar = Array.from(arr)
+                            ar.splice(index,1)
+                            proofModel.setData(proofModel.index(listView.currentIndex,0),ar,263);
+
                         }
 
                     }
@@ -226,26 +235,26 @@ Item {
                     Action{
                         text: "Add Premise"
                         onTriggered: {
-                            proofDataID.insert(0,{"line": 1 , "type" : "premise", "refs": [{ num : -1}]});
-                            updateLines(proofDataID);
+                            theData.insertLine(0,1,"","premise",false,false,false,0,[-1])
+                            proofModel.updateLines();
                             listView.currentIndex = 0;
                         }
                     }
-
                     Action{
                         text: "Add Conclusion"
                         onTriggered: {
-                            proofDataID.insert(index+1,{"line": index +2, "type": "choose", "indent": indent, "sub": sub, "refs": [{ num : -1}]});
-                            updateLines(proofDataID);
+                            theData.insertLine(index + 1,index+2,"","choose",model.sub,model.subSt,model.subEnd,model.ind,[-1]);
+                            proofModel.updateLines();
                             listView.currentIndex = index + 1;
+
                         }
                     }
 
                     Action{
                         text: "Start Subproof"
                         onTriggered:{
-                            proofDataID.insert(index+1,{"line": index + 2 , "type" : "subproof", "sub": true, "subStart": true, "subEnd": false, "indent": indent+20, "refs": [{num : -1}]});
-                            updateLines(proofDataID);
+                            theData.insertLine(index + 1,index+2,"","subproof",true,true,false,model.ind + 20,[-1]);
+                            proofModel.updateLines();
                             listView.currentIndex = index + 1;
                         }
                     }
@@ -253,26 +262,25 @@ Item {
                     Action{
                         text: "End Subproof"
                         onTriggered: {
-                            if (sub === false)
-                                console.log("Invalid Operation")
+                            if (model.sub === false)
+                                console.log("Invalid Operation: There are no ongoing SubProofs")
                             else{
-                                proofDataID.insert(index+1,{"line": index + 2 , "type" : "sub-concl.", "sub": (indent > 20) ? true : false, "subStart": false, "subEnd": true, "indent": indent-20, "refs": [{num : -1}]});
-                                updateLines(proofDataID);
+                                theData.insertLine(index + 1,index+2,"","sub-concl",(model.ind >= 20)? true: false,false,true,model.ind -20,[-1]);
+                                proofModel.updateLines();
                                 listView.currentIndex = index + 1;
                             }
                         }
-
                     }
 
                     Action{
                         text: "Remove this Line"
                         onTriggered: {
-                            if (proofDataID.count > 1){
-                                proofDataID.remove(index)
-                                updateLines(proofDataID)
+                            if (proofModel.rowCount() > 1){
+                                theData.removeLineAt(index)
+                                proofModel.updateLines()
                             }
                             else
-                                console.log("Invalid Operation")
+                                console.log("Invalid Operation: Cannot remove all Lines")
                         }
                     }
                 }

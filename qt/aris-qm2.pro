@@ -12,7 +12,7 @@ SOURCES += \
         process-main.c \
         process.c \
         proof.c \
-        proofline.cpp \
+        proofdata.cpp \
         proofmodel.cpp \
         sen-data.c \
         sexpr-process-bool.c \
@@ -58,7 +58,7 @@ HEADERS += \
     list.h \
     process.h \
     proof.h \
-    proofline.h \
+    proofdata.h \
     proofmodel.h \
     rules.h \
     sen-data.h \

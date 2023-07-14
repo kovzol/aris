@@ -17,7 +17,7 @@ Window {
     function updateLines(item){
 
         for (var i = 0; i < item.count; i++){
-            item.set(i,{"line":i+1})
+            item.set(i,{"pLine":i+1})
         }
 
     }
@@ -29,8 +29,8 @@ Window {
     }
 
     function fillWrap(){
-        for (var i = 0; i < proofDataID.count; i++){
-            var item_i = proofDataID.get(i);
+        for (var i = 0; i < proofData.pmLines.count; i++){
+            var item_i = proofData.pmLines.get(i);
             Wrapper.textAppend(item_i.text);
             Wrapper.ruleAppend(item_i.type);
             Wrapper.depthAppend(item_i.indent);

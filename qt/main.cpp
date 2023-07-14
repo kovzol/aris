@@ -5,7 +5,7 @@
 #include <QQuickStyle>
 #include "wrapper.h"
 #include "proofmodel.h"
-#include "proofline.h"
+#include "proofdata.h"
 
 
 int main(int argc, char *argv[])
@@ -17,14 +17,16 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
 
     Wrapper theWrap;
+    ProofData theData;
+
+    qmlRegisterType<ProofModel>("proof.model",1,0,"ProofModel");
+    qmlRegisterUncreatableType<ProofData>("proof.model",1,0,"ProofData","Should not be created inside QML");
 
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Fusion");
     engine.rootContext()->setContextProperty("Wrapper",&theWrap);
+    engine.rootContext()->setContextProperty("theData",&theData);
 
-    // Register Types
-    qmlRegisterType<ProofModel>("proof.model",1,0,"ProofModel");
-    qmlRegisterType<ProofLine>("proof.line",1,0,"ProofLine");
 
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
