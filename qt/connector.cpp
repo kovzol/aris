@@ -29,6 +29,22 @@ Connector::Connector(QObject *parent)
     rulesMap["Negation"] = 32;                      rulesMap["Dominance"] = 33;                     rulesMap["Symbol Negation"] = 34;
 }
 
+void Connector::reverseMapInit()
+{
+    reverseRulesMap[-1] = "premise";                        reverseRulesMap[0] = "Modus Ponens";                    reverseRulesMap[1] = "Addition";
+    reverseRulesMap[2] = "Simplification";                  reverseRulesMap[3] = "Conjunction";                     reverseRulesMap[4] = "Hypothetical Syllogism";
+    reverseRulesMap[5] = "Disjunctive Syllogism";           reverseRulesMap[6] = "Excluded middle";                 reverseRulesMap[7] = "Constructive Dilemma";
+    reverseRulesMap[8] = "Implication";                     reverseRulesMap[9] = "DeMorgan";                        reverseRulesMap[10] = "Association";
+    reverseRulesMap[11] = "Commutativity";                  reverseRulesMap[12] = "Idempotence";                    reverseRulesMap[13] = "Distribution";
+    reverseRulesMap[14] = "Equivalence";                    reverseRulesMap[15] = "Double Negation";                reverseRulesMap[16] = "Exportation";
+    reverseRulesMap[17] = "Subsumption";                    reverseRulesMap[18] = "Universal Generalization";       reverseRulesMap[19] = "Universal Instantiation";
+    reverseRulesMap[20] = "Existential Generalization";     reverseRulesMap[21] = "Existential Instantiation";      reverseRulesMap[22] = "Bound Variable Substitution";
+    reverseRulesMap[23] = "Null Quantifier";                reverseRulesMap[24] = "Prenex";                         reverseRulesMap[25] = "Identity";
+    reverseRulesMap[26] = "Free Variable Substitution";     reverseRulesMap[27] = "Lemma";                          reverseRulesMap[28] = "subproof";
+    reverseRulesMap[29] = "Sequence";                       reverseRulesMap[30] = "Induction";                      reverseRulesMap[31] = "Identity";
+    reverseRulesMap[32] = "Negation";                       reverseRulesMap[33] = "Dominance";                      reverseRulesMap[34] = "Symbol Negation";
+}
+
 QString Connector::evalText() const
 {
     return m_evalText;
@@ -151,4 +167,34 @@ void Connector::saveProof(const QString &name, const ProofData *toBeSaved)
         qDebug() << "File Saved Successfully";
     if (file_name)
         free(file_name);
+}
+
+void Connector::openProof(const QString &name, ProofData *openTo)
+{
+    char *file_name = (char *) calloc((name.size()+1), sizeof(char));
+    memcpy(file_name, name.toStdString().c_str(), name.size());
+
+    cProof = aio_open((const char *) file_name);
+    if (cProof)
+        qDebug() << "File Opened Successfully";
+    if (file_name)
+        free(file_name);
+
+    reverseMapInit();
+    openTo->removeLineAt(0);
+
+    item_t * pf_itr;
+
+    for (pf_itr = cProof->everything->head; pf_itr; pf_itr = pf_itr->next){
+        sen_data *sd = (sen_data *) pf_itr->value;
+
+        QList<int> temp_refs = {-1};
+        for (int i = 0; sd->refs[i] != REF_END; i++)
+            temp_refs.push_back(sd->refs[i]);
+
+        openTo->insertLine(sd->line_num-1,sd->line_num,(const char *) sd->text,reverseRulesMap[sd->rule],(sd->depth > 0),
+                           (sd->subproof == 1),(sd->line_num != 1 && ((sen_data *) pf_itr->prev->value)->depth > sd->depth), sd->depth * 20,temp_refs);
+    }
+
+    qDebug() << "Model Loaded Successfully";
 }

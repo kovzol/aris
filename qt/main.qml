@@ -13,6 +13,8 @@ Window {
     visible: true
     title: qsTr("GNU Aris")
 
+    property bool isExtFile: false
+
     // Function to check if the item is a TextField QML Type
 
     function isTextField(item){
@@ -74,11 +76,17 @@ Window {
 
         title: "Choose the proof file"
          //selectFolder: false
+        nameFilters: ["Aris files (*.tle)"]
+        fileMode: FileDialog.OpenFile
+        defaultSuffix: "tle"
+        onAccepted: {
+            cConnector.openProof(selectedFile,theData)
+        }
     }
 
     FileDialog{
         id: saveAsID
-
+        nameFilters: ["Aris files (*.tle)"]
         title: "Save As"
         fileMode: FileDialog.SaveFile
         defaultSuffix: "tle"

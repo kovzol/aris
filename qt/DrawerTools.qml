@@ -14,6 +14,7 @@ ToolBar{
             icon.source: "/assets/folder.png"
             onClicked: {
                 fileDialogID.open()
+                isExtFile = true;
             }
         }
 

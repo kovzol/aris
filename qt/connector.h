@@ -12,6 +12,8 @@ class Connector : public QObject
 public:
     explicit Connector(QObject *parent = nullptr);
 
+    void reverseMapInit();
+
     Q_PROPERTY(QString evalText READ evalText WRITE setEvalText NOTIFY evalTextChanged)
 
     QString evalText() const;
@@ -21,6 +23,7 @@ public:
     void genProof(const ProofData * toBeEval);
     Q_INVOKABLE int evalProof(const ProofData * toBeEval);
     Q_INVOKABLE void saveProof(const QString &name,  const ProofData *toBeSaved);
+    Q_INVOKABLE void openProof(const QString &name, ProofData *openTo);
 
 signals:
 
@@ -29,6 +32,7 @@ signals:
 private:
     proof_t * cProof;
     QHash<QString,int> rulesMap;
+    QHash<int,QString> reverseRulesMap;
     QString m_evalText;
     QList<QList<int>> m_indices;
 };

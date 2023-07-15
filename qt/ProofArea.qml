@@ -30,6 +30,8 @@ Item {
             onCurrentItemChanged: {
                 currentItem.children[1].forceActiveFocus()
             }
+
+
         }
 
     }
@@ -43,8 +45,11 @@ Item {
             width: parent.width
             Layout.fillWidth: true
 
+            property bool editCombos: (!isExtFile || type === "choose")
             property var arr: model.refs
-            property bool vis: model.type === "premise" || model.type === "subproof" || model.type === "sub-concl"
+            property var type: model.type
+            property int indexx: model.index
+            property bool vis: type === "premise" || type === "subproof" || type === "sub-concl"
 
             // Line Number Button
             Button{
@@ -167,7 +172,7 @@ Item {
                 visible: !vis
                 height: theTextID.height
 
-                model: ["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]
+                model: (editCombos) ? ["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]: []
             }
 
             // Second ComboBox
@@ -182,23 +187,24 @@ Item {
                 ToolTip.visible: hovered
                 ToolTip.text: currentText
 
-
                 onActivated: {
-                    proofModel.setData(proofModel.index(listView.currentIndex,0),currentText,258)
+                    editCombos = true;
+                    proofModel.setData(proofModel.index(indexx,0),currentText,258)
                     asteriskID.visible = false;
                 }
 
 
-
-                model:  (chooseID.currentText === "Inference")?
-                            ["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"]:
-                            (chooseID.currentText === "Equivalence")?
-                                ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence","Distribution","Equivalence","Double Negation", "Exportation", "Subsumption"]:
-                                (chooseID.currentText === "Predicate")?
-                                    ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"]:
-                                    (chooseID.currentText === "Miscellaneous")?
-                                        ["Lemma","Subproof","Sequence","Induction"]:
-                                        ["Identity","Negation","Dominance","Symbol Negation"]
+                model:  (editCombos)?
+                            ((chooseID.currentText === "Inference")?
+                                ["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"]:
+                                (chooseID.currentText === "Equivalence")?
+                                    ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence","Distribution","Equivalence","Double Negation", "Exportation", "Subsumption"]:
+                                    (chooseID.currentText === "Predicate")?
+                                        ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"]:
+                                        (chooseID.currentText === "Miscellaneous")?
+                                            ["Lemma","Subproof","Sequence","Induction"]:
+                                            ["Identity","Negation","Dominance","Symbol Negation"]):
+                                                [type]
             }
 
 
@@ -210,7 +216,7 @@ Item {
 
                 height: theTextID.height
                 width: 50
-                visible: !vis
+                visible: !vis && editCombos
 
                 property string toolTipText: "Rule Not Chosen"
                 ToolTip.visible: toolTipText ? mID.containsMouse : false
@@ -319,6 +325,7 @@ Item {
                     }
                 }
             }
+
         }
     }
 
