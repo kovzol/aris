@@ -78,6 +78,8 @@ void Connector::genIndices(const ProofData *toBeEval)
 void Connector::genProof(const ProofData *toBeEval)
 {
     main_conns = gui_conns;
+    int conn = 1;
+    std::regex pat("[&|~$%@#!^:>]");
     cProof = proof_init();
     genIndices(toBeEval);
     for (int i = 0; i < toBeEval->lines().size(); i++){
@@ -102,9 +104,11 @@ void Connector::genProof(const ProofData *toBeEval)
         // TODO : Cross-check Unicodes
         // Assign Text
         std::string str = toBeEval->lines().at(i).pText.toStdString();
-        std::regex pat("[&|~$%@#!^:>]");
-        if (std::regex_search(str,pat))
+
+        if (conn && std::regex_search(str,pat)){
             main_conns = cli_conns;
+            conn = 0;
+        }
 
 //        temp_text = (unsigned char *) calloc((toBeEval->lines().at(i).pText.size()+1), sizeof(unsigned char));
 //        memcpy(temp_text, str.c_str(), toBeEval->lines().at(i).pText.size());
