@@ -99,8 +99,12 @@ void Connector::genProof(const ProofData *toBeEval)
 
         // TODO : Cross-check Unicodes
         // Assign Text
-        temp_text = (unsigned char *) calloc((toBeEval->lines().at(i).pText.size()+1), sizeof(unsigned char));
-        memcpy(temp_text, toBeEval->lines().at(i).pText.toStdString().c_str(), toBeEval->lines().at(i).pText.size());
+        std::string str = toBeEval->lines().at(i).pText.toStdString();
+
+//        temp_text = (unsigned char *) calloc((toBeEval->lines().at(i).pText.size()+1), sizeof(unsigned char));
+//        memcpy(temp_text, str.c_str(), toBeEval->lines().at(i).pText.size());
+        temp_text = (unsigned char *) calloc((strlen(str.c_str())+1), sizeof(unsigned char));
+        memcpy(temp_text, str.c_str(), strlen(str.c_str()));
         sd->text = temp_text;
 
         // Assign references

@@ -145,7 +145,9 @@ Item {
                 }
 
                 // Save Text inside Model
-                onEditingFinished: model.lText = text;
+                onEditingFinished: {
+                    model.lText = text;
+                }
             }
 
             Label{
