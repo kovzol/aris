@@ -28,7 +28,8 @@ Item {
             ScrollBar.vertical: ScrollBar{}
 
             onCurrentItemChanged: {
-                currentItem.children[1].forceActiveFocus()
+                if (currentItem)
+                    currentItem.children[1].forceActiveFocus()
             }
 
 
@@ -42,7 +43,7 @@ Item {
         RowLayout{
             id: root_delegate
             spacing: 10
-            width: parent.width
+            width: (parent)? parent.width: 0
             Layout.fillWidth: true
 
             property bool editCombos: (!isExtFile || type === "choose")
