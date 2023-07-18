@@ -195,7 +195,12 @@ Item {
                 visible: !vis
                 height: theTextID.height
 
-                model: (editCombos) ? ["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]: []
+                model: (editCombos) ? ["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]:
+                                      ((["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"].includes(conclusionRuleID.currentText))?
+                                           ["Inference"]: (["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence","Distribution","Equivalence","Double Negation", "Exportation", "Subsumption"].includes(conclusionRuleID.currentText))?
+                                               ["Equivalence"]: (["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"].includes(conclusionRuleID.currentText))?
+                                                                     ["Predicate"]: (["Lemma","Subproof","Sequence","Induction"].includes(conclusionRuleID.currentText))?
+                                                                         ["Miscellaneous"]: ["Boolean"])
             }
 
             // Second ComboBox
