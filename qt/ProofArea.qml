@@ -121,22 +121,42 @@ Item {
                 // Implementation for Keyboard Macros
                 onTextChanged: {
                     // TODO: Improve implementation later
+//                    if (theTextID.length >= 2){
+//                        const last_two = text.slice(theTextID.length-2)
+//                        if (last_two.includes('/\\')){
+//                            theTextID.remove(theTextID.length-2, theTextID.length)
+//                            theTextID.insert(cursorPosition,"\u2227")
+//                        }
+//                        else if (last_two.includes('\\/')){
+//                            theTextID.remove(theTextID.length-2, theTextID.length)
+//                            theTextID.insert(cursorPosition,"\u2228")
+//                        }
+//                        else if (last_two.includes('->')){
+//                            theTextID.remove(theTextID.length-2, theTextID.length)
+//                            theTextID.insert(cursorPosition,"\u2192")
+//                        }
+//                        else if (last_two.includes('<'+"\u2192")){
+//                            theTextID.remove(theTextID.length-2, theTextID.length)
+//                            theTextID.insert(cursorPosition,"\u2194")
+//                        }
+
+//                    }
                     if (theTextID.length >= 2){
-                        const last_two = text.slice(theTextID.length-2)
+                        const last_two = text.slice(cursorPosition-2,cursorPosition)
                         if (last_two.includes('/\\')){
-                            theTextID.remove(theTextID.length-2, theTextID.length)
+                            theTextID.remove(cursorPosition-2, cursorPosition)
                             theTextID.insert(cursorPosition,"\u2227")
                         }
                         else if (last_two.includes('\\/')){
-                            theTextID.remove(theTextID.length-2, theTextID.length)
+                            theTextID.remove(cursorPosition-2, cursorPosition)
                             theTextID.insert(cursorPosition,"\u2228")
                         }
                         else if (last_two.includes('->')){
-                            theTextID.remove(theTextID.length-2, theTextID.length)
+                            theTextID.remove(cursorPosition-2, cursorPosition)
                             theTextID.insert(cursorPosition,"\u2192")
                         }
                         else if (last_two.includes('<'+"\u2192")){
-                            theTextID.remove(theTextID.length-2, theTextID.length)
+                            theTextID.remove(cursorPosition-2, cursorPosition)
                             theTextID.insert(cursorPosition,"\u2194")
                         }
 

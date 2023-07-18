@@ -103,7 +103,7 @@ void Connector::genProof(const ProofData *toBeEval)
 
 //        temp_text = (unsigned char *) calloc((toBeEval->lines().at(i).pText.size()+1), sizeof(unsigned char));
 //        memcpy(temp_text, str.c_str(), toBeEval->lines().at(i).pText.size());
-        temp_text = (unsigned char *) calloc((strlen(str.c_str())+1), sizeof(unsigned char));
+        temp_text = (unsigned char *) calloc((strlen(str.c_str())), sizeof(unsigned char));
         memcpy(temp_text, str.c_str(), strlen(str.c_str()));
         sd->text = temp_text;
 
@@ -185,7 +185,10 @@ void Connector::openProof(const QString &name, ProofData *openTo)
         free(file_name);
 
     reverseMapInit();
-    openTo->removeLineAt(0);
+    int s = openTo->lines().size();
+    for (int i = 0; i < s; i++)
+        openTo->removeLineAt(0);
+//    openTo->lines().clear();
 
     item_t * pf_itr;
 
