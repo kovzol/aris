@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE int evalProof(const ProofData * toBeEval);
     Q_INVOKABLE void saveProof(const QString &name,  const ProofData *toBeSaved);
     Q_INVOKABLE void openProof(const QString &name, ProofData *openTo);
+    Q_INVOKABLE void wasmOpenProof(ProofData *open);
 
 signals:
 

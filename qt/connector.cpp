@@ -10,6 +10,8 @@
 #include <QDebug>
 #include <iostream>
 #include <regex>
+#include <QFileDialog>
+#include <QSaveFile>
 
 Connector::Connector(QObject *parent)
     : QObject{parent}, m_evalText{"Evaluate Proof"}
@@ -184,6 +186,7 @@ void Connector::saveProof(const QString &name, const ProofData *toBeSaved)
 
 void Connector::openProof(const QString &name, ProofData *openTo)
 {
+
     char *file_name = (char *) calloc((name.size()+1), sizeof(char));
     memcpy(file_name, name.toStdString().c_str(), name.size());
 
@@ -213,4 +216,21 @@ void Connector::openProof(const QString &name, ProofData *openTo)
     }
 
     qDebug() << "Model Loaded Successfully";
+}
+
+void Connector::wasmOpenProof(ProofData *open)
+{
+    auto fileContentReady = [&open, this](const QString &fileName, const QByteArray &fileContent) {
+        if (fileName.isEmpty()) {
+            // No file was selected
+        } else {
+            QSaveFile file(fileName);
+            file.open(QIODevice::WriteOnly);
+            file.write(fileContent);
+            file.commit();
+//            QFileDialog::saveFileContent(fileContent,"idk");
+            openProof(fileName,open);
+        }
+    };
+    QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
 }

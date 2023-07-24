@@ -13,7 +13,9 @@ ToolBar{
             text: qsTr("Open")
             icon.source: "/assets/folder.png"
             onClicked: {
-                fileDialogID.open()
+//                fileDialogID.open()
+                cConnector.wasmOpenProof(theData)
+
                 isExtFile = true;
             }
         }
