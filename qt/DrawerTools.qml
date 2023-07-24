@@ -13,6 +13,7 @@ ToolBar{
             text: qsTr("Open")
             icon.source: "/assets/folder.png"
             onClicked: {
+                cConnector.evalText = "Evaluate Proof";
                 if (cConnector.isWasm())
                     cConnector.wasmOpenProof(theData)
                 else
