@@ -114,7 +114,7 @@ void Connector::genProof(const ProofData *toBeEval)
 
 //        temp_text = (unsigned char *) calloc((toBeEval->lines().at(i).pText.size()+1), sizeof(unsigned char));
 //        memcpy(temp_text, str.c_str(), toBeEval->lines().at(i).pText.size());
-        temp_text = (unsigned char *) calloc((strlen(str.c_str())), sizeof(unsigned char));
+        temp_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
         memcpy(temp_text, str.c_str(), strlen(str.c_str()));
         sd->text = temp_text;
 
@@ -206,7 +206,6 @@ void Connector::openProof(const QString &name, ProofData *openTo)
 
     for (pf_itr = cProof->everything->head; pf_itr; pf_itr = pf_itr->next){
         sen_data *sd = (sen_data *) pf_itr->value;
-
         QList<int> temp_refs = {-1};
         for (int i = 0; sd->refs[i] != REF_END; i++)
             temp_refs.push_back(sd->refs[i]);
@@ -233,4 +232,12 @@ void Connector::wasmOpenProof(ProofData *open)
         }
     };
     QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
+}
+
+bool Connector::isWasm()
+{
+    #ifdef Q_OS_WASM
+    return true;
+    #endif
+    return false;
 }

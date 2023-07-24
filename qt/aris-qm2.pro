@@ -38,14 +38,16 @@ QML_DESIGNER_IMPORT_PATH =
 win32: MINGW64_ROOT = C:/msys64/mingw64
 
 # Include path for libxml
-# Comment when compiling to web assembly
-#unix: INCLUDEPATH += /usr/include/libxml2
-win32: INCLUDEPATH += $${MINGW64_ROOT}/include/libxml2
+!wasm{
+    unix: INCLUDEPATH += /usr/include/libxml2
+    win32: INCLUDEPATH += $${MINGW64_ROOT}/include/libxml2
+}
 
 # Lib for libxml
-# Comment when compiling to web assembly
-#unix: LIBS += -lxml2
-win32: LIBS += $${MINGW64_ROOT}/lib/libxml2.a
+!wasm{
+    unix: LIBS += -lxml2
+    win32: LIBS += $${MINGW64_ROOT}/lib/libxml2.a
+}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -69,16 +71,17 @@ HEADERS += \
     vec.h
 
 # Uncomment the below lines when compiling to webassembly
+wasm{
+    win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libxml2/release/ -lxml2
+    else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libxml2/debug/ -lxml2
+    else:unix: LIBS += -L$$PWD/../libxml2/ -lxml2
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libxml2/release/ -lxml2
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libxml2/debug/ -lxml2
-else:unix: LIBS += -L$$PWD/../libxml2/ -lxml2
+    INCLUDEPATH += $$PWD/../libxml2
+    DEPENDPATH += $$PWD/../libxml2
 
-INCLUDEPATH += $$PWD/../libxml2
-DEPENDPATH += $$PWD/../libxml2
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../libxml2/release/libxml2.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../libxml2/debug/libxml2.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../libxml2/release/xml2.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../libxml2/debug/xml2.lib
-else:unix: PRE_TARGETDEPS += $$PWD/../libxml2/libxml2.a
+    win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../libxml2/release/libxml2.a
+    else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../libxml2/debug/libxml2.a
+    else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../libxml2/release/xml2.lib
+    else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../libxml2/debug/xml2.lib
+    else:unix: PRE_TARGETDEPS += $$PWD/../libxml2/libxml2.a
+}
