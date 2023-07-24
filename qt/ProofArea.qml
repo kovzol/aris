@@ -40,6 +40,7 @@ Item {
     Component{
         id: proofLineID
 
+
         RowLayout{
             id: root_delegate
             spacing: 10

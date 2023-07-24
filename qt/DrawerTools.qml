@@ -18,6 +18,7 @@ ToolBar{
                 else
                     fileDialogID.open()
 
+                menuOptions.close()
                 isExtFile = true;
             }
         }
@@ -32,7 +33,12 @@ ToolBar{
             icon.source: "/assets/saveas.png"
 
             onClicked: {
-                saveAsID.open()
+                if (cConnector.isWasm())
+                    cConnector.wasmSaveProof(theData);
+                else
+                    saveAsID.open()
+
+                menuOptions.close()
             }
         }
 

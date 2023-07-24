@@ -221,14 +221,14 @@ void Connector::wasmOpenProof(ProofData *open)
 {
     auto fileContentReady = [&open, this](const QString &fileName, const QByteArray &fileContent) {
         if (fileName.isEmpty()) {
-            // No file was selected
+            qDebug() << "No file was selected" ;
         } else {
             QSaveFile file(fileName);
             file.open(QIODevice::WriteOnly);
             file.write(fileContent);
             file.commit();
-//            QFileDialog::saveFileContent(fileContent,"idk");
             openProof(fileName,open);
+            file.deleteLater();
         }
     };
     QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
@@ -240,4 +240,13 @@ bool Connector::isWasm()
     return true;
     #endif
     return false;
+}
+
+void Connector::wasmSaveProof(const ProofData * pd)
+{
+    saveProof("temp.tle",pd);
+    QFile file("temp.tle");
+    file.open(QIODevice::ReadOnly);
+    QFileDialog::saveFileContent(file.readAll(),"Untitled.tle");
+    file.remove("temp.tle");
 }
