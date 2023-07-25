@@ -5,7 +5,7 @@ import QtQuick.Controls 2.5
 import QtQuick.Dialogs
 import proof.model 1.0
 
-Window {
+ApplicationWindow {
     id: rootID
 
     width: 1200
@@ -14,6 +14,8 @@ Window {
     title: qsTr("GNU Aris")
 
     property bool isExtFile: false
+    // TODO: Implement premiseIndex
+//    property int premiseIndex: 1
 
     // Function to check if the item is a TextField QML Type
 
@@ -21,6 +23,17 @@ Window {
         return item instanceof TextField
     }
 
+
+    footer: Label{
+        height: statusID.implicitHeight
+        visible: !(cConnector.evalText === "Correct!" || cConnector.evalText === "Evaluate Proof")
+        Text{
+            id: statusID
+            text: cConnector.evalText
+            color: "red"
+//            anchors.centerIn: parent
+        }
+    }
 
     // Burger Button
 

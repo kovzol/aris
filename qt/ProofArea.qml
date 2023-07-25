@@ -100,7 +100,7 @@ Item {
                 Layout.fillWidth: true
                 background: Rectangle{
                     border.width: 2
-                    border.color: ((cConnector.evalText).includes("Error in line "+(indexx+1)+" -"))? "red" : (cConnector.evalText === "Evaluate Proof") ? "black" : "lightgreen"
+                    border.color: ((cConnector.errLines).includes(indexx+1) && cConnector.evalText !== "Evaluate Proof")? "red" : (cConnector.evalText === "Evaluate Proof") ? "black" : "lightgreen"
                     color: "lightgrey"
                 }
 
@@ -310,6 +310,7 @@ Item {
                             theData.insertLine(0,1,"","premise",false,false,false,0,[-1])
                             proofModel.updateLines();
                             listView.currentIndex = 0;
+                            cConnector.evalText = "Evaluate Proof";
                         }
                     }
                     Action{
@@ -318,7 +319,7 @@ Item {
                             theData.insertLine(index + 1,index+2,"","choose",model.sub,false,false,model.ind,[-1]);
                             proofModel.updateLines();
                             listView.currentIndex = index + 1;
-
+                            cConnector.evalText = "Evaluate Proof";
                         }
                     }
 
@@ -328,6 +329,7 @@ Item {
                             theData.insertLine(index + 1,index+2,"","subproof",true,true,false,model.ind + 20,[-1]);
                             proofModel.updateLines();
                             listView.currentIndex = index + 1;
+                            cConnector.evalText = "Evaluate Proof";
                         }
                     }
 
@@ -340,6 +342,7 @@ Item {
                                 theData.insertLine(index + 1,index+2,"","sub-concl",(model.ind >= 20)? true: false,false,true,model.ind -20,[-1]);
                                 proofModel.updateLines();
                                 listView.currentIndex = index + 1;
+                                cConnector.evalText = "Evaluate Proof";
                             }
                         }
                     }

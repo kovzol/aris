@@ -139,6 +139,7 @@ void Connector::genProof(const ProofData *toBeEval)
 
 int Connector::evalProof(const ProofData *toBeEval)
 {
+    setErrLines({});
     genProof(toBeEval);
     vec_t *rets;
     rets = init_vec(sizeof(char *));
@@ -157,8 +158,10 @@ int Connector::evalProof(const ProofData *toBeEval)
         cur_line =(char *) ((sen_data *) ev_itr->value)->text;
 
         if (strcmp (cur_ret, CORRECT)){
+            m_errLines.push_back(i+1);
+            emit errLinesChanged();
             qDebug() << "Error in line " << i + 1 << "- " << cur_line;
-            setEvalText(QString("Error in line %1 - %2").arg(i+1).arg(cur_line));
+            setEvalText(((f)?m_evalText:"") + QString("Error in line %1 - \n      ").arg(i+1) + cur_ret + "\n");
             f = 1;
             qDebug() << "  "<< cur_ret;
         }
@@ -249,4 +252,17 @@ void Connector::wasmSaveProof(const ProofData * pd)
     file.open(QIODevice::ReadOnly);
     QFileDialog::saveFileContent(file.readAll(),"Untitled.tle");
     file.remove("temp.tle");
+}
+
+QList<int> Connector::errLines() const
+{
+    return m_errLines;
+}
+
+void Connector::setErrLines(const QList<int> &newErrLines)
+{
+    if (m_errLines == newErrLines)
+        return;
+    m_errLines = newErrLines;
+    emit errLinesChanged();
 }
