@@ -100,7 +100,7 @@ Item {
                 Layout.fillWidth: true
                 background: Rectangle{
                     border.width: 2
-                    border.color: ((cConnector.errLines).includes(indexx+1) && cConnector.evalText !== "Evaluate Proof")? "red" : (cConnector.evalText === "Evaluate Proof") ? "black" : "lightgreen"
+                    border.color: ((cConnector.evalText).includes("Error in line "+(indexx+1)+" -") && cConnector.evalText !== "Evaluate Proof")? "red" : (cConnector.evalText === "Evaluate Proof") ? "black" : "lightgreen"
                     color: "lightgrey"
                 }
 

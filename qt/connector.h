@@ -15,7 +15,6 @@ public:
     void reverseMapInit();
 
     Q_PROPERTY(QString evalText READ evalText WRITE setEvalText NOTIFY evalTextChanged)
-    Q_PROPERTY(QList<int> errLines READ errLines WRITE setErrLines NOTIFY errLinesChanged)
 
     QString evalText() const;
     void setEvalText(const QString &newEvalText);
@@ -29,14 +28,11 @@ public:
     Q_INVOKABLE bool isWasm();
     Q_INVOKABLE void wasmSaveProof(const ProofData *pd);
 
-    QList<int> errLines() const;
-    void setErrLines(const QList<int> &newErrLines);
+
 
 signals:
 
     void evalTextChanged();
-
-    void errLinesChanged();
 
 private:
     proof_t * cProof;
@@ -45,7 +41,6 @@ private:
     QString m_evalText;
     QList<QList<int>> m_indices;
 
-    QList<int> m_errLines;
 };
 
 #endif // CONNECTOR_H
