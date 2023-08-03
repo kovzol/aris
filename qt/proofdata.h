@@ -23,7 +23,6 @@ public:
     QVector<ProofLine> lines() const;
 
     bool setLineAt(int index, const ProofLine &proofLine);
-//    Q_INVOKABLE QList<int> refHelper(QVariantList rfs);
 
 signals:
     void preLineInsert(int index);

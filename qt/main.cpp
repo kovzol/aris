@@ -5,6 +5,8 @@
 #include <QQuickStyle>
 #include "proofmodel.h"
 #include "proofdata.h"
+#include "goaldata.h"
+#include "goalmodel.h"
 #include "connector.h"
 
 
@@ -17,14 +19,18 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
 
     ProofData theData;
+    GoalData theGoals;
     Connector cConnector;
 
     qmlRegisterType<ProofModel>("proof.model",1,0,"ProofModel");
     qmlRegisterUncreatableType<ProofData>("proof.model",1,0,"ProofData","Should not be created inside QML");
+    qmlRegisterType<GoalModel>("goal.model",1,0,"GoalModel");
+    qmlRegisterUncreatableType<GoalData>("goal.model",1,0,"GoalData","Should not be created inside QML");
 
     QQmlApplicationEngine engine;
     QQuickStyle::setStyle("Fusion");
     engine.rootContext()->setContextProperty("theData",&theData);
+    engine.rootContext()->setContextProperty("theGoals",&theGoals);
     engine.rootContext()->setContextProperty("cConnector",&cConnector);
 
 

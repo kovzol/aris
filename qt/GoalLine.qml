@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
-
+import goal.model 1.0
 
 
 RowLayout{
@@ -31,7 +31,9 @@ RowLayout{
         background: Rectangle{
             color: "lightgrey"
         }
-        wrapMode: TextArea.Wrap
+
+        text: model.text
+//        wrapMode: TextArea.Wrap
         placeholderText: qsTr("Start Typing here...")
 
     }
@@ -56,19 +58,18 @@ RowLayout{
             Action{
                 text: "Add Goal"
                 onTriggered: {
-                    goalDataID.insert(index+1,{"line":index + 2});
-                    updateLines(goalDataID)
+                    theGoals.insertgLine(index + 1,-1,"");
+//                    listView.currentIndex = index + 1;
                 }
             }
             Action{
                 text: "Remove Goal"
                 onTriggered: {
-                    if (goalDataID.count > 1){
-                        goalDataID.remove(index)
-                        updateLines(goalDataID)
+                    if (goalDataID.rowCount() > 1){
+                        theGoals.removegLineAt(index)
                     }
                     else
-                        console.log("Invalid Operation")
+                        console.log("Invalid Operation: Cannot remove all Lines")
                 }
             }
             Action{

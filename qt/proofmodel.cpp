@@ -146,6 +146,7 @@ void ProofModel::setlines(ProofData *newLines)
     endResetModel();
 }
 
+// TODO: Use model indices directly in QML, no need to update lines that way
 void ProofModel::updateLines()
 {
     for (int i = 0; i < mLines->lines().size(); ++i) {

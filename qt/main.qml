@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 import QtQuick.Dialogs
 import proof.model 1.0
+import goal.model 1.0
 
 ApplicationWindow {
     id: rootID
@@ -126,7 +127,7 @@ ApplicationWindow {
         parent: Overlay.overlay
         focus: true
         modal: true
-        standardButtons: Dialog.Apply | Dialog.Cancel
+        standardButtons: Dialog.Ok
 
         ColumnLayout{
             id: goalAreaID
@@ -148,12 +149,9 @@ ApplicationWindow {
 
     }
 
-    ListModel{
+    GoalModel{
         id: goalDataID
-
-        ListElement{
-            line: 1
-        }
+        glines: theGoals
     }
 
     ProofModel{

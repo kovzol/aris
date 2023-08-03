@@ -7,6 +7,8 @@ QT += quick widgets quickcontrols2
 SOURCES += \
         aio.c \
         connector.cpp \
+        goaldata.cpp \
+        goalmodel.cpp \
         interop-isar.c \
         list.c \
         main.cpp \
@@ -57,6 +59,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     aio.h \
     connector.h \
+    goaldata.h \
+    goalmodel.h \
     interop-isar.h \
     list.h \
     process.h \
