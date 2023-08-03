@@ -30,6 +30,7 @@ Connector::Connector(QObject *parent)
     rulesMap["Free Variable Substitution"] = 26;    rulesMap["Lemma"] = 27;                         rulesMap["subproof"] = 28;
     rulesMap["Sequence"] = 29;                      rulesMap["Induction"] = 30;                     rulesMap["Identity"] = 31;
     rulesMap["Negation"] = 32;                      rulesMap["Dominance"] = 33;                     rulesMap["Symbol Negation"] = 34;
+    rulesMap["sf"] = -2;
 }
 
 void Connector::reverseMapInit()
@@ -46,6 +47,7 @@ void Connector::reverseMapInit()
     reverseRulesMap[26] = "Free Variable Substitution";     reverseRulesMap[27] = "Lemma";                          reverseRulesMap[28] = "subproof";
     reverseRulesMap[29] = "Sequence";                       reverseRulesMap[30] = "Induction";                      reverseRulesMap[31] = "Identity";
     reverseRulesMap[32] = "Negation";                       reverseRulesMap[33] = "Dominance";                      reverseRulesMap[34] = "Symbol Negation";
+    reverseRulesMap[-2] = "sf";
 }
 
 QString Connector::evalText() const
@@ -67,14 +69,22 @@ void Connector::genIndices(const ProofData *toBeEval)
     QList<int> parent_subproof;
     for (int i = 0; i < toBeEval->lines().size(); i++){
         m_indices.push_back({});
+
+        if (toBeEval->lines().at(i).pType == "sf")
+            parent_subproof.push_back(i + 1);
+
+        if ( i > 0 && toBeEval->lines().at(i).pInd < toBeEval->lines().at(i-1).pInd)
+            parent_subproof.pop_back();
+
         for (const int subp: parent_subproof)
             m_indices[i].push_back(subp);
 
-        if (toBeEval->lines().at(i).pType == "subproof")
-            parent_subproof.push_back(i + 1);
-        if ( i < toBeEval->lines().size() -1 && toBeEval->lines().at(i + 1).pInd < toBeEval->lines().at(i).pInd)
-            parent_subproof.pop_back();
     }
+
+    for (int i = 0; i < m_indices.size(); i++)
+        m_indices[i].push_back(-1);
+
+
 }
 
 void Connector::genProof(const ProofData *toBeEval)
@@ -89,18 +99,22 @@ void Connector::genProof(const ProofData *toBeEval)
         item_t *itm;
         unsigned char *temp_text;
         sd = (sen_data *) calloc (1, sizeof(sen_data));
-        int *ind = (int *) calloc(m_indices.size(), sizeof(int));
+        int *ind = (int *) calloc(m_indices[i].size(), sizeof(int));
         short *temp_refs = (short *) calloc(toBeEval->lines().at(i).pRefs.size(), sizeof(short));
 
         sd->line_num = i+1;
         sd->rule = rulesMap[toBeEval->lines().at(i).pType];
         sd->depth = toBeEval->lines().at(i).pInd/20;
         sd->premise = (sd->rule == -1)?1:0;
-        sd->subproof = (sd->rule == 28)?1:0;
+        sd->subproof = (sd->rule == -2)?1:0;
+
+        if (sd->rule == -2)
+            sd->rule = -1;
 
         // Assign Indices
         for (int ii = 0; ii < m_indices[i].size(); ii++)
             ind[ii] = m_indices[i][ii];
+
         sd->indices = ind;
 
         // TODO : Cross-check Unicodes
@@ -203,15 +217,18 @@ void Connector::openProof(const QString &name, ProofData *openTo)
 //    openTo->lines().clear();
 
     item_t * pf_itr;
-
+    int d = 0;
     for (pf_itr = cProof->everything->head; pf_itr; pf_itr = pf_itr->next){
         sen_data *sd = (sen_data *) pf_itr->value;
         QList<int> temp_refs = {-1};
         for (int i = 0; sd->refs[i] != REF_END; i++)
             temp_refs.push_back(sd->refs[i]);
 
+        if (sd->depth > d)
+            sd->rule = -2;
         openTo->insertLine(sd->line_num-1,sd->line_num,(const char *) sd->text,reverseRulesMap[sd->rule],(sd->depth > 0),
-                           (sd->subproof == 1),(sd->line_num != 1 && ((sen_data *) pf_itr->prev->value)->depth > sd->depth), sd->depth * 20,temp_refs);
+                           (sd->rule == -2),(sd->line_num != 1 && ((sen_data *) pf_itr->prev->value)->depth > sd->depth), sd->depth * 20,temp_refs);
+        d = sd->depth;
     }
 
     qDebug() << "Model Loaded Successfully";

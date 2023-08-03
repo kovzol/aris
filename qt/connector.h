@@ -34,13 +34,13 @@ signals:
 
     void evalTextChanged();
 
+
 private:
     proof_t * cProof;
     QHash<QString,int> rulesMap;
     QHash<int,QString> reverseRulesMap;
     QString m_evalText;
     QList<QList<int>> m_indices;
-
 };
 
 #endif // CONNECTOR_H

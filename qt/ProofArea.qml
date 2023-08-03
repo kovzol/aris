@@ -51,7 +51,7 @@ Item {
             property var arr: model.refs
             property var type: model.type
             property int indexx: model.index
-            property bool vis: type === "premise" || type === "subproof" || type === "sub-concl"
+            property bool vis: type === "premise" || type === "subproof" || type === "sf"
 
             // Line Number Button
             Button{
@@ -72,10 +72,10 @@ Item {
                         console.log("Invalid Operation : Can only reference to smaller line numbers");
                     else if (proofModel.data(proofModel.index(listView.currentIndex,0),257) === "premise")
                         console.log("Invalid Operation: Current Line is a premise");
-                    else if (proofModel.data(proofModel.index(listView.currentIndex,0),260) === true || proofModel.data(proofModel.index(listView.currentIndex,0),261) === true)
-                        console.log("Invalid Operation: subproof");
-                    else if (proofModel.data(proofModel.index(listView.currentIndex,0),262) < model.ind)
-                        console.log("Invalid Operation: invalid reference to subproof");
+                    else if (proofModel.data(proofModel.index(listView.currentIndex,0),260) === true )//|| proofModel.data(proofModel.index(listView.currentIndex,0),261) === true)
+                        console.log("Invalid Operation: Subproof beginning");
+                    else if (proofModel.data(proofModel.index(listView.currentIndex,0),262) < model.ind && proofModel.data(proofModel.index(listView.currentIndex,0),261) === false)
+                        console.log("Invalid Operation: Invalid reference to subproof");
                     else{
                         var array = Array.from(proofModel.data(proofModel.index(listView.currentIndex,0),263));
                         for(var i = 0; i < array.length; i++){
@@ -326,7 +326,7 @@ Item {
                     Action{
                         text: "Start Subproof"
                         onTriggered:{
-                            theData.insertLine(index + 1,index+2,"","subproof",true,true,false,model.ind + 20,[-1]);
+                            theData.insertLine(index + 1,index+2,"","sf",true,true,false,model.ind + 20,[-1]);
                             proofModel.updateLines();
                             listView.currentIndex = index + 1;
                             cConnector.evalText = "Evaluate Proof";
@@ -339,7 +339,7 @@ Item {
                             if (model.sub === false)
                                 console.log("Invalid Operation: There are no ongoing SubProofs")
                             else{
-                                theData.insertLine(index + 1,index+2,"","sub-concl",(model.ind >= 20)? true: false,false,true,model.ind -20,[-1]);
+                                theData.insertLine(index + 1,index+2,"","subproof",(model.ind >= 20)? true: false,false,true,model.ind -20,[-1]);
                                 proofModel.updateLines();
                                 listView.currentIndex = index + 1;
                                 cConnector.evalText = "Evaluate Proof";
