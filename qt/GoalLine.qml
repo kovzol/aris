@@ -6,10 +6,10 @@ import goal.model 1.0
 
 RowLayout{
     spacing: 10
-    width: parent.width
+    width: (parent)? parent.width: 0
     Layout.fillWidth: true
 
-    Rectangle{
+    Label{
         id: goalLineNumID
 
         height: goalTextID
@@ -19,8 +19,20 @@ RowLayout{
             id: resNumID
             anchors.centerIn: parent
             font.italic: true
-            text: (line > 0) ? line: "?"
-            color: (text === "?")? "yellow": "blue"
+            text: (line > 0) ? line: ((line === -3)?  "X" : "?")
+            color: (text === "?")? "yellow": ((text === "X") ? "red": ((model.valid)? "green": "blue"))
+
+        }
+
+        property string toolTipText: (resNumID.color === Qt.color("green"))? "Goal was met at line " + line : ((resNumID.color === Qt.color("blue")) ? "Goal was met at line "+ line+"\n\t but the proof has errors": ((resNumID.color === Qt.color("red"))?"Goal was not met": "Not yet evaluated"))  //aaaaaaaaaaaaaaaaaaaaaaaaaaa
+        ToolTip.visible: toolTipText ? moID.containsMouse : false
+        ToolTip.text: toolTipText
+
+        MouseArea{
+            id: moID
+            anchors.fill: parent
+            hoverEnabled: true
+            onClicked: console.log(line);
         }
 
     }
@@ -36,8 +48,12 @@ RowLayout{
         }
 
         text: model.text
-//        wrapMode: TextArea.Wrap
+        //        wrapMode: TextArea.Wrap
         placeholderText: qsTr("Start Typing here...")
+
+        onEditingFinished: {
+            model.text = text
+        }
 
     }
 
@@ -62,7 +78,7 @@ RowLayout{
                 text: "Add Goal"
                 onTriggered: {
                     theGoals.insertgLine(index + 1,-1,"");
-//                    listView.currentIndex = index + 1;
+                    //                    listView.currentIndex = index + 1;
                 }
             }
             Action{

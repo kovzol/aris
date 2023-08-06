@@ -5,6 +5,7 @@
 
 struct GoalLine{
     int gLine;
+    bool gValid;
     QString gText;
 };
 
@@ -26,7 +27,7 @@ signals:
     void postgLineRemove();
 
 public slots:
-    void insertgLine(int index, int gLine, QString gText);
+    void insertgLine(int index, int gLine, bool gValid, QString gText);
     void removegLineAt(int index);
 
 private:

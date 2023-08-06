@@ -6,6 +6,7 @@
 #include "list.h"
 #include "vec.h"
 #include "aio.h"
+#include "goals-qt.h"
 
 #include <QDebug>
 #include <iostream>
@@ -126,8 +127,6 @@ void Connector::genProof(const ProofData *toBeEval)
             conn = 0;
         }
 
-//        temp_text = (unsigned char *) calloc((toBeEval->lines().at(i).pText.size()+1), sizeof(unsigned char));
-//        memcpy(temp_text, str.c_str(), toBeEval->lines().at(i).pText.size());
         temp_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
         memcpy(temp_text, str.c_str(), strlen(str.c_str()));
         sd->text = temp_text;
@@ -147,17 +146,38 @@ void Connector::genProof(const ProofData *toBeEval)
         if (!itm)
             qDebug() << "proof: could not insert sen_data ";
     }
+
     // TODO : Fix boolean
     cProof->boolean = 0;
 }
 
-int Connector::evalProof(const ProofData *toBeEval)
+void Connector::genGoals(const GoalData *toBeEval)
+{
+
+    for (int i = 0; i < toBeEval->glines().size(); i++){
+
+        unsigned char *temp_text;
+        item_t *itm;
+
+        std::string str = toBeEval->glines().at(i).gText.toStdString();
+        temp_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
+        memcpy(temp_text, str.c_str(), strlen(str.c_str()));
+
+        itm = ls_ins_obj (cProof->goals, temp_text, cProof->goals->tail);
+        if (!itm)
+            qDebug() << "proof: could not insert goal data ";
+
+    }
+}
+
+int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
 {
     genProof(toBeEval);
-    vec_t *rets;
-    rets = init_vec(sizeof(char *));
+    genGoals(gls);
+//    vec_t *rets;
+    returns = init_vec(sizeof(char *));
 
-    if (!proof_eval(cProof,rets,1))
+    if (!proof_eval(cProof,returns,1))
         qDebug() << "Proof Evaluated Successfully";
     else
         qDebug() << "Memory Error";
@@ -165,9 +185,9 @@ int Connector::evalProof(const ProofData *toBeEval)
     item_t * ev_itr;
     int f = 0;
     ev_itr = cProof->everything->head;
-    for (int i = 0; i < rets->num_stuff; i++){
+    for (int i = 0; i < returns->num_stuff; i++){
         char * cur_ret, * cur_line;
-        cur_ret = (char *) vec_str_nth (rets, i);
+        cur_ret = (char *) vec_str_nth (returns, i);
         cur_line =(char *) ((sen_data *) ev_itr->value)->text;
 
         if (strcmp (cur_ret, CORRECT)){
@@ -182,12 +202,14 @@ int Connector::evalProof(const ProofData *toBeEval)
         ev_itr = ev_itr->next;
     }
     if (!f) setEvalText("Correct!");
+
     return 1;
 }
 
-void Connector::saveProof(const QString &name, const ProofData *toBeSaved)
+void Connector::saveProof(const QString &name, const ProofData *toBeSaved, const GoalData *gls)
 {
     genProof(toBeSaved);
+    genGoals(gls);
 
     char *file_name = (char *) calloc((name.size()+1), sizeof(char));
     memcpy(file_name, name.toStdString().c_str(), name.size());
@@ -198,7 +220,7 @@ void Connector::saveProof(const QString &name, const ProofData *toBeSaved)
         free(file_name);
 }
 
-void Connector::openProof(const QString &name, ProofData *openTo)
+void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
 {
 
     char *file_name = (char *) calloc((name.size()+1), sizeof(char));
@@ -214,7 +236,7 @@ void Connector::openProof(const QString &name, ProofData *openTo)
     int s = openTo->lines().size();
     for (int i = 0; i < s; i++)
         openTo->removeLineAt(0);
-//    openTo->lines().clear();
+    //    openTo->lines().clear();
 
     item_t * pf_itr;
     int d = 0;
@@ -231,12 +253,22 @@ void Connector::openProof(const QString &name, ProofData *openTo)
         d = sd->depth;
     }
 
+    int g = gls->glines().size();
+    for (int i = 0; i < g; i++)
+        gls->removegLineAt(0);
+
+    int i = 0;
+    for (pf_itr = cProof->goals->head; pf_itr; pf_itr = pf_itr->next){
+        gls->insertgLine(i,-2,false,(const char *) pf_itr->value);
+        i++;
+    }
+
     qDebug() << "Model Loaded Successfully";
 }
 
-void Connector::wasmOpenProof(ProofData *open)
+void Connector::wasmOpenProof(ProofData *open, GoalData *gls)
 {
-    auto fileContentReady = [&open, this](const QString &fileName, const QByteArray &fileContent) {
+    auto fileContentReady = [&open, this, &gls](const QString &fileName, const QByteArray &fileContent) {
         if (fileName.isEmpty()) {
             qDebug() << "No file was selected" ;
         } else {
@@ -244,26 +276,29 @@ void Connector::wasmOpenProof(ProofData *open)
             file.open(QIODevice::WriteOnly);
             file.write(fileContent);
             file.commit();
-            openProof(fileName,open);
+            openProof(fileName,open,gls);
             file.deleteLater();
         }
     };
     QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
 }
 
-bool Connector::isWasm()
-{
-    #ifdef Q_OS_WASM
-    return true;
-    #endif
-    return false;
-}
 
-void Connector::wasmSaveProof(const ProofData * pd)
+void Connector::wasmSaveProof(const ProofData * pd, const GoalData *gls)
 {
-    saveProof("temp.tle",pd);
+    saveProof("temp.tle",pd,gls);
     QFile file("temp.tle");
     file.open(QIODevice::ReadOnly);
     QFileDialog::saveFileContent(file.readAll(),"Untitled.tle");
     file.remove("temp.tle");
+}
+
+proof_t *Connector::getCProof() const
+{
+    return cProof;
+}
+
+vec_t *Connector::getReturns() const
+{
+    return returns;
 }

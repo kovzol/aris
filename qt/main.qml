@@ -94,7 +94,7 @@ ApplicationWindow {
         fileMode: FileDialog.OpenFile
         defaultSuffix: "tle"
         onAccepted: {
-            cConnector.openProof(selectedFile,theData)
+            cConnector.openProof(selectedFile,theData,theGoals)
         }
     }
 
@@ -105,7 +105,7 @@ ApplicationWindow {
         fileMode: FileDialog.SaveFile
         defaultSuffix: "tle"
         onAccepted: {
-            cConnector.saveProof(selectedFile,theData)
+            cConnector.saveProof(selectedFile,theData,theGoals)
         }
     }
 

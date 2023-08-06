@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 #include "goaldata.h"
+//#include "typedef.h"
+#include "connector.h"
 
 class GoalModel : public QAbstractListModel
 {
@@ -14,7 +16,8 @@ public:
 
     enum {
         LineRole = Qt::UserRole,
-        TextRole
+        TextRole,
+        ValidRole
     };
 
     // Basic functionality:
@@ -32,6 +35,9 @@ public:
 
     GoalData *glines() const;
     void setGlines(GoalData *newGlines);
+
+    Q_INVOKABLE void evalGoals(GoalData *gls, Connector *c);
+
 
 private:
     GoalData *m_glines = nullptr;

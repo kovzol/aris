@@ -5,6 +5,7 @@
 #include <QHash>
 #include "typedef.h"
 #include "proofdata.h"
+#include "goaldata.h"
 
 class Connector : public QObject
 {
@@ -21,14 +22,17 @@ public:
 
     void genIndices(const ProofData * toBeEval);
     void genProof(const ProofData * toBeEval);
-    Q_INVOKABLE int evalProof(const ProofData * toBeEval);
-    Q_INVOKABLE void saveProof(const QString &name,  const ProofData *toBeSaved);
-    Q_INVOKABLE void openProof(const QString &name, ProofData *openTo);
-    Q_INVOKABLE void wasmOpenProof(ProofData *open);
-    Q_INVOKABLE bool isWasm();
-    Q_INVOKABLE void wasmSaveProof(const ProofData *pd);
+    void genGoals(const GoalData * toBeEval);
 
+    Q_INVOKABLE int evalProof(const ProofData * toBeEval, const GoalData * gls);
+    Q_INVOKABLE void saveProof(const QString &name,  const ProofData *toBeSaved, const GoalData *gls);
+    Q_INVOKABLE void openProof(const QString &name, ProofData *openTo, GoalData *gls);
+    Q_INVOKABLE void wasmOpenProof(ProofData *open, GoalData *gls);
+    Q_INVOKABLE void wasmSaveProof(const ProofData *pd, const GoalData *gls);
 
+    proof_t *getCProof() const;
+
+    vec_t *getReturns() const;
 
 signals:
 
@@ -37,6 +41,7 @@ signals:
 
 private:
     proof_t * cProof;
+    vec_t * returns;
     QHash<QString,int> rulesMap;
     QHash<int,QString> reverseRulesMap;
     QString m_evalText;

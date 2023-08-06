@@ -105,7 +105,8 @@ ToolBar{
             }
 
             onClicked: {
-                cConnector.evalProof(theData);
+                cConnector.evalProof(theData,theGoals);
+                goalDataID.evalGoals(theGoals,cConnector);
             }
         }
     }

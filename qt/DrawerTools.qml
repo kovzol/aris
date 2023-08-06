@@ -14,8 +14,8 @@ ToolBar{
             icon.source: "/assets/folder.png"
             onClicked: {
                 cConnector.evalText = "Evaluate Proof";
-                if (cConnector.isWasm())
-                    cConnector.wasmOpenProof(theData)
+                if (Qt.platform.os === "wasm")
+                    cConnector.wasmOpenProof(theData,theGoals)
                 else
                     fileDialogID.open()
 
@@ -34,8 +34,8 @@ ToolBar{
             icon.source: "/assets/saveas.png"
 
             onClicked: {
-                if (cConnector.isWasm())
-                    cConnector.wasmSaveProof(theData);
+                if (Qt.platform.os === "wasm")
+                    cConnector.wasmSaveProof(theData,theGoals);
                 else
                     saveAsID.open()
 
@@ -58,6 +58,7 @@ ToolBar{
 
             onClicked: {
                 goalDialogID.open()
+                menuOptions.close()
             }
         }
 

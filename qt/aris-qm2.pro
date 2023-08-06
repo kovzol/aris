@@ -9,6 +9,7 @@ SOURCES += \
         connector.cpp \
         goaldata.cpp \
         goalmodel.cpp \
+        goals-qt.c \
         interop-isar.c \
         list.c \
         main.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     connector.h \
     goaldata.h \
     goalmodel.h \
+    goals-qt.h \
     interop-isar.h \
     list.h \
     process.h \

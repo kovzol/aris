@@ -3,7 +3,7 @@
 GoalData::GoalData(QObject *parent)
     : QObject{parent}
 {
-    m_goalLines.append({-2,""});
+    m_goalLines.append({-2,false,""});
 }
 
 QVector<GoalLine> GoalData::glines() const
@@ -17,7 +17,7 @@ bool GoalData::setgLineAt(int index, const GoalLine &goalLine)
         return false;
 
     const GoalLine &oldLine = m_goalLines.at(index);
-    if (oldLine.gLine == goalLine.gLine && oldLine.gText == goalLine.gText)
+    if (oldLine.gLine == goalLine.gLine && oldLine.gText == goalLine.gText && oldLine.gValid == goalLine.gValid)
     {
         return false;
     }
@@ -26,12 +26,13 @@ bool GoalData::setgLineAt(int index, const GoalLine &goalLine)
     return true;
 }
 
-void GoalData::insertgLine(int index, int gLine, QString gText)
+void GoalData::insertgLine(int index, int gLine, bool gValid, QString gText)
 {
     emit pregLineInsert(index);
 
     GoalLine aLine;
     aLine.gLine = gLine;
+    aLine.gValid = gValid;
     aLine.gText = gText;
 
     m_goalLines.insert(index,aLine);
