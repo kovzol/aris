@@ -101,7 +101,7 @@ Item {
                 background: Rectangle{
                     border.width: 2
                     border.color: ((cConnector.evalText).includes("Error in line "+(indexx+1)+" -") && cConnector.evalText !== "Evaluate Proof")? "red" : (cConnector.evalText === "Evaluate Proof") ? "black" : "lightgreen"
-                    color: "lightgrey"
+                    color: proofModel.data(proofModel.index(listView.currentIndex,0),263).includes(model.line) ? "lightyellow" : "lightgrey"
                 }
 
 //                wrapMode: TextArea.Wrap

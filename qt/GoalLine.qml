@@ -16,10 +16,13 @@ RowLayout{
         width: height + 10
 
         Text{
+            id: resNumID
             anchors.centerIn: parent
             font.italic: true
-            text: line
+            text: (line > 0) ? line: "?"
+            color: (text === "?")? "yellow": "blue"
         }
+
     }
 
     TextField{
