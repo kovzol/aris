@@ -77,7 +77,7 @@ RowLayout{
             Action{
                 text: "Add Goal"
                 onTriggered: {
-                    theGoals.insertgLine(index + 1,-1,"");
+                    theGoals.insertgLine(index + 1,-2,false,"");
                     //                    listView.currentIndex = index + 1;
                 }
             }
