@@ -127,6 +127,6 @@ void GoalModel::evalGoals(GoalData *gls, Connector *c)
             setData(index(i,0),(is_valid == 1),258);
         }
         else
-            qDebug() << "Error in checking goal " << i + 1 ;
+            qDebug() << "Error in checking goal " << i + 1 << ":\n\t Goal was probably empty";
     }
 }
