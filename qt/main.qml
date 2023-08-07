@@ -13,7 +13,9 @@ ApplicationWindow {
     height: 700
     visible: true
     title: qsTr("GNU Aris")
+    font: thefont
 
+    property font thefont: rootID.font
     property bool isExtFile: false
     // TODO: Implement premiseIndex
 //    property int premiseIndex: 1
@@ -113,6 +115,10 @@ ApplicationWindow {
         id: fontDialogID
 
         title: "Choose Font"
+
+        onAccepted: {
+            thefont = currentFont;
+        }
     }
 
     Dialog{

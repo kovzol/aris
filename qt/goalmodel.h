@@ -3,7 +3,6 @@
 
 #include <QAbstractListModel>
 #include "goaldata.h"
-//#include "typedef.h"
 #include "connector.h"
 
 class GoalModel : public QAbstractListModel

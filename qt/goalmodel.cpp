@@ -1,5 +1,6 @@
 #include "goalmodel.h"
 #include "goals-qt.h"
+#include <QApplication>
 
 GoalModel::GoalModel(QObject *parent)
     : QAbstractListModel(parent)

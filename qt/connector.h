@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QHash>
+//#include <QFont>
 #include "typedef.h"
 #include "proofdata.h"
 #include "goaldata.h"

@@ -79,6 +79,7 @@ ToolBar{
         ToolButton{
             text: qsTr("Font")
             icon.source: "/assets/font.png"
+            visible: !(Qt.platform.os === "wasm")
 
             onClicked: {
                 fontDialogID.open()
@@ -86,6 +87,7 @@ ToolBar{
         }
 
         ToolSeparator{
+            visible: !(Qt.platform.os === "wasm")
             orientation: Qt.Horizontal
         }
 
