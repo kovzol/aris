@@ -32,7 +32,6 @@ public:
     Q_INVOKABLE void wasmSaveProof(const ProofData *pd, const GoalData *gls);
 
     proof_t *getCProof() const;
-
     vec_t *getReturns() const;
 
 signals:

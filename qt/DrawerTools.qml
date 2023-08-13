@@ -46,6 +46,15 @@ ToolBar{
         ToolButton{
             text: qsTr("Export To LaTeX")
             icon.source: "/assets/export.png"
+
+            onClicked: {
+                if (Qt.platform.os === "wasm")
+                    auxConnector.wasmLatex(theData,cConnector);
+                else
+                    latexID.open()
+
+                menuOptions.close()
+            }
         }
 
         ToolSeparator{

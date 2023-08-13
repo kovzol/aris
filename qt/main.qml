@@ -111,6 +111,17 @@ ApplicationWindow {
         }
     }
 
+    FileDialog{
+        id: latexID
+        nameFilters: ["Latex files (*.tex)"]
+        title: "Save As"
+        fileMode: FileDialog.SaveFile
+        defaultSuffix: "tex"
+        onAccepted: {
+            auxConnector.latex(selectedFile,theData,cConnector)
+        }
+    }
+
     FontDialog{
         id: fontDialogID
 

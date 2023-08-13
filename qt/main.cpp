@@ -8,6 +8,7 @@
 #include "goaldata.h"
 #include "goalmodel.h"
 #include "connector.h"
+#include "auxconnector.h"
 
 
 int main(int argc, char *argv[])
@@ -21,6 +22,7 @@ int main(int argc, char *argv[])
     ProofData theData;
     GoalData theGoals;
     Connector cConnector;
+    auxConnector auxConnector;
 
     qmlRegisterType<ProofModel>("proof.model",1,0,"ProofModel");
     qmlRegisterUncreatableType<ProofData>("proof.model",1,0,"ProofData","Should not be created inside QML");
@@ -32,7 +34,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("theData",&theData);
     engine.rootContext()->setContextProperty("theGoals",&theGoals);
     engine.rootContext()->setContextProperty("cConnector",&cConnector);
-
+    engine.rootContext()->setContextProperty("auxConnector",&auxConnector);
 
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
