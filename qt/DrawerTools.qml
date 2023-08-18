@@ -71,14 +71,22 @@ ToolBar{
             }
         }
 
-        ToolButton{
-            text: qsTr("Toggle Boolean Mode")
-            icon.source: "/assets/boolean.png"
-        }
+//        ToolButton{
+//            text: qsTr("Toggle Boolean Mode")
+//            icon.source: "/assets/boolean.png"
+//        }
 
         ToolButton{
             text: qsTr("Import Proof")
             icon.source: "/assets/import.png"
+
+            onClicked: {
+                if (Qt.platform.os === "wasm")
+                    auxConnector.wasmImportProof(theData,cConnector,proofModel)
+                else
+                    importID.open()
+                menuOptions.close()
+            }
         }
 
         ToolSeparator{

@@ -3,7 +3,7 @@
 ProofData::ProofData(QObject *parent)
     : QObject{parent}
 {
-    m_proofLines.append({1,"","premise",false,false,false,0,{-1}});
+    m_proofLines.append({1,"","premise",false,false,false,0,{-1},NULL});
 }
 
 QVector<ProofLine> ProofData::lines() const
@@ -29,6 +29,12 @@ bool ProofData::setLineAt(int index, const ProofLine &proofLine)
     return true;
 }
 
+void ProofData::setFile(int index, const QString &name)
+{
+    m_proofLines[index].fname = (unsigned char *) calloc(name.size()+1, sizeof(unsigned char));
+    memcpy(m_proofLines[index].fname, name.toStdString().c_str(), name.size());
+}
+
 void ProofData::insertLine(int index,int a, QString b, QString c, bool d, bool e, bool f, int g, QList<int> h)
 {
     emit preLineInsert(index);
@@ -42,6 +48,7 @@ void ProofData::insertLine(int index,int a, QString b, QString c, bool d, bool e
     aLine.pSubEnd = f;
     aLine.pInd = g;
     aLine.pRefs = h;
+    aLine.fname = NULL;
     m_proofLines.insert(index,aLine);
 
     emit postLineInsert();

@@ -13,7 +13,8 @@ public:
 
     Q_INVOKABLE void latex(const QString &name, const ProofData *toBeEval , Connector *c);
     Q_INVOKABLE void wasmLatex(const ProofData *pd, Connector *c);
-    Q_INVOKABLE void importProof(const QString &name, ProofData *pd);
+    Q_INVOKABLE void importProof(const QString &name, ProofData *pd, Connector *c, ProofModel *pm);
+    Q_INVOKABLE void wasmImportProof(ProofData *pd, Connector *c, ProofModel *pm);
 
 private:
 

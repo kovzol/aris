@@ -75,7 +75,8 @@ void Connector::genIndices(const ProofData *toBeEval)
             parent_subproof.push_back(i + 1);
 
         if ( i > 0 && toBeEval->lines().at(i).pInd < toBeEval->lines().at(i-1).pInd)
-            parent_subproof.pop_back();
+            if (parent_subproof.size() > 0)
+                parent_subproof.pop_back();
 
         for (const int subp: parent_subproof)
             m_indices[i].push_back(subp);
@@ -108,6 +109,7 @@ void Connector::genProof(const ProofData *toBeEval)
         sd->depth = toBeEval->lines().at(i).pInd/20;
         sd->premise = (sd->rule == -1)?1:0;
         sd->subproof = (sd->rule == -2)?1:0;
+        sd->file = toBeEval->lines().at(i).fname;
 
         if (sd->rule == -2)
             sd->rule = -1;
@@ -130,6 +132,7 @@ void Connector::genProof(const ProofData *toBeEval)
         temp_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
         memcpy(temp_text, str.c_str(), strlen(str.c_str()));
         sd->text = temp_text;
+
 
         // Assign references
         if (toBeEval->lines().at(i).pRefs.size() == 1)

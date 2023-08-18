@@ -122,6 +122,17 @@ ApplicationWindow {
         }
     }
 
+    FileDialog{
+        id: importID
+        nameFilters: ["Aris files (*.tle)"]
+        title: "Import Proof"
+        fileMode: FileDialog.OpenFile
+        defaultSuffix: "tle"
+        onAccepted: {
+            auxConnector.importProof(selectedFile,theData,cConnector,proofModel)
+        }
+    }
+
     FontDialog{
         id: fontDialogID
 

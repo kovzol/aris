@@ -98,6 +98,7 @@ Item {
                 height: font.pointSize + 10
                 Layout.leftMargin: model.ind
                 Layout.fillWidth: true
+
                 background: Rectangle{
                     border.width: 2
                     border.color: ((cConnector.evalText).includes("Error in line "+(indexx+1)+" -") && cConnector.evalText !== "Evaluate Proof")? "red" : (cConnector.evalText === "Evaluate Proof") ? "black" : "lightgreen"
@@ -264,6 +265,7 @@ Item {
 
             // Row of references
             Row{
+                id: refID
 
                 Repeater{
 

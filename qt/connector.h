@@ -34,6 +34,9 @@ public:
     proof_t *getCProof() const;
     vec_t *getReturns() const;
 
+    QHash<QString,int> rulesMap;
+    QHash<int,QString> reverseRulesMap;
+
 signals:
 
     void evalTextChanged();
@@ -42,8 +45,8 @@ signals:
 private:
     proof_t * cProof;
     vec_t * returns;
-    QHash<QString,int> rulesMap;
-    QHash<int,QString> reverseRulesMap;
+//    QHash<QString,int> rulesMap;
+//    QHash<int,QString> reverseRulesMap;
     QString m_evalText;
     QList<QList<int>> m_indices;
 };

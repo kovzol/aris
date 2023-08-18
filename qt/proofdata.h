@@ -12,6 +12,7 @@ struct ProofLine{
     bool pSubEnd;
     int pInd;
     QList<int> pRefs;
+    unsigned char *fname;
 };
 
 class ProofData : public QObject
@@ -23,6 +24,7 @@ public:
     QVector<ProofLine> lines() const;
 
     bool setLineAt(int index, const ProofLine &proofLine);
+    void setFile(int index, const QString& name);
 
 signals:
     void preLineInsert(int index);
