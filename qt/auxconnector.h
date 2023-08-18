@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "connector.h"
+#include "proofmodel.h"
 
 class auxConnector : public QObject
 {
@@ -12,7 +13,7 @@ public:
 
     Q_INVOKABLE void latex(const QString &name, const ProofData *toBeEval , Connector *c);
     Q_INVOKABLE void wasmLatex(const ProofData *pd, Connector *c);
-
+    Q_INVOKABLE void importProof(const QString &name, ProofData *pd);
 
 private:
 

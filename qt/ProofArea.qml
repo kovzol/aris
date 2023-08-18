@@ -309,6 +309,7 @@ Item {
                         onTriggered: {
                             theData.insertLine(0,1,"","premise",false,false,false,0,[-1])
                             proofModel.updateLines();
+                            proofModel.updateRefs(0,true);
                             listView.currentIndex = 0;
                             cConnector.evalText = "Evaluate Proof";
                         }
@@ -318,6 +319,7 @@ Item {
                         onTriggered: {
                             theData.insertLine(index + 1,index+2,"","choose",model.sub,false,false,model.ind,[-1]);
                             proofModel.updateLines();
+                            proofModel.updateRefs(index+1,true);
                             listView.currentIndex = index + 1;
                             cConnector.evalText = "Evaluate Proof";
                         }
@@ -328,6 +330,7 @@ Item {
                         onTriggered:{
                             theData.insertLine(index + 1,index+2,"","sf",true,true,false,model.ind + 20,[-1]);
                             proofModel.updateLines();
+                            proofModel.updateRefs(index+1,true);
                             listView.currentIndex = index + 1;
                             cConnector.evalText = "Evaluate Proof";
                         }
@@ -341,6 +344,7 @@ Item {
                             else{
                                 theData.insertLine(index + 1,index+2,"","subproof",(model.ind >= 20)? true: false,false,true,model.ind -20,[-1]);
                                 proofModel.updateLines();
+                                proofModel.updateRefs(index+1,true);
                                 listView.currentIndex = index + 1;
                                 cConnector.evalText = "Evaluate Proof";
                             }
@@ -353,6 +357,7 @@ Item {
                             if (proofModel.rowCount() > 1){
                                 theData.removeLineAt(index)
                                 proofModel.updateLines()
+                                proofModel.updateRefs(index,false);
                             }
                             else
                                 console.log("Invalid Operation: Cannot remove all Lines")
@@ -370,7 +375,7 @@ Item {
 
         Rectangle{
             width: parent.width
-            color: "wheat"
+            color: "lightblue"//"wheat"
             radius: 10
         }
     }

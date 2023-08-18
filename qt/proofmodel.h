@@ -42,6 +42,7 @@ public:
     ProofData *lines() const;
     void setlines(ProofData *newLines);
     Q_INVOKABLE void updateLines();
+    Q_INVOKABLE void updateRefs(int ln, bool op);
 
 private:
     ProofData *mLines;

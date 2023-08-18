@@ -23,25 +23,25 @@ QVariant ProofModel::data(const QModelIndex &index, int role) const
     const ProofLine someLine = mLines->lines().at(index.row());
 
     switch (role){
-        case LineRole:
-            return QVariant(someLine.pLine);
-        case TextRole:
-            return QVariant(someLine.pText);
-        case TypeRole:
-            return QVariant(someLine.pType);
-        case SubRole:
-            return QVariant(someLine.pSub);
-        case SubStartRole:
-            return QVariant(someLine.pSubStart);
-        case SubEndRole:
-            return QVariant(someLine.pSubEnd);
-        case IndentRole:
-            return QVariant(someLine.pInd);
-        case RefsRole:
-            QList<QVariant> ret;
-            for (int x: someLine.pRefs)
-                ret.append(x);
-            return ret;
+    case LineRole:
+        return QVariant(someLine.pLine);
+    case TextRole:
+        return QVariant(someLine.pText);
+    case TypeRole:
+        return QVariant(someLine.pType);
+    case SubRole:
+        return QVariant(someLine.pSub);
+    case SubStartRole:
+        return QVariant(someLine.pSubStart);
+    case SubEndRole:
+        return QVariant(someLine.pSubEnd);
+    case IndentRole:
+        return QVariant(someLine.pInd);
+    case RefsRole:
+        QList<QVariant> ret;
+        for (int x: someLine.pRefs)
+            ret.append(x);
+        return ret;
 
     }
     return QVariant();
@@ -56,32 +56,32 @@ bool ProofModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
     switch (role){
     case LineRole:
-            someLine.pLine = value.toInt();
-            break;
+        someLine.pLine = value.toInt();
+        break;
     case TextRole:
-            someLine.pText = value.toString();
-            break;
+        someLine.pText = value.toString();
+        break;
     case TypeRole:
-            someLine.pType = value.toString();
-            break;
+        someLine.pType = value.toString();
+        break;
     case SubRole:
-            someLine.pSub = value.toBool();
-            break;
+        someLine.pSub = value.toBool();
+        break;
     case SubStartRole:
-            someLine.pSubStart = value.toBool();
-            break;
+        someLine.pSubStart = value.toBool();
+        break;
     case SubEndRole:
-            someLine.pSubEnd = value.toBool();
-            break;
+        someLine.pSubEnd = value.toBool();
+        break;
     case IndentRole:
-            someLine.pInd = value.toInt();
-            break;
+        someLine.pInd = value.toInt();
+        break;
     case RefsRole:
-            someLine.pRefs.clear();
-            QVariantList temp = value.toList();
-            for (const QVariant &x: qAsConst(temp))
-                someLine.pRefs.append(x.toInt());
-            break;
+        someLine.pRefs.clear();
+        QVariantList temp = value.toList();
+        for (const QVariant &x: qAsConst(temp))
+            someLine.pRefs.append(x.toInt());
+        break;
 
     }
 
@@ -152,4 +152,32 @@ void ProofModel::updateLines()
     for (int i = 0; i < mLines->lines().size(); ++i) {
         setData(index(i,0),i+1,LineRole);
     }
+}
+
+void ProofModel::updateRefs(int ln, bool op)
+{
+    for (int i = ln+1; i < mLines->lines().size(); i++){
+        QList<int> refs = mLines->lines().at(i).pRefs;
+
+        for (int ii = 1; ii < refs.size(); ii++){
+
+            if (op){
+                if (refs[ii] >= (ln+1))
+                    refs[ii]++;
+
+            }
+            else{
+                if (refs[ii] == (ln + 1))
+                    refs.removeAt(ii);
+                else if (refs[ii] > (ln + 1))
+                    refs[ii]--;
+
+            }
+        }
+        QList<QVariant> ret;
+        for (int x: refs)
+            ret.append(x);
+        setData(index(i,0),ret,RefsRole);
+    }
+
 }
