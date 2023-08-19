@@ -22,6 +22,8 @@ Item {
             delegate: proofLineID
             highlight: highlightID
 
+            currentIndex: -1
+
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 10
@@ -47,11 +49,18 @@ Item {
             width: (parent)? parent.width: 0
             Layout.fillWidth: true
 
-            property bool editCombos: (!isExtFile || type === "choose")
-            property var arr: model.refs
-            property var type: model.type
-            property int indexx: model.index
-            property bool vis: type === "premise" || type === "subproof" || type === "sf"
+            property bool editCombos: (!isExtFile || type === "choose");
+            property var arr: model.refs;
+            property var type: model.type;
+            property int indexx: model.index;
+            property bool vis: type === "premise" || type === "subproof" || type === "sf";
+            property var textFieldColor: (listView.currentIndex !== -1)?(proofModel.data(proofModel.index(listView.currentIndex,0),263).includes(model.line) ? "yellow" : "white"):"lightgrey";
+
+            function refreshTextFieldColor(){
+                var temp = listView.currentIndex;
+                listView.currentIndex =  -1;
+                listView.currentIndex = temp;
+            }
 
             // Line Number Button
             Button{
@@ -82,11 +91,13 @@ Item {
                             if (array[i] === model.line){
                                 array.splice(i,1);
                                 proofModel.setData(proofModel.index(listView.currentIndex,0),array,263);
+                                refreshTextFieldColor();
                                 return;
                             }
                         }
                         array.push(model.line);
                         proofModel.setData(proofModel.index(listView.currentIndex,0),array,263);
+                        refreshTextFieldColor();
                     }
                 }
             }
@@ -100,18 +111,18 @@ Item {
                 Layout.fillWidth: true
 
                 background: Rectangle{
+                    id: backRectID
                     border.width: 2
                     border.color: ((cConnector.evalText).includes("Error in line "+(indexx+1)+" -") && cConnector.evalText !== "Evaluate Proof")? "red" : (cConnector.evalText === "Evaluate Proof") ? "black" : "lightgreen"
-                    color: proofModel.data(proofModel.index(listView.currentIndex,0),263).includes(model.line) ? "lightyellow" : "lightgrey"
+                    color: textFieldColor//(listView.currentIndex !== -1)?(proofModel.data(proofModel.index(listView.currentIndex,0),263).includes(model.line) ? "lightyellow" : "white"):"lightgrey"
                 }
 
-//                wrapMode: TextArea.Wrap
                 placeholderText: qsTr("Start Typing here...")
                 text: model.lText
                 MouseArea{
 
                     anchors.fill: parent
-                    propagateComposedEvents: true
+//                    propagateComposedEvents: true
                     onClicked: {
                         listView.currentIndex = index;
                         parent.forceActiveFocus();
@@ -127,26 +138,7 @@ Item {
                 // Implementation for Keyboard Macros
                 onTextChanged: {
                     // TODO: Improve implementation later
-//                    if (theTextID.length >= 2){
-//                        const last_two = text.slice(theTextID.length-2)
-//                        if (last_two.includes('/\\')){
-//                            theTextID.remove(theTextID.length-2, theTextID.length)
-//                            theTextID.insert(cursorPosition,"\u2227")
-//                        }
-//                        else if (last_two.includes('\\/')){
-//                            theTextID.remove(theTextID.length-2, theTextID.length)
-//                            theTextID.insert(cursorPosition,"\u2228")
-//                        }
-//                        else if (last_two.includes('->')){
-//                            theTextID.remove(theTextID.length-2, theTextID.length)
-//                            theTextID.insert(cursorPosition,"\u2192")
-//                        }
-//                        else if (last_two.includes('<'+"\u2192")){
-//                            theTextID.remove(theTextID.length-2, theTextID.length)
-//                            theTextID.insert(cursorPosition,"\u2194")
-//                        }
 
-//                    }
                     if (theTextID.length >= 2){
                         const last_two = text.slice(cursorPosition-2,cursorPosition)
                         if (last_two.includes('/\\')){
@@ -167,7 +159,6 @@ Item {
                         }
 
                     }
-//                    model.pText = text;
                 }
 
                 // Save Text inside Model
@@ -268,19 +259,24 @@ Item {
                 id: refID
 
                 Repeater{
-
+                    id: repID
                     model: arr
 
                     Button{
                         visible: (modelData === -1)? false: true
                         text: modelData
+
                         onClicked: {
                             var ar = Array.from(arr)
                             ar.splice(index,1)
+                            var ok = parent.parent.parent;
                             proofModel.setData(proofModel.index(listView.currentIndex,0),ar,263);
-
                         }
 
+                    }
+
+                    onModelChanged: {
+                        root_delegate.refreshTextFieldColor();
                     }
 
                 }
@@ -376,10 +372,11 @@ Item {
         id: highlightID
 
         Rectangle{
-            width: parent.width
+            width: (parent)?parent.width:0
             color: "lightblue"//"wheat"
             radius: 10
         }
     }
 
+//    Component.onCompleted: theTextID.forceActiveFocus()
 }

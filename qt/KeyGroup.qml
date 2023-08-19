@@ -101,12 +101,36 @@ ToolBar{
             ToolTip.visible: hovered
             ToolTip.text: cConnector.evalText
             background: Rectangle{
+                id: runButtonID
                 color: (cConnector.evalText === "Evaluate Proof")? "white": (cConnector.evalText === "Correct!")? "green": "red"
             }
 
             onClicked: {
                 cConnector.evalProof(theData,theGoals);
                 goalDataID.evalGoals(theGoals,cConnector);
+                animationID.start();
+            }
+
+            SequentialAnimation {
+                id: animationID
+
+                // Expand the button
+                PropertyAnimation {
+                    target: runButtonID
+                    property: "scale"
+                    to: 1.2
+                    duration: 200
+                    easing.type: Easing.InOutQuad
+                }
+
+                // Shrink back to normal
+                PropertyAnimation {
+                    target: runButtonID
+                    property: "scale"
+                    to: 1.0
+                    duration: 200
+                    easing.type: Easing.InOutQuad
+                }
             }
         }
     }

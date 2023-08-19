@@ -16,8 +16,15 @@ public:
     Q_INVOKABLE void importProof(const QString &name, ProofData *pd, Connector *c, ProofModel *pm);
     Q_INVOKABLE void wasmImportProof(ProofData *pd, Connector *c, ProofModel *pm);
 
+    QString textFieldColor() const;
+    void setTextFieldColor(const QString &newTextFieldColor);
+
+signals:
+    void textFieldColorChanged();
+
 private:
 
+    QString m_textFieldColor;
 };
 
 #endif // AUXCONNECTOR_H

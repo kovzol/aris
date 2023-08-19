@@ -26,7 +26,6 @@ ApplicationWindow {
         return item instanceof TextField
     }
 
-
     footer: Label{
         height: statusID.implicitHeight
         visible: !(cConnector.evalText === "Correct!" || cConnector.evalText === "Evaluate Proof")

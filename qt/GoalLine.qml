@@ -20,7 +20,7 @@ RowLayout{
             anchors.centerIn: parent
             font.italic: true
             text: (line > 0) ? line: ((line === -3)?  "X" : "?")
-            color: (text === "?")? "yellow": ((text === "X") ? "red": ((model.valid)? "green": "blue"))
+            color: (text === "?")? "brown": ((text === "X") ? "red": ((model.valid)? "green": "blue"))
 
         }
 

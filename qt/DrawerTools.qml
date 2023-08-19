@@ -85,7 +85,8 @@ ToolBar{
                     auxConnector.wasmImportProof(theData,cConnector,proofModel)
                 else
                     importID.open()
-                menuOptions.close()
+                menuOptions.close();
+                isExtFile = true;
             }
         }
 
