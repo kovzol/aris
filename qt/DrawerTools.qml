@@ -105,8 +105,8 @@ ToolBar{
                 }
                 else
                     importID.open()
-                menuOptions.close();
 
+                menuOptions.close();
             }
         }
 
