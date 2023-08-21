@@ -12,6 +12,9 @@ ApplicationWindow {
     property font thefont: rootID.font
     property bool isExtFile: false  // If the file is opened from an external file
     property bool darkMode: false
+    property string filename: "Untitled"
+    property bool fileExists: isExtFile
+//    property bool closing: false
 
     // Function to check if the item is a TextField QML Type
     function isTextField(item){
@@ -21,7 +24,7 @@ ApplicationWindow {
     width: 1200
     height: 700
     visible: true
-    title: qsTr("GNU Aris")
+    title: qsTr(filename.slice(filename.lastIndexOf("/")+ 1) + " | " + "GNU Aris")
     font: thefont
     color: darkMode ? "#121212": "white"
 
@@ -33,10 +36,14 @@ ApplicationWindow {
         Text{
             id: statusID
             text: cConnector.evalText
-            color: darkMode?"#CF6679":"red"
+            color: darkMode ? "#CF6679" : "red"
         }
     }
 
+//    onClosing: function(close){
+//        close.accepted = closing;
+//        onTriggered: if(!closing) exitMessageID.open();
+//    }
 
     // Burger Button
     Button{
@@ -52,9 +59,8 @@ ApplicationWindow {
         ToolTip.visible: hovered
         ToolTip.text: "Menu"
 
-        onClicked: {
-            menuOptions.open()
-        }
+        onClicked: menuOptions.open()
+
 
         Text{
             anchors.centerIn: parent
@@ -93,11 +99,15 @@ ApplicationWindow {
         id: fileDialogID
 
         title: "Choose the proof file"
-         //selectFolder: false
+        //selectFolder: false
         nameFilters: ["Aris files (*.tle)"]
         fileMode: FileDialog.OpenFile
         defaultSuffix: "tle"
-        onAccepted: cConnector.openProof(selectedFile,theData,theGoals)
+        onAccepted: {
+            cConnector.openProof(selectedFile,theData,theGoals);
+            filename = selectedFile;
+            isExtFile = true;
+        }
 
     }
 
@@ -108,7 +118,11 @@ ApplicationWindow {
         title: "Save As"
         fileMode: FileDialog.SaveFile
         defaultSuffix: "tle"
-        onAccepted: cConnector.saveProof(selectedFile,theData,theGoals)
+        onAccepted: {
+            cConnector.saveProof(selectedFile,theData,theGoals);
+            filename = selectedFile;
+            fileExists = true;
+        }
 
     }
 
@@ -130,8 +144,10 @@ ApplicationWindow {
         title: "Import Proof"
         fileMode: FileDialog.OpenFile
         defaultSuffix: "tle"
-        onAccepted: auxConnector.importProof(selectedFile,theData,cConnector,proofModel)
-
+        onAccepted: {
+            isExtFile = true;
+            auxConnector.importProof(selectedFile,theData,cConnector,proofModel);
+        }
     }
 
     FontDialog{
@@ -155,9 +171,11 @@ ApplicationWindow {
             anchors.fill: parent
             color: darkMode? "#1F1B24": "white"
             opacity: 0.6
+            border.width: 5
         }
 
         palette {
+
             button: darkMode? "#1F1A24" : "white"
             buttonText: darkMode? "white": "black"
             text: darkMode? "white": "black"
@@ -190,6 +208,40 @@ ApplicationWindow {
 
     }
 
+    // Message Dialog when Closing App
+//    Dialog{
+//        id: exitMessageID
+
+//        title: "The document was modified"
+//        x: (parent.width - width)/2
+//        y: (parent.height - height)/2
+
+
+//        parent: Overlay.overlay
+//        focus: true
+//        modal: true
+//        closePolicy: Popup.CloseOnEscape
+
+//        standardButtons: MessageDialog.Save | MessageDialog.Discard
+//        onAccepted: {
+//            if (Qt.platform.os === "wasm")
+//                cConnector.wasmSaveProof(theData,theGoals);
+//            else
+//                saveAsID.open();
+
+//            closing = true;
+//        }
+//        onDiscarded: {
+//            closing = true;
+//            rootID.close();
+//        }
+
+//        Text{
+//            text: "Do you want to save the file"
+//        }
+
+//    }
+
     GoalModel{
         id: goalDataID
         glines: theGoals
@@ -207,3 +259,4 @@ ApplicationWindow {
 // TODO:
 //  1)  Implement premiseIndex to keep track of latest premise and enter any new premise after it
 //  2)  Dark Mode for Drawer
+//  3)  Closing App on Desktop

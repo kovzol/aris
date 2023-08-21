@@ -50,8 +50,8 @@ RowLayout{
         }
 
         text: model.text
-//        wrapMode: TextArea.Wrap
-//        placeholderText: qsTr("Start Typing here...")
+        //        wrapMode: TextArea.Wrap
+        //        placeholderText: qsTr("Start Typing here...")
 
         // Implementing Keyboard Macros
         onTextChanged: {
@@ -101,15 +101,16 @@ RowLayout{
 
             Action{
                 text: "Add Goal"
-                onTriggered: theGoals.insertgLine(index + 1,-2,false,"");
-
+                onTriggered: {
+                    theGoals.insertgLine(index + 1,-2,false,"");
+                }
             }
 
             Action{
                 text: "Remove Goal"
                 onTriggered: {
                     if (goalDataID.rowCount() > 1){
-                        theGoals.removegLineAt(index)
+                        theGoals.removegLineAt(index);
                     }
                     else
                         console.log("Invalid Operation: Cannot remove all Lines")

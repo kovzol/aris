@@ -15,19 +15,32 @@ ToolBar{
             icon.source: "/assets/folder.png"
             onClicked: {
                 cConnector.evalText = "Evaluate Proof";
-                if (Qt.platform.os === "wasm")
-                    cConnector.wasmOpenProof(theData,theGoals)
-                else
-                    fileDialogID.open()
 
-                menuOptions.close()
-                isExtFile = true;
+                if (Qt.platform.os === "wasm"){
+                    isExtFile = true;
+                    cConnector.wasmOpenProof(theData,theGoals);
+                }
+                else
+                    fileDialogID.open();
+
+                menuOptions.close();
             }
         }
 
         ToolButton{
             text: qsTr("Save")
             icon.source: "/assets/save.png"
+
+            onClicked: {
+
+                if (fileExists)
+                    cConnector.saveProof(filename,theData,theGoals);
+                else
+                    saveAsID.open();
+
+                menuOptions.close();
+            }
+
         }
 
         ToolButton{
@@ -35,12 +48,13 @@ ToolBar{
             icon.source: "/assets/saveas.png"
 
             onClicked: {
+
                 if (Qt.platform.os === "wasm")
                     cConnector.wasmSaveProof(theData,theGoals);
                 else
-                    saveAsID.open()
+                    saveAsID.open();
 
-                menuOptions.close()
+                menuOptions.close();
             }
         }
 
@@ -85,12 +99,14 @@ ToolBar{
             icon.source: "/assets/import.png"
 
             onClicked: {
-                if (Qt.platform.os === "wasm")
+                if (Qt.platform.os === "wasm"){
+                    isExtFile = true;
                     auxConnector.wasmImportProof(theData,cConnector,proofModel)
+                }
                 else
                     importID.open()
                 menuOptions.close();
-                isExtFile = true;
+
             }
         }
 

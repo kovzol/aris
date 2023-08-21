@@ -213,6 +213,7 @@ Item {
                                                ["Equivalence"]: (["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"].includes(conclusionRuleID.currentText))?
                                                                      ["Predicate"]: (["Lemma","Subproof","Sequence","Induction"].includes(conclusionRuleID.currentText))?
                                                                          ["Miscellaneous"]: ["Boolean"])
+
             }
 
             // Second ComboBox to select rule
@@ -237,7 +238,6 @@ Item {
                     asteriskID.visible = false;
                 }
 
-
                 model:  (editCombos)?
                             ((chooseID.currentText === "Inference")?
                                 ["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"]:
@@ -249,6 +249,7 @@ Item {
                                             ["Lemma","Subproof","Sequence","Induction"]:
                                             ["Identity","Negation","Dominance","Symbol Negation"]):
                                                 [type]
+
             }
 
 
