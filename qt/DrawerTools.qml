@@ -11,6 +11,7 @@ ToolBar{
 
         ToolButton{
             text: qsTr("Open")
+
             icon.source: "/assets/folder.png"
             onClicked: {
                 cConnector.evalText = "Evaluate Proof";
@@ -71,10 +72,13 @@ ToolBar{
             }
         }
 
-//        ToolButton{
-//            text: qsTr("Toggle Boolean Mode")
-//            icon.source: "/assets/boolean.png"
-//        }
+        ToolButton{
+            text: qsTr("Toggle Dark Mode")
+            icon.source: "/assets/boolean.png"
+
+            onClicked: darkMode = !darkMode;
+
+        }
 
         ToolButton{
             text: qsTr("Import Proof")
@@ -99,9 +103,8 @@ ToolBar{
             icon.source: "/assets/font.png"
             visible: !(Qt.platform.os === "wasm")
 
-            onClicked: {
-                fontDialogID.open()
-            }
+            onClicked: fontDialogID.open()
+
         }
 
         ToolSeparator{
@@ -112,17 +115,15 @@ ToolBar{
         ToolButton{
             text: qsTr("Help")
             icon.source: "/assets/help.png"
-            onClicked: {
-                Qt.openUrlExternally("https://www.gnu.org/software/aris/manual/aris.pdf")
-            }
+            onClicked: Qt.openUrlExternally("https://www.gnu.org/software/aris/manual/aris.pdf")
+
         }
 
         ToolButton{
             text: qsTr("About")
             icon.source: "/assets/about.png"
-            onClicked: {
-                Qt.openUrlExternally("https://www.gnu.org/software/aris/")
-            }
+            onClicked: Qt.openUrlExternally("https://www.gnu.org/software/aris/")
+
         }
 
     }

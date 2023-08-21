@@ -5,6 +5,9 @@ import goal.model 1.0
 
 
 RowLayout{
+
+    property string toolTipText: (resNumID.color === Qt.color("green"))? "Goal was met at line " + line : ((resNumID.color === Qt.color("blue")) ? "Goal was met at line "+ line+"\n\t but the proof has errors": ((resNumID.color === Qt.color("red"))?"Goal was not met": "Not yet evaluated"))  //aaaaaaaaaaaaaaaaaaaaaaaaaaa
+
     spacing: 10
     width: (parent)? parent.width: 0
     Layout.fillWidth: true
@@ -15,16 +18,6 @@ RowLayout{
         height: goalTextID
         width: height + 10
 
-        Text{
-            id: resNumID
-            anchors.centerIn: parent
-            font.italic: true
-            text: (line > 0) ? line: ((line === -3)?  "X" : "?")
-            color: (text === "?")? "brown": ((text === "X") ? "red": ((model.valid)? "green": "blue"))
-
-        }
-
-        property string toolTipText: (resNumID.color === Qt.color("green"))? "Goal was met at line " + line : ((resNumID.color === Qt.color("blue")) ? "Goal was met at line "+ line+"\n\t but the proof has errors": ((resNumID.color === Qt.color("red"))?"Goal was not met": "Not yet evaluated"))  //aaaaaaaaaaaaaaaaaaaaaaaaaaa
         ToolTip.visible: toolTipText ? moID.containsMouse : false
         ToolTip.text: toolTipText
 
@@ -33,6 +26,15 @@ RowLayout{
             anchors.fill: parent
             hoverEnabled: true
             onClicked: console.log(line);
+        }
+
+        Text{
+            id: resNumID
+            anchors.centerIn: parent
+            font.italic: true
+            text: (line > 0) ? line: ((line === -3)?  "X" : "?")
+            color: (text === "?")? (darkMode?"yellow":"brown"): ((text === "X") ? "red": ((model.valid)? "green": "blue"))
+
         }
 
     }
@@ -44,16 +46,40 @@ RowLayout{
         width: 200
         Layout.fillWidth: true
         background: Rectangle{
-            color: "lightgrey"
+            color: darkMode?"#332940":"lightgrey"
         }
 
         text: model.text
-        //        wrapMode: TextArea.Wrap
-        placeholderText: qsTr("Start Typing here...")
+//        wrapMode: TextArea.Wrap
+//        placeholderText: qsTr("Start Typing here...")
 
-        onEditingFinished: {
-            model.text = text
+        // Implementing Keyboard Macros
+        onTextChanged: {
+
+            if (goalTextID.length >= 2){
+                const last_two = text.slice(cursorPosition-2,cursorPosition)
+                if (last_two.includes('/\\')){
+                    goalTextID.remove(cursorPosition-2, cursorPosition)
+                    goalTextID.insert(cursorPosition,"\u2227")
+                }
+                else if (last_two.includes('\\/')){
+                    goalTextID.remove(cursorPosition-2, cursorPosition)
+                    goalTextID.insert(cursorPosition,"\u2228")
+                }
+                else if (last_two.includes('->')){
+                    goalTextID.remove(cursorPosition-2, cursorPosition)
+                    goalTextID.insert(cursorPosition,"\u2192")
+                }
+                else if (last_two.includes('<'+"\u2192")){
+                    goalTextID.remove(cursorPosition-2, cursorPosition)
+                    goalTextID.insert(cursorPosition,"\u2194")
+                }
+
+            }
+
         }
+
+        onEditingFinished: model.text = text
 
     }
 
@@ -62,13 +88,12 @@ RowLayout{
 
         height: goalTextID.height
 
+        onClicked: goalOptionsID.open()
+
         Text{
             anchors.centerIn: parent
             text: "+ / \u2013"
-        }
-
-        onClicked: {
-            goalOptionsID.open()
+            color: darkMode? "white": "black"
         }
 
         Menu{
@@ -76,11 +101,10 @@ RowLayout{
 
             Action{
                 text: "Add Goal"
-                onTriggered: {
-                    theGoals.insertgLine(index + 1,-2,false,"");
-                    //                    listView.currentIndex = index + 1;
-                }
+                onTriggered: theGoals.insertgLine(index + 1,-2,false,"");
+
             }
+
             Action{
                 text: "Remove Goal"
                 onTriggered: {
@@ -91,13 +115,10 @@ RowLayout{
                         console.log("Invalid Operation: Cannot remove all Lines")
                 }
             }
-            Action{
-                text: "Check Line"
-                onTriggered: {
-                    console.log("Coming Soon")
-                }
-            }
+
+
         }
+
     }
 }
 

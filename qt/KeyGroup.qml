@@ -2,6 +2,12 @@ import QtQuick 2.15
 import QtQuick.Controls 2.5
 
 ToolBar{
+    spacing: 5
+
+    background: Rectangle{
+        anchors.fill: parent
+        color: darkMode? "#121212":"white"
+    }
 
     Column{
         id: keyColID
@@ -9,77 +15,87 @@ ToolBar{
         KeyButton{
             id: conjunctionButton
 
-            text: "\u2227"
+
+            txt: "\u2227"
             ToolTip.text: "Conjunction"
         }
 
         KeyButton{
             id: disjunctionButton
 
-            text: "\u2228"
+
+            txt: "\u2228"
             ToolTip.text: "Disjunction"
         }
 
         KeyButton{
             id: negationButton
 
-            text: "\u00ac"
+
+            txt: "\u00ac"
             ToolTip.text: "Negation"
         }
 
         KeyButton{
             id: implicationButton
 
-            text: "\u2192"
+
+            txt: "\u2192"
             ToolTip.text: "Implication"
         }
 
         KeyButton{
             id: biconditionalButton
 
-            text: "\u2194"
+            txt: "\u2194"
             ToolTip.text: "Bi-conditional"
         }
 
         KeyButton{
             id: forAllButton
 
-            text: "\u2200"
+            txt: "\u2200"
             ToolTip.text: "For all"
         }
 
         KeyButton{
             id: thereExistsButton
 
-            text: "\u2203"
+
+            txt: "\u2203"
             ToolTip.text: "There exists"
         }
 
         KeyButton{
             id: tautologyButton
 
-            text: "\u22a4"
+
+            txt: "\u22a4"
             ToolTip.text: "Tautology"
         }
 
         KeyButton{
             id: contradictionButton
 
-            text: "\u22a5"
+
+            txt: "\u22a5"
             ToolTip.text: "Contradiction"
         }
 
         KeyButton{
             id: belongsToButton
 
-            text: "\u2208"
+
+            txt: "\u2208"
             ToolTip.text: "Belongs To"
         }
 
         KeyButton{
             id: nullButton
 
-            text: "\u2205"
+
+
+            txt: "\u2205"
             ToolTip.text: "Null"
         }
 
@@ -102,7 +118,8 @@ ToolBar{
             ToolTip.text: cConnector.evalText
             background: Rectangle{
                 id: runButtonID
-                color: (cConnector.evalText === "Evaluate Proof")? "white": (cConnector.evalText === "Correct!")? "green": "red"
+                color: (cConnector.evalText === "Evaluate Proof")? (darkMode?"#BB86FC":"white"): (cConnector.evalText === "Correct!")? (darkMode?"springgreen":"green"): "red"
+                radius: 5
             }
 
             onClicked: {

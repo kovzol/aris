@@ -4,7 +4,9 @@ import QtQuick.Controls 2.5
 import proof.model 1.0
 
 Item {
+
     anchors.fill: parent
+
     ColumnLayout{
         id: proofAreaID
 
@@ -45,22 +47,24 @@ Item {
 
         RowLayout{
             id: root_delegate
-            spacing: 10
-            width: (parent)? parent.width: 0
-            Layout.fillWidth: true
 
             property bool editCombos: (!isExtFile || type === "choose");
             property var arr: model.refs;
-            property var type: model.type;
+            property string type: model.type;
             property int indexx: model.index;
             property bool vis: type === "premise" || type === "subproof" || type === "sf";
-            property var textFieldColor: (listView.currentIndex !== -1)?(proofModel.data(proofModel.index(listView.currentIndex,0),263).includes(model.line) ? "yellow" : "white"):"lightgrey";
+            property string textFieldColor: (listView.currentIndex !== -1)?(proofModel.data(proofModel.index(listView.currentIndex,0),263).includes(model.line) ? (darkMode?"brown":"yellow") : (darkMode ? "#1F1A24":"white")):(darkMode?"#332940":"lightgrey");
 
+            // Function to refresh the line color after selecting/de-selecting references
             function refreshTextFieldColor(){
                 var temp = listView.currentIndex;
                 listView.currentIndex =  -1;
                 listView.currentIndex = temp;
             }
+
+            spacing: 10
+            width: (parent)? parent.width: 0
+            Layout.fillWidth: true
 
             // Line Number Button
             Button{
@@ -68,12 +72,17 @@ Item {
 
                 height: theTextID.height
                 width: height
+                palette {
+                    button: darkMode? "#1F1A24" : "white"
+                }
 
                 Text{
                     anchors.centerIn: parent
                     font.italic: true
                     text: model.line
+                    color: theTextID.color
                 }
+
 
                 // Add this button's line to the current line's references
                 onClicked: {
@@ -106,23 +115,25 @@ Item {
             TextField{
                 id: theTextID
 
+                color: darkMode? "white": "black"
                 height: font.pointSize + 10
                 Layout.leftMargin: model.ind
                 Layout.fillWidth: true
 
                 background: Rectangle{
                     id: backRectID
-                    border.width: 2
-                    border.color: ((cConnector.evalText).includes("Error in line "+(indexx+1)+" -") && cConnector.evalText !== "Evaluate Proof")? "red" : (cConnector.evalText === "Evaluate Proof") ? "black" : "lightgreen"
-                    color: textFieldColor//(listView.currentIndex !== -1)?(proofModel.data(proofModel.index(listView.currentIndex,0),263).includes(model.line) ? "lightyellow" : "white"):"lightgrey"
+                    border.width: 1
+                    border.color: ((cConnector.evalText).includes("Error in line "+(indexx+1)+" -") && cConnector.evalText !== "Evaluate Proof")? "red" : (cConnector.evalText === "Evaluate Proof") ? ( darkMode ? "white":"black") : "springgreen"
+                    color: textFieldColor
                 }
 
-                placeholderText: qsTr("Start Typing here...")
+                //placeholderText: indexx === 0 ? qsTr("Start Typing here..."): ""
                 text: model.lText
+
                 MouseArea{
 
                     anchors.fill: parent
-//                    propagateComposedEvents: true
+                    //propagateComposedEvents: true
                     onClicked: {
                         listView.currentIndex = index;
                         parent.forceActiveFocus();
@@ -131,9 +142,8 @@ Item {
                 }
 
                 // Click the +/- button on pressing Enter
-                onAccepted: {
-                    plusID.clicked()
-                }
+                onAccepted: plusID.clicked()
+
 
                 // Implementation for Keyboard Macros
                 onTextChanged: {
@@ -162,11 +172,11 @@ Item {
                 }
 
                 // Save Text inside Model
-                onEditingFinished: {
-                    model.lText = text;
-                }
+                onEditingFinished: model.lText = text;
+
             }
 
+            // Label for premise, subproofs
             Label{
                 id: ruleID
 
@@ -178,15 +188,21 @@ Item {
                     anchors.centerIn: parent
                     font.italic: true
                     text: model.type
+                    color: darkMode ? "white" : "black"
+                    opacity: darkMode ? 0.87 : 1
                 }
 
 
 
             }
 
-            // First ComboBox
+            // First ComboBox to select rule
             ComboBox{
                 id: chooseID
+
+                palette {
+                    button: darkMode ? "#CF6679" : "white"
+                }
 
                 visible: !vis
                 height: theTextID.height
@@ -199,9 +215,13 @@ Item {
                                                                          ["Miscellaneous"]: ["Boolean"])
             }
 
-            // Second ComboBox
+            // Second ComboBox to select rule
             ComboBox{
                 id: conclusionRuleID
+
+                palette {
+                    button: darkMode ? "#CF6679" : "white"
+                }
 
                 // TODO: Fix width maybe
                 visible: !vis
@@ -235,6 +255,9 @@ Item {
             // Display Asterisk next to ComboBox if rule not chosen
             Label{
                 id: asteriskID
+
+                property string toolTipText: "Rule Not Chosen"
+
                 text: "*"
                 font.bold: true
 
@@ -242,7 +265,6 @@ Item {
                 width: 50
                 visible: !vis && editCombos
 
-                property string toolTipText: "Rule Not Chosen"
                 ToolTip.visible: toolTipText ? mID.containsMouse : false
                 ToolTip.text: toolTipText
 
@@ -262,9 +284,16 @@ Item {
                     id: repID
                     model: arr
 
+                    onModelChanged: {
+                        root_delegate.refreshTextFieldColor();
+                    }
+
                     Button{
                         visible: (modelData === -1)? false: true
-                        text: modelData
+
+                        palette {
+                            button: darkMode? "#1F1A24" : "white"
+                        }
 
                         onClicked: {
                             var ar = Array.from(arr)
@@ -273,11 +302,15 @@ Item {
                             proofModel.setData(proofModel.index(listView.currentIndex,0),ar,263);
                         }
 
+                        Text{
+                            anchors.centerIn: parent
+                            font.italic: true
+                            text: modelData
+                            color: darkMode?"white":"black"
+                        }
+
                     }
 
-                    onModelChanged: {
-                        root_delegate.refreshTextFieldColor();
-                    }
 
                 }
 
@@ -289,14 +322,18 @@ Item {
                 id: plusID
 
                 height: theTextID.height
-
-                Text{
-                    anchors.centerIn: parent
-                    text: "+ / \u2013"
+                palette {
+                    button: darkMode? "#1F1A24" : "white"
                 }
 
                 onClicked: {
                     optionsID.open()
+                }
+
+                Text{
+                    anchors.centerIn: parent
+                    text: "+ / \u2013"
+                    color: theTextID.color
                 }
 
                 Menu{
@@ -372,11 +409,10 @@ Item {
         id: highlightID
 
         Rectangle{
-            width: (parent)?parent.width:0
-            color: "lightblue"//"wheat"
+            width: (parent) ? parent.width : 0
+            color: darkMode ? "#3700B3" : "lightblue"
             radius: 10
         }
     }
 
-//    Component.onCompleted: theTextID.forceActiveFocus()
 }

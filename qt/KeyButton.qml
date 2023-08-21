@@ -3,7 +3,9 @@ import QtQuick.Controls 2.5
 
 ToolButton{
 
-    text: "Symbol"
+    property string txt: "Symbol"
+
+    height: thefont.pointSize + 15
 
     hoverEnabled: true
     ToolTip.visible: hovered
@@ -12,10 +14,17 @@ ToolButton{
     focusPolicy: Qt.NoFocus         // Text is passed to focused TextArea, so the button musn't steal focus
 
     onClicked: {
-
         if (isTextField(activeFocusItem))
-            activeFocusItem.insert(activeFocusItem.cursorPosition, text)
+            activeFocusItem.insert(activeFocusItem.cursorPosition, txt)
 
+    }
+
+    Text{
+        text: txt
+        font: thefont
+        color: darkMode? "#BB86FC" : "black"
+        anchors.centerIn: parent
+        fontSizeMode: Text.HorizontalFit
     }
 
 }
