@@ -10,9 +10,21 @@ ToolBar{
     ColumnLayout{
 
         ToolButton{
-            text: qsTr("Open")
+            text: qsTr("New")
+            icon.source: "/assets/new.png"
 
+            onClicked: {
+                if (Qt.platform.os === "wasm")
+                    Qt.openUrlExternally("https://matek.hu/zoltan/aris/");
+                else
+                    auxConnector.newWindow();
+            }
+        }
+
+        ToolButton{
+            text: qsTr("Open")
             icon.source: "/assets/folder.png"
+
             onClicked: {
                 cConnector.evalText = "Evaluate Proof";
 
@@ -30,6 +42,7 @@ ToolBar{
         ToolButton{
             text: qsTr("Save")
             icon.source: "/assets/save.png"
+            visible: !(Qt.platform.os === "wasm")
 
             onClicked: {
 

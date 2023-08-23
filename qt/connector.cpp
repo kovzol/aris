@@ -6,7 +6,6 @@
 #include "list.h"
 #include "vec.h"
 #include "aio.h"
-#include "goals-qt.h"
 
 #include <QDebug>
 #include <iostream>
@@ -29,7 +28,7 @@ Connector::Connector(QObject *parent)
     rulesMap["Existential Generalization"] = 20;    rulesMap["Existential Instantiation"] = 21;     rulesMap["Bound Variable Substitution"] = 22;
     rulesMap["Null Quantifier"] = 23;               rulesMap["Prenex"] = 24;                        rulesMap["Identity"] = 25;
     rulesMap["Free Variable Substitution"] = 26;    rulesMap["Lemma"] = 27;                         rulesMap["subproof"] = 28;
-    rulesMap["Sequence"] = 29;                      rulesMap["Induction"] = 30;                     rulesMap["Identity"] = 31;
+    rulesMap["Sequence"] = 29;                      rulesMap["Induction"] = 30;                     rulesMap["identity"] = 31;
     rulesMap["Negation"] = 32;                      rulesMap["Dominance"] = 33;                     rulesMap["Symbol Negation"] = 34;
     rulesMap["sf"] = -2;
 }
@@ -46,7 +45,7 @@ void Connector::reverseMapInit()
     reverseRulesMap[20] = "Existential Generalization";     reverseRulesMap[21] = "Existential Instantiation";      reverseRulesMap[22] = "Bound Variable Substitution";
     reverseRulesMap[23] = "Null Quantifier";                reverseRulesMap[24] = "Prenex";                         reverseRulesMap[25] = "Identity";
     reverseRulesMap[26] = "Free Variable Substitution";     reverseRulesMap[27] = "Lemma";                          reverseRulesMap[28] = "subproof";
-    reverseRulesMap[29] = "Sequence";                       reverseRulesMap[30] = "Induction";                      reverseRulesMap[31] = "Identity";
+    reverseRulesMap[29] = "Sequence";                       reverseRulesMap[30] = "Induction";                      reverseRulesMap[31] = "identity";
     reverseRulesMap[32] = "Negation";                       reverseRulesMap[33] = "Dominance";                      reverseRulesMap[34] = "Symbol Negation";
     reverseRulesMap[-2] = "sf";
 }

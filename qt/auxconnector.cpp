@@ -10,6 +10,10 @@
 #include <QFileDialog>
 #include <QSaveFile>
 
+#ifndef Q_OS_WASM
+#include <QProcess>
+#endif
+
 auxConnector::auxConnector(QObject *parent)
     : QObject{parent}
 {
@@ -94,7 +98,7 @@ void auxConnector::importProof(const QString &name, ProofData *pd, Connector *c,
         if (ev_itr >= pd->lines().size() || pd->lines().at(ev_itr).pType != "premise"){
             QList<int> temp_refs = {-1};
             for (int i = 0; sd->refs[i] != REF_END; i++)
-                temp_refs.push_back(sd->refs[i]);
+//                temp_refs.push_back(sd->refs[i]);
 
             if (sd->depth > 0)
                 sd->rule = -2;
@@ -189,3 +193,15 @@ void auxConnector::wasmImportProof(ProofData *pd, Connector *c, ProofModel *pm)
     };
     QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
 }
+
+#ifndef Q_OS_WASM
+void auxConnector::newWindow()
+{
+    QString program = "./Aris";
+    QStringList arguments;
+
+    QProcess *myProcess = new QProcess(this);
+    myProcess->startDetached(program, arguments);
+    delete myProcess;
+}
+#endif

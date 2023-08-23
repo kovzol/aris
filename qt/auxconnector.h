@@ -16,6 +16,10 @@ public:
     Q_INVOKABLE void importProof(const QString &name, ProofData *pd, Connector *c, ProofModel *pm);
     Q_INVOKABLE void wasmImportProof(ProofData *pd, Connector *c, ProofModel *pm);
 
+#ifndef Q_OS_WASM
+    Q_INVOKABLE void newWindow();
+#endif
+
 signals:
 
 private:

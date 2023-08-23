@@ -170,8 +170,8 @@ ApplicationWindow {
         background: Rectangle{
             anchors.fill: parent
             color: darkMode? "#1F1B24": "white"
-            opacity: 0.6
-            border.width: 5
+            opacity: 1//0.6
+            border.width: 2
         }
 
         palette {

@@ -5,6 +5,13 @@ import proof.model 1.0
 
 Item {
 
+    property var combo2: [
+        ["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"],
+        ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence","Distribution","Equivalence","Double Negation", "Exportation", "Subsumption"],
+        ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"],
+        ["Lemma","Subproof","Sequence","Induction"],
+        ["identity","Negation","Dominance","Symbol Negation"]
+        ]
     anchors.fill: parent
 
     ColumnLayout{
@@ -207,12 +214,28 @@ Item {
                 visible: !vis
                 height: theTextID.height
 
-                model: (editCombos) ? ["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]:
-                                      ((["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"].includes(conclusionRuleID.currentText))?
-                                           ["Inference"]: (["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence","Distribution","Equivalence","Double Negation", "Exportation", "Subsumption"].includes(conclusionRuleID.currentText))?
-                                               ["Equivalence"]: (["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"].includes(conclusionRuleID.currentText))?
-                                                                     ["Predicate"]: (["Lemma","Subproof","Sequence","Induction"].includes(conclusionRuleID.currentText))?
-                                                                         ["Miscellaneous"]: ["Boolean"])
+                onActivated: {
+                    editCombos = true;
+                    proofModel.setData(proofModel.index(indexx,0),conclusionRuleID.currentText,258)
+                    asteriskID.visible = false;
+                }
+
+                model:["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]
+
+                Component.onCompleted: {
+                    if (!editCombos){
+                        if (combo2[0].includes(type))
+                            currentIndex = 0;
+                        else if (combo2[1].includes(type))
+                            currentIndex = 1;
+                        else if (combo2[2].includes(type))
+                            currentIndex = 2;
+                        else if (combo2[3].includes(type))
+                            currentIndex = 3;
+                        else
+                            currentIndex = 4;
+                    }
+                }
 
             }
 
@@ -238,17 +261,13 @@ Item {
                     asteriskID.visible = false;
                 }
 
-                model:  (editCombos)?
-                            ((chooseID.currentText === "Inference")?
-                                ["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"]:
-                                (chooseID.currentText === "Equivalence")?
-                                    ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence","Distribution","Equivalence","Double Negation", "Exportation", "Subsumption"]:
-                                    (chooseID.currentText === "Predicate")?
-                                        ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"]:
-                                        (chooseID.currentText === "Miscellaneous")?
-                                            ["Lemma","Subproof","Sequence","Induction"]:
-                                            ["Identity","Negation","Dominance","Symbol Negation"]):
-                                                [type]
+                onModelChanged: {
+                    if (!editCombos){
+                        currentIndex = model.indexOf(type);
+                    }
+                }
+
+                model:  combo2[chooseID.currentIndex]
 
             }
 
@@ -390,13 +409,13 @@ Item {
                     Action{
                         text: "Remove this Line"
                         onTriggered: {
-                            if (proofModel.rowCount() > 1){
+                            if (index !== 0){
                                 theData.removeLineAt(index)
                                 proofModel.updateLines()
                                 proofModel.updateRefs(index,false);
                             }
                             else
-                                console.log("Invalid Operation: Cannot remove all Lines")
+                                console.log("Invalid Operation: Cannot remove first premise")
                         }
                     }
                 }
