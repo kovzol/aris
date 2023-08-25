@@ -1,3 +1,21 @@
+/* Function to check a goal line (platform independent but named with qt as it's required only for the qt version).
+   Inspired from goals.h.
+
+   Copyright (C) 2023 Saksham Attri.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "goals-qt.h"
 #include "process.h"
 #include "sen-data.h"
@@ -41,17 +59,6 @@ int qtgoal_check_line(proof_t *proof, unsigned char *sen_text, vec_t *rets, int 
 
             *ln = ev_sen->line_num;
 
-            //   char * sb_text = (char *) calloc (30, sizeof (char *));
-            //   CHECK_ALLOC (sb_text, AEC_MEM);
-            //   int offset = 0;
-            //   offset += sprintf (sb_text, "The goal was met at line %i", ln);
-            //   if (!is_valid)
-            //     {
-            //       offset += sprintf (sb_text + offset,
-            // 			 ", however there are errors leading up to it.");
-            //     }
-            //   sen_parent_set_sb ((sen_parent *) goal, sb_text);
-            //   free (sb_text);
             free (ev_cmp_text);
             free (cmp_text);
             return 0;
@@ -66,8 +73,5 @@ int qtgoal_check_line(proof_t *proof, unsigned char *sen_text, vec_t *rets, int 
     }
 
     free (cmp_text);
-
-    //   sentence_set_value (sen, VALUE_TYPE_FALSE);
-    //   sen_parent_set_sb ((sen_parent *) goal, "This goal has not been met.");
     return 0;
 }

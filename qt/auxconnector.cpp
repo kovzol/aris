@@ -1,3 +1,20 @@
+/* Auxiliary Connector Class for operations not included in Connector.
+
+   Copyright (C) 2023 Saksham Attri.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "auxconnector.h"
 #include "aio.h"
 #include "connector.h"
@@ -47,7 +64,7 @@ void auxConnector::wasmLatex(const ProofData *pd, Connector *c)
 
 }
 
-void auxConnector::importProof(const QString &name, ProofData *pd, Connector *c, ProofModel *pm)
+void auxConnector::importProof(const QString &name, ProofData *pd, const Connector *c, ProofModel *pm)
 {
     QString newName = name.contains("file://")? name.mid(7): name;
     char *file_name = (char *) calloc((newName.size()+1), sizeof(char));
@@ -61,7 +78,7 @@ void auxConnector::importProof(const QString &name, ProofData *pd, Connector *c,
 
     refs = (short *) calloc (proof->everything->num_stuff, sizeof(int));
 
-    int num_ins = 0;
+    int num_ins = 1;
     for (pf_itr =(item_t *) proof->everything->head; pf_itr != NULL; pf_itr = pf_itr->next){
         sen_data *sd;
         char *pf_text;
@@ -97,13 +114,14 @@ void auxConnector::importProof(const QString &name, ProofData *pd, Connector *c,
 
         if (ev_itr >= pd->lines().size() || pd->lines().at(ev_itr).pType != "premise"){
             QList<int> temp_refs = {-1};
-            for (int i = 0; sd->refs[i] != REF_END; i++)
+//            for (int i = 0; sd->refs[i] != REF_END; i++)
 //                temp_refs.push_back(sd->refs[i]);
 
             if (sd->depth > 0)
                 sd->rule = -2;
             pd->insertLine(num_ins,num_ins+1,(const char *) sd->text,c->reverseRulesMap[sd->rule],false,
                                false,false, sd->depth * 20,temp_refs);
+            pd->setFile(num_ins,newName);
             pm->updateLines();
             pm->updateRefs(num_ins,true);
             num_ins++;
@@ -177,7 +195,7 @@ void auxConnector::importProof(const QString &name, ProofData *pd, Connector *c,
         free(file_name);
 }
 
-void auxConnector::wasmImportProof(ProofData *pd, Connector *c, ProofModel *pm)
+void auxConnector::wasmImportProof(ProofData *pd, const Connector *c, ProofModel *pm)
 {
     auto fileContentReady = [this, &c, &pd, &pm](const QString &fileName, const QByteArray &fileContent) {
         if (fileName.isEmpty()) {

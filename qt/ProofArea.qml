@@ -1,3 +1,20 @@
+/* The proof area containing textfields, labels, rule combo boxes etc.
+
+   Copyright (C) 2023 Saksham Attri.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 import QtQuick 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
@@ -10,8 +27,8 @@ Item {
         ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence","Distribution","Equivalence","Double Negation", "Exportation", "Subsumption"],
         ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"],
         ["Lemma","Subproof","Sequence","Induction"],
-        ["identity","Negation","Dominance","Symbol Negation"]
-        ]
+        ["Identity ","Negation","Dominance","Symbol Negation"]
+    ]
     anchors.fill: parent
 
     ColumnLayout{
@@ -102,6 +119,7 @@ Item {
                     else if (proofModel.data(proofModel.index(listView.currentIndex,0),262) < model.ind && proofModel.data(proofModel.index(listView.currentIndex,0),261) === false)
                         console.log("Invalid Operation: Invalid reference to subproof");
                     else{
+                        cConnector.evalText = "Evaluate Proof";
                         var array = Array.from(proofModel.data(proofModel.index(listView.currentIndex,0),263));
                         for(var i = 0; i < array.length; i++){
                             if (array[i] === model.line){
@@ -320,6 +338,7 @@ Item {
                             ar.splice(index,1)
                             var ok = parent.parent.parent;
                             proofModel.setData(proofModel.index(listView.currentIndex,0),ar,263);
+                            cConnector.evalText = "Evaluate Proof";
                         }
 
                         Text{
@@ -393,29 +412,31 @@ Item {
 
                     Action{
                         text: "End Subproof"
+                        enabled: model.sub
+
                         onTriggered: {
-                            if (model.sub === false)
-                                console.log("Invalid Operation: There are no ongoing SubProofs")
-                            else{
-                                theData.insertLine(index + 1,index+2,"","subproof",(model.ind >= 20)? true: false,false,true,model.ind -20,[-1]);
-                                proofModel.updateLines();
-                                proofModel.updateRefs(index+1,true);
-                                listView.currentIndex = index + 1;
-                                cConnector.evalText = "Evaluate Proof";
-                            }
+
+                            theData.insertLine(index + 1,index+2,"","subproof",(model.ind >= 20)? true: false,false,true,model.ind -20,[-1]);
+                            proofModel.updateLines();
+                            proofModel.updateRefs(index+1,true);
+                            listView.currentIndex = index + 1;
+                            cConnector.evalText = "Evaluate Proof";
+
                         }
                     }
 
                     Action{
                         text: "Remove this Line"
+                        enabled: (index !== 0)
+
                         onTriggered: {
-                            if (index !== 0){
-                                theData.removeLineAt(index)
-                                proofModel.updateLines()
-                                proofModel.updateRefs(index,false);
-                            }
-                            else
-                                console.log("Invalid Operation: Cannot remove first premise")
+
+                            var i = index;
+                            theData.removeLineAt(index)
+                            proofModel.updateLines()
+                            proofModel.updateRefs(i,false);
+                            cConnector.evalText = "Evaluate Proof";
+
                         }
                     }
                 }
