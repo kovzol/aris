@@ -5,29 +5,29 @@ QT += quick widgets quickcontrols2
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        aio.c \
+        ../src/aio.c \
         auxconnector.cpp \
         connector.cpp \
         goaldata.cpp \
         goalmodel.cpp \
         goals-qt.c \
-        interop-isar.c \
-        list.c \
+        ../src/interop-isar.c \
+        ../src/list.c \
         main.cpp \
-        process-main.c \
-        process.c \
-        proof.c \
+        ../src/process-main.c \
+        ../src/process.c \
+        ../src/proof.c \
         proofdata.cpp \
         proofmodel.cpp \
-        sen-data.c \
-        sexpr-process-bool.c \
-        sexpr-process-equiv.c \
-        sexpr-process-infer.c \
-        sexpr-process-misc.c \
-        sexpr-process-quant.c \
-        sexpr-process.c \
-        var.c \
-        vec.c
+        ../src/sen-data.c \
+        ../src/sexpr-process-bool.c \
+        ../src/sexpr-process-equiv.c \
+        ../src/sexpr-process-infer.c \
+        ../src/sexpr-process-misc.c \
+        ../src/sexpr-process-quant.c \
+        ../src/sexpr-process.c \
+        ../src/var.c \
+        ../src/vec.c
 
 RESOURCES += qml.qrc \
     resources.qrc
@@ -59,24 +59,24 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    aio.h \
+    ../src/aio.h \
     auxconnector.h \
     connector.h \
     goaldata.h \
     goalmodel.h \
     goals-qt.h \
-    interop-isar.h \
-    list.h \
-    process.h \
-    proof.h \
+    ../src/interop-isar.h \
+    ../src/list.h \
+    ../src/process.h \
+    ../src/proof.h \
     proofdata.h \
     proofmodel.h \
-    rules.h \
-    sen-data.h \
-    sexpr-process.h \
-    typedef.h \
-    var.h \
-    vec.h
+    ../src/rules.h \
+    ../src/sen-data.h \
+    ../src/sexpr-process.h \
+    ../src/typedef.h \
+    ../src/var.h \
+    ../src/vec.h
 
 # Uncomment the below lines when compiling to webassembly
 wasm{

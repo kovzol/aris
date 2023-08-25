@@ -17,7 +17,7 @@
 */
 
 #include "sexpr-process.h"
-#include "vec.h"
+#include "../src/vec.h"
 
 // Boolean rules follow the same structure as equivalence rules.
 
@@ -30,45 +30,45 @@ process_bool (unsigned char * conc, vec_t * prems, const char * rule)
   if (!strcmp (rule, "bi"))
     {
       if (prems->num_stuff != 1)
-	return _("Boolean Identity requires one (1) reference.");
+    return _("Boolean Identity requires one (1) reference.");
 
       prem = vec_nth (prems, 0);
       ret = proc_bi (*prem, conc);
       if (!ret)
-	return NULL;
+    return NULL;
     }
 
   if (!strcmp (rule, "bd"))
     {
       if (prems->num_stuff != 1)
-	return _("Boolean Domination requires one (1) reference.");
+    return _("Boolean Domination requires one (1) reference.");
 
       prem = vec_nth (prems, 0);
       ret = proc_bd (*prem, conc);
       if (!ret)
-	return NULL;
+    return NULL;
     }
 
   if (!strcmp (rule, "bn"))
     {
       if (prems->num_stuff != 1)
-	return _("Boolean Negation requires one (1) reference.");
+    return _("Boolean Negation requires one (1) reference.");
 
       prem = vec_nth (prems, 0);
       ret = proc_bn (*prem, conc);
       if (!ret)
-	return NULL;
+    return NULL;
     }
 
   if (!strcmp (rule, "sn"))
     {
       if (prems->num_stuff != 1)
-	return _("Symbol Negation require one (1) reference.");
+    return _("Symbol Negation require one (1) reference.");
 
       prem = vec_nth (prems, 0);
       ret = proc_sn (*prem, conc);
       if (!ret)
-	return NULL;
+    return NULL;
     }
 
   return ret;
@@ -98,17 +98,17 @@ proc_bi (unsigned char * prem, unsigned char * conc)
     {
       si--;
       if (si < 0)
-	return _("Boolean Identity constructed incorrectly.");
+    return _("Boolean Identity constructed incorrectly.");
     }
   else if (si > 0
-	   && (!strncmp (sh_sen + si - 1, S_AND, S_CL)
-	       || !strncmp (sh_sen + si - 1, S_OR, S_CL)
-	       || !strncmp (sh_sen + si - 1, S_CON, S_CL)
-	       || !strncmp (sh_sen + si - 1, S_BIC, S_CL)
-	       || !strncmp (sh_sen + si - 1, S_NOT, S_NL)))
+       && (!strncmp (sh_sen + si - 1, S_AND, S_CL)
+           || !strncmp (sh_sen + si - 1, S_OR, S_CL)
+           || !strncmp (sh_sen + si - 1, S_CON, S_CL)
+           || !strncmp (sh_sen + si - 1, S_BIC, S_CL)
+           || !strncmp (sh_sen + si - 1, S_NOT, S_NL)))
     {
       while (sh_sen[si] != '(')
-	si--;
+    si--;
       si--;
     }
 
@@ -121,26 +121,26 @@ proc_bi (unsigned char * prem, unsigned char * conc)
   else
     {
       if (ln_sen[li] != '(')
-	{
-	  li = find_unmatched_o_paren (ln_sen, li);
-	  if (li == -1)
-	    return _("There must be a connective in the longer sentence.");
-	}
+    {
+      li = find_unmatched_o_paren (ln_sen, li);
+      if (li == -1)
+        return _("There must be a connective in the longer sentence.");
+    }
 
       int ret_chk;
       ret_chk = sexpr_find_unmatched (ln_sen, sh_sen, &li, &si);
       if (ret_chk == AEC_MEM)
-	return NULL;
+    return NULL;
 
       if (li < 0)
-	return _("Boolean Identity constructed incorrectly.");
+    return _("Boolean Identity constructed incorrectly.");
 
       if (si < 0)
-	{
-	  // The equivalence uses all of sh_sen.
-	  // this means that li needs to be zero.
-	  li = 0;
-	}
+    {
+      // The equivalence uses all of sh_sen.
+      // this means that li needs to be zero.
+      li = 0;
+    }
     }
 
   if (ln_sen[li] != '(')
@@ -295,18 +295,18 @@ proc_bd (unsigned char * prem, unsigned char * conc)
       cur_gen = vec_nth (gens, j);
 
       if (!strcmp (*cur_gen, S_CTR) && !strcmp (conn, S_AND))
-	{
-	  strncpy (sym, S_CTR, S_CL);
-	  sym[S_CL] = '\0';
-	  break;
-	}
+    {
+      strncpy (sym, S_CTR, S_CL);
+      sym[S_CL] = '\0';
+      break;
+    }
 
       if (!strcmp (*cur_gen, S_TAU) && !strcmp (conn, S_OR))
-	{
-	  strncpy (sym, S_TAU, S_CL);
-	  sym[S_CL] = '\0';
-	  break;
-	}
+    {
+      strncpy (sym, S_TAU, S_CL);
+      sym[S_CL] = '\0';
+      break;
+    }
     }
 
   destroy_str_vec (gens);

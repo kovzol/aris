@@ -17,11 +17,11 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "goals-qt.h"
-#include "process.h"
-#include "sen-data.h"
-#include "proof.h"
-#include "list.h"
-#include "vec.h"
+#include "../src/process.h"
+#include "../src/sen-data.h"
+#include "../src/proof.h"
+#include "../src/list.h"
+#include "../src/vec.h"
 
 
 int qtgoal_check_line(proof_t *proof, unsigned char *sen_text, vec_t *rets, int *ln, int *is_valid)

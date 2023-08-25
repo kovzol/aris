@@ -23,7 +23,7 @@
 extern "C" {
 #endif
 
-#include "typedef.h"
+#include "../src/typedef.h"
 
 int qtgoal_check_line (proof_t * proof, unsigned char * sen_text, vec_t * rets, int * ln, int * is_valid);
 

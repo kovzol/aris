@@ -20,7 +20,7 @@
 
 #include <QObject>
 #include <QHash>
-#include "typedef.h"
+#include "../src/typedef.h"
 #include "proofdata.h"
 #include "goaldata.h"
 

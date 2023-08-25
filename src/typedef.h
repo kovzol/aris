@@ -16,9 +16,12 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ARIS_TYPE_DEF_H
-#define ARIS_TYPE_DEF_H
+#ifndef TYPEDEF_H
+#define TYPEDEF_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 typedef struct proof proof_t;
 typedef struct list list_t;
 typedef struct item item_t;
@@ -61,13 +64,16 @@ typedef void * (* conf_obj_value_func) (conf_obj * obj, int get);
 #define PERROR(s) { REPORT (); perror(s); }
 #define REPORT() fprintf (stderr, "%s:%i reporting!\n", __FILE__, __LINE__)
 #define CHECK_ALLOC(o,r) if (!(o)) {                                    \
-    perror ("CHECK_ALLOC FAILED: " __FILE__ ", line " _S(__LINE__) );   \
+perror ("CHECK_ALLOC FAILED: " __FILE__ ", line " _S(__LINE__) );   \
     exit (EXIT_FAILURE);                                                \
-  }
+}
 
 enum ARIS_ERROR_CODES {
-  AEC_MEM = -1, /* Memory Error */
-  AEC_IO = -2   /* I/O Error */
+    AEC_MEM = -1, /* Memory Error */
+    AEC_IO = -2   /* I/O Error */
 };
+#ifdef __cplusplus
+}
+#endif
 
-#endif /*  ARIS_TYPE_DEF_H  */
+#endif // TYPEDEF_H

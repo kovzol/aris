@@ -1,21 +1,3 @@
-/* Functions for the vector data type.
-
-   Copyright (C) 2012, 2013, 2014 Ian Dunn.
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -32,28 +14,28 @@
 vec_t *
 init_vec (const unsigned int stuff_size)
 {
-  vec_t * v;
+    vec_t * v;
 
-  v = (vec_t *) calloc (1, sizeof (vec_t));
-  if (!v)
+    v = (vec_t *) calloc (1, sizeof (vec_t));
+    if (!v)
     {
-      PERROR (NULL);
-      return NULL;
+        PERROR (NULL);
+        return NULL;
     }
 
-  v->num_stuff = 0;
-  v->size_stuff = stuff_size;
-  v->alloc_space = 1;
+    v->num_stuff = 0;
+    v->size_stuff = stuff_size;
+    v->alloc_space = 1;
 
-  v->stuff = calloc (1, stuff_size);
-  if (!v->stuff)
+    v->stuff = calloc (1, stuff_size);
+    if (!v->stuff)
     {
-      PERROR (NULL);
-      free (v);
-      return NULL;
+        PERROR (NULL);
+        free (v);
+        return NULL;
     }
 
-  return v;
+    return v;
 }
 
 /* Destroys a vector.
@@ -65,13 +47,13 @@ init_vec (const unsigned int stuff_size)
 void
 destroy_vec (vec_t * v)
 {
-  if (v->stuff)
-    free (v->stuff);
+    if (v->stuff)
+        free (v->stuff);
 
-  v->num_stuff = 0;
-  v->alloc_space = 0;
-  v->size_stuff = 0;
-  free (v);
+    v->num_stuff = 0;
+    v->alloc_space = 0;
+    v->size_stuff = 0;
+    free (v);
 }
 
 /* Destroys a string vector.
@@ -83,26 +65,26 @@ destroy_vec (vec_t * v)
 void
 destroy_str_vec (vec_t * v)
 {
-  if (v->stuff)
+    if (v->stuff)
     {
-      int i;
-      for (i = 0; i < v->num_stuff; i++)
+        int i;
+        for (i = 0; i < v->num_stuff; i++)
         {
-          unsigned char * cur_str;
-          cur_str = vec_str_nth (v, i);
+            unsigned char * cur_str;
+            cur_str = vec_str_nth (v, i);
 
-          if (cur_str)
-            free (cur_str);
-          cur_str = NULL;
+            if (cur_str)
+                free (cur_str);
+            cur_str = NULL;
         }
 
-      free (v->stuff);
+        free (v->stuff);
     }
 
-  v->num_stuff = 0;
-  v->alloc_space = 0;
-  v->size_stuff = 0;
-  free (v);
+    v->num_stuff = 0;
+    v->alloc_space = 0;
+    v->size_stuff = 0;
+    free (v);
 }
 
 /* Adds an object to a vector.
@@ -115,22 +97,22 @@ destroy_str_vec (vec_t * v)
 int
 vec_add_obj (vec_t * v, const void * more)
 {
-  assert (more != NULL);
+    assert (more != NULL);
 
-  v->num_stuff++; 
+    v->num_stuff++;
 
-  if (v->alloc_space == v->num_stuff)
+    if (v->alloc_space == v->num_stuff)
     {
-      v->alloc_space *= 2;
+        v->alloc_space *= 2;
 
-      v->stuff = realloc (v->stuff, v->alloc_space * v->size_stuff);
-      CHECK_ALLOC (v->stuff, AEC_MEM);
+        v->stuff = realloc (v->stuff, v->alloc_space * v->size_stuff);
+        CHECK_ALLOC (v->stuff, AEC_MEM);
     }
 
-  memcpy (v->stuff + ((v->num_stuff - 1) * v->size_stuff),
-          more, v->size_stuff);
+    memcpy (v->stuff + ((v->num_stuff - 1) * v->size_stuff),
+           more, v->size_stuff);
 
-  return 0;
+    return 0;
 }
 
 /* Adds a new string to a string vector.
@@ -143,25 +125,23 @@ vec_add_obj (vec_t * v, const void * more)
 int
 vec_str_add_obj (vec_t * v, unsigned char * more)
 {
-  v->num_stuff++;
+    v->num_stuff++;
 
-  if (v->alloc_space == v->num_stuff)
+    if (v->alloc_space == v->num_stuff)
     {
-      v->alloc_space *= 2;
+        v->alloc_space *= 2;
 
-      v->stuff = realloc (v->stuff, v->alloc_space * sizeof (char *));
-      CHECK_ALLOC (v->stuff, AEC_MEM);
+        v->stuff = realloc (v->stuff, v->alloc_space * sizeof (char *));
+        CHECK_ALLOC (v->stuff, AEC_MEM);
     }
+    unsigned char * obj;
+    obj = (unsigned char *) calloc (strlen (more) + 1, sizeof (char));
+    CHECK_ALLOC (obj, AEC_MEM);
 
-  unsigned char * obj;
-  obj = (unsigned char *) calloc (strlen (more) + 1, sizeof (char));
-  CHECK_ALLOC (obj, AEC_MEM);
-
-  strcpy (obj, more);
-  memcpy (v->stuff + ((v->num_stuff - 1) * sizeof (char *)),
-          &obj, sizeof (char *));
-
-  return 0;
+    strcpy (obj, more);
+    memcpy (v->stuff + ((v->num_stuff - 1) * sizeof (char *)),
+           &obj, sizeof (char *));
+    return 0;
 }
 
 /* Removes an object from the end of a vector.
@@ -173,10 +153,10 @@ vec_str_add_obj (vec_t * v, unsigned char * more)
 void
 vec_pop_obj (vec_t * v)
 {
-  if (v->num_stuff == 0)
-    return;
+    if (v->num_stuff == 0)
+        return;
 
-  v->num_stuff--;
+    v->num_stuff--;
 }
 
 /* Clears a vector.
@@ -188,12 +168,12 @@ vec_pop_obj (vec_t * v)
 int
 vec_clear (vec_t * vec)
 {
-  free (vec->stuff);
-  vec->num_stuff = 0;
-  vec->alloc_space = 1;
-  vec->stuff = calloc (1, vec->size_stuff);
-  CHECK_ALLOC (vec->stuff, AEC_MEM);
-  return 0;
+    free (vec->stuff);
+    vec->num_stuff = 0;
+    vec->alloc_space = 1;
+    vec->stuff = calloc (1, vec->size_stuff);
+    CHECK_ALLOC (vec->stuff, AEC_MEM);
+    return 0;
 }
 
 /* Clears a string vector.
@@ -205,22 +185,22 @@ vec_clear (vec_t * vec)
 int
 vec_str_clear (vec_t * vec)
 {
-  // If vec is empty, then just return.
-  if (!vec || !vec->stuff)
-    return 0;
+    // If vec is empty, then just return.
+    if (!vec || !vec->stuff)
+        return 0;
 
-  int i;
-  for (i = 0; i < vec->num_stuff; i++)
+    int i;
+    for (i = 0; i < vec->num_stuff; i++)
     {
-      unsigned char * cur_str;
-      cur_str = vec_str_nth (vec, i);
+        unsigned char * cur_str;
+        cur_str = vec_str_nth (vec, i);
 
-      if (cur_str)
-        free (cur_str);
-      cur_str = NULL;
+        if (cur_str)
+            free (cur_str);
+        cur_str = NULL;
     }
 
-  return vec_clear (vec);
+    return vec_clear (vec);
 }
 
 /* Gets the nth element of a vector.
@@ -233,10 +213,10 @@ vec_str_clear (vec_t * vec)
 void *
 vec_nth (vec_t * vec, int n)
 {
-  if (n >= vec->num_stuff)
-    return NULL;
+    if (n >= vec->num_stuff)
+        return NULL;
 
-  return (vec->stuff + (vec->size_stuff * n));
+    return (vec->stuff + (vec->size_stuff * n));
 }
 
 /* Gets the nth string from a string vector.
@@ -249,10 +229,10 @@ vec_nth (vec_t * vec, int n)
 unsigned char *
 vec_str_nth (vec_t * vec, int n)
 {
-  unsigned char ** tmp = vec_nth (vec, n);
-  if (!tmp)
-    return NULL;
-  return *tmp;
+    unsigned char ** tmp = vec_nth (vec, n);
+    if (!tmp)
+        return NULL;
+    return *tmp;
 }
 
 /* Finds an object in a vector.
@@ -265,18 +245,18 @@ vec_str_nth (vec_t * vec, int n)
 int
 vec_find (vec_t * vec, void * obj)
 {
-  int i;
-  
-  for (i = 0; i < vec->num_stuff; i++)
+    int i;
+
+    for (i = 0; i < vec->num_stuff; i++)
     {
-      void * cur_obj;
-      cur_obj = vec_nth (vec, i);
-      if (cur_obj == obj)
-        break;
+        void * cur_obj;
+        cur_obj = vec_nth (vec, i);
+        if (cur_obj == obj)
+            break;
     }
 
-  i = (i == vec->num_stuff) ? -1 : i;
-  return i;
+    i = (i == vec->num_stuff) ? -1 : i;
+    return i;
 }
 
 
@@ -292,53 +272,53 @@ vec_find (vec_t * vec, void * obj)
 int
 vec_str_cmp (vec_t * vec_0, vec_t * vec_1)
 {
-  int i, j;
-  short * check;
+    int i, j;
+    short * check;
 
-  check = (short *) calloc (vec_1->num_stuff, sizeof (short));
-  CHECK_ALLOC (check, AEC_MEM);
+    check = (short *) calloc (vec_1->num_stuff, sizeof (short));
+    CHECK_ALLOC (check, AEC_MEM);
 
-  for (i = 0; i < vec_0->num_stuff; i++)
+    for (i = 0; i < vec_0->num_stuff; i++)
     {
-      unsigned char * cur_0;
-      cur_0 = vec_str_nth (vec_0, i);
+        unsigned char * cur_0;
+        cur_0 = vec_str_nth (vec_0, i);
 
-      for (j = 0; j < vec_1->num_stuff; j++)
+        for (j = 0; j < vec_1->num_stuff; j++)
         {
-          if (check[j])
-            continue;
+            if (check[j])
+                continue;
 
-          unsigned char * cur_1;
-          cur_1 = vec_str_nth (vec_1, j);
+            unsigned char * cur_1;
+            cur_1 = vec_str_nth (vec_1, j);
 
-          if (!strcmp (cur_0, cur_1))
+            if (!strcmp (cur_0, cur_1))
             {
-              check[j] = 1;
-              break;
+                check[j] = 1;
+                break;
             }
         }
 
-      if (j == vec_1->num_stuff)
+        if (j == vec_1->num_stuff)
         {
-          free (check);
-          return -2;
+            free (check);
+            return -2;
         }
     }
 
-  // vec_0 is a subsequence of vec_1
+    // vec_0 is a subsequence of vec_1
 
-  for (i = 0; i < vec_1->num_stuff; i++)
+    for (i = 0; i < vec_1->num_stuff; i++)
     {
-      if (!check[i])
+        if (!check[i])
         {
-          free (check);
-          return -3;
+            free (check);
+            return -3;
         }
     }
 
-  free (check);
+    free (check);
 
-  return 0;
+    return 0;
 }
 
 /* Checks if a vector is a subsequence of another vector.
@@ -354,49 +334,49 @@ vec_str_cmp (vec_t * vec_0, vec_t * vec_1)
 int
 vec_str_sub (vec_t * vec_0, vec_t * vec_1)
 {
-  int i, j;
-  short * check;
+    int i, j;
+    short * check;
 
-  check = (short *) calloc (vec_0->num_stuff, sizeof (short));
-  CHECK_ALLOC (check, AEC_MEM);
+    check = (short *) calloc (vec_0->num_stuff, sizeof (short));
+    CHECK_ALLOC (check, AEC_MEM);
 
-  for (i = 0; i < vec_1->num_stuff; i++)
+    for (i = 0; i < vec_1->num_stuff; i++)
     {
-      unsigned char * cur_1;
-      cur_1 = vec_str_nth (vec_1, i);
+        unsigned char * cur_1;
+        cur_1 = vec_str_nth (vec_1, i);
 
-      for (j = 0; j < vec_0->num_stuff; j++)
+        for (j = 0; j < vec_0->num_stuff; j++)
         {
-          unsigned char * cur_0;
-          cur_0 = vec_str_nth (vec_0, j);
+            unsigned char * cur_0;
+            cur_0 = vec_str_nth (vec_0, j);
 
-          if (!strcmp (cur_0, cur_1))
+            if (!strcmp (cur_0, cur_1))
             {
-              check[j] = 1;
-              break;
+                check[j] = 1;
+                break;
             }
         }
 
-      if (j == vec_0->num_stuff)
+        if (j == vec_0->num_stuff)
         {
-          free (check);
-          return -2;
+            free (check);
+            return -2;
         }
     }
 
-  for (i = 0; i < vec_0->num_stuff; i++)
+    for (i = 0; i < vec_0->num_stuff; i++)
     {
-      if (!check[i])
+        if (!check[i])
         {
-          unsigned char * cur_i;
-          cur_i = vec_str_nth (vec_0, i);
-          fprintf (stderr, "cur[%i] == '%s'\n", i, cur_i);
-          free (check);
-          return -3;
+            unsigned char * cur_i;
+            cur_i = vec_str_nth (vec_0, i);
+            fprintf (stderr, "cur[%i] == '%s'\n", i, cur_i);
+            free (check);
+            return -3;
         }
     }
 
-  free (check);
+    free (check);
 
-  return 0;
+    return 0;
 }

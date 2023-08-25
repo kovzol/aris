@@ -15,10 +15,12 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef AIO_H
+#define AIO_H
 
-#ifndef ARIS_A_IO_H
-#define ARIS_A_IO_H
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <stdlib.h>
 #include "typedef.h"
 
@@ -58,5 +60,8 @@
 
 int aio_save (proof_t * proof, const char * file_name);
 proof_t * aio_open (const char * file_name);
+#ifdef __cplusplus
+}
+#endif
 
-#endif /* ARIS_A_IO_H */
+#endif // AIO_H

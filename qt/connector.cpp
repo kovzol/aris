@@ -16,13 +16,13 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "connector.h"
-#include "proof.h"
-#include "process.h"
-#include "typedef.h"
-#include "sen-data.h"
-#include "list.h"
-#include "vec.h"
-#include "aio.h"
+#include "../src/proof.h"
+#include "../src/process.h"
+#include "../src/typedef.h"
+#include "../src/sen-data.h"
+#include "../src/list.h"
+#include "../src/vec.h"
+#include "../src/aio.h"
 
 #include <QDebug>
 #include <iostream>

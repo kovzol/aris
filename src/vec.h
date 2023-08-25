@@ -16,21 +16,25 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ARIS_VEC_H
-#define ARIS_VEC_H
 
+#ifndef VEC_H
+#define VEC_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "typedef.h"
 
 // The vector data structure.
 
 struct vector
 {
-  unsigned int num_stuff;    //The amount of stuff.
-  unsigned int size_stuff;   //The size of each stuff.
+    unsigned int num_stuff;    //The amount of stuff.
+    unsigned int size_stuff;   //The size of each stuff.
 
-  unsigned int alloc_space;  //The allocated space.
+    unsigned int alloc_space;  //The allocated space.
 
-  void * stuff;              //The stuff.
+    void * stuff;              //The stuff.
 };
 
 
@@ -47,5 +51,8 @@ unsigned char * vec_str_nth (vec_t * vec, int n);
 int vec_find (vec_t * vec, void * obj);
 int vec_str_cmp (vec_t * vec_0, vec_t * vec_1);
 int vec_str_sub (vec_t * vec_0, vec_t * vec_1);
+#ifdef __cplusplus
+}
+#endif
 
-#endif /* ARIS_VEC_H */
+#endif // VEC_H

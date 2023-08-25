@@ -16,12 +16,12 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "auxconnector.h"
-#include "aio.h"
+#include "../src/aio.h"
 #include "connector.h"
-#include "list.h"
-#include "proof.h"
-#include "rules.h"
-#include "sen-data.h"
+#include "../src/list.h"
+#include "../src/proof.h"
+#include "../src/rules.h"
+#include "../src/sen-data.h"
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>

@@ -17,7 +17,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QApplication app(argc, argv);
+#ifndef WITH_CMAKE
     app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
+    const QUrl url(QStringLiteral("qrc:/main.qml"));
+#else
+    app.setWindowIcon(QIcon(u"Aris-qt/assets/icon_simple.svg"_qs));
+    const QUrl url(u"Aris-qt/main.qml"_qs);
+#endif
 
     ProofData theData;
     GoalData theGoals;
@@ -37,7 +43,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("auxConnector",&auxConnector);
 
 
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
+//    const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
         &app, [url](QObject *obj, const QUrl &objUrl) {
             if (!obj && url == objUrl)

@@ -16,28 +16,31 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ARIS_LIST_H
-#define ARIS_LIST_H
+#ifndef LIST_H
+#define LIST_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "typedef.h"
 
 // The item structure of the doubly-linked list.
 
 struct item
 {
-  struct item * prev;
-  struct item * next;
+    struct item * prev;
+    struct item * next;
 
-  void * value;
+    void * value;
 };
 
 // The doubly-linked list structure itself.
 
 struct list
 {
-  unsigned int num_stuff;
+    unsigned int num_stuff;
 
-  item_t * head, * tail;
+    item_t * head, * tail;
 };
 
 list_t * init_list ();
@@ -51,5 +54,8 @@ void ls_clear (list_t * ls);
 item_t * ls_nth (list_t * ls, int n);
 item_t * ls_find (list_t * ls, void * val);
 int ls_empty (list_t * ls);
+#ifdef __cplusplus
+}
+#endif
 
-#endif /* ARIS_LIST_H */
+#endif // LIST_H
