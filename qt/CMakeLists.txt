@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Aris VERSION 0.1 LANGUAGES C CXX)
+project(aris-qt VERSION 0.1 LANGUAGES C CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,7 +9,7 @@ add_compile_definitions(WITH_CMAKE)
 find_package(Qt6 6.2 REQUIRED COMPONENTS Quick Widgets QuickControls2)
 find_package(LibXml2 REQUIRED)
 
-add_executable(Aris
+add_executable(aris-qt
     ../src/aio.h
     auxconnector.h
     connector.h
@@ -53,8 +53,8 @@ add_executable(Aris
     ../src/vec.c
 )
 
-qt_add_qml_module(Aris
-    URI Aris-qt
+qt_add_qml_module(aris-qt
+    URI arisqt
     VERSION 1.0
     QML_FILES main.qml ProofArea.qml DrawerTools.qml GoalLine.qml KeyButton.qml KeyGroup.qml
     RESOURCES
@@ -73,7 +73,7 @@ qt_add_qml_module(Aris
         assets/eval.png
 )
 
-set_target_properties(Aris PROPERTIES
+set_target_properties(aris-qt PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -81,14 +81,14 @@ set_target_properties(Aris PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(Aris
+target_link_libraries(aris-qt
     PRIVATE Qt6::Quick
     PRIVATE Qt6::Widgets
     PRIVATE Qt6::QuickControls2
     PUBLIC LibXml2::LibXml2
 )
 
-install(TARGETS Aris
+install(TARGETS aris-qt
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

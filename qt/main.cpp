@@ -21,8 +21,8 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 #else
-    app.setWindowIcon(QIcon(u"Aris-qt/assets/icon_simple.svg"_qs));
-    const QUrl url(u"Aris-qt/main.qml"_qs);
+    app.setWindowIcon(QIcon(u"arisqt/assets/icon_simple.svg"_qs));
+    const QUrl url(u"arisqt/main.qml"_qs);
 #endif
 
     ProofData theData;
