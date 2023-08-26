@@ -215,7 +215,7 @@ void auxConnector::wasmImportProof(ProofData *pd, const Connector *c, ProofModel
 #ifndef Q_OS_WASM
 void auxConnector::newWindow()
 {
-    QString program = "./Aris";
+    QString program = "./aris-qt";
     QStringList arguments;
 
     QProcess *myProcess = new QProcess(this);
