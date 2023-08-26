@@ -227,7 +227,11 @@ Item {
 
                 palette {
                     button: darkMode ? "#CF6679" : "white"
+                    buttonText: "black"
+                    window: darkMode ? "#CF6679" : "white"
                 }
+
+
 
                 visible: !vis
                 height: theTextID.height
@@ -263,6 +267,8 @@ Item {
 
                 palette {
                     button: darkMode ? "#CF6679" : "white"
+                    buttonText: "black"
+                    window: darkMode ? "#CF6679" : "white"
                 }
 
                 // TODO: Fix width maybe
@@ -377,6 +383,11 @@ Item {
 
                 Menu{
                     id: optionsID
+
+                    palette {
+                        base: darkMode? "#1F1A24" : "white"
+                        text: darkMode?  "white" : "black"
+                    }
 
                     Action{
                         text: "Add Premise"

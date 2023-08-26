@@ -24,6 +24,12 @@ ToolBar{
 
     anchors.fill: parent
 
+    palette {
+        buttonText: darkMode ? "white" : "black"
+        window: darkMode ? "#121212" : "white"
+        button: darkMode ? "#5C469C" : "white"
+    }
+
     ColumnLayout{
 
         ToolButton{
