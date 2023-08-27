@@ -1,18 +1,18 @@
 
-### GNU Aris distribution
+# GNU Aris
 
 GNU Aris is a logical proof program that provides support for propositional and predicate logic, Boolean algebra, and arithmetical logic in the form of abstract sequences (seqlog). This software is distributed under the GNU General Public License.
 
---------------------
 Copyright (C) 2012, 2013 Ian Dunn
 
 Copying and distribution of this file, with or without modification, are permitted in any medium without royalty provided the copyright
 notice and this notice are preserved.
 
-----
-### Table of Contents
+## Table of Contents
 - [Installation Guide](#installation-guide)
-  - [Build GNU Aris through source](#build-gnu-aris-through-source)
+  - [gtk version](#gtk-version)
+  - [qt version](#qt-version)
+  - [WebAssembly](#webassembly)
 - [Contributing Guide](#contributing-guide)
   - [Getting Started](#getting-started)
   - [How to Contribute](#how-to-contribute)
@@ -20,17 +20,26 @@ notice and this notice are preserved.
 - [Contact Us](#contact-us)
 - [References](#references)
 
-### Installation Guide
-#### Build GNU Aris through source
-To build GNU Aris through source, follow the instructions given below. This should work on Linux, Mac or Windows (by using, for example, the MSYS2 toolchain and its MINGW64 environment):
+## Installation Guide
+Check under `Releases` for Linux/Windows bundles and `AppImages` or visit our [website](matek.hu/zoltan/aris) .
 
-1. Clone the Aris repository from https://github.com/kovzol/aris using the command `git clone https://github.com/kovzol/aris`.
+Else, to build GNU Aris through source, follow the instructions given below. This should work on Linux, Mac or Windows (by using, for example, the MSYS2 toolchain and its MINGW64 environment):
 
-2. Create a directory named **build** by entering `mkdir build`.
+Clone/Download the repository. For example:
+   ```
+   git clone https://github.com/kovzol/aris
+   ```
 
-3. Change your working directory to this folder: `cd build`.
+### gtk version
 
-3. Run the command `cmake ..`. You should see something like this:
+1. Follow the steps:
+```
+mkdir build
+cd build
+cmake ..
+```
+
+2. You should see something like this:
 ```
 -- The C compiler identification is GNU 11.3.0
 -- Detecting C compiler ABI info
@@ -44,10 +53,10 @@ To build GNU Aris through source, follow the instructions given below. This shou
 --   Found gtk+-3.0, version 3.24.33
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/kovzol/workspace/aris/b
+-- Build files have been written to: /home/abc/workspace/aris/build/
 ```
 
-4. Run the command `make`. You should see something like this at the end of the process:
+3. Run the command `make`. You should see something like this at the end of the process:
 ```
 [ 88%] Building C object CMakeFiles/aris.dir/src/undo.c.o
 [ 92%] Building C object CMakeFiles/aris.dir/src/var.c.o
@@ -56,13 +65,79 @@ To build GNU Aris through source, follow the instructions given below. This shou
 [100%] Built target aris
 ```
 
-5. Launch GNU Aris using `./aris`.
+4. Launch using `./aris`.
 
-For further instructions on building and installation, refer to the INSTALL file.
+For further instructions on building and installation ( without `cmake`), refer to the [INSTALL](INSTALL) file.
 
-#### Run a precompiled binary of GNU Aris through snap
+#### Snap Installation
 
-To install GNU Aris through snap, visit https://snapcraft.io/aris and find the required distribution details according to your system. For example, for Linux machines, use `sudo snap install aris` to install the Aris and launch it with `aris`.
+To install GNU Aris through snap, visit https://snapcraft.io/aris and find the required distribution details according to your system.
+
+### qt version
+#### Using `cmake`
+
+Run the following inside `aris/` :
+```
+cmake -S qt/ -B build-qt/ -DCMAKE_GENERATOR:STRING=Ninja -DCMAKE_BUILD_TYPE:STRING=Release
+cmake --build build-qt/ --target all
+```
+This should generate a binary `aris-qt` inside `build-qt/` , it can be run with `./aris-qt` or you can install to `/usr/local` with:
+```
+cd build-qt/ && cmake -P cmake_install.cmake
+```
+To uninstall:
+```
+cd build-qt/ && xargs rm < install_manifest.txt
+```
+
+#### Using `qmake`
+
+Run the following inside `aris/` with appropriate `path/to/qmake`:
+```
+mkdir build-qt
+cd build-qt
+path/to/qmake -o Makefile ../qt/aris-qt.pro -spec linux-g++ CONFIG+=qtquickcompiler
+```
+This should generate a binary `aris-qt` inside `build-qt/` , it can be run with `./aris-qt` .
+
+### WebAssembly
+
+To build to WebAssembly, `Qt 6.5` and `emscripten` version `3.1.25` are required.
+Also, since `emscripten` doesn't have support for `libxml2` yet, it would need to be compiled from source.
+
+Follow these steps (after cloning libxml2) to compile `libxml2` :
+```
+mkdir build
+cd libxml2 && autoreconf -if -Wall
+cd ../build 
+path/to/emconfigure ../libxml2/configure --with-http=no --with-ftp=no --with-python=no --with-threads=no --enable-shared=no
+path/to/emmake make
+path/to/emar rcs libxml2.a *.o
+```
+
+Now, navigate to your `aris/` directory and run the following:
+```
+mkdir libxml2
+cp path/to/above/created/libxml2.a libxml2/
+cp -r path/to/cloned-libxml2/include/libxml/ libxml2/
+```
+You can customize these paths by editing the `aris-qt.pro` file.
+
+Finally:
+
+```
+mkdir build-wasm
+cd build-wasm
+/path/to/Qt/6.5.0/wasm_singlethread/bin/qmake /path/to/aris/qt/aris-qt.pro -spec wasm-emscripten && /usr/bin/make qmake_all
+make -j $(nproc)
+```
+
+Now, run:
+```
+python -m http.server 8000
+```
+The project can be found at `http://0.0.0.0:8000/` .
+
 
 ### Contributing Guide
 We welcome contributions to our project and thank you for taking the time to improve it. Here are some guidelines to follow when contributing:
