@@ -1,5 +1,5 @@
 AC_PREREQ(2.60)
-AC_INIT([GNU Aris], [2.2], [bug-aris@gnu.org])
+AC_INIT([GNU Aris], [3.0], [bug-aris@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
 

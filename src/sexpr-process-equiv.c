@@ -36,11 +36,11 @@
  */
 
 #include "sexpr-process.h"
-#include "vec.h"
+#include "../src/vec.h"
 
 enum {
-  MODE_CO = 0,
-  MODE_ID
+    MODE_CO = 0,
+    MODE_ID
 };
 
 /*
@@ -50,1460 +50,1460 @@ enum {
 int
 recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
 {
-  if (!strcmp (sen_0, sen_1))
-    return -3;
+    if (!strcmp (sen_0, sen_1))
+        return -3;
 
-  int gg_0, gg_1;
-  vec_t * gens_0, * gens_1;
-  int con_0, con_1;
+    int gg_0, gg_1;
+    vec_t * gens_0, * gens_1;
+    int con_0, con_1;
 
-  gens_0 = init_vec (sizeof (char *));
-  if (!gens_0)
-    return AEC_MEM;
+    gens_0 = init_vec (sizeof (char *));
+    if (!gens_0)
+        return AEC_MEM;
 
-  gens_1 = init_vec (sizeof (char *));
-  if (!gens_1)
-    return AEC_MEM;
+    gens_1 = init_vec (sizeof (char *));
+    if (!gens_1)
+        return AEC_MEM;
 
-  unsigned char conn_0[S_CL + 1], conn_1[S_CL + 1];
+    unsigned char conn_0[S_CL + 1], conn_1[S_CL + 1];
 
-  conn_0[0] = '\0';
-  conn_1[0] = '\0';
+    conn_0[0] = '\0';
+    conn_1[0] = '\0';
 
-  gg_0 = sexpr_get_generalities (sen_0, conn_0, gens_0);
-  if (gg_0 == AEC_MEM)
-    return AEC_MEM;
+    gg_0 = sexpr_get_generalities (sen_0, conn_0, gens_0);
+    if (gg_0 == AEC_MEM)
+        return AEC_MEM;
 
-  gg_1 = sexpr_get_generalities (sen_1, conn_1, gens_1);
-  if (gg_1 == AEC_MEM)
-    return AEC_MEM;
+    gg_1 = sexpr_get_generalities (sen_1, conn_1, gens_1);
+    if (gg_1 == AEC_MEM)
+        return AEC_MEM;
 
-  if (mode == MODE_CO)
+    if (mode == MODE_CO)
     {
-      if (gg_0 != gg_1)
-	{
-	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
-	  return -2;
-	}
+        if (gg_0 != gg_1)
+        {
+            destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+            return -2;
+        }
     }
-  else
+    else
     {
-      if (gg_0 < gg_1)
-	{
-	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
-	  return -2;
-	}
-    }
-
-  // If the larger sentence has no top connective.
-  if (gg_0 == 1)
-    {
-      destroy_str_vec (gens_0); destroy_str_vec (gens_1);
-
-      // If only one generality, there is either a negation or quantifier.
-
-      if (sen_0[0] != '(' || sen_1[0] != '(')
-	return -2;
-
-      int pos0, pos1;
-      unsigned char * car_0, * car_1, * cdr_0, * cdr_1;
-
-      pos0 = sexpr_str_car_cdr (sen_0, &car_0, &cdr_0);
-      if (pos0 == AEC_MEM)
-	return AEC_MEM;
-
-      pos1 = sexpr_str_car_cdr (sen_1, &car_1, &cdr_1);
-      if (pos1 == AEC_MEM)
-	return AEC_MEM;
-
-      // Check for a negation.
-      if (!strcmp (car_0, S_NOT) && !strcmp (car_1, S_NOT))
-	{
-	  free (car_0); free (car_1);
-	  // Eliminate the negation, and continue.
-
-	  int ret;
-	  ret = recurse_mode (cdr_0, cdr_1, mode);
-	  if (ret == AEC_MEM)
-	    return AEC_MEM;
-
-	  free (cdr_0); free(cdr_1);
-
-	  return ret;
-	}
-
-      // Check for a quantifier.
-      if (!strcmp (car_0, car_1))
-	{
-	  // Eliminate the quantifier and continue.
-	  if (strncmp (car_0 + 1, S_UNV, S_CL)
-	      && strncmp (car_0 + 1, S_EXL, S_CL))
-	    {
-	      free (car_0); free (car_1);
-	      free (cdr_0); free(cdr_1);
-	      return -2;
-	    }
-
-	  free (car_0); free (car_1);
-
-	  int cmp;
-	  cmp = recurse_mode (cdr_0, cdr_1, mode);
-	  if (cmp == AEC_MEM)
-	    return AEC_MEM;
-
-	  free (cdr_0); free(cdr_1);
-
-	  return cmp;
-	}
-
-      free (car_0); free(car_1);
-      free (cdr_0); free(cdr_1);
-
-      return -2;
+        if (gg_0 < gg_1)
+        {
+            destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+            return -2;
+        }
     }
 
-  /* The connectives only need to be the same if mode == 1 */
-
-  con_0 = 1;
-  if (strcmp (conn_0, S_AND) && strcmp (conn_0, S_OR))
-    con_0 = 0;
-
-  con_1 = 1;
-  if (strcmp (conn_1, S_AND) && strcmp (conn_1, S_OR))
+    // If the larger sentence has no top connective.
+    if (gg_0 == 1)
     {
-      if (!(mode == MODE_ID && conn_1[0] == '\0'))
-	con_1 = 0;
+        destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+
+        // If only one generality, there is either a negation or quantifier.
+
+        if (sen_0[0] != '(' || sen_1[0] != '(')
+            return -2;
+
+        int pos0, pos1;
+        unsigned char * car_0, * car_1, * cdr_0, * cdr_1;
+
+        pos0 = sexpr_str_car_cdr (sen_0, &car_0, &cdr_0);
+        if (pos0 == AEC_MEM)
+            return AEC_MEM;
+
+        pos1 = sexpr_str_car_cdr (sen_1, &car_1, &cdr_1);
+        if (pos1 == AEC_MEM)
+            return AEC_MEM;
+
+        // Check for a negation.
+        if (!strcmp (car_0, S_NOT) && !strcmp (car_1, S_NOT))
+        {
+            free (car_0); free (car_1);
+            // Eliminate the negation, and continue.
+
+            int ret;
+            ret = recurse_mode (cdr_0, cdr_1, mode);
+            if (ret == AEC_MEM)
+                return AEC_MEM;
+
+            free (cdr_0); free(cdr_1);
+
+            return ret;
+        }
+
+        // Check for a quantifier.
+        if (!strcmp (car_0, car_1))
+        {
+            // Eliminate the quantifier and continue.
+            if (strncmp (car_0 + 1, S_UNV, S_CL)
+                && strncmp (car_0 + 1, S_EXL, S_CL))
+            {
+                free (car_0); free (car_1);
+                free (cdr_0); free(cdr_1);
+                return -2;
+            }
+
+            free (car_0); free (car_1);
+
+            int cmp;
+            cmp = recurse_mode (cdr_0, cdr_1, mode);
+            if (cmp == AEC_MEM)
+                return AEC_MEM;
+
+            free (cdr_0); free(cdr_1);
+
+            return cmp;
+        }
+
+        free (car_0); free(car_1);
+        free (cdr_0); free(cdr_1);
+
+        return -2;
     }
 
-  if ((con_0 && !con_1) || (!con_0 && con_1))
+    /* The connectives only need to be the same if mode == 1 */
+
+    con_0 = 1;
+    if (strcmp (conn_0, S_AND) && strcmp (conn_0, S_OR))
+        con_0 = 0;
+
+    con_1 = 1;
+    if (strcmp (conn_1, S_AND) && strcmp (conn_1, S_OR))
     {
-      destroy_str_vec (gens_0); destroy_str_vec (gens_1);
-      return -2;
+        if (!(mode == MODE_ID && conn_1[0] == '\0'))
+            con_1 = 0;
     }
 
-  if (con_0 && con_1)
+    if ((con_0 && !con_1) || (!con_0 && con_1))
     {
-      int cmp;
-      if (mode == MODE_CO)
-	cmp = vec_str_cmp (gens_0, gens_1);
-      else
-	cmp = vec_str_sub (gens_1, gens_0);
-
-      if (cmp == AEC_MEM)
-	return AEC_MEM;
-
-      if (cmp == 0)
-	{
-	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
-	  return 0;
-	}
-      else if (mode == MODE_ID && gg_0 != gg_1)
-	{
-	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
-	  return -2;
-	}
+        destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+        return -2;
     }
 
-  int ret, i;
-
-  for (i = 0; i < gens_0->num_stuff; i++)
+    if (con_0 && con_1)
     {
-      unsigned char * cur_0, * cur_1;
+        int cmp;
+        if (mode == MODE_CO)
+            cmp = vec_str_cmp (gens_0, gens_1);
+        else
+            cmp = vec_str_sub (gens_1, gens_0);
 
-      cur_0 = vec_str_nth (gens_0, i);
-      cur_1 = vec_str_nth (gens_1, i);
+        if (cmp == AEC_MEM)
+            return AEC_MEM;
 
-      if (!strcmp (cur_0, cur_1))
-	continue;
-
-      ret = recurse_mode (cur_0, cur_1, mode);
-      if (ret == AEC_MEM)
-	return AEC_MEM;
-
-      if (ret != 0)
-	{
-	  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
-	  return ret;
-	}
+        if (cmp == 0)
+        {
+            destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+            return 0;
+        }
+        else if (mode == MODE_ID && gg_0 != gg_1)
+        {
+            destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+            return -2;
+        }
     }
 
-  destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+    int ret, i;
 
-  return 0;
+    for (i = 0; i < gens_0->num_stuff; i++)
+    {
+        unsigned char * cur_0, * cur_1;
+
+        cur_0 = vec_str_nth (gens_0, i);
+        cur_1 = vec_str_nth (gens_1, i);
+
+        if (!strcmp (cur_0, cur_1))
+            continue;
+
+        ret = recurse_mode (cur_0, cur_1, mode);
+        if (ret == AEC_MEM)
+            return AEC_MEM;
+
+        if (ret != 0)
+        {
+            destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+            return ret;
+        }
+    }
+
+    destroy_str_vec (gens_0); destroy_str_vec (gens_1);
+
+    return 0;
 }
 
 char *
 process_equivalence (unsigned char * conc, vec_t * prems, const char * rule)
 {
-  char * ret = NOT_MINE;
-  unsigned char * prem;
-  prem = vec_str_nth (prems, 0);
+    char * ret = NOT_MINE;
+    unsigned char * prem;
+    prem = vec_str_nth (prems, 0);
 
-  if (!strcmp (rule, "im"))
+    if (!strcmp (rule, "im"))
     {
-      if (prems->num_stuff != 1)
-	return _("Implication requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Implication requires one (1) reference.");
 
-      ret = proc_im (prem, conc);
-      if (!ret)
-	return NULL;
+        ret = proc_im (prem, conc);
+        if (!ret)
+            return NULL;
     }  /* End of implication. */
 
-  if (!strcmp (rule, "dm"))
+    if (!strcmp (rule, "dm"))
     {
-      if (prems->num_stuff != 1)
-	return _("DeMorgan requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("DeMorgan requires one (1) reference.");
 
-      ret = proc_dm (prem, conc, -1);
-      if (!ret)
-	return NULL;
+        ret = proc_dm (prem, conc, -1);
+        if (!ret)
+            return NULL;
     }
 
-  if (!strcmp (rule, "as"))
+    if (!strcmp (rule, "as"))
     {
-      if (prems->num_stuff != 1)
-	return _("Association requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Association requires one (1) reference.");
 
-      ret = proc_as (prem, conc);
-      if (!ret)
-	return NULL;
+        ret = proc_as (prem, conc);
+        if (!ret)
+            return NULL;
     }  /* End of association. */
 
-  if (!strcmp (rule, "co"))
+    if (!strcmp (rule, "co"))
     {
-      if (prems->num_stuff != 1)
-	return _("Commutativity requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Commutativity requires one (1) reference.");
 
-      ret = proc_co (prem, conc);
-      if (!ret)
-	return NULL;
+        ret = proc_co (prem, conc);
+        if (!ret)
+            return NULL;
     }  /* End of commutativity. */
 
-  if (!strcmp (rule, "id"))
+    if (!strcmp (rule, "id"))
     {
-      if (prems->num_stuff != 1)
-	return _("Idempotence requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Idempotence requires one (1) reference.");
 
-      ret = proc_id (prem, conc);
-      if (!ret)
-	return NULL;
+        ret = proc_id (prem, conc);
+        if (!ret)
+            return NULL;
     }  /* End of idempotence. */
 
-  if (!strcmp (rule, "dt"))
+    if (!strcmp (rule, "dt"))
     {
-      if (prems->num_stuff != 1)
-	return _("Distribution requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Distribution requires one (1) reference.");
 
-      ret = proc_dt (prem, conc, -1);
-      if (!ret)
-	return NULL;
+        ret = proc_dt (prem, conc, -1);
+        if (!ret)
+            return NULL;
     } /* End of distribution. */
 
-  if (!strcmp (rule, "eq"))
+    if (!strcmp (rule, "eq"))
     {
-      if (prems->num_stuff != 1)
-	return _("Equivalence requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Equivalence requires one (1) reference.");
 
-      ret = proc_eq (prem, conc);
-      if (!ret)
-	return NULL;
+        ret = proc_eq (prem, conc);
+        if (!ret)
+            return NULL;
     }  /* End of equivalence. */
 
-  if (!strcmp (rule, "dn"))
+    if (!strcmp (rule, "dn"))
     {
-      if (prems->num_stuff != 1)
-	return _("Double Negation requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Double Negation requires one (1) reference.");
 
-      ret = proc_dn (prem, conc);
-      if (!ret)
-	return NULL;
+        ret = proc_dn (prem, conc);
+        if (!ret)
+            return NULL;
     }  /* End of double negation. */
 
-  if (!strcmp (rule, "ep"))
+    if (!strcmp (rule, "ep"))
     {
-      if (prems->num_stuff != 1)
-	return _("Exportation requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Exportation requires one (1) reference.");
 
-      ret = proc_ep (prem, conc);
-      if (!ret)
-	return NULL;
+        ret = proc_ep (prem, conc);
+        if (!ret)
+            return NULL;
     }
 
-  if (!strcmp (rule, "sb"))
+    if (!strcmp (rule, "sb"))
     {
-      if (prems->num_stuff != 1)
-	return _("Subsumption requires one (1) reference.");
+        if (prems->num_stuff != 1)
+            return _("Subsumption requires one (1) reference.");
 
-      ret = proc_sb (prem, conc);
-      if (!ret)
-	return NULL;
+        ret = proc_sb (prem, conc);
+        if (!ret)
+            return NULL;
     }
 
-  return ret;
+    return ret;
 }
 
 char *
 proc_im (unsigned char * prem, unsigned char * conc)
 {
-  unsigned char * dis_sen, * con_sen;
-  int d_len;
+    unsigned char * dis_sen, * con_sen;
+    int d_len;
 
-  sen_put_len (prem, conc, &con_sen, &dis_sen);
-  d_len = strlen (dis_sen);
+    sen_put_len (prem, conc, &con_sen, &dis_sen);
+    d_len = strlen (dis_sen);
 
-  int i;
+    int i;
 
-  i = find_difference (dis_sen, con_sen);
-  if (i == -1)
-    return NO_DIFFERENCE;
+    i = find_difference (dis_sen, con_sen);
+    if (i == -1)
+        return NO_DIFFERENCE;
 
-  // i might be zero if this is an incorrect usage of im.
-  // same with i == 1.
-  // Only occurs if there is no top connective on one, or a quantifier.
+    // i might be zero if this is an incorrect usage of im.
+    // same with i == 1.
+    // Only occurs if there is no top connective on one, or a quantifier.
 
-  if (i < 2)
-    return _("Implication constructed incorrectly.");
+    if (i < 2)
+        return _("Implication constructed incorrectly.");
 
-  int tmp_pos;
-  unsigned char * tmp_str;
+    int tmp_pos;
+    unsigned char * tmp_str;
 
-  tmp_pos = parse_parens (dis_sen, i - 2, &tmp_str);
-  if (tmp_pos == AEC_MEM)
-    return NULL;
-  if (!tmp_str)
-    return _("Implication constructed incorrectly.");
+    tmp_pos = parse_parens (dis_sen, i - 2, &tmp_str);
+    if (tmp_pos == AEC_MEM)
+        return NULL;
+    if (!tmp_str)
+        return _("Implication constructed incorrectly.");
 
-  int ftc;
-  unsigned char * lsen, * rsen, * n_lsen;
+    int ftc;
+    unsigned char * lsen, * rsen, * n_lsen;
 
-  ftc = sexpr_find_top_connective (tmp_str, S_OR, &lsen, &rsen);
-  if (ftc == AEC_MEM)
-    return NULL;
+    ftc = sexpr_find_top_connective (tmp_str, S_OR, &lsen, &rsen);
+    if (ftc == AEC_MEM)
+        return NULL;
 
-  free (tmp_str);
+    free (tmp_str);
 
-  if (ftc < 0)
+    if (ftc < 0)
     {
-      if (lsen)  free (lsen);
-      if (rsen)  free (rsen);
+        if (lsen)  free (lsen);
+        if (rsen)  free (rsen);
 
-      return _("One sentence must contain a disjunction.");
+        return _("One sentence must contain a disjunction.");
     }
 
-  if (!sexpr_not_check (lsen))
+    if (!sexpr_not_check (lsen))
     {
-      free (lsen); free (rsen);
-      return _("The left disjunct must have a negation.");
+        free (lsen); free (rsen);
+        return _("The left disjunct must have a negation.");
     }
 
-  n_lsen = sexpr_elim_not (lsen);
-  if (!n_lsen)
-    return NULL;
+    n_lsen = sexpr_elim_not (lsen);
+    if (!n_lsen)
+        return NULL;
 
-  free (lsen);
+    free (lsen);
 
-  // Construct what should be the other sentence.
+    // Construct what should be the other sentence.
 
-  unsigned char * oth_sen;
-  oth_sen = construct_other (dis_sen, i - 1, tmp_pos, d_len - 3 - S_NL,
-			     "%s %s %s", S_CON, n_lsen, rsen);
-  if (!oth_sen)
-    return NULL;
+    unsigned char * oth_sen;
+    oth_sen = construct_other (dis_sen, i - 1, tmp_pos, d_len - 3 - S_NL,
+                              "%s %s %s", S_CON, n_lsen, rsen);
+    if (!oth_sen)
+        return NULL;
 
-  free (n_lsen);
-  free (rsen);
+    free (n_lsen);
+    free (rsen);
 
-  char * ret_str;
-  if (dis_sen == conc)
-    ret_str = proc_im (con_sen, oth_sen);
-  else
-    ret_str = proc_im (oth_sen, con_sen);
-  if (!ret_str)
-    return NULL;
+    char * ret_str;
+    if (dis_sen == conc)
+        ret_str = proc_im (con_sen, oth_sen);
+    else
+        ret_str = proc_im (oth_sen, con_sen);
+    if (!ret_str)
+        return NULL;
 
-  free (oth_sen);
-  if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-    return CORRECT;
+    free (oth_sen);
+    if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+        return CORRECT;
 
-  return _("Implication constructed incorrectly.");
+    return _("Implication constructed incorrectly.");
 }
 
 char *
 proc_dm (unsigned char * prem, unsigned char * conc, int mode_guess)
 {
-  int i;
-  i = find_difference (prem, conc);
-  if (i == -1)
-    return NO_DIFFERENCE;
+    int i;
+    i = find_difference (prem, conc);
+    if (i == -1)
+        return NO_DIFFERENCE;
 
-  int p_len, c_len, mode;
+    int p_len, c_len, mode;
 
-  if (mode_guess == -1)
+    if (mode_guess == -1)
     {
-      p_len = strlen (prem);
-      c_len = strlen (conc);
-      if (p_len != c_len)
-	mode = 0;
-      else
-	mode = 1;
+        p_len = strlen (prem);
+        c_len = strlen (conc);
+        if (p_len != c_len)
+            mode = 0;
+        else
+            mode = 1;
     }
-  else
+    else
     {
-      mode = mode_guess;
+        mode = mode_guess;
     }
 
-  if (mode == 0)
+    if (mode == 0)
     {
-      // Determine which sentence has the negation on it.
+        // Determine which sentence has the negation on it.
 
-      unsigned char * not_sen, * oth_sen;
-      int n_len;
+        unsigned char * not_sen, * oth_sen;
+        int n_len;
 
-      if (i == 0)
-	return _("DeMorgan constructed incorrectly.");
+        if (i == 0)
+            return _("DeMorgan constructed incorrectly.");
 
-      if (!strncmp (prem + i - 1, S_NOT, S_NL))
-	{
-	  not_sen = prem;  n_len = p_len;
-	  oth_sen = conc;
-	}
-      else if (!strncmp (conc + i - 1, S_NOT, S_NL))
-	{
-	  not_sen = conc;  n_len = c_len;
-	  oth_sen = prem;
-	}
-      else
-	{
-	  return _("There must be a negation at the difference.");
-	}
+        if (!strncmp (prem + i - 1, S_NOT, S_NL))
+        {
+            not_sen = prem;  n_len = p_len;
+            oth_sen = conc;
+        }
+        else if (!strncmp (conc + i - 1, S_NOT, S_NL))
+        {
+            not_sen = conc;  n_len = c_len;
+            oth_sen = prem;
+        }
+        else
+        {
+            return _("There must be a negation at the difference.");
+        }
 
-      // Determine the scope, and remove the negation.
+        // Determine the scope, and remove the negation.
 
-      int tmp_pos;
-      unsigned char * tmp_str;
+        int tmp_pos;
+        unsigned char * tmp_str;
 
-      tmp_pos = parse_parens (not_sen, i - 2, &tmp_str);
-      if (tmp_pos == AEC_MEM)
-	return NULL;
-      if (!tmp_str)
-	return _("DeMorgan constructed incorrectly.");
+        tmp_pos = parse_parens (not_sen, i - 2, &tmp_str);
+        if (tmp_pos == AEC_MEM)
+            return NULL;
+        if (!tmp_str)
+            return _("DeMorgan constructed incorrectly.");
 
-      unsigned char * elim_sen;
+        unsigned char * elim_sen;
 
-      elim_sen = sexpr_elim_not (tmp_str);
-      if (!elim_sen)
-	return NULL;
-      free (tmp_str);
+        elim_sen = sexpr_elim_not (tmp_str);
+        if (!elim_sen)
+            return NULL;
+        free (tmp_str);
 
-      int gg;
-      vec_t * gg_vec;
-      unsigned char conn[S_CL + 1];
+        int gg;
+        vec_t * gg_vec;
+        unsigned char conn[S_CL + 1];
 
-      gg_vec = init_vec (sizeof (char *));
-      if (!gg_vec)
-	return NULL;
+        gg_vec = init_vec (sizeof (char *));
+        if (!gg_vec)
+            return NULL;
 
-      conn[0] = '\0';
-      gg = sexpr_get_generalities (elim_sen, conn, gg_vec);
-      if (gg == AEC_MEM)
-	return NULL;
-      free (elim_sen);
+        conn[0] = '\0';
+        gg = sexpr_get_generalities (elim_sen, conn, gg_vec);
+        if (gg == AEC_MEM)
+            return NULL;
+        free (elim_sen);
 
-      if (gg == 1)
-	{
-	  destroy_str_vec (gg_vec);
-	  return _("There must be generalities on the negation sentence.");
-	}
+        if (gg == 1)
+        {
+            destroy_str_vec (gg_vec);
+            return _("There must be generalities on the negation sentence.");
+        }
 
-      if (strcmp (conn, S_AND) && strcmp (conn, S_OR))
-	{
-	  destroy_str_vec (gg_vec);
-	  return _("The negation sentence must be negating either a conjunction or a disjunction.");
-	}
+        if (strcmp (conn, S_AND) && strcmp (conn, S_OR))
+        {
+            destroy_str_vec (gg_vec);
+            return _("The negation sentence must be negating either a conjunction or a disjunction.");
+        }
 
-      unsigned char oth_conn[S_CL + 1];
-      int j;
+        unsigned char oth_conn[S_CL + 1];
+        int j;
 
-      if (!strcmp (conn, S_AND))
-	strcpy (oth_conn, S_OR);
-      else
-	strcpy (oth_conn, S_AND);
+        if (!strcmp (conn, S_AND))
+            strcpy (oth_conn, S_OR);
+        else
+            strcpy (oth_conn, S_AND);
 
-      // Construct what should be the other sentence.
+        // Construct what should be the other sentence.
 
-      unsigned char * cons_sen;
-      int cons_pos, alloc_size;
+        unsigned char * cons_sen;
+        int cons_pos, alloc_size;
 
-      alloc_size = n_len + (gg_vec->num_stuff - 1) * (S_NL + 3);
-      cons_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
-      CHECK_ALLOC (cons_sen, NULL);
-      strncpy (cons_sen, not_sen, i - 1);
-      cons_pos = i - 1;
+        alloc_size = n_len + (gg_vec->num_stuff - 1) * (S_NL + 3);
+        cons_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+        CHECK_ALLOC (cons_sen, NULL);
+        strncpy (cons_sen, not_sen, i - 1);
+        cons_pos = i - 1;
 
-      cons_pos += sprintf (cons_sen + cons_pos, "%s", oth_conn);
+        cons_pos += sprintf (cons_sen + cons_pos, "%s", oth_conn);
 
-      for (j = 0; j < gg_vec->num_stuff; j++)
-	{
-	  cons_pos += sprintf (cons_sen + cons_pos, " (%s %s)",
-			       S_NOT, vec_str_nth (gg_vec, j));
-	}
+        for (j = 0; j < gg_vec->num_stuff; j++)
+        {
+            cons_pos += sprintf (cons_sen + cons_pos, " (%s %s)",
+                                S_NOT, vec_str_nth (gg_vec, j));
+        }
 
-      strcpy (cons_sen + cons_pos, not_sen + tmp_pos);
+        strcpy (cons_sen + cons_pos, not_sen + tmp_pos);
 
-      destroy_str_vec (gg_vec);
+        destroy_str_vec (gg_vec);
 
-      char * ret_str;
-      if (not_sen == conc)
-	ret_str = proc_dm (oth_sen, cons_sen, 0);
-      else
-	ret_str = proc_dm (cons_sen, oth_sen, 0);
-      if (!ret_str)
-	return NULL;
+        char * ret_str;
+        if (not_sen == conc)
+            ret_str = proc_dm (oth_sen, cons_sen, 0);
+        else
+            ret_str = proc_dm (cons_sen, oth_sen, 0);
+        if (!ret_str)
+            return NULL;
 
-      free (cons_sen);
-      if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-	return CORRECT;
+        free (cons_sen);
+        if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+            return CORRECT;
 
-      return _("DeMorgan constructed incorrectly.");
+        return _("DeMorgan constructed incorrectly.");
     }
-  else
+    else
     {
-      unsigned char * not_sen, * oth_sen;
-      int n_len;
+        unsigned char * not_sen, * oth_sen;
+        int n_len;
 
-      if (!strncmp (prem + i, S_NOT, S_NL))
-	{
-	  not_sen = prem;  n_len = p_len;
-	  oth_sen = conc;
-	}
-      else if (!strncmp (conc + i, S_NOT, S_NL))
-	{
-	  not_sen = conc;  n_len = c_len;
-	  oth_sen = prem;
-	}
-      else
-	{
-	  return _("There must be a negation at the difference.");
-	}
+        if (!strncmp (prem + i, S_NOT, S_NL))
+        {
+            not_sen = prem;  n_len = p_len;
+            oth_sen = conc;
+        }
+        else if (!strncmp (conc + i, S_NOT, S_NL))
+        {
+            not_sen = conc;  n_len = c_len;
+            oth_sen = prem;
+        }
+        else
+        {
+            return _("There must be a negation at the difference.");
+        }
 
-      int tmp_pos;
-      unsigned char * tmp_str, * elim_sen;
+        int tmp_pos;
+        unsigned char * tmp_str, * elim_sen;
 
-      tmp_pos = parse_parens (not_sen, i - 1, &tmp_str);
-      if (tmp_pos == AEC_MEM)
-	return NULL;
-      if (!tmp_str)
-	return _("DeMorgan constructed incorrectly.");
+        tmp_pos = parse_parens (not_sen, i - 1, &tmp_str);
+        if (tmp_pos == AEC_MEM)
+            return NULL;
+        if (!tmp_str)
+            return _("DeMorgan constructed incorrectly.");
 
-      elim_sen = sexpr_elim_not (tmp_str);
-      if (!elim_sen)
-	return NULL;
-      free (tmp_str);
+        elim_sen = sexpr_elim_not (tmp_str);
+        if (!elim_sen)
+            return NULL;
+        free (tmp_str);
 
-      if (elim_sen[1] != '(')
-	return _("There must be a quantifier after the negation.");
+        if (elim_sen[1] != '(')
+            return _("There must be a quantifier after the negation.");
 
-      unsigned char * cmp_str;
-      unsigned char quant[S_CL + 1], oth_quant[S_CL + 1];
-      unsigned char * var;
+        unsigned char * cmp_str;
+        unsigned char quant[S_CL + 1], oth_quant[S_CL + 1];
+        unsigned char * var;
 
-      cmp_str = sexpr_elim_quant (elim_sen, quant, &var);
-      if (!cmp_str)
-	return NULL;
+        cmp_str = sexpr_elim_quant (elim_sen, quant, &var);
+        if (!cmp_str)
+            return NULL;
 
-      if (cmp_str[0] == '\0')
-	return _("DeMorgan constructed incorrectly.");
+        if (cmp_str[0] == '\0')
+            return _("DeMorgan constructed incorrectly.");
 
-      if (!strncmp (quant, S_UNV, S_CL))
-	strcpy (oth_quant, S_EXL);
-      else if (!strncmp (quant, S_EXL, S_CL))
-	strcpy (oth_quant, S_UNV);
-      else
-	return _("There must be a quantifier after the negation.");
+        if (!strncmp (quant, S_UNV, S_CL))
+            strcpy (oth_quant, S_EXL);
+        else if (!strncmp (quant, S_EXL, S_CL))
+            strcpy (oth_quant, S_UNV);
+        else
+            return _("There must be a quantifier after the negation.");
 
-      // Construct what should be the other sentence.
+        // Construct what should be the other sentence.
 
-      unsigned char * cons_sen;
-      int alloc_size;
+        unsigned char * cons_sen;
+        int alloc_size;
 
-      alloc_size = n_len;
-      cons_sen = construct_other (not_sen, i - 1, tmp_pos + 1, alloc_size,
-				  "((%s %s) (%s %s))",
-				  oth_quant, var, S_NOT, cmp_str);
-      free (cmp_str);
-      free (var);
+        alloc_size = n_len;
+        cons_sen = construct_other (not_sen, i - 1, tmp_pos + 1, alloc_size,
+                                   "((%s %s) (%s %s))",
+                                   oth_quant, var, S_NOT, cmp_str);
+        free (cmp_str);
+        free (var);
 
-      char * ret_str;
+        char * ret_str;
 
-      if (not_sen == conc)
-	ret_str = proc_dm (oth_sen, cons_sen, 1);
-      else
-	ret_str = proc_dm (cons_sen, oth_sen, 1);
-      if (!ret_str)
-	return NULL;
+        if (not_sen == conc)
+            ret_str = proc_dm (oth_sen, cons_sen, 1);
+        else
+            ret_str = proc_dm (cons_sen, oth_sen, 1);
+        if (!ret_str)
+            return NULL;
 
-      free (cons_sen);
+        free (cons_sen);
 
-      if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-	return CORRECT;
+        if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+            return CORRECT;
 
-      return _("DeMorgan constructed incorrectly.");
+        return _("DeMorgan constructed incorrectly.");
     }
 }
 
 char *
 proc_as (unsigned char * prem, unsigned char * conc)
 {
-  // At the difference:
-  // rollback sh_sen;
-  // sexpr_find_unmatched
-  // run checks on the larger sentence.
-  // strip the connective and recurse.
+    // At the difference:
+    // rollback sh_sen;
+    // sexpr_find_unmatched
+    // run checks on the larger sentence.
+    // strip the connective and recurse.
 
-  unsigned char * ln_sen, * sh_sen;
-  int l_len;
+    unsigned char * ln_sen, * sh_sen;
+    int l_len;
 
-  sen_put_len (prem, conc, &sh_sen, &ln_sen);
-  l_len = strlen (ln_sen);
+    sen_put_len (prem, conc, &sh_sen, &ln_sen);
+    l_len = strlen (ln_sen);
 
-  int i;
-  i = find_difference (ln_sen, sh_sen);
-  if (i == -1)
-    return NO_DIFFERENCE;
+    int i;
+    i = find_difference (ln_sen, sh_sen);
+    if (i == -1)
+        return NO_DIFFERENCE;
 
-  int li, si;
+    int li, si;
 
-  si = li = i;
-  if (sh_sen[si] == '(')
-    si--;
+    si = li = i;
+    if (sh_sen[si] == '(')
+        si--;
 
-  if (si < 0)
-    return _("There must be a connective in both sentences.");
+    if (si < 0)
+        return _("There must be a connective in both sentences.");
 
-  si = find_unmatched_o_paren (sh_sen, si);
-  if (si == -1)
-    return _("There must be a connective in both sentences.");
+    si = find_unmatched_o_paren (sh_sen, si);
+    if (si == -1)
+        return _("There must be a connective in both sentences.");
 
-  if (ln_sen[li] != '(')
+    if (ln_sen[li] != '(')
     {
-      li = find_unmatched_o_paren (ln_sen, li);
-      if (li == -1)
-	return _("There must be a connective in both sentences.");
+        li = find_unmatched_o_paren (ln_sen, li);
+        if (li == -1)
+            return _("There must be a connective in both sentences.");
     }
 
-  int ret_chk;
-  ret_chk = sexpr_find_unmatched (ln_sen, sh_sen, &li, &si);
-  if (ret_chk == AEC_MEM)
-    return NULL;
+    int ret_chk;
+    ret_chk = sexpr_find_unmatched (ln_sen, sh_sen, &li, &si);
+    if (ret_chk == AEC_MEM)
+        return NULL;
 
-  int tmp_pos;
-  unsigned char * tmp_str;
-  tmp_pos = parse_parens (ln_sen, li, &tmp_str);
-  if (tmp_pos == AEC_MEM)
-    return NULL;
-  if (!tmp_str || tmp_pos < 0)
+    int tmp_pos;
+    unsigned char * tmp_str;
+    tmp_pos = parse_parens (ln_sen, li, &tmp_str);
+    if (tmp_pos == AEC_MEM)
+        return NULL;
+    if (!tmp_str || tmp_pos < 0)
     {
-      if (tmp_str) free (tmp_str);
-      return _("Association constructed incorrectly.");
+        if (tmp_str) free (tmp_str);
+        return _("Association constructed incorrectly.");
     }
-  free (tmp_str);
+    free (tmp_str);
 
-  int ti;
-  ti = li - 1;
-  if (ti < 0)
+    int ti;
+    ti = li - 1;
+    if (ti < 0)
+        return _("Association constructed incorrectly.");
+
+    ti = find_unmatched_o_paren (ln_sen, ti);
+
+    if (strncmp (ln_sen + ti + 1, S_AND, S_CL)
+        && strncmp (ln_sen + ti + 1, S_OR, S_CL)
+        && strncmp (ln_sen + ti + 1, ln_sen + li + 1, S_CL))
+    {
+        return _("Association must be done on a conjunction or disjunction.");
+    }
+
+    unsigned char * oth_sen;
+    int oth_pos;
+
+    oth_sen = (unsigned char *) calloc (l_len - 2 - S_CL, sizeof (char));
+    CHECK_ALLOC (oth_sen, NULL);
+    strncpy (oth_sen, ln_sen, li);
+    oth_pos = li;
+
+    strncpy (oth_sen + oth_pos, ln_sen + li + S_CL + 2, tmp_pos - li - 2 - S_CL);
+    oth_pos += tmp_pos - li - 2 - S_CL;
+
+    strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
+
+    char * ret_str;
+
+    if (ln_sen == conc)
+        ret_str = proc_as (sh_sen, oth_sen);
+    else
+        ret_str = proc_as (oth_sen, sh_sen);
+    if (!ret_str)
+        return NULL;
+
+    free (oth_sen);
+    if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+        return CORRECT;
+
     return _("Association constructed incorrectly.");
-
-  ti = find_unmatched_o_paren (ln_sen, ti);
-
-  if (strncmp (ln_sen + ti + 1, S_AND, S_CL)
-      && strncmp (ln_sen + ti + 1, S_OR, S_CL)
-      && strncmp (ln_sen + ti + 1, ln_sen + li + 1, S_CL))
-    {
-      return _("Association must be done on a conjunction or disjunction.");
-    }
-
-  unsigned char * oth_sen;
-  int oth_pos;
-
-  oth_sen = (unsigned char *) calloc (l_len - 2 - S_CL, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, ln_sen, li);
-  oth_pos = li;
-
-  strncpy (oth_sen + oth_pos, ln_sen + li + S_CL + 2, tmp_pos - li - 2 - S_CL);
-  oth_pos += tmp_pos - li - 2 - S_CL;
-
-  strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
-
-  char * ret_str;
-
-  if (ln_sen == conc)
-    ret_str = proc_as (sh_sen, oth_sen);
-  else
-    ret_str = proc_as (oth_sen, sh_sen);
-  if (!ret_str)
-    return NULL;
-
-  free (oth_sen);
-  if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-    return CORRECT;
-
-  return _("Association constructed incorrectly.");
 }
 
 char *
 proc_co (unsigned char * prem, unsigned char * conc)
 {
-  int ret_chk;
-  ret_chk = recurse_mode (prem, conc, MODE_CO);
-  if (ret_chk == AEC_MEM)
-    return NULL;
+    int ret_chk;
+    ret_chk = recurse_mode (prem, conc, MODE_CO);
+    if (ret_chk == AEC_MEM)
+        return NULL;
 
-  switch (ret_chk)
+    switch (ret_chk)
     {
     case 0:
-      return CORRECT;
+        return CORRECT;
     case -3:
-      return NO_DIFFERENCE;
+        return NO_DIFFERENCE;
     default:
-      return _("Commutativity constructed incorrectly.");
+        return _("Commutativity constructed incorrectly.");
     }
 }
 
 char *
 proc_id (unsigned char * prem, unsigned char * conc)
 {
-  unsigned char * ln_sen, * sh_sen;
-  sen_put_len (prem, conc, &sh_sen, &ln_sen);
+    unsigned char * ln_sen, * sh_sen;
+    sen_put_len (prem, conc, &sh_sen, &ln_sen);
 
-  int ret_chk;
-  ret_chk = recurse_mode (ln_sen, sh_sen, MODE_ID);
-  if (ret_chk == AEC_MEM)
-    return NULL;
+    int ret_chk;
+    ret_chk = recurse_mode (ln_sen, sh_sen, MODE_ID);
+    if (ret_chk == AEC_MEM)
+        return NULL;
 
-  switch (ret_chk)
+    switch (ret_chk)
     {
     case 0:
-      return CORRECT;
+        return CORRECT;
     case -3:
-      return NO_DIFFERENCE;
+        return NO_DIFFERENCE;
     default:
-      return _("Idempotence constructed incorrectly.");
+        return _("Idempotence constructed incorrectly.");
     }
 }
 
 char *
 proc_dt (unsigned char * prem, unsigned char * conc, int mode_guess)
 {
-  unsigned char * ln_sen, * sh_sen;
-  int s_len, l_len;
+    unsigned char * ln_sen, * sh_sen;
+    int s_len, l_len;
 
-  sen_put_len (prem, conc, &sh_sen, &ln_sen);
-  s_len = strlen (sh_sen);
-  l_len = strlen (ln_sen);
+    sen_put_len (prem, conc, &sh_sen, &ln_sen);
+    s_len = strlen (sh_sen);
+    l_len = strlen (ln_sen);
 
-  int mode, i;
+    int mode, i;
 
-  i = find_difference (ln_sen, sh_sen);
-  if (i == -1)
-    return NO_DIFFERENCE;
+    i = find_difference (ln_sen, sh_sen);
+    if (i == -1)
+        return NO_DIFFERENCE;
 
-  if (l_len == s_len)
-    return _("The two sentences must be of different lengths.");
+    if (l_len == s_len)
+        return _("The two sentences must be of different lengths.");
 
-  if (mode_guess == -1)
-    mode = (sh_sen[i] == '(') ? 1 : 0;
-  else
-    mode = mode_guess;
+    if (mode_guess == -1)
+        mode = (sh_sen[i] == '(') ? 1 : 0;
+    else
+        mode = mode_guess;
 
-  if (mode == 0)
+    if (mode == 0)
     {
-      int tmp_pos;
-      unsigned char * tmp_str;
+        int tmp_pos;
+        unsigned char * tmp_str;
 
-      if (i < 2
-	  || (strncmp (sh_sen + i - 1, S_AND, S_CL)
-	      &&  strncmp (sh_sen + i - 1, S_OR, S_CL)))
-	{
-	  return _("The top connective must change between sentences.");
-	}
+        if (i < 2
+            || (strncmp (sh_sen + i - 1, S_AND, S_CL)
+                &&  strncmp (sh_sen + i - 1, S_OR, S_CL)))
+        {
+            return _("The top connective must change between sentences.");
+        }
 
-      tmp_pos = parse_parens (sh_sen, i - S_CL + 1, &tmp_str);
-      if (tmp_pos == -2)
-	return NULL;
-      if (!tmp_str)
-	return _("Distribution constructed incorrectly.");
+        tmp_pos = parse_parens (sh_sen, i - S_CL + 1, &tmp_str);
+        if (tmp_pos == -2)
+            return NULL;
+        if (!tmp_str)
+            return _("Distribution constructed incorrectly.");
 
-      int ftc;
-      unsigned char * lsen, * rsen, mc[S_CL + 1];
-      
-      mc[0] = '\0';
+        int ftc;
+        unsigned char * lsen, * rsen, mc[S_CL + 1];
 
-      ftc = sexpr_find_top_connective (tmp_str, mc, &lsen, &rsen);
-      if (ftc == AEC_MEM)
-	return NULL;
-      free (tmp_str);
+        mc[0] = '\0';
 
-      if (ftc < 0)
-	{
-	  if (lsen)  free (lsen);
-	  if (rsen)  free (rsen);
+        ftc = sexpr_find_top_connective (tmp_str, mc, &lsen, &rsen);
+        if (ftc == AEC_MEM)
+            return NULL;
+        free (tmp_str);
 
-	  return _("There must be only two parts for distribution.");
-	}
+        if (ftc < 0)
+        {
+            if (lsen)  free (lsen);
+            if (rsen)  free (rsen);
 
-      if (strcmp (mc, S_AND) && strcmp (mc, S_OR))
-	{
-	  free (lsen); free (rsen);
+            return _("There must be only two parts for distribution.");
+        }
 
-	  return _("Distribution must be done around a conjunction or a disjunction.");
-	}
+        if (strcmp (mc, S_AND) && strcmp (mc, S_OR))
+        {
+            free (lsen); free (rsen);
 
-      int r_gg, r_len;
-      unsigned char rc[S_CL + 1];
-      vec_t * rsens;
+            return _("Distribution must be done around a conjunction or a disjunction.");
+        }
 
-      r_len = strlen (rsen);
-      rsens = init_vec (sizeof (char *));
-      if (!rsens)
-	return NULL;
+        int r_gg, r_len;
+        unsigned char rc[S_CL + 1];
+        vec_t * rsens;
 
-      rc[0] = '\0';
-      r_gg = sexpr_get_generalities (rsen, rc, rsens);
-      if (r_gg == AEC_MEM)
-	return NULL;
-      free (rsen);
+        r_len = strlen (rsen);
+        rsens = init_vec (sizeof (char *));
+        if (!rsens)
+            return NULL;
 
-      if (r_gg == 1)
-	{
-	  free (lsen);
-	  destroy_str_vec (rsens);
+        rc[0] = '\0';
+        r_gg = sexpr_get_generalities (rsen, rc, rsens);
+        if (r_gg == AEC_MEM)
+            return NULL;
+        free (rsen);
 
-	  return _("There must be more than one generality for distribution.");
-	}
+        if (r_gg == 1)
+        {
+            free (lsen);
+            destroy_str_vec (rsens);
 
-      unsigned char * oth_sen;
-      int oth_pos, j, alloc_size;
+            return _("There must be more than one generality for distribution.");
+        }
 
-      // length of lsen + S_CL (mc) + 4 (two spaces, two parens)
-      // r_len - 1 (both of the parentheses, plus one for the null byte).
-      alloc_size = s_len + (strlen (lsen) + S_CL + 4) * rsens->num_stuff + r_len - 1;
-      oth_sen = (unsigned char *) calloc (alloc_size,  sizeof (char));
-      CHECK_ALLOC (oth_sen, NULL);
-      strncpy (oth_sen, sh_sen, i - 1);
-      oth_pos = i - 1;
+        unsigned char * oth_sen;
+        int oth_pos, j, alloc_size;
 
-      oth_pos += sprintf (oth_sen + oth_pos, "%s", rc);
+        // length of lsen + S_CL (mc) + 4 (two spaces, two parens)
+        // r_len - 1 (both of the parentheses, plus one for the null byte).
+        alloc_size = s_len + (strlen (lsen) + S_CL + 4) * rsens->num_stuff + r_len - 1;
+        oth_sen = (unsigned char *) calloc (alloc_size,  sizeof (char));
+        CHECK_ALLOC (oth_sen, NULL);
+        strncpy (oth_sen, sh_sen, i - 1);
+        oth_pos = i - 1;
 
-      for (j = 0; j < rsens->num_stuff; j++)
-	{
-	  oth_pos += sprintf (oth_sen + oth_pos, " (%s %s %s)",
-			      mc, lsen, vec_str_nth (rsens, j));
-	}
+        oth_pos += sprintf (oth_sen + oth_pos, "%s", rc);
 
-      strcpy (oth_sen + oth_pos, sh_sen + tmp_pos);
+        for (j = 0; j < rsens->num_stuff; j++)
+        {
+            oth_pos += sprintf (oth_sen + oth_pos, " (%s %s %s)",
+                               mc, lsen, vec_str_nth (rsens, j));
+        }
 
-      free (lsen);
-      destroy_str_vec (rsens);
+        strcpy (oth_sen + oth_pos, sh_sen + tmp_pos);
 
-      char * ret_str;
+        free (lsen);
+        destroy_str_vec (rsens);
 
-      if (sh_sen == conc)
-	ret_str = proc_dt (ln_sen, oth_sen, 0);
-      else
-	ret_str = proc_dt (oth_sen, ln_sen, 0);
+        char * ret_str;
 
-      if (!ret_str)
-	return NULL;
+        if (sh_sen == conc)
+            ret_str = proc_dt (ln_sen, oth_sen, 0);
+        else
+            ret_str = proc_dt (oth_sen, ln_sen, 0);
 
-      free (oth_sen);
-      if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-	return CORRECT;
+        if (!ret_str)
+            return NULL;
 
-      return _("Distribution constructed incorrectly.");
+        free (oth_sen);
+        if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+            return CORRECT;
+
+        return _("Distribution constructed incorrectly.");
     }
-  else
+    else
     {
-      unsigned char * tmp_str;
-      int tmp_pos;
+        unsigned char * tmp_str;
+        int tmp_pos;
 
-      if (mode_guess != -1)
-	{
-	  if (sh_sen[i] != '(')
-	    return _("The difference must be a quantifier.");
-	}
+        if (mode_guess != -1)
+        {
+            if (sh_sen[i] != '(')
+                return _("The difference must be a quantifier.");
+        }
 
-      tmp_pos = parse_parens (sh_sen, i - 1, &tmp_str);
-      if (tmp_pos == AEC_MEM)
-	return NULL;
-      if (!tmp_str)
-	return _("Distribution constructed incorrectly.");
+        tmp_pos = parse_parens (sh_sen, i - 1, &tmp_str);
+        if (tmp_pos == AEC_MEM)
+            return NULL;
+        if (!tmp_str)
+            return _("Distribution constructed incorrectly.");
 
-      unsigned char * scope, * var, quant[S_CL + 1];
-      int v_len;
+        unsigned char * scope, * var, quant[S_CL + 1];
+        int v_len;
 
-      scope = sexpr_elim_quant (tmp_str, quant, &var);
-      if (!scope)
-	return NULL;
-      if (scope[0] == '\0')
-	return _("Distribution constructed incorrectly.");
-      v_len = strlen (var);
-      free (tmp_str);
+        scope = sexpr_elim_quant (tmp_str, quant, &var);
+        if (!scope)
+            return NULL;
+        if (scope[0] == '\0')
+            return _("Distribution constructed incorrectly.");
+        v_len = strlen (var);
+        free (tmp_str);
 
-      int gg;
-      vec_t * gg_vec;
-      unsigned char conn[S_CL + 1];
+        int gg;
+        vec_t * gg_vec;
+        unsigned char conn[S_CL + 1];
 
-      conn[0] = '\0';
-      gg_vec = init_vec (sizeof (char *));
-      if (!gg_vec)
-	return NULL;
+        conn[0] = '\0';
+        gg_vec = init_vec (sizeof (char *));
+        if (!gg_vec)
+            return NULL;
 
-      gg = sexpr_get_generalities (scope, conn, gg_vec);
-      if (gg == AEC_MEM)
-	return NULL;
-      free (scope);
+        gg = sexpr_get_generalities (scope, conn, gg_vec);
+        if (gg == AEC_MEM)
+            return NULL;
+        free (scope);
 
-      if (gg == 1)
-	{
-	  destroy_str_vec (gg_vec);
-	  return _("Distribution constructed incorrectly.");
-	}
+        if (gg == 1)
+        {
+            destroy_str_vec (gg_vec);
+            return _("Distribution constructed incorrectly.");
+        }
 
-      if ((strcmp (quant, S_UNV) || strcmp (conn, S_AND))
-	  && (strcmp (quant, S_EXL) || strcmp (conn, S_OR)))
-	{
-	  destroy_str_vec (gg_vec);
-	  return _("A universal is distributed over a conjnction, and an existential is distributed over a disjunction.");
-	}
+        if ((strcmp (quant, S_UNV) || strcmp (conn, S_AND))
+            && (strcmp (quant, S_EXL) || strcmp (conn, S_OR)))
+        {
+            destroy_str_vec (gg_vec);
+            return _("A universal is distributed over a conjnction, and an existential is distributed over a disjunction.");
+        }
 
-      unsigned char * oth_sen;
-      int oth_pos, j, alloc_size;
+        unsigned char * oth_sen;
+        int oth_pos, j, alloc_size;
 
-      alloc_size = s_len + (gg_vec->num_stuff * (6 + S_CL + v_len));
-      oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
-      CHECK_ALLOC (oth_sen, NULL);
-      strncpy (oth_sen, sh_sen, i - 1);
-      oth_pos = i - 1;
+        alloc_size = s_len + (gg_vec->num_stuff * (6 + S_CL + v_len));
+        oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+        CHECK_ALLOC (oth_sen, NULL);
+        strncpy (oth_sen, sh_sen, i - 1);
+        oth_pos = i - 1;
 
-      oth_pos += sprintf (oth_sen + oth_pos, "(%s", conn);
+        oth_pos += sprintf (oth_sen + oth_pos, "(%s", conn);
 
-      for (j = 0; j < gg_vec->num_stuff; j++)
-	{
-	  unsigned char * cur_gen;
-	  cur_gen = vec_str_nth (gg_vec, j);
-	  oth_pos += sprintf (oth_sen + oth_pos, " ((%s %s) %s)",
-			      quant, var, cur_gen);
-	}
+        for (j = 0; j < gg_vec->num_stuff; j++)
+        {
+            unsigned char * cur_gen;
+            cur_gen = vec_str_nth (gg_vec, j);
+            oth_pos += sprintf (oth_sen + oth_pos, " ((%s %s) %s)",
+                               quant, var, cur_gen);
+        }
 
-      oth_pos += sprintf (oth_sen + oth_pos, ")");
+        oth_pos += sprintf (oth_sen + oth_pos, ")");
 
-      strcpy (oth_sen + oth_pos, sh_sen + tmp_pos + 1);
+        strcpy (oth_sen + oth_pos, sh_sen + tmp_pos + 1);
 
-      free (var);
-      destroy_str_vec (gg_vec);
+        free (var);
+        destroy_str_vec (gg_vec);
 
-      char * ret_str;
-      if (sh_sen == conc)
-	ret_str = proc_dt (ln_sen, oth_sen, 1);
-      else
-	ret_str = proc_dt (oth_sen, ln_sen, 1);
-      if (!ret_str)
-	return NULL;
+        char * ret_str;
+        if (sh_sen == conc)
+            ret_str = proc_dt (ln_sen, oth_sen, 1);
+        else
+            ret_str = proc_dt (oth_sen, ln_sen, 1);
+        if (!ret_str)
+            return NULL;
 
-      free (oth_sen);
-      if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-	return CORRECT;
+        free (oth_sen);
+        if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+            return CORRECT;
 
-      return _("Distribution constructed incorrectly.");      
+        return _("Distribution constructed incorrectly.");
     }
 }
 
 char *
 proc_eq (unsigned char * prem, unsigned char * conc)
 {
-  unsigned char * bic_sen, * oth_sen;
-  int b_len;
+    unsigned char * bic_sen, * oth_sen;
+    int b_len;
 
-  sen_put_len (prem, conc, &bic_sen, &oth_sen);
-  b_len = strlen (bic_sen);
+    sen_put_len (prem, conc, &bic_sen, &oth_sen);
+    b_len = strlen (bic_sen);
 
-  int i;
-  i = find_difference (bic_sen, oth_sen);
-  if (i == -1)
-    return NO_DIFFERENCE;
+    int i;
+    i = find_difference (bic_sen, oth_sen);
+    if (i == -1)
+        return NO_DIFFERENCE;
 
-  if (i < 2)
-    return _("Equivalence constructed incorrectly.");
+    if (i < 2)
+        return _("Equivalence constructed incorrectly.");
 
-  int tmp_pos;
-  unsigned char * tmp_str;
+    int tmp_pos;
+    unsigned char * tmp_str;
 
-  tmp_pos = parse_parens (bic_sen, i - 2, &tmp_str);
-  if (tmp_pos == AEC_MEM)
-    return NULL;
-  if (!tmp_str)
-    return _("Equivalence constructed incorrectly.");
+    tmp_pos = parse_parens (bic_sen, i - 2, &tmp_str);
+    if (tmp_pos == AEC_MEM)
+        return NULL;
+    if (!tmp_str)
+        return _("Equivalence constructed incorrectly.");
 
-  int ftc;
-  unsigned char * lsen, * rsen;
+    int ftc;
+    unsigned char * lsen, * rsen;
 
-  lsen = rsen = NULL;
-  ftc = sexpr_find_top_connective (tmp_str, S_BIC, &lsen, &rsen);
-  if (ftc == AEC_MEM)
-    return NULL;
-  free (tmp_str);
+    lsen = rsen = NULL;
+    ftc = sexpr_find_top_connective (tmp_str, S_BIC, &lsen, &rsen);
+    if (ftc == AEC_MEM)
+        return NULL;
+    free (tmp_str);
 
-  if (ftc < 0)
+    if (ftc < 0)
     {
-      if (lsen)  free (lsen);
-      if (rsen)  free (rsen);
+        if (lsen)  free (lsen);
+        if (rsen)  free (rsen);
 
-      return _("There must be a biconditional in one sentence.");
+        return _("There must be a biconditional in one sentence.");
     }
 
-  unsigned char * cons_sen;
-  int alloc_size;
+    unsigned char * cons_sen;
+    int alloc_size;
 
-  alloc_size = b_len + (tmp_pos - (i - 2) + 1) + S_CL + 4;
-  cons_sen = construct_other (bic_sen, i - 1, tmp_pos, alloc_size,
-			      "%s (%s %s %s) (%s %s %s)",
-			      S_AND, S_CON, lsen, rsen, S_CON, rsen, lsen);
+    alloc_size = b_len + (tmp_pos - (i - 2) + 1) + S_CL + 4;
+    cons_sen = construct_other (bic_sen, i - 1, tmp_pos, alloc_size,
+                               "%s (%s %s %s) (%s %s %s)",
+                               S_AND, S_CON, lsen, rsen, S_CON, rsen, lsen);
 
-  if (!cons_sen)
-    return NULL;
+    if (!cons_sen)
+        return NULL;
 
-  free (lsen);
-  free (rsen);
+    free (lsen);
+    free (rsen);
 
-  char * ret_str;
+    char * ret_str;
 
-  if (bic_sen == conc)
-    ret_str = proc_eq (oth_sen, cons_sen);
-  else
-    ret_str = proc_eq (cons_sen, oth_sen);
+    if (bic_sen == conc)
+        ret_str = proc_eq (oth_sen, cons_sen);
+    else
+        ret_str = proc_eq (cons_sen, oth_sen);
 
-  free (cons_sen);
+    free (cons_sen);
 
-  if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-    return CORRECT;
+    if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+        return CORRECT;
 
-  return _("Equivalence constructed incorrectly.");
+    return _("Equivalence constructed incorrectly.");
 }
 
 char *
 proc_dn (unsigned char * prem, unsigned char * conc)
 {
-  // Standard long-short setup.
+    // Standard long-short setup.
 
-  unsigned char * ln_sen, * sh_sen;
-  int l_len;
+    unsigned char * ln_sen, * sh_sen;
+    int l_len;
 
-  sen_put_len (prem, conc, &sh_sen, &ln_sen);
-  l_len = strlen (ln_sen);
+    sen_put_len (prem, conc, &sh_sen, &ln_sen);
+    l_len = strlen (ln_sen);
 
-  int i;
-  i = find_difference (ln_sen, sh_sen);
-  if (i == -1)
-    return NO_DIFFERENCE;
+    int i;
+    i = find_difference (ln_sen, sh_sen);
+    if (i == -1)
+        return NO_DIFFERENCE;
 
-  if (ln_sen[i] != '(' && strncmp (ln_sen + i, S_NOT, S_NL)
-      && (i > 0 && l_len > S_NL && strncmp (ln_sen + i - 1, S_NOT, S_NL)))
+    if (ln_sen[i] != '(' && strncmp (ln_sen + i, S_NOT, S_NL)
+        && (i > 0 && l_len > S_NL && strncmp (ln_sen + i - 1, S_NOT, S_NL)))
     {
-      return _("Double Negation must be used to eliminate negations.");
+        return _("Double Negation must be used to eliminate negations.");
     }
 
-  if (ln_sen[i] != '(')
+    if (ln_sen[i] != '(')
     {
-      if (!strncmp (ln_sen + i, S_NOT, S_NL))
-	i--;
-      else
-	i -= 2;
+        if (!strncmp (ln_sen + i, S_NOT, S_NL))
+            i--;
+        else
+            i -= 2;
     }
 
-  int tmp_pos;
-  unsigned char * tmp_str;
-  tmp_pos = parse_parens (ln_sen, i, &tmp_str);
-  if (tmp_pos == AEC_MEM)
-    return NULL;
-  if (!tmp_str)
+    int tmp_pos;
+    unsigned char * tmp_str;
+    tmp_pos = parse_parens (ln_sen, i, &tmp_str);
+    if (tmp_pos == AEC_MEM)
+        return NULL;
+    if (!tmp_str)
+        return _("Double Negation constructed incorrectly.");
+
+    int pos;
+    int oth_pos;
+
+    pos = i;
+    if (!sexpr_not_check (tmp_str) || strncmp (tmp_str + S_NL + 3, S_NOT, S_NL))
+    {
+        free (tmp_str);
+        return _("Double Negation removes negations in pairs.");
+    }
+
+    free (tmp_str);
+    pos = i + 4 + 2 * S_NL;
+    // Begin removing pairs of negations, until there are no more pairs.
+
+    unsigned char * oth_sen;
+    int alloc_size;
+
+    alloc_size = l_len - S_NL * 2 - 6;
+    oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+    CHECK_ALLOC (oth_sen, NULL);
+    strncpy (oth_sen, ln_sen, i);
+    oth_pos = i;
+
+    strncpy (oth_sen + oth_pos, ln_sen + pos, tmp_pos - pos - 1);
+    oth_pos += tmp_pos - pos - 1;
+
+    strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
+
+    char * ret_str;
+
+    if (ln_sen == conc)
+        ret_str = proc_dn (sh_sen, oth_sen);
+    else
+        ret_str = proc_dn (oth_sen, sh_sen);
+
+    if (!ret_str)
+        return NULL;
+
+    free (oth_sen);
+    if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+        return CORRECT;
+
     return _("Double Negation constructed incorrectly.");
-
-  int pos;
-  int oth_pos;
-
-  pos = i;
-  if (!sexpr_not_check (tmp_str) || strncmp (tmp_str + S_NL + 3, S_NOT, S_NL))
-    {
-      free (tmp_str);
-      return _("Double Negation removes negations in pairs.");
-    }
-
-  free (tmp_str);
-  pos = i + 4 + 2 * S_NL;
-  // Begin removing pairs of negations, until there are no more pairs.
-
-  unsigned char * oth_sen;
-  int alloc_size;
-
-  alloc_size = l_len - S_NL * 2 - 6;
-  oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, ln_sen, i);
-  oth_pos = i;
-
-  strncpy (oth_sen + oth_pos, ln_sen + pos, tmp_pos - pos - 1);
-  oth_pos += tmp_pos - pos - 1;
-
-  strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
-
-  char * ret_str;
-
-  if (ln_sen == conc)
-    ret_str = proc_dn (sh_sen, oth_sen);
-  else
-    ret_str = proc_dn (oth_sen, sh_sen);
-
-  if (!ret_str)
-    return NULL;
-
-  free (oth_sen);
-  if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-    return CORRECT;
-
-  return _("Double Negation constructed incorrectly.");
 }
 
 char *
 proc_ep (unsigned char * prem, unsigned char * conc)
 {
-  /* First, determine which sentence is which. */
+    /* First, determine which sentence is which. */
 
-  unsigned char * and_sen, * con_sen;
-  int p_len, c_len, a_len;
+    unsigned char * and_sen, * con_sen;
+    int p_len, c_len, a_len;
 
-  p_len = strlen (prem);
-  c_len = strlen (conc);
+    p_len = strlen (prem);
+    c_len = strlen (conc);
 
-  // Count number of conditionals in each sentence.
+    // Count number of conditionals in each sentence.
 
-  int i, c_cons = 0, p_cons = 0;
+    int i, c_cons = 0, p_cons = 0;
 
-  for (i = 0; i < p_len; i++)
+    for (i = 0; i < p_len; i++)
     {
-      if (!strncmp (prem + i, S_CON, S_CL))
-	p_cons++;
+        if (!strncmp (prem + i, S_CON, S_CL))
+            p_cons++;
 
-      if (!strncmp (conc + i, S_CON, S_CL))
-	c_cons++;
+        if (!strncmp (conc + i, S_CON, S_CL))
+            c_cons++;
     }
 
-  if (c_cons > p_cons)
+    if (c_cons > p_cons)
     {
-      and_sen = prem;  a_len = p_len;
-      con_sen = conc;
+        and_sen = prem;  a_len = p_len;
+        con_sen = conc;
     }
-  else
+    else
     {
-      and_sen = conc;  a_len = c_len;
-      con_sen = prem;
-    }
-
-  /* Then, find the difference. */
-
-  i = find_difference (and_sen, con_sen);
-  if (i == -1)
-    return NO_DIFFERENCE;
-
-  /* Roll back to the start of the difference. */
-
-  int ai, ci;
-
-  ai = ci = i;
-
-  if (con_sen[ci] == '(')
-    {
-      ci--;
-      if (ci == -1)
-	return _("Exportation constructed incorrectly.");
+        and_sen = conc;  a_len = c_len;
+        con_sen = prem;
     }
 
-  ci = find_unmatched_o_paren (con_sen, ci);
-  if (ci == -1)
-    return _("There must be connectives on both sentences.");
+    /* Then, find the difference. */
 
-  if (and_sen[ai] != '(')
+    i = find_difference (and_sen, con_sen);
+    if (i == -1)
+        return NO_DIFFERENCE;
+
+    /* Roll back to the start of the difference. */
+
+    int ai, ci;
+
+    ai = ci = i;
+
+    if (con_sen[ci] == '(')
     {
-      ai = find_unmatched_o_paren (and_sen, ai);
-      if (ai == -1)
-	return _("There must be connectives on both sentences.");
+        ci--;
+        if (ci == -1)
+            return _("Exportation constructed incorrectly.");
     }
 
-  int ret_chk;
-  ret_chk = sexpr_find_unmatched (and_sen, con_sen, &ai, &ci);
-  if (ret_chk == AEC_MEM)
-    return NULL;
+    ci = find_unmatched_o_paren (con_sen, ci);
+    if (ci == -1)
+        return _("There must be connectives on both sentences.");
 
-  ai--;
-  if (ai < 0)
+    if (and_sen[ai] != '(')
+    {
+        ai = find_unmatched_o_paren (and_sen, ai);
+        if (ai == -1)
+            return _("There must be connectives on both sentences.");
+    }
+
+    int ret_chk;
+    ret_chk = sexpr_find_unmatched (and_sen, con_sen, &ai, &ci);
+    if (ret_chk == AEC_MEM)
+        return NULL;
+
+    ai--;
+    if (ai < 0)
+        return _("Exportation constructed incorrectly.");
+
+    ai = find_unmatched_o_paren (and_sen, ai);
+    if (ai == -1)
+        return _("Exportation constructed incorrectly.");
+
+    /* Get the sentence parts. */
+
+    int tmp_pos;
+    unsigned char * tmp_str;
+
+    tmp_pos = parse_parens (and_sen, ai, &tmp_str);
+    if (tmp_pos == AEC_MEM)
+        return NULL;
+
+    int ftc;
+    unsigned char * lsen, * rsen;
+
+    lsen = rsen = NULL;
+    ftc = sexpr_find_top_connective (tmp_str, S_CON, &lsen, &rsen);
+    if (ftc == AEC_MEM)
+        return NULL;
+    free (tmp_str);
+
+    if (ftc < 0)
+    {
+        if (lsen)  free (lsen);
+        if (rsen)  free (rsen);
+
+        return _("There must be a conditional in both sentences.");
+    }
+
+    vec_t * a_sens;
+
+    a_sens = init_vec (sizeof (char *));
+    if (!a_sens)
+        return NULL;
+
+    ftc = sexpr_get_generalities (lsen, S_AND, a_sens);
+    if (ftc == AEC_MEM)
+        return NULL;
+    free (lsen);
+
+    if (ftc == 1)
+    {
+        destroy_str_vec (a_sens);
+        free (rsen);
+        return _("Exportation constructed incorrectly.");
+    }
+
+    /* Construct what should be the other sentence. */
+
+    unsigned char * oth_sen;
+    int oth_pos, alloc_size;
+
+    alloc_size = a_len + (3 + S_CL) * a_sens->num_stuff;
+    oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+    CHECK_ALLOC (oth_sen, NULL);
+    strncpy (oth_sen, and_sen, ai);
+    oth_pos = ai;
+
+    for (i = 0; i < a_sens->num_stuff; i++)
+    {
+        oth_pos += sprintf (oth_sen + oth_pos, "(%s %s ",
+                           S_CON, vec_str_nth (a_sens, i));
+    }
+
+    oth_pos += sprintf (oth_sen + oth_pos, "%s", rsen);
+    for (i = 0; i < a_sens->num_stuff; i++)
+        oth_pos += sprintf (oth_sen + oth_pos, ")");
+
+    destroy_str_vec (a_sens);
+    free (rsen);
+
+    strcpy (oth_sen + oth_pos, and_sen + tmp_pos + 1);
+
+    char * ret_str;
+    if (and_sen == conc)
+        ret_str = proc_ep (con_sen, oth_sen);
+    else
+        ret_str = proc_ep (oth_sen, con_sen);
+    if (!ret_str)
+        return NULL;
+    free (oth_sen);
+
+    if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+        return CORRECT;
+
     return _("Exportation constructed incorrectly.");
-
-  ai = find_unmatched_o_paren (and_sen, ai);
-  if (ai == -1)
-    return _("Exportation constructed incorrectly.");
-
-  /* Get the sentence parts. */
-  
-  int tmp_pos;
-  unsigned char * tmp_str;
-
-  tmp_pos = parse_parens (and_sen, ai, &tmp_str);
-  if (tmp_pos == AEC_MEM)
-    return NULL;
-
-  int ftc;
-  unsigned char * lsen, * rsen;
-
-  lsen = rsen = NULL;
-  ftc = sexpr_find_top_connective (tmp_str, S_CON, &lsen, &rsen);
-  if (ftc == AEC_MEM)
-    return NULL;
-  free (tmp_str);
-
-  if (ftc < 0)
-    {
-      if (lsen)  free (lsen);
-      if (rsen)  free (rsen);
-
-      return _("There must be a conditional in both sentences.");
-    }
-
-  vec_t * a_sens;
-
-  a_sens = init_vec (sizeof (char *));
-  if (!a_sens)
-    return NULL;
-
-  ftc = sexpr_get_generalities (lsen, S_AND, a_sens);
-  if (ftc == AEC_MEM)
-    return NULL;
-  free (lsen);
-
-  if (ftc == 1)
-    {
-      destroy_str_vec (a_sens);
-      free (rsen);
-      return _("Exportation constructed incorrectly.");
-    }
-
-  /* Construct what should be the other sentence. */
-
-  unsigned char * oth_sen;
-  int oth_pos, alloc_size;
-
-  alloc_size = a_len + (3 + S_CL) * a_sens->num_stuff;
-  oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, and_sen, ai);
-  oth_pos = ai;
-
-  for (i = 0; i < a_sens->num_stuff; i++)
-    {
-      oth_pos += sprintf (oth_sen + oth_pos, "(%s %s ",
-			  S_CON, vec_str_nth (a_sens, i));
-    }
-
-  oth_pos += sprintf (oth_sen + oth_pos, "%s", rsen);
-  for (i = 0; i < a_sens->num_stuff; i++)
-    oth_pos += sprintf (oth_sen + oth_pos, ")");
-
-  destroy_str_vec (a_sens);
-  free (rsen);
-
-  strcpy (oth_sen + oth_pos, and_sen + tmp_pos + 1);
-
-  char * ret_str;
-  if (and_sen == conc)
-    ret_str = proc_ep (con_sen, oth_sen);
-  else
-    ret_str = proc_ep (oth_sen, con_sen);
-  if (!ret_str)
-    return NULL;
-  free (oth_sen);
-
-  if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-    return CORRECT;
-
-  return _("Exportation constructed incorrectly.");
 }
 
 char *
 proc_sb (unsigned char * prem, unsigned char * conc)
 {
-  // Standard long-short setup.
+    // Standard long-short setup.
 
-  unsigned char * ln_sen, * sh_sen;
-  int l_len;
+    unsigned char * ln_sen, * sh_sen;
+    int l_len;
 
-  sen_put_len (prem, conc, &sh_sen, &ln_sen);
-  l_len = strlen (ln_sen);
+    sen_put_len (prem, conc, &sh_sen, &ln_sen);
+    l_len = strlen (ln_sen);
 
-  int i;
-  i = find_difference (ln_sen, sh_sen);
-  if (i == -1)
-    return NO_DIFFERENCE;
+    int i;
+    i = find_difference (ln_sen, sh_sen);
+    if (i == -1)
+        return NO_DIFFERENCE;
 
-  // Standard find_unmatched setup.
+    // Standard find_unmatched setup.
 
-  int li, si;
+    int li, si;
 
-  si = li = i;
-  if (sh_sen[si] == '(')
+    si = li = i;
+    if (sh_sen[si] == '(')
     {
-      si--;
-      if (si < 0)
-	return _("Subsumption constructed incorrectly.");
+        si--;
+        if (si < 0)
+            return _("Subsumption constructed incorrectly.");
     }
-  else if (si > 0
-	   && (!strncmp (sh_sen + si - 1, S_AND, S_CL)
-	       || !strncmp (sh_sen + si - 1, S_OR, S_CL)
-	       || !strncmp (sh_sen + si - 1, S_CON, S_CL)
-	       || !strncmp (sh_sen + si - 1, S_BIC, S_CL)))
+    else if (si > 0
+             && (!strncmp (sh_sen + si - 1, S_AND, S_CL)
+                 || !strncmp (sh_sen + si - 1, S_OR, S_CL)
+                 || !strncmp (sh_sen + si - 1, S_CON, S_CL)
+                 || !strncmp (sh_sen + si - 1, S_BIC, S_CL)))
     {
-      while (sh_sen[si] != '(')
-	si--;
-      si--;
-    }
-
-  si = find_unmatched_o_paren (sh_sen, si);
-  if (si == -1)
-    {
-      // This is the entire sentence.
-      li = 0;
-    }
-  else
-    {
-      if (ln_sen[li] != '(')
-	li = find_unmatched_o_paren (ln_sen, li);
-      if (li < 0)
-	return _("Subsumption constructed incorrectly.");
-
-      int ret_chk;
-      ret_chk = sexpr_find_unmatched (ln_sen, sh_sen, &li, &si);
-      if (ret_chk == AEC_MEM)
-	return NULL;
-
-      if (li < 0)
-	return _("Subsumption constructed incorrectly.");
+        while (sh_sen[si] != '(')
+            si--;
+        si--;
     }
 
-  if (ln_sen[li] != '(')
-    return _("There must be a connective in one sentence.");
+    si = find_unmatched_o_paren (sh_sen, si);
+    if (si == -1)
+    {
+        // This is the entire sentence.
+        li = 0;
+    }
+    else
+    {
+        if (ln_sen[li] != '(')
+            li = find_unmatched_o_paren (ln_sen, li);
+        if (li < 0)
+            return _("Subsumption constructed incorrectly.");
 
-  int tmp_pos;
-  unsigned char * tmp_str;
+        int ret_chk;
+        ret_chk = sexpr_find_unmatched (ln_sen, sh_sen, &li, &si);
+        if (ret_chk == AEC_MEM)
+            return NULL;
 
-  tmp_pos = parse_parens (ln_sen, li, &tmp_str);
-  if (tmp_pos == AEC_MEM)
-    return NULL;
-  if (!tmp_str)
+        if (li < 0)
+            return _("Subsumption constructed incorrectly.");
+    }
+
+    if (ln_sen[li] != '(')
+        return _("There must be a connective in one sentence.");
+
+    int tmp_pos;
+    unsigned char * tmp_str;
+
+    tmp_pos = parse_parens (ln_sen, li, &tmp_str);
+    if (tmp_pos == AEC_MEM)
+        return NULL;
+    if (!tmp_str)
+        return _("Subsumption constructed incorrectly.");
+
+    int ftc;
+    unsigned char * t_lsen, * t_rsen, tconn[S_CL + 1];
+
+    tconn[0] = '\0';
+    t_lsen = t_rsen = NULL;
+    ftc = sexpr_find_top_connective (tmp_str, tconn, &t_lsen, &t_rsen);
+    if (ftc == AEC_MEM)
+        return NULL;
+
+    free (tmp_str);
+
+    if (ftc < 0)
+    {
+        if (t_lsen)  free (t_lsen);
+        if (t_rsen)  free (t_rsen);
+
+        return _("Subsumption must be done around a connective.");
+    }
+
+    if (strcmp (tconn, S_AND) && strcmp (tconn, S_OR))
+    {
+        free (t_lsen); free (t_rsen);
+
+        return _("Subsumption must be done around a disjunction or a conjunction.");
+    }
+
+    int r_len;
+    unsigned char * lsen, * rsen, conn[S_CL + 1];
+
+    r_len = strlen (t_rsen);
+    conn[0] = '\0';
+    lsen = rsen = NULL;
+    ftc = sexpr_find_top_connective (t_rsen, conn, &lsen, &rsen);
+    if (ftc == AEC_MEM)
+        return NULL;
+    free (t_rsen);
+    if (rsen)  free (rsen);
+
+    if (ftc < 0)
+    {
+        free (t_lsen);
+        if (lsen)  free (lsen);
+
+        return _("Subsumption must be done around two connectives.");
+    }
+
+    if ((strcmp (tconn, S_AND) || strcmp (conn, S_OR))
+        && (strcmp (tconn, S_OR) || strcmp (conn, S_AND)))
+    {
+        free (t_lsen);
+        free (lsen);
+
+        return _("The two connectives must be complementary to one another.");
+    }
+
+    if (strcmp (t_lsen, lsen))
+    {
+        free (t_lsen);
+        free (lsen);
+
+        return _("Both of the left sentences must be the same.");
+    }
+    free (lsen);
+
+    /* Construct what should be the other sentence. */
+
+    unsigned char * oth_sen;
+    int oth_pos, alloc_size;
+
+    alloc_size = l_len - r_len - S_CL - 4;
+
+    oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+    CHECK_ALLOC (oth_sen, NULL);
+    strncpy (oth_sen, ln_sen, li);
+    oth_pos = li;
+
+    strcpy (oth_sen + oth_pos, t_lsen);
+    oth_pos += strlen (t_lsen);
+    free (t_lsen);
+
+    strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
+
+    char * ret_str;
+
+    if (ln_sen == conc)
+        ret_str = proc_sb (sh_sen, oth_sen);
+    else
+        ret_str = proc_sb (oth_sen, sh_sen);
+
+    if (!ret_str)
+        return NULL;
+
+    free (oth_sen);
+    if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
+        return CORRECT;
+
     return _("Subsumption constructed incorrectly.");
-
-  int ftc;
-  unsigned char * t_lsen, * t_rsen, tconn[S_CL + 1];
-
-  tconn[0] = '\0';
-  t_lsen = t_rsen = NULL;
-  ftc = sexpr_find_top_connective (tmp_str, tconn, &t_lsen, &t_rsen);
-  if (ftc == AEC_MEM)
-    return NULL;
-
-  free (tmp_str);
-
-  if (ftc < 0)
-    {
-      if (t_lsen)  free (t_lsen);
-      if (t_rsen)  free (t_rsen);
-
-      return _("Subsumption must be done around a connective.");
-    }
-
-  if (strcmp (tconn, S_AND) && strcmp (tconn, S_OR))
-    {
-      free (t_lsen); free (t_rsen);
-
-      return _("Subsumption must be done around a disjunction or a conjunction.");
-    }
-
-  int r_len;
-  unsigned char * lsen, * rsen, conn[S_CL + 1];
-
-  r_len = strlen (t_rsen);
-  conn[0] = '\0';
-  lsen = rsen = NULL;
-  ftc = sexpr_find_top_connective (t_rsen, conn, &lsen, &rsen);
-  if (ftc == AEC_MEM)
-    return NULL;
-  free (t_rsen);
-  if (rsen)  free (rsen);
-
-  if (ftc < 0)
-    {
-      free (t_lsen);
-      if (lsen)  free (lsen);
-
-      return _("Subsumption must be done around two connectives.");
-    }
-
-  if ((strcmp (tconn, S_AND) || strcmp (conn, S_OR))
-      && (strcmp (tconn, S_OR) || strcmp (conn, S_AND)))
-    {
-      free (t_lsen);
-      free (lsen);
-
-      return _("The two connectives must be complementary to one another.");
-    }
-
-  if (strcmp (t_lsen, lsen))
-    {
-      free (t_lsen);
-      free (lsen);
-
-      return _("Both of the left sentences must be the same.");
-    }
-  free (lsen);
-
-  /* Construct what should be the other sentence. */
-
-  unsigned char * oth_sen;
-  int oth_pos, alloc_size;
-
-  alloc_size = l_len - r_len - S_CL - 4;
-
-  oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
-  CHECK_ALLOC (oth_sen, NULL);
-  strncpy (oth_sen, ln_sen, li);
-  oth_pos = li;
-
-  strcpy (oth_sen + oth_pos, t_lsen);
-  oth_pos += strlen (t_lsen);
-  free (t_lsen);
-
-  strcpy (oth_sen + oth_pos, ln_sen + tmp_pos + 1);
-
-  char * ret_str;
-
-  if (ln_sen == conc)
-    ret_str = proc_sb (sh_sen, oth_sen);
-  else
-    ret_str = proc_sb (oth_sen, sh_sen);
-
-  if (!ret_str)
-    return NULL;
-
-  free (oth_sen);
-  if (ret_str == NO_DIFFERENCE || ret_str == CORRECT)
-    return CORRECT;
-
-  return _("Subsumption constructed incorrectly.");
 }

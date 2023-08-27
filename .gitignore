@@ -13,6 +13,9 @@ build-aux
 *.o
 src/aris
 src/.deps
+build*
+libxml2
+qt/*.user
 
 # Generated Documentation
 doc/aris/*.html

@@ -16,15 +16,18 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ARIS_SEXPR_PROCESS_H
-#define ARIS_SEXPR_PROCESS_H
+#ifndef SEXPRPROCESS_H
+#define SEXPRPROCESS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "process.h"
-#include "typedef.h"
+#include "../src/typedef.h"
 
-#define S_AND sexpr_conns.and
-#define S_OR  sexpr_conns.or
-#define S_NOT sexpr_conns.not
+#define S_AND sexpr_conns.And
+#define S_OR  sexpr_conns.Or
+#define S_NOT sexpr_conns.Not
 #define S_CON sexpr_conns.con
 #define S_BIC sexpr_conns.bic
 #define S_UNV sexpr_conns.unv
@@ -37,31 +40,31 @@
 #define S_NL  sexpr_conns.nl
 
 int sexpr_get_part (unsigned char * in_str,
-		    unsigned int init_pos,
-		    unsigned char ** out_str);
+                   unsigned int init_pos,
+                   unsigned char ** out_str);
 
 unsigned char * sexpr_car (unsigned char * in_str);
 
 unsigned char * sexpr_cdr (unsigned char * in_str);
 
 int sexpr_car_cdr (unsigned char * in_str,
-		   unsigned char ** car,
-		   vec_t * cdr);
+                  unsigned char ** car,
+                  vec_t * cdr);
 
 int sexpr_str_car_cdr (unsigned char * in_str,
-		       unsigned char ** car,
-		       unsigned char ** cdr);
+                      unsigned char ** car,
+                      unsigned char ** cdr);
 
 void sen_put_len (unsigned char * in0, unsigned char * in1,
-		  unsigned char ** sh_sen, unsigned char ** ln_sen);
+                 unsigned char ** sh_sen, unsigned char ** ln_sen);
 
 unsigned char *
 construct_other (unsigned char * main_str,
-		 int init_pos,
-		 int fin_pos,
-		 int alloc_size,
-		 char * template,
-		 ...);
+                int init_pos,
+                int fin_pos,
+                int alloc_size,
+                char * template,
+                ...);
 
 int sexpr_not_check (unsigned char * in_str);
 
@@ -72,7 +75,7 @@ unsigned char * sexpr_elim_not (unsigned char * in_str);
 int sexpr_get_generalities (unsigned char * in_str, unsigned char * conn, vec_t * vec);
 
 int sexpr_find_top_connective (unsigned char * in_str, unsigned char * conn,
-			       unsigned char ** lsen, unsigned char ** rsen);
+                              unsigned char ** lsen, unsigned char ** rsen);
 
 int find_unmatched_o_paren (unsigned char * in_str, int in_pos);
 
@@ -81,16 +84,16 @@ int sexpr_find_unmatched (unsigned char * sen_a, unsigned char * sen_b, int * ai
 int sexpr_get_pred_args (unsigned char * in_str, unsigned char ** pred, vec_t * args);
 
 unsigned char * sexpr_elim_quant (unsigned char * in_str, unsigned char * quant,
-				  unsigned char ** var);
+                                unsigned char ** var);
 
 int sexpr_get_quant_vars (unsigned char * in_str, vec_t * vars);
 
 int sexpr_replace_var (unsigned char * in_str, unsigned char * new_var,
-		       unsigned char * old_var, vec_t * off_var,
-		       unsigned char ** out_str);
+                      unsigned char * old_var, vec_t * off_var,
+                      unsigned char ** out_str);
 
 int sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
-		       unsigned char * quant, int cons, vec_t * cur_vars);
+                      unsigned char * quant, int cons, vec_t * cur_vars);
 
 int sexpr_find_vars (unsigned char * in_str, unsigned char * var, vec_t * offsets);
 
@@ -179,4 +182,8 @@ char * proc_sp (unsigned char * prem_0, unsigned char * prem_1, unsigned char * 
 char * proc_sq (unsigned char * conc, vec_t * vars);
 
 char * proc_in (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc, vec_t * vars);
-#endif  /*  ARIS_SEXPR_PROCESS_H  */
+#ifdef __cplusplus
+}
+#endif
+
+#endif // SEXPRPROCESS_H

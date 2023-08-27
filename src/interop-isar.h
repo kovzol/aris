@@ -16,31 +16,34 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ARIS_INTEROP_ISAR_H
-#define ARIS_INTEROP_ISAR_H
+#ifndef INTEROPISAR_H
+#define INTEROPISAR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "typedef.h"
 
 struct input_type {
-  char * type;
-  char * seq;
+    char * type;
+    char * seq;
 };
 
 struct key_function {
-  char * key;
-  int (* func) (char *, char **);
+    char * key;
+    int (* func) (char *, char **);
 };
 
 
 enum KEY_FUNCS {
-  KF_SYN = 0,
-  KF_FUN,
-  KF_CASE,
-  KF_PRIMREC,
-  KF_DEF,
-  KF_LEMMA,
-  KF_THEOREM,
-  KF_NUM_FUNCS,
+    KF_SYN = 0,
+    KF_FUN,
+    KF_CASE,
+    KF_PRIMREC,
+    KF_DEF,
+    KF_LEMMA,
+    KF_THEOREM,
+    KF_NUM_FUNCS,
 };
 
 int isar_run_cmds (unsigned char ** inputs, unsigned char ** output);
@@ -81,14 +84,14 @@ const char * marksups[] = {
 */
 
 static key_func kfs[KF_NUM_FUNCS] = {
-  "type_synonym", isar_parse_syn,
-  "fun", isar_parse_fun,
-  "case", isar_parse_case,
-  "primrec", isar_parse_primrec,
-  "definition", isar_parse_def,
-  "lemma", isar_parse_lemma,
-  "theorem", isar_parse_theorem,
-  /*
+    "type_synonym", isar_parse_syn,
+    "fun", isar_parse_fun,
+    "case", isar_parse_case,
+    "primrec", isar_parse_primrec,
+    "definition", isar_parse_def,
+    "lemma", isar_parse_lemma,
+    "theorem", isar_parse_theorem,
+    /*
   "header", isar_parse_markup,
   "section", isar_parse_markup,
   "subsection", isar_parse_markup,
@@ -97,8 +100,8 @@ static key_func kfs[KF_NUM_FUNCS] = {
 };
 
 struct regexp_assoc {
-  char * ident;
-  char * regexp;
+    char * ident;
+    char * regexp;
 };
 
 /*
@@ -114,5 +117,8 @@ struct regexp_assoc reg_assocs[] = {
   "latin", "[a-zA-Z]"
 };
 */
+#ifdef __cplusplus
+}
+#endif
 
-#endif  /*  ARIS_INTEROP_ISAR_H  */
+#endif // INTEROPISAR_H

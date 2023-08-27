@@ -1462,7 +1462,7 @@ sentence_paste_text (sentence * sen)
 
           if (IS_TYPE_CONN (sen_text + i, gui_conns))
             {
-              if (!strncmp (sen_text + i, gui_conns.not, gui_conns.nl))
+              if (!strncmp (sen_text + i, gui_conns.Not, gui_conns.nl))
                 len = gui_conns.nl;
               else
                 len = gui_conns.cl;

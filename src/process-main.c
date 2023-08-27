@@ -17,48 +17,48 @@
 */
 
 #include "process.h"
-#include "vec.h"
+#include "../src/vec.h"
 
 char *
 process (unsigned char * conc, vec_t * prems, const char * rule, vec_t * vars,
-	 proof_t * proof)
+        proof_t * proof)
 {
-  unsigned char * conclusion;
+    unsigned char * conclusion;
 
-  conclusion = conc;
+    conclusion = conc;
 
-  char * infer, * equiv, * quant, * misc, * bool;
+    char * infer, * equiv, * quant, * misc, * bool;
 
-  infer = process_inference (conclusion, prems, rule);
-  if (!infer)
-    return NULL;
+    infer = process_inference (conclusion, prems, rule);
+    if (!infer)
+        return NULL;
 
-  if (strncmp (infer, NOT_MINE, 28))
-    return infer;
+    if (strncmp (infer, NOT_MINE, 28))
+        return infer;
 
-  equiv = process_equivalence (conclusion, prems, rule);
-  if (!equiv)
-    return NULL;
-  if (strncmp (equiv, NOT_MINE, 28))
-    return equiv;
+    equiv = process_equivalence (conclusion, prems, rule);
+    if (!equiv)
+        return NULL;
+    if (strncmp (equiv, NOT_MINE, 28))
+        return equiv;
 
-  bool = process_bool (conclusion, prems, rule);
-  if (!bool)
-    return NULL;
-  if (strncmp (bool, NOT_MINE, 28))
-    return bool;
+    bool = process_bool (conclusion, prems, rule);
+    if (!bool)
+        return NULL;
+    if (strncmp (bool, NOT_MINE, 28))
+        return bool;
 
-  quant = process_quantifiers (conclusion, prems, rule, vars);
-  if (!quant)
-    return NULL;
-  if (strncmp (quant, NOT_MINE, 28))
-    return quant;
+    quant = process_quantifiers (conclusion, prems, rule, vars);
+    if (!quant)
+        return NULL;
+    if (strncmp (quant, NOT_MINE, 28))
+        return quant;
 
-  misc = process_misc (conclusion, prems, rule, vars, proof);
-  if (!misc)
-    return NULL;
-  if (strncmp (misc, NOT_MINE, 28))
-    return misc;
+    misc = process_misc (conclusion, prems, rule, vars, proof);
+    if (!misc)
+        return NULL;
+    if (strncmp (misc, NOT_MINE, 28))
+        return misc;
 
-  return "Rule not recognized.";
+    return "Rule not recognized.";
 }

@@ -16,36 +16,39 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ARIS_PROC_H
-#define ARIS_PROC_H
+#ifndef PROCESS_H
+#define PROCESS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "typedef.h"
+#include "../src/typedef.h"
 
 
 #define ISLEGIT(c) (islower (c) || isdigit (c) || c == '_')
 
 #define ISSEP(c) (c == ')' || c == ',' || c == '+' || c == '*' || c == '(')
 
-#define IS_TYPE_CONN(s,t) (!strncmp (s, t.and, t.cl)		\
-			   || !strncmp (s, t.or, t.cl)		\
-			   || !strncmp (s, t.not, t.nl)		\
-			   || !strncmp (s, t.con, t.cl)		\
-			   || !strncmp (s, t.bic, t.cl)		\
-			   || !strncmp (s, t.unv, t.cl)		\
-			   || !strncmp (s, t.exl, t.cl)		\
-			   || !strncmp (s, t.tau, t.cl)		\
-			   || !strncmp (s, t.ctr, t.cl)		\
-			   || !strncmp (s, t.elm, t.cl)		\
-			   || !strncmp (s, t.nil, t.cl))
+#define IS_TYPE_CONN(s,t) (!strncmp (s, t.And, t.cl)		\
+               || !strncmp (s, t.Or, t.cl)		\
+               || !strncmp (s, t.Not, t.nl)		\
+               || !strncmp (s, t.con, t.cl)		\
+               || !strncmp (s, t.bic, t.cl)		\
+               || !strncmp (s, t.unv, t.cl)		\
+               || !strncmp (s, t.exl, t.cl)		\
+               || !strncmp (s, t.tau, t.cl)		\
+               || !strncmp (s, t.ctr, t.cl)		\
+               || !strncmp (s, t.elm, t.cl)		\
+               || !strncmp (s, t.nil, t.cl))
 
 #define IS_BIN_CONN(s) (!strncmp (s,AND,CL)	\
-			|| !strncmp (s,OR,CL)	\
-			|| !strncmp (s,CON,CL)	\
-			|| !strncmp (s,BIC,CL))
+            || !strncmp (s,OR,CL)	\
+            || !strncmp (s,CON,CL)	\
+            || !strncmp (s,BIC,CL))
 
 #define IS_SBIN_CONN(s) (!strncmp (s,S_AND,S_CL)            \
                          || !strncmp (s,S_OR,S_CL)          \
@@ -56,13 +59,13 @@
 
 // Used in check_sides
 #define ISGOOD(s) (!strncmp (s, UNV, CL)     \
-		   || !strncmp (s, EXL, CL)  \
-		   || *(s) == '('	     \
-		   || isupper (*(s))	     \
-		   || !strncmp (s, NOT, NL)  \
-		   || !strncmp (s, CTR, CL)  \
-		   || !strncmp (s, NIL, CL)  \
-		   || !strncmp (s, TAU, CL))
+           || !strncmp (s, EXL, CL)  \
+           || *(s) == '('	     \
+           || isupper (*(s))	     \
+           || !strncmp (s, NOT, NL)  \
+           || !strncmp (s, CTR, CL)  \
+           || !strncmp (s, NIL, CL)  \
+           || !strncmp (s, TAU, CL))
 
 #define ISSBOOL(s) (!strncmp (s, S_TAU, S_CL) || !strncmp (s, S_CTR, S_CL))
 
@@ -85,9 +88,9 @@ enum CONN_ORDER {
 // The struct for connectives handling.
 
 struct connectives_list {
-  char * and;
-  char * or;
-  char * not;
+  char * And;
+  char * Or;
+  char * Not;
   char * con;
   char * bic;
   char * unv;
@@ -130,6 +133,7 @@ static struct connectives_list gui_conns = {
   "\u2208",
   "\u2349",
   3, 2
+//    1, 1
 };
 
 
@@ -174,9 +178,9 @@ extern struct connectives_list main_conns;
 
 // Definitions.
 
-#define AND main_conns.and
-#define OR main_conns.or
-#define NOT main_conns.not
+#define AND main_conns.And
+#define OR main_conns.Or
+#define NOT main_conns.Not
 #define CON main_conns.con
 #define BIC main_conns.bic
 #define UNV main_conns.unv
@@ -238,29 +242,29 @@ struct sen_id {
 /* Parse functions. */
 
 int parse_parens (const unsigned char * in_str,
-		  const int init_pos,
-		  unsigned char ** out_str);
+          const int init_pos,
+          unsigned char ** out_str);
 
 int reverse_parse_parens (const unsigned char * in_str,
-			  const int init_pos,
-			  unsigned char ** out_str);
+              const int init_pos,
+              unsigned char ** out_str);
 
 int parse_tags (const unsigned char * in_str,
-		const int init_pos,
-		unsigned char ** out_str,
-		const char * o_tag, const char * c_tag);
+        const int init_pos,
+        unsigned char ** out_str,
+        const char * o_tag, const char * c_tag);
 
 /* Check functions. */
 
 int check_parens (const unsigned char * chk_str);
 
 int check_sides_conn (const unsigned char * chk_str,
-		       const unsigned int init_pos);
+               const unsigned int init_pos);
 
 int check_conns (const unsigned char * chk_str);
 
 int check_sides_quant (const unsigned char * chk_str,
-			const unsigned int init_pos);
+            const unsigned int init_pos);
 
 int check_quants (const unsigned char * chk_str);
 
@@ -285,44 +289,44 @@ unsigned char * elim_not (const unsigned char * not_str);
 unsigned char * elim_par (const unsigned char * par_str);
 
 int get_gen (unsigned char * in_str,
-	     int in_pos,
-	     unsigned char ** out_str);
+         int in_pos,
+         unsigned char ** out_str);
 
 int get_generalities (unsigned char * chk_str,
-		      unsigned char * conn,
-		      vec_t * vec);
+              unsigned char * conn,
+              vec_t * vec);
 
 // Process functions
 
 char * process (unsigned char * conc,
-		vec_t * prems,
-		const char * rule,
-		vec_t * vars,
-		proof_t * proof);
+        vec_t * prems,
+        const char * rule,
+        vec_t * vars,
+        proof_t * proof);
 
 
 char * process_inference (unsigned char * conc,
-			  vec_t * prems,
-			  const char * rule);
+              vec_t * prems,
+              const char * rule);
 
 char * process_equivalence (unsigned char * conc,
-			    vec_t * prems,
-			    const char * rule);
+                vec_t * prems,
+                const char * rule);
 
 char * process_quantifiers (unsigned char * conc,
-			    vec_t * prems,
-			    const char * rule,
-			    vec_t * vars);
+                vec_t * prems,
+                const char * rule,
+                vec_t * vars);
 
 char * process_misc (unsigned char * conc,
-		     vec_t * prems,
-		     const char * rule,
-		     vec_t * vars,
-		     proof_t * proof);
+             vec_t * prems,
+             const char * rule,
+             vec_t * vars,
+             proof_t * proof);
 
 char * process_bool (unsigned char * conc,
-		     vec_t * prems,
-		     const char * rule);
+             vec_t * prems,
+             const char * rule);
 
 
 // Sexpr conversion functions.
@@ -330,10 +334,13 @@ char * process_bool (unsigned char * conc,
 unsigned char * convert_sexpr (unsigned char * in_str);
 
 int get_pred_func_args (unsigned char * in_str, int init_pos,
-			unsigned char ** sym, vec_t * args);
+            unsigned char ** sym, vec_t * args);
 
 unsigned char * infix_to_prefix (unsigned char * in_str);
 
 unsigned char * infix_to_prefix_func (unsigned char * in_str);
+#ifdef __cplusplus
+}
+#endif
 
-#endif  /* ARIS_PROC_H */
+#endif // PROCESS_H

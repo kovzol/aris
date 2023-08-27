@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/saveas.png</file>
+        <file>assets/save.png</file>
+        <file>assets/import.png</file>
+        <file>assets/icon_simple.svg</file>
+        <file>assets/help.png</file>
+        <file>assets/goal.png</file>
+        <file>assets/font.png</file>
+        <file>assets/folder.png</file>
+        <file>assets/export.png</file>
+        <file>assets/boolean.png</file>
+        <file>assets/about.png</file>
+        <file>assets/eval.png</file>
+        <file>assets/new.png</file>
+    </qresource>
+</RCC>

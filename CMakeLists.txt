@@ -3,7 +3,7 @@ project(aris C)
 
 set(PACKAGE_NAME "GNU Aris")
 set(PACKAGE "aris")
-set(ARIS_VERSION "2.2")
+set(ARIS_VERSION "3.0")
 set(PACKAGE_BUGREPORT "aris-bugs@gnu.org")
 
 set(CMAKE_C_STANDARD 11)
