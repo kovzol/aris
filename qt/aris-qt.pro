@@ -51,6 +51,7 @@ win32: MINGW64_ROOT = C:/msys64/mingw64
 !wasm{
     unix: LIBS += -lxml2
     win32: LIBS += $${MINGW64_ROOT}/lib/libxml2.a
+    win32: LIBS += $${MINGW64_ROOT}/lib/libxml2.dll.a
 }
 
 # Default rules for deployment.
