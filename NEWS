@@ -7,6 +7,16 @@ This NEWS file records important changes.
   notice and this notice are preserved.
 
 
+3.0
+
+  * Added a qt version.
+  
+  * Added support for WebAssembly compilation.
+  
+  * Fixed up subproof referencing bugs.
+  
+  * Fixed up On-Screen Keyboard bugs on gtk build.
+
 2.2
 
   * Added undo/redo functionality.
