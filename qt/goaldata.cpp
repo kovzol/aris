@@ -28,6 +28,7 @@ QVector<GoalLine> GoalData::glines() const
     return m_goalLines;
 }
 
+// Edit/Change an existing goal line (in m_goalLines) for some valid index
 bool GoalData::setgLineAt(int index, const GoalLine &goalLine)
 {
     if (index < 0 || index > m_goalLines.size())
@@ -43,6 +44,7 @@ bool GoalData::setgLineAt(int index, const GoalLine &goalLine)
     return true;
 }
 
+// Insert a goal line (in m_goalLines) at a valid index
 void GoalData::insertgLine(int index, int gLine, bool gValid, QString gText)
 {
     emit pregLineInsert(index);
@@ -57,6 +59,7 @@ void GoalData::insertgLine(int index, int gLine, bool gValid, QString gText)
     emit postgLineInsert();
 }
 
+// Remove a goal line (in m_goalLines) at a valid index
 void GoalData::removegLineAt(int index)
 {
     emit pregLineRemove(index);

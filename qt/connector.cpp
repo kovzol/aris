@@ -52,6 +52,8 @@ Connector::Connector(QObject *parent)
 
 void Connector::reverseMapInit()
 {
+    // Initialize reverseRulesMap
+
     reverseRulesMap[-1] = "premise";                        reverseRulesMap[0] = "Modus Ponens";                    reverseRulesMap[1] = "Addition";
     reverseRulesMap[2] = "Simplification";                  reverseRulesMap[3] = "Conjunction";                     reverseRulesMap[4] = "Hypothetical Syllogism";
     reverseRulesMap[5] = "Disjunctive Syllogism";           reverseRulesMap[6] = "Excluded middle";                 reverseRulesMap[7] = "Constructive Dilemma";
@@ -67,11 +69,13 @@ void Connector::reverseMapInit()
     reverseRulesMap[-2] = "sf";
 }
 
+// Getter for m_evalText
 QString Connector::evalText() const
 {
     return m_evalText;
 }
 
+// Setter for m_evalText
 void Connector::setEvalText(const QString &newEvalText)
 {
     if (m_evalText == newEvalText)
@@ -80,6 +84,12 @@ void Connector::setEvalText(const QString &newEvalText)
     emit evalTextChanged();
 }
 
+/* Populates m_indices, with array of indices for sen-data corresponding to a line.
+ *  input:
+ *    toBeEval  - pointer to the ProofData object.
+ *  output:
+ *    none.
+ */
 void Connector::genIndices(const ProofData *toBeEval)
 {
     m_indices.clear();
@@ -105,6 +115,13 @@ void Connector::genIndices(const ProofData *toBeEval)
 
 }
 
+/* Sets connectives (using regex) and generates proof_t from corresponding ProofData Object
+ * This is stored inside cProof
+ *  input:
+ *    toBeEval  - pointer to the ProofData object.
+ *  output:
+ *    none.
+ */
 void Connector::genProof(const ProofData *toBeEval)
 {
     main_conns = gui_conns;
@@ -170,6 +187,13 @@ void Connector::genProof(const ProofData *toBeEval)
     cProof->boolean = 0;
 }
 
+
+/* Inserts goal text from corresponding GoalData Object into cProof.
+ *  input:
+ *    toBeEval  - pointer to the GoalData object.
+ *  output:
+ *    none.
+ */
 void Connector::genGoals(const GoalData *toBeEval)
 {
 
@@ -189,6 +213,13 @@ void Connector::genGoals(const GoalData *toBeEval)
     }
 }
 
+/* Evaluates the proof and updates m_evalText accordingly.
+ *  input:
+ *    toBeEval  - pointer to the ProofData object.
+ *    gls       - pointer to the GoalData object.
+ *  output:
+ *    1 on success.
+ */
 int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
 {
     genProof(toBeEval);
@@ -225,6 +256,14 @@ int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
     return 1;
 }
 
+/* Generates cProof and saves file (using aio_save).
+ *  input:
+ *    name          - filename for the file being saved.
+ *    toBeSaved     - pointer to the ProofData object.
+ *    gls           - pointer to the GoalData object.
+ *  output:
+ *    none.
+ */
 void Connector::saveProof(const QString &name, const ProofData *toBeSaved, const GoalData *gls)
 {
     genProof(toBeSaved);
@@ -239,6 +278,14 @@ void Connector::saveProof(const QString &name, const ProofData *toBeSaved, const
         free(file_name);
 }
 
+/* Opens the specified proof after clearing the previous one.
+ *  input:
+ *    name      - filename of the opened proof.
+ *    openTo    - pointer to the ProofData object.
+ *    gls       - pointer to the GoalData object.
+ *  output:
+ *    none.
+ */
 void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
 {
 
@@ -285,6 +332,13 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
     qDebug() << "Model Loaded Successfully";
 }
 
+/* Opens the specified proof after clearing the previous one (for WebAssembly).
+ *  input:
+ *    open      - pointer to the ProofData object.
+ *    gls       - pointer to the GoalData object.
+ *  output:
+ *    none.
+ */
 void Connector::wasmOpenProof(ProofData *open, GoalData *gls)
 {
     auto fileContentReady = [&open, this, &gls](const QString &fileName, const QByteArray &fileContent) {
@@ -302,7 +356,13 @@ void Connector::wasmOpenProof(ProofData *open, GoalData *gls)
     QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
 }
 
-
+/* Generates cProof and saves file (using aio_save) (for WebAssembly).
+ *  input:
+ *    pd         - pointer to the ProofData object.
+ *    gls        - pointer to the GoalData object.
+ *  output:
+ *    none.
+ */
 void Connector::wasmSaveProof(const ProofData * pd, const GoalData *gls)
 {
     saveProof("temp.tle",pd,gls);
@@ -312,11 +372,13 @@ void Connector::wasmSaveProof(const ProofData * pd, const GoalData *gls)
     file.remove("temp.tle");
 }
 
+// Getter for cProof
 proof_t *Connector::getCProof() const
 {
     return cProof;
 }
 
+// Getter for post-evaluation return values
 vec_t *Connector::getReturns() const
 {
     return returns;

@@ -28,6 +28,7 @@ QVector<ProofLine> ProofData::lines() const
     return m_proofLines;
 }
 
+// Edit/Change an existing proof line (in m_proofLines) for some valid index
 bool ProofData::setLineAt(int index, const ProofLine &proofLine)
 {
     if (index < 0 || index > m_proofLines.size())
@@ -46,12 +47,14 @@ bool ProofData::setLineAt(int index, const ProofLine &proofLine)
     return true;
 }
 
+// Set sd->file for a line (required for rule lemma i.e. import proof)
 void ProofData::setFile(int index, const QString &name)
 {
     m_proofLines[index].fname = (unsigned char *) calloc(name.size()+1, sizeof(unsigned char));
     memcpy(m_proofLines[index].fname, name.toStdString().c_str(), name.size());
 }
 
+// Insert a proof line (in m_proofLines) at a valid index
 void ProofData::insertLine(int index,int a, QString b, QString c, bool d, bool e, bool f, int g, QList<int> h)
 {
     emit preLineInsert(index);
@@ -71,6 +74,7 @@ void ProofData::insertLine(int index,int a, QString b, QString c, bool d, bool e
     emit postLineInsert();
 }
 
+// Proof a proof line (in m_proofLines) at a valid index
 void ProofData::removeLineAt(int index)
 {
     emit preLineRemove(index);

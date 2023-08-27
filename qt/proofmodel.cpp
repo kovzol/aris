@@ -22,6 +22,7 @@ ProofModel::ProofModel(QObject *parent)
 {
 }
 
+// Return the number of rows in the model.
 int ProofModel::rowCount(const QModelIndex &parent) const
 {
     // For list models only the root node (an invalid parent) should return the list's size. For all
@@ -32,6 +33,7 @@ int ProofModel::rowCount(const QModelIndex &parent) const
     return mLines->lines().size();
 }
 
+// Return data corresponding to a particular index and role(enum)
 QVariant ProofModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -64,6 +66,7 @@ QVariant ProofModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+// Set/Change/Edit data corresponding to a particular index and role(enum) with the given value
 bool ProofModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (!mLines)
@@ -117,6 +120,7 @@ Qt::ItemFlags ProofModel::flags(const QModelIndex &index) const
     return Qt::ItemIsEditable;
 }
 
+// Define role names.
 QHash<int, QByteArray> ProofModel::roleNames() const
 {
     QHash<int, QByteArray> names;
@@ -136,6 +140,7 @@ ProofData *ProofModel::lines() const
     return mLines;
 }
 
+// Update the model with the new proof line(s)
 void ProofModel::setlines(ProofData *newLines)
 {
     beginResetModel();
@@ -164,6 +169,8 @@ void ProofModel::setlines(ProofData *newLines)
 }
 
 // TODO: Use model indices directly in QML, no need to update lines that way
+
+// Update line number roles after insertion and/or removal of a proof line
 void ProofModel::updateLines()
 {
     for (int i = 0; i < mLines->lines().size(); ++i) {
@@ -171,6 +178,7 @@ void ProofModel::updateLines()
     }
 }
 
+// Update relevant reference roles after insertion and/or removal of a proof line
 void ProofModel::updateRefs(int ln, bool op)
 {
     for (int i = ln+1; i < mLines->lines().size(); i++){

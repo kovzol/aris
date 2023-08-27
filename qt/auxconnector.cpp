@@ -37,6 +37,14 @@ auxConnector::auxConnector(QObject *parent)
 
 }
 
+/* Exports the proof to a latex file.
+ *  input:
+ *    name      - filename for the to be saved file.
+ *    toBeEval  - pointer to the ProofData object.
+ *    c         - pointer to the Connector object.
+ *  output:
+ *    none.
+ */
 void auxConnector::latex(const QString &name, const ProofData *toBeEval, Connector *c)
 {
     c->genProof(toBeEval);
@@ -54,6 +62,13 @@ void auxConnector::latex(const QString &name, const ProofData *toBeEval, Connect
 
 }
 
+/* Exports the proof to a latex file (for WebAssembly).
+ *  input:
+ *    pd - pointer to the ProofData object.
+ *    c  - pointer to the Connector object.
+ *  output:
+ *    none.
+ */
 void auxConnector::wasmLatex(const ProofData *pd, Connector *c)
 {
     latex("temp.tex",pd,c);
@@ -64,6 +79,15 @@ void auxConnector::wasmLatex(const ProofData *pd, Connector *c)
 
 }
 
+/* Imports a proof into the current proof.
+ *  input:
+ *    name  - filename of the imported proof file.
+ *    pd    - pointer to the ProofData object.
+ *    c     - pointer to the Connector object.
+ *    pm    - pointer to the ProofModel object.
+ *  output:
+ *    none.
+ */
 void auxConnector::importProof(const QString &name, ProofData *pd, const Connector *c, ProofModel *pm)
 {
     QString newName = name.contains("file://")? name.mid(7): name;
@@ -195,6 +219,14 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
         free(file_name);
 }
 
+/* Imports a proof into the current proof (for WebAssembly).
+ *  input:
+ *    pd    - pointer to the ProofData object.
+ *    c     - pointer to the Connector object.
+ *    pm    - pointer to the ProofModel object.
+ *  output:
+ *    none.
+ */
 void auxConnector::wasmImportProof(ProofData *pd, const Connector *c, ProofModel *pm)
 {
     auto fileContentReady = [this, &c, &pd, &pm](const QString &fileName, const QByteArray &fileContent) {
@@ -213,6 +245,13 @@ void auxConnector::wasmImportProof(ProofData *pd, const Connector *c, ProofModel
 }
 
 #ifndef Q_OS_WASM
+
+/* Starts Aris as a new detached process (for Desktop).
+ *  input:
+ *    none.
+ *  output:
+ *    none.
+ */
 void auxConnector::newWindow()
 {
     QString program = "./aris-qt";

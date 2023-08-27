@@ -24,6 +24,7 @@ GoalModel::GoalModel(QObject *parent)
 {
 }
 
+// Return number of rows in the model
 int GoalModel::rowCount(const QModelIndex &parent) const
 {
     // For list models only the root node (an invalid parent) should return the list's size. For all
@@ -34,6 +35,7 @@ int GoalModel::rowCount(const QModelIndex &parent) const
     return m_glines->glines().size();
 }
 
+// Return data corresponding to a particular index and role(enum)
 QVariant GoalModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -53,6 +55,7 @@ QVariant GoalModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+// Set/Change/Edit data corresponding to a particular index and role(enum) with the given value
 bool GoalModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (!m_glines)
@@ -87,6 +90,7 @@ Qt::ItemFlags GoalModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable; // FIXME: Implement me!
 }
 
+// Define role names
 QHash<int, QByteArray> GoalModel::roleNames() const
 {
     QHash<int, QByteArray> names;
@@ -102,6 +106,7 @@ GoalData *GoalModel::glines() const
     return m_glines;
 }
 
+// Update the model with the new goal line(s)
 void GoalModel::setGlines(GoalData *newGlines)
 {
     beginResetModel();
@@ -129,6 +134,7 @@ void GoalModel::setGlines(GoalData *newGlines)
     endResetModel();
 }
 
+// Evaluate goals and set the valid role
 void GoalModel::evalGoals(GoalData *gls, Connector *c)
 {
     for (int i = 0; i < gls->glines().size(); i++){

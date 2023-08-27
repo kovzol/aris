@@ -23,7 +23,13 @@
 #include "../src/list.h"
 #include "../src/vec.h"
 
-
+/* Checks a line in the goal. Inspired from goal_check_line in goals.c
+ *  input:
+ *    goal - the goal containing the sentence to be checked.
+ *    sen - the sentence being checked.
+ *  output:
+ *    0 on success, -1 on error.
+ */
 int qtgoal_check_line(proof_t *proof, unsigned char *sen_text, vec_t *rets, int *ln, int *is_valid)
 {
     // First, check for text errors.
