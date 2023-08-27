@@ -98,7 +98,7 @@ Run the following inside `aris/`:
 mkdir build
 cd build
 cmake -G "MinGW Makefiles" ..
-mingw32-make -j $(nproc)
+mingw32-make -j4
 ```
 
 #### Using `qmake`
