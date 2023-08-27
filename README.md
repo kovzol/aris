@@ -115,7 +115,7 @@ path/to/emmake make
 path/to/emar rcs libxml2.a *.o
 ```
 
-Now, navigate to your `aris/` directory and run the following:
+Now, inside `aris/` run the following:
 ```
 mkdir libxml2
 cp path/to/above/created/libxml2.a libxml2/
