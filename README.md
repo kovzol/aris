@@ -76,6 +76,7 @@ To install GNU Aris through snap, visit https://snapcraft.io/aris and find the r
 ### qt version
 #### Using `cmake`
 
+##### Linux
 Run the following inside `aris/` :
 ```
 cmake -S qt/ -B build-qt/ -DCMAKE_GENERATOR:STRING=Ninja -DCMAKE_BUILD_TYPE:STRING=Release
@@ -88,6 +89,16 @@ cd build-qt/ && cmake -P cmake_install.cmake
 To uninstall:
 ```
 cd build-qt/ && xargs rm < install_manifest.txt
+```
+
+##### Windows (with MINGW)
+
+Run the following inside `aris/`:
+```
+mkdir build
+cd build
+cmake -G "MinGW Makefiles" ..
+mingw32-make -j $(nproc)
 ```
 
 #### Using `qmake`
