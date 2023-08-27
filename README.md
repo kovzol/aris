@@ -21,7 +21,7 @@ notice and this notice are preserved.
 - [References](#references)
 
 ## Installation Guide
-Check under `Releases` for Linux/Windows bundles and `AppImages` or visit our [website](matek.hu/zoltan/aris) .
+Check under `Releases` for Linux/Windows bundles and `AppImages` or visit our [website](https://matek.hu/zoltan/aris) .
 
 Else, to build GNU Aris through source, follow the instructions given below. This should work on Linux, Mac or Windows (by using, for example, the MSYS2 toolchain and its MINGW64 environment):
 
