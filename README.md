@@ -29,8 +29,12 @@ Clone/Download the repository. For example:
    ```
    git clone https://github.com/kovzol/aris
    ```
+You may need to install additional software like `cmake`, Qt, `ninja`, and of course, you need to have
+a working C/C++ compiler toolchain.
 
 ### gtk version
+
+#### Linux or Mac
 
 1. Follow the steps:
 ```
@@ -67,29 +71,7 @@ cmake ..
 
 4. Launch using `./aris`.
 
-For further instructions on building and installation ( without `cmake`), refer to the [INSTALL](INSTALL) file.
-
-#### Snap Installation
-
-To install GNU Aris through snap, visit https://snapcraft.io/aris and find the required distribution details according to your system.
-
-### qt version
-#### Using `cmake`
-
-##### Linux
-Run the following inside `aris/` :
-```
-cmake -S qt/ -B build-qt/ -DCMAKE_GENERATOR:STRING=Ninja -DCMAKE_BUILD_TYPE:STRING=Release
-cmake --build build-qt/ --target all
-```
-This should generate a binary `aris-qt` inside `build-qt/` , it can be run with `./aris-qt` or you can install to `/usr/local` with:
-```
-cd build-qt/ && cmake -P cmake_install.cmake
-```
-To uninstall:
-```
-cd build-qt/ && xargs rm < install_manifest.txt
-```
+For further instructions on building and installation (without `cmake`), refer to the [INSTALL](INSTALL) file.
 
 ##### Windows (with MINGW)
 
@@ -100,6 +82,32 @@ cd build
 cmake -G "MinGW Makefiles" ..
 mingw32-make -j4
 ```
+
+#### Snap Installation
+
+To install GNU Aris through snap, visit https://snapcraft.io/aris and find the required distribution details according to your system.
+
+### qt version
+#### Using `cmake`
+
+##### Linux
+Run the following inside `aris/`:
+```
+cmake -S qt/ -B build-qt/ -DCMAKE_GENERATOR:STRING=Ninja -DCMAKE_BUILD_TYPE:STRING=Release
+cmake --build build-qt/ --target all
+```
+(In case Qt is installed in a non-system folder, add `-DCMAKE_PREFIX_PATH=...` to the first command line.
+See https://stackoverflow.com/a/66457331 for more information.)
+
+This should generate a binary `aris-qt` inside `build-qt/` , it can be run with `./aris-qt` or you can install to `/usr/local` with:
+```
+cd build-qt/ && cmake -P cmake_install.cmake
+```
+To uninstall:
+```
+cd build-qt/ && xargs rm < install_manifest.txt
+```
+
 
 #### Using `qmake`
 
