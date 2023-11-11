@@ -455,10 +455,12 @@ Item {
 
                     Action {
                         text: "Remove this Line"
-                        enabled: (index !== 0)
+                        enabled: !((premiseCount == listView.count)
+                                   && (listView.count == 1))
 
                         onTriggered: {
-
+                            if (type === "premise")
+                                premiseCount--
                             var i = index
                             theData.removeLineAt(index)
                             proofModel.updateLines()
