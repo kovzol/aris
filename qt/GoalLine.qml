@@ -1,3 +1,4 @@
+
 /* Goal Line Custom QML Type.
 
    Copyright (C) 2023 Saksham Attri.
@@ -20,16 +21,18 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 import goal.model 1.0
 
+RowLayout {
 
-RowLayout{
-
-    property string toolTipText: (resNumID.color === Qt.color("green"))? "Goal was met at line " + line : ((resNumID.color === Qt.color("blue")) ? "Goal was met at line "+ line+"\n\t but the proof has errors": ((resNumID.color === Qt.color("red"))?"Goal was not met": "Not yet evaluated"))  //aaaaaaaaaaaaaaaaaaaaaaaaaaa
+    property string toolTipText: (resNumID.color === Qt.color(
+                                      "green")) ? "Goal was met at line "
+                                                  + line : ((resNumID.color === Qt.color(
+                                                                 "blue")) ? "Goal was met at line " + line + "\n\t but the proof has errors" : ((resNumID.color === Qt.color("red")) ? "Goal was not met" : "Not yet evaluated")) //aaaaaaaaaaaaaaaaaaaaaaaaaaa
 
     spacing: 10
-    width: (parent)? parent.width: 0
+    width: (parent) ? parent.width : 0
     Layout.fillWidth: true
 
-    Label{
+    Label {
         id: goalLineNumID
 
         height: goalTextID
@@ -38,32 +41,30 @@ RowLayout{
         ToolTip.visible: toolTipText ? moID.containsMouse : false
         ToolTip.text: toolTipText
 
-        MouseArea{
+        MouseArea {
             id: moID
             anchors.fill: parent
             hoverEnabled: true
-            onClicked: console.log(line);
+            onClicked: console.log(line)
         }
 
-        Text{
+        Text {
             id: resNumID
             anchors.centerIn: parent
             font.italic: true
-            text: (line > 0) ? line: ((line === -3)?  "X" : "?")
-            color: (text === "?")? (darkMode?"yellow":"brown"): ((text === "X") ? "red": ((model.valid)? "green": "blue"))
-
+            text: (line > 0) ? line : ((line === -3) ? "X" : "?")
+            color: (text === "?") ? (darkMode ? "yellow" : "brown") : ((text === "X") ? "red" : ((model.valid) ? "green" : "blue"))
         }
-
     }
 
-    TextField{
+    TextField {
         id: goalTextID
 
         height: font.pointSize + 10
         width: 200
         Layout.fillWidth: true
-        background: Rectangle{
-            color: darkMode?"#332940":"lightgrey"
+        background: Rectangle {
+            color: darkMode ? "#332940" : "lightgrey"
         }
 
         text: model.text
@@ -73,70 +74,59 @@ RowLayout{
         // Implementing Keyboard Macros
         onTextChanged: {
 
-            if (goalTextID.length >= 2){
-                const last_two = text.slice(cursorPosition-2,cursorPosition)
-                if (last_two.includes('/\\')){
-                    goalTextID.remove(cursorPosition-2, cursorPosition)
-                    goalTextID.insert(cursorPosition,"\u2227")
+            if (goalTextID.length >= 2) {
+                const last_two = text.slice(cursorPosition - 2, cursorPosition)
+                if (last_two.includes('/\\')) {
+                    goalTextID.remove(cursorPosition - 2, cursorPosition)
+                    goalTextID.insert(cursorPosition, "\u2227")
+                } else if (last_two.includes('\\/')) {
+                    goalTextID.remove(cursorPosition - 2, cursorPosition)
+                    goalTextID.insert(cursorPosition, "\u2228")
+                } else if (last_two.includes('->')) {
+                    goalTextID.remove(cursorPosition - 2, cursorPosition)
+                    goalTextID.insert(cursorPosition, "\u2192")
+                } else if (last_two.includes('<' + "\u2192")) {
+                    goalTextID.remove(cursorPosition - 2, cursorPosition)
+                    goalTextID.insert(cursorPosition, "\u2194")
                 }
-                else if (last_two.includes('\\/')){
-                    goalTextID.remove(cursorPosition-2, cursorPosition)
-                    goalTextID.insert(cursorPosition,"\u2228")
-                }
-                else if (last_two.includes('->')){
-                    goalTextID.remove(cursorPosition-2, cursorPosition)
-                    goalTextID.insert(cursorPosition,"\u2192")
-                }
-                else if (last_two.includes('<'+"\u2192")){
-                    goalTextID.remove(cursorPosition-2, cursorPosition)
-                    goalTextID.insert(cursorPosition,"\u2194")
-                }
-
             }
-
         }
 
         onEditingFinished: model.text = text
-
     }
 
-    Button{
+    Button {
         id: goalPlusID
 
         height: goalTextID.height
 
         onClicked: goalOptionsID.open()
 
-        Text{
+        Text {
             anchors.centerIn: parent
             text: "+ / \u2013"
-            color: darkMode? "white": "black"
+            color: darkMode ? "white" : "black"
         }
 
-        Menu{
+        Menu {
             id: goalOptionsID
 
-            Action{
+            Action {
                 text: "Add Goal"
                 onTriggered: {
-                    theGoals.insertgLine(index + 1,-2,false,"");
+                    theGoals.insertgLine(index + 1, -2, false, "")
                 }
             }
 
-            Action{
+            Action {
                 text: "Remove Goal"
                 onTriggered: {
-                    if (goalDataID.rowCount() > 1){
-                        theGoals.removegLineAt(index);
-                    }
-                    else
+                    if (goalDataID.rowCount() > 1) {
+                        theGoals.removegLineAt(index)
+                    } else
                         console.log("Invalid Operation: Cannot remove all Lines")
                 }
             }
-
-
         }
-
     }
 }
-
