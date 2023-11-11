@@ -1,3 +1,4 @@
+
 /* Container for the on-screen keyboard buttons.
 
    Copyright (C) 2023 Saksham Attri.
@@ -18,131 +19,121 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.5
 
-ToolBar{
+ToolBar {
     spacing: 5
 
-    background: Rectangle{
+    background: Rectangle {
         anchors.fill: parent
-        color: darkMode? "#121212":"white"
+        color: darkMode ? "#121212" : "white"
     }
 
-    Column{
+    Column {
         id: keyColID
 
-        KeyButton{
+        KeyButton {
             id: conjunctionButton
-
 
             txt: "\u2227"
             ToolTip.text: "Conjunction"
         }
 
-        KeyButton{
+        KeyButton {
             id: disjunctionButton
-
 
             txt: "\u2228"
             ToolTip.text: "Disjunction"
         }
 
-        KeyButton{
+        KeyButton {
             id: negationButton
-
 
             txt: "\u00ac"
             ToolTip.text: "Negation"
         }
 
-        KeyButton{
+        KeyButton {
             id: implicationButton
-
 
             txt: "\u2192"
             ToolTip.text: "Implication"
         }
 
-        KeyButton{
+        KeyButton {
             id: biconditionalButton
 
             txt: "\u2194"
             ToolTip.text: "Bi-conditional"
         }
 
-        KeyButton{
+        KeyButton {
             id: forAllButton
 
             txt: "\u2200"
             ToolTip.text: "For all"
         }
 
-        KeyButton{
+        KeyButton {
             id: thereExistsButton
-
 
             txt: "\u2203"
             ToolTip.text: "There exists"
         }
 
-        KeyButton{
+        KeyButton {
             id: tautologyButton
-
 
             txt: "\u22a4"
             ToolTip.text: "Tautology"
         }
 
-        KeyButton{
+        KeyButton {
             id: contradictionButton
-
 
             txt: "\u22a5"
             ToolTip.text: "Contradiction"
         }
 
-        KeyButton{
+        KeyButton {
             id: belongsToButton
-
 
             txt: "\u2208"
             ToolTip.text: "Belongs To"
         }
 
-        KeyButton{
+        KeyButton {
             id: nullButton
-
-
 
             txt: "\u2205"
             ToolTip.text: "Null"
         }
 
-        ToolSeparator{
+        ToolSeparator {
             orientation: Qt.Horizontal
         }
 
         // Evaluate Proof Button
-
-        ToolButton{
+        ToolButton {
             id: evalButton
 
             icon {
                 source: "assets/eval.png"
-                height: (Qt.platform.os === "wasm") ? nullButton.height/1.5 : nullButton.height/2
-                width:  (Qt.platform.os === "wasm") ? nullButton.width/1.5 : nullButton.width/2
+                height: (Qt.platform.os === "wasm") ? nullButton.height
+                                                      / 1.5 : nullButton.height / 2
+                width: (Qt.platform.os === "wasm") ? nullButton.width / 1.5 : nullButton.width / 2
             }
             hoverEnabled: true
             ToolTip.visible: hovered
             ToolTip.text: cConnector.evalText
-            background: Rectangle{
+            background: Rectangle {
                 id: runButtonID
-                color: (cConnector.evalText === "Evaluate Proof")? (darkMode?"#BB86FC":"white"): (cConnector.evalText === "Correct!")? (darkMode?"springgreen":"green"): "red"
+                color: (cConnector.evalText === "Evaluate Proof") ? (darkMode ? "#BB86FC" : "white") : (cConnector.evalText === "Correct!") ? (darkMode ? "springgreen" : "green") : "red"
                 radius: 5
             }
 
             onClicked: {
-                cConnector.evalProof(theData,theGoals);
-                goalDataID.evalGoals(theGoals,cConnector);
-                animationID.start();
+                cConnector.evalProof(theData, theGoals)
+                goalDataID.evalGoals(theGoals, cConnector)
+                animationID.start()
             }
 
             SequentialAnimation {

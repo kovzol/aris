@@ -1,3 +1,4 @@
+
 /* The main window.
 
    Copyright (C) 2023 Saksham Attri.
@@ -27,49 +28,64 @@ ApplicationWindow {
     id: rootID
 
     property font thefont: rootID.font
-    property bool isExtFile: false  // If the file is opened from an external file
+    property bool isExtFile: false // If the file is opened from an external file
     property bool darkMode: false
     property string filename: "Untitled"
     property bool fileExists: isExtFile
-//    property bool closing: false
+    property int premiseCount: 1
+    property bool computePremise: false // set to true if Open or Import Proof are used
+    //    property bool closing: false
+
+    // Function to compute premiseCount, used when opening new file
+    function computePremiseCount(item) {
+        premiseCount = 0
+        for (var child in item.contentItem.children) {
+            if (item.contentItem.children[child].type === "premise")
+                premiseCount++
+            //            else if (item.contentItem.children[child].type !== "undefined")
+            //                break
+        }
+    }
 
     // Function to check if the item is a TextField QML Type
-    function isTextField(item){
+    function isTextField(item) {
         return item instanceof TextField
     }
 
     width: 1200
     height: 700
     visible: true
-    title: qsTr(filename.slice(filename.lastIndexOf("/")+ 1) + " | " + "GNU Aris")
+    title: qsTr(filename.slice(filename.lastIndexOf(
+                                   "/") + 1) + " | " + "GNU Aris")
     font: thefont
-    color: darkMode ? "#121212": "white"
+    color: darkMode ? "#121212" : "white"
 
     // Footer to display error messages
-    footer: Label{
+    footer: Label {
         height: statusID.implicitHeight
-        visible: !(cConnector.evalText === "Correct!" || cConnector.evalText === "Evaluate Proof")
+        visible: !(cConnector.evalText === "Correct!"
+                   || cConnector.evalText === "Evaluate Proof")
 
-        Text{
+        Text {
             id: statusID
             text: cConnector.evalText
             color: darkMode ? "#CF6679" : "red"
         }
     }
 
-//    onClosing: function(close){
-//        close.accepted = closing;
-//        onTriggered: if(!closing) exitMessageID.open();
-//    }
+    //    onClosing: function(close){
+    //        close.accepted = closing;
+    //        onTriggered: if(!closing) exitMessageID.open();
+    //    }
 
     // Burger Button
-    Button{
+    Button {
         id: burgerMenu
 
         height: keyboardID.width
         width: keyboardID.width
-        palette{
-            button: darkMode? "#121212": "white"
+        palette {
+            button: darkMode ? "#121212" : "white"
         }
 
         hoverEnabled: true
@@ -78,41 +94,38 @@ ApplicationWindow {
 
         onClicked: menuOptions.open()
 
-
-        Text{
+        Text {
             anchors.centerIn: parent
-            color: darkMode? "#BB86FC": "black"
+            color: darkMode ? "#BB86FC" : "black"
             text: "\u2630"
             minimumPointSize: 20
         }
-
     }
 
     // On-Screen Keyboard
-    Frame{
+    Frame {
         id: keyboardID
 
         anchors.verticalCenter: parent.verticalCenter
 
-        KeyGroup{}
+        KeyGroup {}
     }
 
     // Drawer associated with the Burger Button
-    Drawer{
+    Drawer {
         id: menuOptions
 
         width: drawerToolBar.implicitWidth
         height: rootID.height
         interactive: true
 
-        DrawerTools{
+        DrawerTools {
             id: drawerToolBar
         }
     }
 
     // Dialogs associated with the DrawerTools
-
-    FileDialog{
+    FileDialog {
         id: fileDialogID
 
         title: "Choose the proof file"
@@ -121,14 +134,14 @@ ApplicationWindow {
         fileMode: FileDialog.OpenFile
         defaultSuffix: "tle"
         onAccepted: {
-            cConnector.openProof(selectedFile,theData,theGoals);
-            filename = selectedFile;
-            isExtFile = true;
+            cConnector.openProof(selectedFile, theData, theGoals)
+            filename = selectedFile
+            isExtFile = true
+            computePremise = true
         }
-
     }
 
-    FileDialog{
+    FileDialog {
         id: saveAsID
 
         nameFilters: ["Aris files (*.tle)"]
@@ -136,25 +149,23 @@ ApplicationWindow {
         fileMode: FileDialog.SaveFile
         defaultSuffix: "tle"
         onAccepted: {
-            cConnector.saveProof(selectedFile,theData,theGoals);
-            filename = selectedFile;
-            fileExists = true;
+            cConnector.saveProof(selectedFile, theData, theGoals)
+            filename = selectedFile
+            fileExists = true
         }
-
     }
 
-    FileDialog{
+    FileDialog {
         id: latexID
 
         nameFilters: ["Latex files (*.tex)"]
         title: "Save As"
         fileMode: FileDialog.SaveFile
         defaultSuffix: "tex"
-        onAccepted: auxConnector.latex(selectedFile,theData,cConnector)
-
+        onAccepted: auxConnector.latex(selectedFile, theData, cConnector)
     }
 
-    FileDialog{
+    FileDialog {
         id: importID
 
         nameFilters: ["Aris files (*.tle)"]
@@ -162,118 +173,111 @@ ApplicationWindow {
         fileMode: FileDialog.OpenFile
         defaultSuffix: "tle"
         onAccepted: {
-            isExtFile = true;
-            auxConnector.importProof(selectedFile,theData,cConnector,proofModel);
+            isExtFile = true
+            computePremise = true
+            auxConnector.importProof(selectedFile, theData, cConnector,
+                                     proofModel)
         }
     }
 
-    FontDialog{
+    FontDialog {
         id: fontDialogID
 
         title: "Choose Font"
-        onAccepted: thefont = currentFont;
-
+        onAccepted: thefont = currentFont
     }
 
-    Dialog{
+    Dialog {
         id: goalDialogID
 
         title: "Goals"
-        width: parent.width/2
-        height: parent.height/2
-        x: (parent.width - width)/2
-        y: (parent.height - height)/2
+        width: parent.width / 2
+        height: parent.height / 2
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
 
-        background: Rectangle{
+        background: Rectangle {
             anchors.fill: parent
-            color: darkMode? "#1F1B24": "white"
-            opacity: 1//0.6
+            color: darkMode ? "#1F1B24" : "white"
+            opacity: 1 //0.6
             border.width: 2
         }
 
         palette {
 
-            button: darkMode? "#1F1A24" : "white"
-            buttonText: darkMode? "white": "black"
-            text: darkMode? "white": "black"
-            window: darkMode? "#1F1B24": "white"
+            button: darkMode ? "#1F1A24" : "white"
+            buttonText: darkMode ? "white" : "black"
+            text: darkMode ? "white" : "black"
+            window: darkMode ? "#1F1B24" : "white"
         }
 
         parent: Overlay.overlay
         focus: true
         //modal: true
-        closePolicy: Popup.CloseOnEscape    // To allow keyboard access
+        closePolicy: Popup.CloseOnEscape // To allow keyboard access
         standardButtons: Dialog.Ok
 
-        ColumnLayout{
+        ColumnLayout {
             id: goalAreaID
 
             anchors.fill: parent
 
-            ListView{
+            ListView {
                 model: goalDataID
-                delegate: GoalLine{}
+                delegate: GoalLine {}
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 spacing: 10
 
-                ScrollBar.vertical: ScrollBar{}
+                ScrollBar.vertical: ScrollBar {}
             }
-
         }
-
     }
 
     // Message Dialog when Closing App
-//    Dialog{
-//        id: exitMessageID
+    //    Dialog{
+    //        id: exitMessageID
 
-//        title: "The document was modified"
-//        x: (parent.width - width)/2
-//        y: (parent.height - height)/2
+    //        title: "The document was modified"
+    //        x: (parent.width - width)/2
+    //        y: (parent.height - height)/2
 
+    //        parent: Overlay.overlay
+    //        focus: true
+    //        modal: true
+    //        closePolicy: Popup.CloseOnEscape
 
-//        parent: Overlay.overlay
-//        focus: true
-//        modal: true
-//        closePolicy: Popup.CloseOnEscape
+    //        standardButtons: MessageDialog.Save | MessageDialog.Discard
+    //        onAccepted: {
+    //            if (Qt.platform.os === "wasm")
+    //                cConnector.wasmSaveProof(theData,theGoals);
+    //            else
+    //                saveAsID.open();
 
-//        standardButtons: MessageDialog.Save | MessageDialog.Discard
-//        onAccepted: {
-//            if (Qt.platform.os === "wasm")
-//                cConnector.wasmSaveProof(theData,theGoals);
-//            else
-//                saveAsID.open();
+    //            closing = true;
+    //        }
+    //        onDiscarded: {
+    //            closing = true;
+    //            rootID.close();
+    //        }
 
-//            closing = true;
-//        }
-//        onDiscarded: {
-//            closing = true;
-//            rootID.close();
-//        }
+    //        Text{
+    //            text: "Do you want to save the file"
+    //        }
 
-//        Text{
-//            text: "Do you want to save the file"
-//        }
-
-//    }
-
-    GoalModel{
+    //    }
+    GoalModel {
         id: goalDataID
         glines: theGoals
     }
 
-    ProofModel{
+    ProofModel {
         id: proofModel
         lines: theData
     }
 
-    ProofArea{}
-
-}
-
-// TODO:
-//  1)  Implement premiseIndex to keep track of latest premise and enter any new premise after it
-//  2)  Dark Mode for Drawer
-//  3)  Closing App on Desktop
+    ProofArea {
+        id: proofID
+    }
+} // TODO://  1)  Dark Mode for Drawer//  2)  Closing App on Desktop
