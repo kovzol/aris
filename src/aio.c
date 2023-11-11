@@ -49,6 +49,78 @@
 #define IS_REF(s) (!strcmp (CSTD_CAST (s),REF_DATA) || !strcmp (CSTD_CAST (s),ALT_REF_DATA))
 #define IS_FILE(s) (!strcmp (CSTD_CAST (s),FILE_DATA) || !strcmp (CSTD_CAST (s),ALT_FILE_DATA))
 
+// A standard solution to replace a substring in a char array.
+// Taken from https://stackoverflow.com/a/779960
+
+// You must free the result if result is non-NULL.
+char *str_replace(char *orig, char *rep, char *with) {
+    char *result; // the return string
+    char *ins;    // the next insert point
+    char *tmp;    // varies
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of with (the string to replace rep with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // sanity checks and initialization
+    if (!orig || !rep)
+        return NULL;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return NULL; // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // count the number of replacements needed
+    ins = orig;
+    for (count = 0; tmp = strstr(ins, rep); ++count) {
+        ins = tmp + len_rep;
+    }
+
+    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep; // move to next "end of rep"
+    }
+    strcpy(tmp, orig);
+    return result;
+}
+
+/* Convert input to the new format.
+ *  input:
+ *    text - the content written by using the old style.
+ *  output:
+ *    the content by using the new style.
+ */
+static xmlChar *
+aio_convert_old_new (xmlChar * text)
+{
+    char * old_text = (char *) text;
+    char * new_text;
+
+#define REPLACEMENTS 11
+    char from[REPLACEMENTS][5] = {"&", "|", "~", "$", "%", "@", "#", "!", "^", ":", ">"};
+    char to[REPLACEMENTS][5] = {"∧", "∨", "¬", "→", "↔", "∀", "∃", "⊤", "⊥", "∈", "∅"};
+    for (int i = 0; i < REPLACEMENTS; i++) {
+        new_text = str_replace(old_text, from[i], to[i]);
+        old_text = new_text;
+    }
+    return (xmlChar *) new_text;
+}
+
 /* Gets the first attribute from an xml stream.
  *  input:
  *    xml - the xml stream to get the attribute from.
@@ -71,7 +143,11 @@ aio_get_first_attribute (xmlTextReader * xml, xmlChar ** name)
         return NULL;
 
     buffer = xmlTextReaderValue (xml);
+#if defined(QT_CORE_LIB)
+    return aio_convert_old_new(buffer);
+#else
     return buffer;
+#endif
 }
 
 /* Gets the next attribute from an xml stream.
@@ -96,7 +172,11 @@ aio_get_next_attribute (xmlTextReader * xml, xmlChar ** name)
         return NULL;
 
     buffer = xmlTextReaderValue (xml);
+#if defined(QT_CORE_LIB)
+    return aio_convert_old_new(buffer);
+#else
     return buffer;
+#endif
 }
 
 ///* Write the line number of a sentence object to an XML stream.
