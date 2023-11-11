@@ -392,7 +392,7 @@ Item {
                     Action{
                         text: "Add Premise"
                         onTriggered: {
-                            theData.insertLine(0,1,"","premise",false,false,false,0,[-1])
+                            theData.insertLine(index + 1,index+2,"","premise",false,false,false,0,[-1])
                             proofModel.updateLines();
                             proofModel.updateRefs(0,true);
                             listView.currentIndex = 0;
