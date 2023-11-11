@@ -394,8 +394,8 @@ Item {
                         onTriggered: {
                             theData.insertLine(index + 1,index+2,"","premise",false,false,false,0,[-1])
                             proofModel.updateLines();
-                            proofModel.updateRefs(0,true);
-                            listView.currentIndex = 0;
+                            proofModel.updateRefs(index + 1,true);
+                            listView.currentIndex = index + 1;
                             cConnector.evalText = "Evaluate Proof";
                         }
                     }
