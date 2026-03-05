@@ -20,12 +20,16 @@ int main(int argc, char *argv[])
 
     // preprocessor macros because url/link resolution works differently on qmake vis a vis cmake
 #ifndef WITH_CMAKE
+    QIcon::setThemeSearchPaths({ u":/assets/icons"_qs });
     app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 #else
+    QIcon::setThemeSearchPaths({ u"arisqt/assets/icons"_qs });
     app.setWindowIcon(QIcon(u"arisqt/assets/icon_simple.svg"_qs));
     const QUrl url(u"arisqt/main.qml"_qs);
 #endif
+
+    QIcon::setThemeName("arisqt");
 
     // Create custom objects for interfacing with QML
     ProofData theData;

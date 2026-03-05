@@ -35,7 +35,7 @@ ToolBar {
 
         ToolButton {
             text: qsTr("New")
-            icon.source: "assets/new.png"
+            icon.name: "new"
 
             onClicked: {
                 if (Qt.platform.os === "wasm")
@@ -47,7 +47,7 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Open")
-            icon.source: "assets/folder.png"
+            icon.name: "folder"
 
             onClicked: {
                 cConnector.evalText = "Evaluate Proof"
@@ -65,7 +65,7 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Save")
-            icon.source: "assets/save.png"
+            icon.name: "save"
             visible: !(Qt.platform.os === "wasm")
 
             onClicked: {
@@ -81,7 +81,7 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Save As")
-            icon.source: "assets/saveas.png"
+            icon.name: "saveas"
 
             onClicked: {
 
@@ -96,7 +96,7 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Export To LaTeX")
-            icon.source: "assets/export.png"
+            icon.name: "export"
 
             onClicked: {
                 if (Qt.platform.os === "wasm")
@@ -114,7 +114,7 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Toggle Goals")
-            icon.source: "assets/goal.png"
+            icon.name: "goal"
 
             onClicked: {
                 goalDialogID.open()
@@ -124,14 +124,14 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Toggle Dark Mode")
-            icon.source: "assets/boolean.png"
+            icon.name: "boolean"
 
             onClicked: darkMode = !darkMode
         }
 
         ToolButton {
             text: qsTr("Import Proof")
-            icon.source: "assets/import.png"
+            icon.name: "import"
 
             onClicked: {
                 cConnector.evalText = "Evaluate Proof"
@@ -154,7 +154,7 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Font")
-            icon.source: "assets/font.png"
+            icon.name: "font"
             visible: !(Qt.platform.os === "wasm")
 
             onClicked: fontDialogID.open()
@@ -167,14 +167,14 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Help")
-            icon.source: "assets/help.png"
+            icon.name: "help"
             onClicked: Qt.openUrlExternally(
                            "https://www.gnu.org/software/aris/manual/aris.pdf")
         }
 
         ToolButton {
             text: qsTr("About")
-            icon.source: "assets/about.png"
+            icon.name: "about"
             onClicked: Qt.openUrlExternally(
                            "https://www.gnu.org/software/aris/")
         }

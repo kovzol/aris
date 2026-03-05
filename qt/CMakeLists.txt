@@ -59,19 +59,20 @@ qt_add_qml_module(aris-qt
     VERSION 1.0
     QML_FILES main.qml ProofArea.qml DrawerTools.qml GoalLine.qml KeyButton.qml KeyGroup.qml
     RESOURCES
-        assets/help.png
         assets/icon_simple.svg
-        assets/about.png
-        assets/font.png
-        assets/import.png
-        assets/boolean.png
-        assets/goal.png
-        assets/export.png
-        assets/saveas.png
-        assets/save.png
-        assets/folder.png
-        assets/new.png
-        assets/eval.png
+        assets/icons/arisqt/index.theme
+        assets/icons/arisqt/512x512/help.png
+        assets/icons/arisqt/512x512/about.png
+        assets/icons/arisqt/512x512/font.png
+        assets/icons/arisqt/512x512/import.png
+        assets/icons/arisqt/512x512/boolean.png
+        assets/icons/arisqt/512x512/goal.png
+        assets/icons/arisqt/512x512/export.png
+        assets/icons/arisqt/512x512/saveas.png
+        assets/icons/arisqt/512x512/save.png
+        assets/icons/arisqt/512x512/folder.png
+        assets/icons/arisqt/512x512/new.png
+        assets/icons/arisqt/512x512/eval.png
 )
 
 set_target_properties(aris-qt PROPERTIES
