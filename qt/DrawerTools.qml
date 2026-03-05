@@ -35,7 +35,8 @@ ToolBar {
 
         ToolButton {
             text: qsTr("New")
-            icon.source: "assets/new.png"
+            icon.name: "new"
+            icon.color: darkMode ? "white" : "black"
 
             onClicked: {
                 if (Qt.platform.os === "wasm")
@@ -47,7 +48,8 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Open")
-            icon.source: "assets/folder.png"
+            icon.name: "folder"
+            icon.color: darkMode ? "white" : "black"
 
             onClicked: {
                 cConnector.evalText = "Evaluate Proof"
@@ -65,7 +67,8 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Save")
-            icon.source: "assets/save.png"
+            icon.name: "save"
+            icon.color: darkMode ? "white" : "black"
             visible: !(Qt.platform.os === "wasm")
 
             onClicked: {
@@ -81,7 +84,8 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Save As")
-            icon.source: "assets/saveas.png"
+            icon.name: "saveas"
+            icon.color: darkMode ? "white" : "black"
 
             onClicked: {
 
@@ -96,7 +100,8 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Export To LaTeX")
-            icon.source: "assets/export.png"
+            icon.name: "export"
+            icon.color: darkMode ? "white" : "black"
 
             onClicked: {
                 if (Qt.platform.os === "wasm")
@@ -114,7 +119,8 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Toggle Goals")
-            icon.source: "assets/goal.png"
+            icon.name: "goal"
+            icon.color: darkMode ? "white" : "black"
 
             onClicked: {
                 goalDialogID.open()
@@ -124,14 +130,16 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Toggle Dark Mode")
-            icon.source: "assets/boolean.png"
+            icon.name: "boolean"
+            icon.color: darkMode ? "white" : "black"
 
             onClicked: darkMode = !darkMode
         }
 
         ToolButton {
             text: qsTr("Import Proof")
-            icon.source: "assets/import.png"
+            icon.name: "import"
+            icon.color: darkMode ? "white" : "black"
 
             onClicked: {
                 cConnector.evalText = "Evaluate Proof"
@@ -154,7 +162,8 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Font")
-            icon.source: "assets/font.png"
+            icon.name: "font"
+            icon.color: darkMode ? "white" : "black"
             visible: !(Qt.platform.os === "wasm")
 
             onClicked: fontDialogID.open()
@@ -167,14 +176,16 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Help")
-            icon.source: "assets/help.png"
+            icon.name: "help"
+            icon.color: darkMode ? "white" : "black"
             onClicked: Qt.openUrlExternally(
                            "https://www.gnu.org/software/aris/manual/aris.pdf")
         }
 
         ToolButton {
             text: qsTr("About")
-            icon.source: "assets/about.png"
+            icon.name: "about"
+            icon.color: darkMode ? "white" : "black"
             onClicked: Qt.openUrlExternally(
                            "https://www.gnu.org/software/aris/")
         }
