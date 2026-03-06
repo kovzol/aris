@@ -683,7 +683,7 @@ aio_compute_indices (proof_t * proof)
 
         sd->indices = (int *) calloc (depth + 1, sizeof (int));
         if (!sd->indices)
-            XML_ERR (AEC_MEM);
+            return -1;
 
         i = 0;
         if (!sd->premise && prev_itr != NULL)
@@ -727,14 +727,14 @@ aio_validate_proof (proof_t * proof)
         /* premises and subproof starters cannot have references. */
         if ((sd->premise || sd->subproof)
             && sd->refs && sd->refs[0] != REF_END)
-            XML_ERR (-1);
+            return -1;
 
         if (sd->premise || sd->subproof)
             continue;
 
         /* rule index must be in [0, NUM_RULES-1]. */
         if (sd->rule < 0 || sd->rule >= NUM_RULES)
-            XML_ERR (-1);
+            return -1;
 
         if (!sd->refs)
             continue;
@@ -758,10 +758,10 @@ aio_validate_proof (proof_t * proof)
             }
 
             if (!ref_sd)
-                XML_ERR (-1);
+                return -1;
 
             if (sen_data_can_select_as_ref (sd, ref_sd) == 0)
-                XML_ERR (-1);
+                return -1;
         }
     }
     return 0;
