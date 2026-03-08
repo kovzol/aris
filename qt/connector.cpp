@@ -293,11 +293,16 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
     memcpy(file_name, name.toStdString().c_str(), name.size());
 
     cProof = aio_open((const char *) file_name);
-    if (cProof)
-        qDebug() << "File Opened Successfully";
+    
     if (file_name)
         free(file_name);
 
+    if (!cProof)
+        qDebug() << "Failed to open proof";
+        return;
+
+    qDebug() << "File Opened Successfully";
+        
     reverseMapInit();
     int s = openTo->lines().size();
     for (int i = 0; i < s; i++)
