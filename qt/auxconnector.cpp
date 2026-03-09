@@ -96,6 +96,11 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
 
     proof_t *proof = aio_open(file_name);
 
+    if (!proof)
+        qDebug() << "Failed to import proof";
+        free(file_name);
+        return;
+
     item_t *pf_itr;
     int ref_num = 0, ev_conc = -1, ev_itr;
     short *refs;
