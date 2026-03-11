@@ -297,9 +297,10 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
     if (file_name)
         free(file_name);
 
-    if (!cProof)
+    if (!cProof) {
         qDebug() << "Failed to open proof";
         return;
+    }
 
     qDebug() << "File Opened Successfully";
         
