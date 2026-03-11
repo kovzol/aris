@@ -175,6 +175,9 @@ ApplicationWindow {
         onAccepted: {
             isExtFile = true
             computePremise = true
+            if (premiseCount === 1) {
+                premiseCount = 0
+            }
             auxConnector.importProof(selectedFile, theData, cConnector,
                                      proofModel)
         }
