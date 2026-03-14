@@ -123,7 +123,10 @@ ToolBar {
             icon.color: darkMode ? "white" : "black"
 
             onClicked: {
-                goalDialogID.open()
+                if (goalDialogID.opened)
+                    goalDialogID.close()
+                else
+                    goalDialogID.open()
                 menuOptions.close()
             }
         }
