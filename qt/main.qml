@@ -32,9 +32,9 @@ ApplicationWindow {
     property bool darkMode: false
     property string filename: "Untitled"
     property bool fileExists: isExtFile
+    property bool fileModified: false
     property int premiseCount: 1
     property bool computePremise: false // set to true if Open or Import Proof are used
-    //    property bool closing: false
 
     // Function to compute premiseCount, used when opening new file
     function computePremiseCount(item) {
@@ -81,10 +81,12 @@ ApplicationWindow {
         qsTr("QT_LAYOUT_DIRECTION", "QGuiApplication");
     }
 
-    //    onClosing: function(close){
-    //        close.accepted = closing;
-    //        onTriggered: if(!closing) exitMessageID.open();
-    //    }
+    onClosing: function(close) {
+        if (fileModified) {
+            unsavedChangesID.open()
+            close.accepted = false;
+        }
+    }
 
     // Burger Button
     Button {
@@ -149,12 +151,15 @@ ApplicationWindow {
             cConnector.openProof(selectedFile, theData, theGoals)
             filename = selectedFile
             isExtFile = true
+            fileModified = false
             computePremise = true
         }
     }
 
     FileDialog {
         id: saveAsID
+
+        property bool closeOnSave: false
 
         nameFilters: ["Aris files (*.tle)"]
         title: "Save As"
@@ -164,6 +169,8 @@ ApplicationWindow {
             cConnector.saveProof(selectedFile, theData, theGoals)
             filename = selectedFile
             fileExists = true
+            fileModified = false
+            if (closeOnSave) rootID.close()
         }
     }
 
@@ -251,37 +258,42 @@ ApplicationWindow {
     }
 
     // Message Dialog when Closing App
-    //    Dialog{
-    //        id: exitMessageID
+    Dialog {
+        id: unsavedChangesID
 
-    //        title: "The document was modified"
-    //        x: (parent.width - width)/2
-    //        y: (parent.height - height)/2
+        title: qsTr("Unsaved changes")
+        anchors.centerIn: parent
 
-    //        parent: Overlay.overlay
-    //        focus: true
-    //        modal: true
-    //        closePolicy: Popup.CloseOnEscape
+        parent: Overlay.overlay
+        modal: true
+        closePolicy: Popup.CloseOnEscape
 
-    //        standardButtons: MessageDialog.Save | MessageDialog.Discard
-    //        onAccepted: {
-    //            if (Qt.platform.os === "wasm")
-    //                cConnector.wasmSaveProof(theData,theGoals);
-    //            else
-    //                saveAsID.open();
+        standardButtons: MessageDialog.Save | MessageDialog.Discard | MessageDialog.Cancel
+        onAccepted: {
+            if (Qt.platform.os === "wasm")
+                cConnector.wasmSaveProof(theData, theGoals);
+            else if (fileExists)
+                cConnector.saveProof(filename, theData, theGoals);
+            else {
+                saveAsID.closeOnSave = true
+                saveAsID.open();
+                return
+            }
+            fileModified = false
+            rootID.close();
+        }
+        onDiscarded: {
+            fileModified = false;
+            rootID.close();
+        }
 
-    //            closing = true;
-    //        }
-    //        onDiscarded: {
-    //            closing = true;
-    //            rootID.close();
-    //        }
+        Label {
+            text: isExtFile
+                 ? qsTr("Save file before closing?")
+                 : qsTr("Save new file before closing?")
+        }
+    }
 
-    //        Text{
-    //            text: "Do you want to save the file"
-    //        }
-
-    //    }
     GoalModel {
         id: goalDataID
         glines: theGoals
@@ -295,4 +307,4 @@ ApplicationWindow {
     ProofArea {
         id: proofID
     }
-} // TODO://  1)  Dark Mode for Drawer//  2)  Closing App on Desktop
+}
