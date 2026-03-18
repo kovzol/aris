@@ -183,6 +183,11 @@ ToolBar {
                 id: languageMenu
                 y: langButton.height
 
+                palette {
+                    base: darkMode ? "#1F1A24" : "white"
+                    text: darkMode ? "white" : "black"
+                }
+
                 MenuItem {
                     text: "English"
                     onTriggered: settings.setLanguage("en")
