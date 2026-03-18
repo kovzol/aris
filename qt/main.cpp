@@ -9,6 +9,7 @@
 #include "goalmodel.h"
 #include "connector.h"
 #include "auxconnector.h"
+#include "settings.h"
 
 
 int main(int argc, char *argv[])
@@ -32,23 +33,27 @@ int main(int argc, char *argv[])
     QIcon::setThemeName("arisqt");
 
     // Create custom objects for interfacing with QML
+    Settings settings(&app);
     ProofData theData;
     GoalData theGoals;
     Connector cConnector;
     auxConnector auxConnector;
 
     // Register models with QML
+    qmlRegisterType<Settings>("settings.model",1,0,"Settings");
     qmlRegisterType<ProofModel>("proof.model",1,0,"ProofModel");
     qmlRegisterUncreatableType<ProofData>("proof.model",1,0,"ProofData","Should not be created inside QML");
     qmlRegisterType<GoalModel>("goal.model",1,0,"GoalModel");
     qmlRegisterUncreatableType<GoalData>("goal.model",1,0,"GoalData","Should not be created inside QML");
 
     QQmlApplicationEngine engine;
+    settings.setEngine(&engine);
 
     // Set Application Style
     QQuickStyle::setStyle("Fusion");
 
     // Provide context to QML engine to use custom objects as properties
+    engine.rootContext()->setContextProperty("settings",&settings);
     engine.rootContext()->setContextProperty("theData",&theData);
     engine.rootContext()->setContextProperty("theGoals",&theGoals);
     engine.rootContext()->setContextProperty("cConnector",&cConnector);

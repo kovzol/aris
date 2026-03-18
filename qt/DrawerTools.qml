@@ -172,6 +172,33 @@ ToolBar {
             onClicked: fontDialogID.open()
         }
 
+        ToolButton {
+            id: langButton
+            text: qsTr("Language")
+            icon.name: "language"
+            icon.color: darkMode ? "white" : "black"
+            onClicked: languageMenu.open()
+
+            Menu {
+                id: languageMenu
+                y: langButton.height
+
+                palette {
+                    base: darkMode ? "#1F1A24" : "white"
+                    text: darkMode ? "white" : "black"
+                }
+
+                MenuItem {
+                    text: "English"
+                    onTriggered: settings.setLanguage("en")
+                }
+                MenuItem {
+                    text: "العربية"
+                    onTriggered: settings.setLanguage("ar")
+                }
+            }
+        }
+
         ToolSeparator {
             visible: !(Qt.platform.os === "wasm")
             orientation: Qt.Horizontal
