@@ -14,5 +14,6 @@
         <file>assets/icons/arisqt/512x512/about.png</file>
         <file>assets/icons/arisqt/512x512/eval.png</file>
         <file>assets/icons/arisqt/512x512/new.png</file>
+        <file>assets/icons/arisqt/512x512/language.png</file>
     </qresource>
 </RCC>

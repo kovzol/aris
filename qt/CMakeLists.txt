@@ -6,8 +6,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_definitions(WITH_CMAKE)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Widgets QuickControls2)
-set(Qt6_FIND_VERSION_MIN 6.0)
+find_package(Qt6 REQUIRED COMPONENTS Quick Widgets QuickControls2 LinguistTools)
+qt_standard_project_setup(REQUIRES 6.0
+    I18N_TRANSLATED_LANGUAGES ar)
 find_package(LibXml2 REQUIRED)
 
 add_executable(aris-qt
@@ -17,6 +18,7 @@ add_executable(aris-qt
     goaldata.h
     goalmodel.h
     goals-qt.h
+    settings.h
     ../src/interop-isar.h
     ../src/list.h
     ../src/process.h
@@ -35,6 +37,7 @@ add_executable(aris-qt
     goaldata.cpp
     goalmodel.cpp
     goals-qt.c
+    settings.cpp
     ../src/interop-isar.c
     ../src/list.c
     main.cpp
@@ -65,6 +68,7 @@ qt_add_qml_module(aris-qt
         assets/icons/arisqt/512x512/about.png
         assets/icons/arisqt/512x512/font.png
         assets/icons/arisqt/512x512/import.png
+        assets/icons/arisqt/512x512/language.png
         assets/icons/arisqt/512x512/boolean.png
         assets/icons/arisqt/512x512/goal.png
         assets/icons/arisqt/512x512/export.png
@@ -74,6 +78,9 @@ qt_add_qml_module(aris-qt
         assets/icons/arisqt/512x512/new.png
         assets/icons/arisqt/512x512/eval.png
 )
+
+qt_add_translations(TARGETS aris-qt
+    TS_OUTPUT_DIRECTORY i18n)
 
 set_target_properties(aris-qt PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -89,6 +96,7 @@ target_link_libraries(aris-qt
     PRIVATE Qt6::QuickControls2
     PUBLIC LibXml2::LibXml2
 )
+target_link_libraries(aris-qt PRIVATE Qt6::Core)
 
 install(TARGETS aris-qt
     BUNDLE DESTINATION .

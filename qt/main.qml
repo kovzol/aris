@@ -60,6 +60,10 @@ ApplicationWindow {
     font: thefont
     color: darkMode ? "#121212" : "white"
 
+    // Automatic layout mirroring for RTL languages
+    LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
+    LayoutMirroring.childrenInherit: true
+
     // Footer to display error messages
     footer: Label {
         height: statusID.implicitHeight
@@ -73,6 +77,10 @@ ApplicationWindow {
         }
     }
 
+    Component.onCompleted: () => {
+        qsTr("QT_LAYOUT_DIRECTION", "QGuiApplication");
+    }
+
     //    onClosing: function(close){
     //        close.accepted = closing;
     //        onTriggered: if(!closing) exitMessageID.open();
@@ -82,6 +90,8 @@ ApplicationWindow {
     Button {
         id: burgerMenu
 
+        anchors.left: parent.left
+        anchors.top: parent.top
         height: keyboardID.width
         width: keyboardID.width
         palette {
@@ -106,6 +116,7 @@ ApplicationWindow {
     Frame {
         id: keyboardID
 
+        anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
 
         KeyGroup {}
@@ -118,6 +129,7 @@ ApplicationWindow {
         width: drawerToolBar.implicitWidth
         height: rootID.height
         interactive: true
+        edge: Qt.application.layoutDirection === Qt.LeftToRight ? Qt.LeftEdge : Qt.RightEdge
 
         DrawerTools {
             id: drawerToolBar
