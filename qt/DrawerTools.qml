@@ -73,8 +73,10 @@ ToolBar {
 
             onClicked: {
 
-                if (fileExists)
+                if (fileExists) {
                     cConnector.saveProof(filename, theData, theGoals)
+                    fileModified = false
+                }
                 else
                     saveAsID.open()
 
@@ -93,6 +95,7 @@ ToolBar {
                     cConnector.wasmSaveProof(theData, theGoals)
                 else
                     saveAsID.open()
+                fileModified = false
 
                 menuOptions.close()
             }

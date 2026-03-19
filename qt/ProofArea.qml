@@ -209,7 +209,12 @@ Item {
                 }
 
                 // Save Text inside Model
-                onEditingFinished: model.lText = text
+                onEditingFinished: {
+                    if (model.lText !== text) {
+                        fileModified = true
+                    }
+                    model.lText = text
+                }
             }
 
             // Label for premise, subproofs
