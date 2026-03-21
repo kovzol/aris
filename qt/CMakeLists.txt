@@ -7,8 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_definitions(WITH_CMAKE)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Widgets QuickControls2 LinguistTools)
-qt_standard_project_setup(REQUIRES 6.0
-    I18N_TRANSLATED_LANGUAGES ar)
+set(Qt6_FIND_VERSION_MIN 6.0)
 find_package(LibXml2 REQUIRED)
 
 add_executable(aris-qt
