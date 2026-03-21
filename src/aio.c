@@ -379,7 +379,7 @@ aio_open_conc (xmlTextReader * xml)
                     num_refs ++;
 
             num_refs++;
-            refs = (short *) calloc (num_refs + 1, sizeof (int));
+            refs = (short *) calloc (num_refs + 1, sizeof (short));
             CHECK_ALLOC (refs, NULL);
 
             char * ref_str = strdup ((const char *) buffer);
@@ -599,9 +599,10 @@ aio_save (proof_t * proof, const char * file_name)
             }
         }
 
-        max_line = (max_line > 0) ? (int) log10 (max_line) + 1 : 0;
+        max_line = (max_line > 0) ? (int) log10 (max_line) + 1 : 1;
 
-        refs = (char *) calloc (num_refs * (max_line + 1), sizeof (char));
+        /* Buffer needs: num_refs * max_line digits + (num_refs - 1) commas + 1 null */
+        refs = (char *) calloc (num_refs * max_line + (num_refs > 0 ? num_refs : 1), sizeof (char));
         CHECK_ALLOC (refs, -1);
 
         i = 0;
