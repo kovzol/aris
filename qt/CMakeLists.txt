@@ -7,8 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_definitions(WITH_CMAKE)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Widgets QuickControls2 LinguistTools)
-qt_standard_project_setup(REQUIRES 6.0
-    I18N_TRANSLATED_LANGUAGES ar)
+set(Qt6_FIND_VERSION_MIN 6.0)
 find_package(LibXml2 REQUIRED)
 
 add_executable(aris-qt
@@ -79,8 +78,10 @@ qt_add_qml_module(aris-qt
         assets/icons/arisqt/512x512/eval.png
 )
 
-qt_add_translations(TARGETS aris-qt
-    TS_OUTPUT_DIRECTORY i18n)
+qt_add_translations(aris-qt
+    TS_FILES
+        i18n/aris-qt_ar.ts
+        i18n/aris-qt_en.ts)
 
 set_target_properties(aris-qt PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
