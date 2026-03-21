@@ -79,8 +79,10 @@ qt_add_qml_module(aris-qt
         assets/icons/arisqt/512x512/eval.png
 )
 
-qt_add_translations(TARGETS aris-qt
-    TS_OUTPUT_DIRECTORY i18n)
+qt_add_translations(aris-qt
+    TS_FILES
+        i18n/aris-qt_ar.ts
+        i18n/aris-qt_en.ts)
 
 set_target_properties(aris-qt PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
