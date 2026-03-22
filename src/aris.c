@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <locale.h>
 
 #include "process.h"
 #include "vec.h"
@@ -855,6 +856,21 @@ evaluate flag not specified in non-gui mode.\n");
 #else
 
       main_conns = cli_conns;
+
+      /* On Windows (MINGW64) the default C locale is ASCII-only,
+       * which causes GTK's UTF-8 text buffer validation to fail for
+       * multi-byte Unicode connectives (→, ¬, ∨, ↔, etc.).
+       * Inherit the system locale so that UTF-8 is handled correctly. */
+      setlocale (LC_ALL, "");
+
+      /* Use gui_conns in GUI mode so that CL = 3 (bytes per connective).
+       * sentence_copy_text() uses CL to advance the buffer index when
+       * writing back a pixbuf connective — with cli_conns CL=1, only the
+       * first byte of each 3-byte UTF-8 symbol was kept, corrupting the
+       * text on every save/reload cycle. sentence_paste_text() already
+       * accepts both gui_conns AND cli_conns when reading files, so
+       * existing proofs saved with ASCII symbols still open correctly. */
+      main_conns = gui_conns;
 
       gtk_init (&argc, &argv);
 
