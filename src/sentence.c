@@ -1398,11 +1398,12 @@ sentence_copy_text (sentence * sen)
 
           val = (char *) g_object_get_data (G_OBJECT (pixbuf),
                                             _("conn"));
+          int val_len = strlen (val);
           ret_str = (char *) realloc (ret_str,
-                                      (i + CL + 1) * sizeof (char));
+                                      (i + val_len + 1) * sizeof (char));
           CHECK_ALLOC (ret_str, NULL);
           strcpy (ret_str + i, val);
-          i += CL;
+          i += val_len;
         }
       else
         {
