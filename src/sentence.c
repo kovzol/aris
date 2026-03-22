@@ -1402,11 +1402,12 @@ sentence_copy_text (sentence * sen)
 
           val = (char *) g_object_get_data (G_OBJECT (pixbuf),
                                             _("conn"));
+          int val_len = strlen (val);
           ret_str = (char *) realloc (ret_str,
-                                      (i + CL + 1) * sizeof (char));
+                                      (i + val_len + 1) * sizeof (char));
           CHECK_ALLOC (ret_str, NULL);
           strcpy (ret_str + i, val);
-          i += CL;
+          i += val_len;
         }
       else
         {
@@ -1416,11 +1417,14 @@ sentence_copy_text (sentence * sen)
 
           c = gtk_text_iter_get_text (&start, &end);
 
-          ret_str = (char *) realloc (ret_str, (i + 2)
+          int c_len = strlen (c);
+          ret_str = (char *) realloc (ret_str, (i + c_len + 1)
                                       * sizeof (char));
           CHECK_ALLOC (ret_str, NULL);
-          
-          ret_str[i++] = *c;
+
+          memcpy (ret_str + i, c, c_len);
+          i += c_len;
+          g_free (c);
         }
 
       gtk_text_iter_forward_char (&start);
@@ -1500,7 +1504,22 @@ sentence_paste_text (sentence * sen)
         }
       else
         {
-          gtk_text_buffer_insert (buffer, &end, sen_text + i, 1);
+          /* Insert a full UTF-8 code point, not just one byte.
+           * Inserting a lone lead byte (e.g. 0xC2 without its
+           * continuation byte) causes GTK's g_utf8_validate to fail.
+           * Compute the code point's byte width from the lead byte,
+           * validate the whole sequence, then advance i accordingly. */
+          int char_bytes = 1;
+          unsigned char lead = sen_text[i];
+          if      (lead >= 0xF0) char_bytes = 4;
+          else if (lead >= 0xE0) char_bytes = 3;
+          else if (lead >= 0xC0) char_bytes = 2;
+
+          if (g_utf8_validate ((const gchar *)(sen_text + i), char_bytes, NULL))
+            gtk_text_buffer_insert (buffer, &end,
+                                    (const gchar *)(sen_text + i), char_bytes);
+          /* Skip invalid / truncated bytes silently */
+          i += char_bytes - 1;  /* loop adds 1 more */
         }
     }
 

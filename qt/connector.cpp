@@ -29,6 +29,7 @@
 #include <regex>
 #include <QFileDialog>
 #include <QSaveFile>
+#include <QUrl>
 
 Connector::Connector(QObject *parent)
     : QObject{parent}, m_evalText{"Evaluate Proof"}
@@ -269,11 +270,19 @@ void Connector::saveProof(const QString &name, const ProofData *toBeSaved, const
     genProof(toBeSaved);
     genGoals(gls);
 
-    char *file_name = (char *) calloc((name.size()+1), sizeof(char));
-    memcpy(file_name, name.toStdString().c_str(), name.size());
+    // selectedFile from QML FileDialog is a file:// URL; convert to a local path.
+    QString localName = QUrl(name).toLocalFile();
+    if (localName.isEmpty())
+        localName = name;
+
+    std::string nameStr = localName.toStdString();
+    char *file_name = (char *) calloc((nameStr.size()+1), sizeof(char));
+    memcpy(file_name, nameStr.c_str(), nameStr.size());
 
     if (aio_save(cProof,(const char *) file_name) == 0)
         qDebug() << "File Saved Successfully";
+    else
+        qDebug() << "File Save Failed for path:" << localName;
     if (file_name)
         free(file_name);
 }
@@ -289,22 +298,31 @@ void Connector::saveProof(const QString &name, const ProofData *toBeSaved, const
 void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
 {
 
-    char *file_name = (char *) calloc((name.size()+1), sizeof(char));
-    memcpy(file_name, name.toStdString().c_str(), name.size());
+    // selectedFile from QML FileDialog is a file:// URL; convert to a local path.
+    QString localName = QUrl(name).toLocalFile();
+    if (localName.isEmpty())
+        localName = name;
+
+    std::string nameStr = localName.toStdString();
+    char *file_name = (char *) calloc((nameStr.size()+1), sizeof(char)); 
+    memcpy(file_name, nameStr.c_str(), nameStr.size());
 
     cProof = aio_open((const char *) file_name);
-    
+    if (cProof)
+        qDebug() << "File Opened Successfully";
+    else
+        qDebug() << "File Open Failed for path:" << localName;
     if (file_name)
         free(file_name);
 
-    if (!cProof) {
-        qDebug() << "Failed to open proof";
+    reverseMapInit();
+
+    if (!cProof)
+    {
+        qDebug() << "Cannot populate UI: proof is null.";
         return;
     }
 
-    qDebug() << "File Opened Successfully";
-        
-    reverseMapInit();
     int s = openTo->lines().size();
     for (int i = 0; i < s; i++)
         openTo->removeLineAt(0);

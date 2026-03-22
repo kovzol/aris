@@ -1319,7 +1319,23 @@ aris_proof_import_proof (aris_proof * ap)
 
   proof = aio_open (filename);
   if (!proof)
-    return AEC_MEM;
+    {
+      GtkWidget * err_dialog;
+      err_dialog =
+        gtk_message_dialog_new_with_markup (GTK_WINDOW (SEN_PARENT (ap)->window),
+                                            GTK_DIALOG_MODAL
+                                            | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_CLOSE,
+                                            "<b>%s</b>",
+                                            _("Invalid or corrupted .tle file"));
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (err_dialog),
+                                                _("The selected file could not be imported.\n"
+                                                  "It may be missing, corrupted, or not a valid Aris proof file."));
+      gtk_dialog_run (GTK_DIALOG (err_dialog));
+      gtk_widget_destroy (err_dialog);
+      return AEC_MEM;
+    }
 
   item_t * ev_itr, * pf_itr, * ev_conc = NULL;
   int ref_num = 0;

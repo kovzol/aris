@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <locale.h>
 
 #include "process.h"
 #include "vec.h"
@@ -855,6 +856,12 @@ evaluate flag not specified in non-gui mode.\n");
 #else
 
       main_conns = cli_conns;
+
+      /* On Windows (MINGW64) the default C locale is ASCII-only,
+       * which causes GTK's UTF-8 text buffer validation to fail for
+       * multi-byte Unicode connectives (→, ¬, ∨, ↔, etc.).
+       * Inherit the system locale so that UTF-8 is handled correctly. */
+      setlocale (LC_ALL, "");
 
       gtk_init (&argc, &argv);
 
