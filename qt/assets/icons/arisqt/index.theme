@@ -1,0 +1,9 @@
+[Icon Theme]
+Name=GNU Aris
+Comment=GNU Aris Icons
+
+Directories=512x512
+
+[512x512]
+Size=512
+Type=Fixed

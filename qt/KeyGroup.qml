@@ -116,7 +116,7 @@ ToolBar {
             id: evalButton
 
             icon {
-                source: "assets/eval.png"
+                name: "eval"
                 height: (Qt.platform.os === "wasm") ? nullButton.height
                                                       / 1.5 : nullButton.height / 2
                 width: (Qt.platform.os === "wasm") ? nullButton.width / 1.5 : nullButton.width / 2
