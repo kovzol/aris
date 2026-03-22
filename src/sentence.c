@@ -1413,11 +1413,14 @@ sentence_copy_text (sentence * sen)
 
           c = gtk_text_iter_get_text (&start, &end);
 
-          ret_str = (char *) realloc (ret_str, (i + 2)
+          int c_len = strlen (c);
+          ret_str = (char *) realloc (ret_str, (i + c_len + 1)
                                       * sizeof (char));
           CHECK_ALLOC (ret_str, NULL);
-          
-          ret_str[i++] = *c;
+
+          memcpy (ret_str + i, c, c_len);
+          i += c_len;
+          g_free (c);
         }
 
       gtk_text_iter_forward_char (&start);

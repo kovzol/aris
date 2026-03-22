@@ -304,7 +304,7 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
         localName = name;
 
     std::string nameStr = localName.toStdString();
-    char *file_name = (char *) calloc((nameStr.size()+1), sizeof(char));
+    char *file_name = (char *) calloc((nameStr.size()+1), sizeof(char)); 
     memcpy(file_name, nameStr.c_str(), nameStr.size());
 
     cProof = aio_open((const char *) file_name);

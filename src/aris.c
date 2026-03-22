@@ -863,15 +863,6 @@ evaluate flag not specified in non-gui mode.\n");
        * Inherit the system locale so that UTF-8 is handled correctly. */
       setlocale (LC_ALL, "");
 
-      /* Use gui_conns in GUI mode so that CL = 3 (bytes per connective).
-       * sentence_copy_text() uses CL to advance the buffer index when
-       * writing back a pixbuf connective — with cli_conns CL=1, only the
-       * first byte of each 3-byte UTF-8 symbol was kept, corrupting the
-       * text on every save/reload cycle. sentence_paste_text() already
-       * accepts both gui_conns AND cli_conns when reading files, so
-       * existing proofs saved with ASCII symbols still open correctly. */
-      main_conns = gui_conns;
-
       gtk_init (&argc, &argv);
 
       the_app = init_app (boolean, verbose);
