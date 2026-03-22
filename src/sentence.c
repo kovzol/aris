@@ -1497,7 +1497,22 @@ sentence_paste_text (sentence * sen)
         }
       else
         {
-          gtk_text_buffer_insert (buffer, &end, sen_text + i, 1);
+          /* Insert a full UTF-8 code point, not just one byte.
+           * Inserting a lone lead byte (e.g. 0xC2 without its
+           * continuation byte) causes GTK's g_utf8_validate to fail.
+           * Compute the code point's byte width from the lead byte,
+           * validate the whole sequence, then advance i accordingly. */
+          int char_bytes = 1;
+          unsigned char lead = sen_text[i];
+          if      (lead >= 0xF0) char_bytes = 4;
+          else if (lead >= 0xE0) char_bytes = 3;
+          else if (lead >= 0xC0) char_bytes = 2;
+
+          if (g_utf8_validate ((const gchar *)(sen_text + i), char_bytes, NULL))
+            gtk_text_buffer_insert (buffer, &end,
+                                    (const gchar *)(sen_text + i), char_bytes);
+          /* Skip invalid / truncated bytes silently */
+          i += char_bytes - 1;  /* loop adds 1 more */
         }
     }
 
