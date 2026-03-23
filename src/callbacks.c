@@ -783,22 +783,27 @@ evaluate_line (aris_proof * ap, sentence * sen)
 
   sentence_set_value (sen, ret);
 
-  /* Update the row background colour to reflect the evaluation result:
-   *   VALUE_TYPE_TRUE  → green  (BG_COLOR_GOOD)
-   *   any error state  → red    (BG_COLOR_BAD)
-   *   blank / default  → clear  (BG_COLOR_DEFAULT)
-   * This is reset to BG_COLOR_DEFAULT by sentence_text_changed() on any
-   * subsequent edit (Issue #20 fix). */
-  if (ret == VALUE_TYPE_TRUE)
-    sentence_set_bg (sen, BG_COLOR_GOOD);
-  else if (ret == VALUE_TYPE_BLANK)
-    sentence_set_bg (sen, BG_COLOR_DEFAULT);
-  else
-    sentence_set_bg (sen, BG_COLOR_BAD);
-
   aris_proof_set_sb (ap, ret_str);
-
-
+  /* Color the line number based on the evaluation result.
+   * Red  = error or incorrect reference.
+   * Green = correct / true.
+   * Reset = anything else (blank, rule, etc.). */
+  if (ret == VALUE_TYPE_ERROR || ret == VALUE_TYPE_REF
+      || ret == VALUE_TYPE_FALSE || ret == VALUE_TYPE_RULE)
+    {
+      GdkRGBA red = {0.8, 0.0, 0.0, 1.0};
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &red);
+    }
+  else if (ret == VALUE_TYPE_TRUE)
+    {
+      GdkRGBA green = {0.0, 0.7, 0.0, 1.0};
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &green);
+    }
+  else
+    {
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
+    }
+    
   destroy_list (lines);
 
   return ret;

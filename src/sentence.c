@@ -1540,10 +1540,6 @@ sentence_text_changed (sentence * sen)
   sen_parent * sp = sen->parent;
   sentence_set_value (sen, VALUE_TYPE_BLANK);
 
-  /* Reset the entry background color to default to clear stale
-     evaluation colors (red/green) from a previous Ctrl+E evaluation. */
-  sentence_set_bg (sen, BG_COLOR_DEFAULT);
-
   item_t * e_itr = ls_find (sp->everything, sen);
 
   for (e_itr = sp->everything->head; e_itr; e_itr = e_itr->next)
@@ -1603,7 +1599,7 @@ sentence_text_changed (sentence * sen)
       if (ret < 0)
         return AEC_MEM;
 
-      gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
 
       if (SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->num_stuff > 0)
         {
