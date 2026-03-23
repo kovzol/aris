@@ -206,22 +206,23 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
     return 0;
 }
 
-/* Checks raw (un-formatted) text for incomplete / dangling expressions.
+/* Checks raw (un-formatted) text for invalid CLI symbols and dangling
+ * connectives.
  *
- * Strategy: look only at the LAST non-space character of the raw text.
- * If it is an operator-like character that requires a right-hand operand,
- * the expression is incomplete (e.g. "P v" ends with 'v', "P $" ends
- * with '$').
+ * Pass 1 — scan EVERY character: reject CLI shorthand symbols ('$', '%',
+ *           '@', '#') wherever they appear.  These are never valid in the
+ *           GUI — only in the command-line interface.  A user who typed
+ *           "P $ Q" in the GUI must get an error even though '$' is not
+ *           the last character.
  *
- * We do NOT flag characters that appear in the middle of the text because
- * expressions like "P v Q" are perfectly valid — 'v' here is surrounded
- * by operands.  The main parser (check_text) handles structural errors
- * inside expressions.
+ * Pass 2 — look at the LAST non-space character: if it is a dangling
+ *           connective that requires a right-hand operand ('v', '^'),
+ *           the expression is incomplete.
  *
  *  input:  raw  - the raw sentence text (spaces still present).
  *  output: 0   - no issues found.
  *         -3   - connective missing right operand (e.g. "P v", "P ^").
- *         -5   - unrecognised symbol left dangling  (e.g. "P $", "P %").
+ *         -5   - invalid / CLI symbol found (e.g. "P $ Q", "P % Q").
  */
 static int
 check_raw_connective_usage (const unsigned char * raw)
@@ -236,18 +237,25 @@ check_raw_connective_usage (const unsigned char * raw)
     if (last < 0)
         return 0;   /* empty / whitespace-only — handled elsewhere */
 
+    /* Pass 1: scan every character for CLI shorthand symbols.
+     * '$' = conditional, '%' = biconditional,
+     * '@' = universal,   '#' = existential in Aris CLI notation.
+     * None of these are valid in the GUI text field. */
+    int i;
+    for (i = 0; i <= last; i++)
+    {
+        unsigned char ch = raw[i];
+        if (ch == '$' || ch == '%' || ch == '@' || ch == '#')
+            return -5;  /* invalid CLI symbol found in text */
+    }
+
+    /* Pass 2: check the last non-space character for dangling connectives. */
     unsigned char c = raw[last];
 
     /* 'v' or '^' at the end of the text: dangling operator (missing RHS).
      * These are the common ASCII stand-ins for OR and AND. */
     if (c == 'v' || c == '^')
         return -3;  /* connective missing operand */
-
-    /* CLI shorthand symbols at the end: user typed them literally and
-     * left no right-hand side.  '$' = conditional, '%' = biconditional,
-     * '@' = universal, '#' = existential in Aris CLI notation. */
-    if (c == '$' || c == '%' || c == '@' || c == '#')
-        return -5;  /* invalid / directly-typed CLI symbol dangling */
 
     return 0;
 }
