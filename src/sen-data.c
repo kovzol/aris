@@ -16,6 +16,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "sen-data.h"
@@ -205,6 +206,52 @@ sen_data_copy (sen_data * old_sd, sen_data * new_sd)
     return 0;
 }
 
+/* Checks raw (un-formatted) text for incomplete / dangling expressions.
+ *
+ * Strategy: look only at the LAST non-space character of the raw text.
+ * If it is an operator-like character that requires a right-hand operand,
+ * the expression is incomplete (e.g. "P v" ends with 'v', "P $" ends
+ * with '$').
+ *
+ * We do NOT flag characters that appear in the middle of the text because
+ * expressions like "P v Q" are perfectly valid — 'v' here is surrounded
+ * by operands.  The main parser (check_text) handles structural errors
+ * inside expressions.
+ *
+ *  input:  raw  - the raw sentence text (spaces still present).
+ *  output: 0   - no issues found.
+ *         -3   - connective missing right operand (e.g. "P v", "P ^").
+ *         -5   - unrecognised symbol left dangling  (e.g. "P $", "P %").
+ */
+static int
+check_raw_connective_usage (const unsigned char * raw)
+{
+    int len = (int) strlen ((const char *) raw);
+
+    /* Find the last non-space character. */
+    int last = len - 1;
+    while (last >= 0 && isspace ((unsigned char) raw[last]))
+        last--;
+
+    if (last < 0)
+        return 0;   /* empty / whitespace-only — handled elsewhere */
+
+    unsigned char c = raw[last];
+
+    /* 'v' or '^' at the end of the text: dangling operator (missing RHS).
+     * These are the common ASCII stand-ins for OR and AND. */
+    if (c == 'v' || c == '^')
+        return -3;  /* connective missing operand */
+
+    /* CLI shorthand symbols at the end: user typed them literally and
+     * left no right-hand side.  '$' = conditional, '%' = biconditional,
+     * '@' = universal, '#' = existential in Aris CLI notation. */
+    if (c == '$' || c == '%' || c == '@' || c == '#')
+        return -5;  /* invalid / directly-typed CLI symbol dangling */
+
+    return 0;
+}
+
 /* Convert text to sexpr form.
  *  input:
  *    text - the text to convert to sexpr form.
@@ -282,6 +329,29 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         }
     }
 
+    /* Pre-validate raw text for common connective typing mistakes before
+     * format_string strips spaces (which would hide the error context). */
+    {
+        static char _pre_err_buf[128];
+        int pre_ret = check_raw_connective_usage (sd->text);
+        if (pre_ret == -3)
+        {
+            *ret_val = VALUE_TYPE_ERROR;
+            snprintf (_pre_err_buf, sizeof (_pre_err_buf),
+                      _("Line %d: Syntax error: connective missing operand."),
+                      sd->line_num);
+            return _pre_err_buf;
+        }
+        if (pre_ret == -5)
+        {
+            *ret_val = VALUE_TYPE_ERROR;
+            snprintf (_pre_err_buf, sizeof (_pre_err_buf),
+                      _("Line %d: Syntax error: invalid symbol or malformed expression."),
+                      sd->line_num);
+            return _pre_err_buf;
+        }
+    }
+
     unsigned char * text;
     text = format_string (sd->text);
 //    main_conns = cli_conns;
@@ -292,18 +362,36 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         return NULL;
 
     *ret_val = VALUE_TYPE_ERROR;
-    switch (ret)
     {
-    case 0:
-        break;
-    case -2:
-        return _("The sentence has mismatched parenthesis.");
-    case -3:
-        return _("The sentence has invalid connectives.");
-    case -4:
-        return _("The sentence has invalid quantifiers.");
-    case -5:
-        return _("The sentence has syntactical errors.");
+        /* Static buffer — safe because evaluation is single-threaded. */
+        static char _err_buf[128];
+        const char * _msg = NULL;
+        switch (ret)
+        {
+        case 0:
+            break;
+        case -2:
+            _msg = _("Syntax error: mismatched parentheses.");
+            break;
+        case -3:
+            _msg = _("Syntax error: connective missing operand.");
+            break;
+        case -4:
+            _msg = _("Syntax error: invalid quantifier usage.");
+            break;
+        case -5:
+            _msg = _("Syntax error: invalid symbol or malformed expression.");
+            break;
+        default:
+            _msg = _("Syntax error: unknown parsing error.");
+            break;
+        }
+        if (_msg)
+        {
+            snprintf (_err_buf, sizeof (_err_buf), _("Line %d: %s"), sd->line_num, _msg);
+            free (text);
+            return _err_buf;
+        }
     }
 
     *ret_val = VALUE_TYPE_BLANK;
