@@ -185,6 +185,7 @@ sentence_gui_init (sentence * sen)
   sen->entry = gtk_text_view_new ();
   gtk_widget_set_hexpand (sen->entry, TRUE);
   gtk_widget_set_halign (sen->entry, GTK_ALIGN_FILL);
+  gtk_widget_set_size_request (sen->entry, 0, -1);
 
   sen->value = gtk_image_new_from_icon_name (sen_values[0], GTK_ICON_SIZE_MENU);
 
@@ -201,7 +202,10 @@ sentence_gui_init (sentence * sen)
   sen->rule_box = gtk_label_new (NULL);
   gtk_label_set_justify (GTK_LABEL (sen->rule_box), GTK_JUSTIFY_FILL);
   gtk_label_set_width_chars (GTK_LABEL (sen->rule_box), 2);
-
+  gtk_widget_set_hexpand(sen->rule_box, FALSE);
+  gtk_widget_set_halign(sen->rule_box, GTK_ALIGN_END);
+  gtk_widget_set_size_request(sen->rule_box, 30, -1);
+  
   gtk_grid_attach (GTK_GRID (sen->panel), sen->rule_box, left++, 0, 1, 1);
 
   sen->mark = NULL;
@@ -1398,11 +1402,12 @@ sentence_copy_text (sentence * sen)
 
           val = (char *) g_object_get_data (G_OBJECT (pixbuf),
                                             _("conn"));
+          int val_len = strlen (val);
           ret_str = (char *) realloc (ret_str,
-                                      (i + CL + 1) * sizeof (char));
+                                      (i + val_len + 1) * sizeof (char));
           CHECK_ALLOC (ret_str, NULL);
           strcpy (ret_str + i, val);
-          i += CL;
+          i += val_len;
         }
       else
         {
@@ -1412,11 +1417,14 @@ sentence_copy_text (sentence * sen)
 
           c = gtk_text_iter_get_text (&start, &end);
 
-          ret_str = (char *) realloc (ret_str, (i + 2)
+          int c_len = strlen (c);
+          ret_str = (char *) realloc (ret_str, (i + c_len + 1)
                                       * sizeof (char));
           CHECK_ALLOC (ret_str, NULL);
-          
-          ret_str[i++] = *c;
+
+          memcpy (ret_str + i, c, c_len);
+          i += c_len;
+          g_free (c);
         }
 
       gtk_text_iter_forward_char (&start);
@@ -1496,7 +1504,22 @@ sentence_paste_text (sentence * sen)
         }
       else
         {
-          gtk_text_buffer_insert (buffer, &end, sen_text + i, 1);
+          /* Insert a full UTF-8 code point, not just one byte.
+           * Inserting a lone lead byte (e.g. 0xC2 without its
+           * continuation byte) causes GTK's g_utf8_validate to fail.
+           * Compute the code point's byte width from the lead byte,
+           * validate the whole sequence, then advance i accordingly. */
+          int char_bytes = 1;
+          unsigned char lead = sen_text[i];
+          if      (lead >= 0xF0) char_bytes = 4;
+          else if (lead >= 0xE0) char_bytes = 3;
+          else if (lead >= 0xC0) char_bytes = 2;
+
+          if (g_utf8_validate ((const gchar *)(sen_text + i), char_bytes, NULL))
+            gtk_text_buffer_insert (buffer, &end,
+                                    (const gchar *)(sen_text + i), char_bytes);
+          /* Skip invalid / truncated bytes silently */
+          i += char_bytes - 1;  /* loop adds 1 more */
         }
     }
 
@@ -1521,6 +1544,10 @@ sentence_text_changed (sentence * sen)
   sen_parent * sp = sen->parent;
   sentence_set_value (sen, VALUE_TYPE_BLANK);
 
+  /* Reset the entry background color to default to clear stale
+     evaluation colors (red/green) from a previous Ctrl+E evaluation. */
+  sentence_set_bg (sen, BG_COLOR_DEFAULT);
+
   item_t * e_itr = ls_find (sp->everything, sen);
 
   for (e_itr = sp->everything->head; e_itr; e_itr = e_itr->next)
@@ -1533,7 +1560,13 @@ sentence_text_changed (sentence * sen)
           r_itr = ls_find (e_refs, sen);
 
           if (r_itr)
-            sentence_set_value (SENTENCE (e_itr->value), VALUE_TYPE_BLANK);
+            {
+              sentence_set_value (SENTENCE (e_itr->value), VALUE_TYPE_BLANK);
+              /* Also reset the eventbox of dependent sentences so their
+                 goal-check colors are cleared when a reference changes. */
+              gtk_widget_override_background_color (
+                SENTENCE (e_itr->value)->eventbox, GTK_STATE_NORMAL, NULL);
+            }
         }
     }
 

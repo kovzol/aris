@@ -379,7 +379,7 @@ aio_open_conc (xmlTextReader * xml)
                     num_refs ++;
 
             num_refs++;
-            refs = (short *) calloc (num_refs + 1, sizeof (int));
+            refs = (short *) calloc (num_refs + 1, sizeof (short));
             CHECK_ALLOC (refs, NULL);
 
             char * ref_str = strdup ((const char *) buffer);
@@ -599,9 +599,10 @@ aio_save (proof_t * proof, const char * file_name)
             }
         }
 
-        max_line = (max_line > 0) ? (int) log10 (max_line) + 1 : 0;
+        max_line = (max_line > 0) ? (int) log10 (max_line) + 1 : 1;
 
-        refs = (char *) calloc (num_refs * (max_line + 1), sizeof (char));
+        /* Buffer needs: num_refs * max_line digits + (num_refs - 1) commas + 1 null */
+        refs = (char *) calloc (num_refs * max_line + (num_refs > 0 ? num_refs : 1), sizeof (char));
         CHECK_ALLOC (refs, -1);
 
         i = 0;
@@ -657,6 +658,113 @@ aio_save (proof_t * proof, const char * file_name)
 
     xmlFreeTextWriter (xml);
 
+    return 0;
+}
+
+/* Computes the indices arrays for every sen_data in a proof.
+ *  input:
+ *    proof - the proof for which to compute the indices.
+ *  output:
+ *    0 on success, -1 on error.
+ */
+static int
+aio_compute_indices (proof_t * proof)
+{
+    item_t * itr, * prev_itr;
+    int i;
+
+    prev_itr = NULL;
+    for (itr = proof->everything->head; itr; itr = itr->next)
+    {
+        sen_data * sd = (sen_data *) itr->value;
+        int depth = sd->depth;
+        int ln    = sd->line_num;
+
+        IF_FREE(sd->indices);
+
+        sd->indices = (int *) calloc (depth + 1, sizeof (int));
+        if (!sd->indices)
+            return -1;
+
+        i = 0;
+        if (!sd->premise && prev_itr != NULL)
+        {
+            sen_data * prev_sd = (sen_data *) prev_itr->value;
+            int copy_end = (prev_sd->depth < depth) ? prev_sd->depth : depth;
+
+            for (i = 0; i < copy_end; i++)
+                sd->indices[i] = prev_sd->indices[i];
+
+            if (sd->subproof)
+                sd->indices[i++] = ln;
+        }
+        sd->indices[i] = -1;
+
+        prev_itr = itr;
+    }
+    return 0;
+}
+
+/* Validates a proof loaded from a file.
+ *  input:
+ *    proof - the proof to validate.
+ *  output:
+ *    0 on success, -1 on error.
+*/
+
+static int
+aio_validate_proof (proof_t * proof)
+{
+    if (!proof || !proof->everything)
+        return -1;
+
+    item_t * itr;
+
+    for (itr = proof->everything->head; itr; itr = itr->next)
+    {
+        sen_data * sd = (sen_data *) itr->value;
+        int i;
+        
+        /* premises and subproof starters cannot have references. */
+        if ((sd->premise || sd->subproof)
+            && sd->refs && sd->refs[0] != REF_END)
+            return -1;
+
+        if (sd->premise || sd->subproof)
+            continue;
+
+        /* rule index must be in [0, NUM_RULES-1]. */
+        if (sd->rule < 0 || sd->rule >= NUM_RULES)
+            return -1;
+
+        if (!sd->refs)
+            continue;
+
+        /* every reference must be valid. */
+        for (i = 0; sd->refs[i] != REF_END; i++)
+        {
+            int ref_line = (int) sd->refs[i];
+            sen_data * ref_sd = NULL;
+            item_t * ref_itr;
+
+            for (ref_itr = proof->everything->head;
+                 ref_itr; ref_itr = ref_itr->next)
+            {
+                sen_data * cand = (sen_data *) ref_itr->value;
+                if (cand->line_num == ref_line)
+                {
+                    ref_sd = cand;
+                    break;
+                }
+            }
+
+            if (!ref_sd)
+                return -1;
+
+            if (sen_data_can_select_as_ref (sd, ref_sd) == 0)
+                return -1;
+        }
+    }
     return 0;
 }
 
@@ -899,6 +1007,12 @@ aio_open (const char * file_name)
     }
 
     xmlFreeTextReader (xml);
+
+    if (aio_compute_indices (proof) < 0)
+        XML_ERR (NULL);
+        
+    if (aio_validate_proof (proof) < 0)
+        XML_ERR (NULL);
 
     return proof;
 }

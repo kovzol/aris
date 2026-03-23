@@ -569,6 +569,20 @@ gui_open (GtkWidget * window)
       proof = aio_open (filename);
       if (!proof)
         {
+          GtkWidget * err_dialog;
+          err_dialog =
+            gtk_message_dialog_new_with_markup (GTK_WINDOW (file_chooser),
+                                                GTK_DIALOG_MODAL
+                                                | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                GTK_MESSAGE_ERROR,
+                                                GTK_BUTTONS_CLOSE,
+                                                "<b>%s</b>",
+                                                _("Invalid or corrupted .tle file"));
+          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (err_dialog),
+                                                    _("The selected file could not be opened.\n"
+                                                      "It may be missing, corrupted, or not a valid Aris proof file."));
+          gtk_dialog_run (GTK_DIALOG (err_dialog));
+          gtk_widget_destroy (err_dialog);
           gtk_widget_destroy (file_chooser);
           return -1;
         }
@@ -768,7 +782,22 @@ evaluate_line (aris_proof * ap, sentence * sen)
     return AEC_MEM;
 
   sentence_set_value (sen, ret);
+
+  /* Update the row background colour to reflect the evaluation result:
+   *   VALUE_TYPE_TRUE  → green  (BG_COLOR_GOOD)
+   *   any error state  → red    (BG_COLOR_BAD)
+   *   blank / default  → clear  (BG_COLOR_DEFAULT)
+   * This is reset to BG_COLOR_DEFAULT by sentence_text_changed() on any
+   * subsequent edit (Issue #20 fix). */
+  if (ret == VALUE_TYPE_TRUE)
+    sentence_set_bg (sen, BG_COLOR_GOOD);
+  else if (ret == VALUE_TYPE_BLANK)
+    sentence_set_bg (sen, BG_COLOR_DEFAULT);
+  else
+    sentence_set_bg (sen, BG_COLOR_BAD);
+
   aris_proof_set_sb (ap, ret_str);
+
 
   destroy_list (lines);
 
