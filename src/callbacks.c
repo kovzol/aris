@@ -782,22 +782,7 @@ evaluate_line (aris_proof * ap, sentence * sen)
     return AEC_MEM;
 
   sentence_set_value (sen, ret);
-
-  /* Update the row background colour to reflect the evaluation result:
-   *   VALUE_TYPE_TRUE  → green  (BG_COLOR_GOOD)
-   *   any error state  → red    (BG_COLOR_BAD)
-   *   blank / default  → clear  (BG_COLOR_DEFAULT)
-   * This is reset to BG_COLOR_DEFAULT by sentence_text_changed() on any
-   * subsequent edit (Issue #20 fix). */
-  if (ret == VALUE_TYPE_TRUE)
-    sentence_set_bg (sen, BG_COLOR_GOOD);
-  else if (ret == VALUE_TYPE_BLANK)
-    sentence_set_bg (sen, BG_COLOR_DEFAULT);
-  else
-    sentence_set_bg (sen, BG_COLOR_BAD);
-
   aris_proof_set_sb (ap, ret_str);
-
 
   destroy_list (lines);
 
