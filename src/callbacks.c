@@ -782,8 +782,28 @@ evaluate_line (aris_proof * ap, sentence * sen)
     return AEC_MEM;
 
   sentence_set_value (sen, ret);
-  aris_proof_set_sb (ap, ret_str);
 
+  aris_proof_set_sb (ap, ret_str);
+  /* Color the line number based on the evaluation result.
+   * Red  = error or incorrect reference.
+   * Green = correct / true.
+   * Reset = anything else (blank, rule, etc.). */
+  if (ret == VALUE_TYPE_ERROR || ret == VALUE_TYPE_REF
+      || ret == VALUE_TYPE_FALSE || ret == VALUE_TYPE_RULE)
+    {
+      GdkRGBA red = {0.8, 0.0, 0.0, 1.0};
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &red);
+    }
+  else if (ret == VALUE_TYPE_TRUE)
+    {
+      GdkRGBA green = {0.0, 0.7, 0.0, 1.0};
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &green);
+    }
+  else
+    {
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
+    }
+    
   destroy_list (lines);
 
   return ret;

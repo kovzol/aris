@@ -1597,7 +1597,7 @@ sentence_text_changed (sentence * sen)
       if (ret < 0)
         return AEC_MEM;
 
-      gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
 
       if (SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->num_stuff > 0)
         {
