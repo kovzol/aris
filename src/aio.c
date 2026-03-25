@@ -992,7 +992,10 @@ aio_open (const char * file_name)
                 XML_ERR (NULL);
 
             int sub = 0, old_depth;
-            old_depth = ((sen_data *) proof->everything->tail->value)->depth;
+            if (proof->everything && proof->everything->tail)
+                old_depth = ((sen_data *) proof->everything->tail->value)->depth;
+            else
+                old_depth = 0;
             if (sd->depth > old_depth)
                 sub = 1;
 
