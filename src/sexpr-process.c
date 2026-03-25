@@ -22,6 +22,7 @@
 #include "../src/var.h"
 #include "../src/list.h"
 #include <stdarg.h>
+#include <stdio.h>
 
 /* Gets a sentence part from a sexpr.
  *  input:
@@ -204,13 +205,33 @@ construct_other (unsigned char * main_str,
     int oth_pos = init_pos;
     va_list args;
 
+    if (!main_str || !template || init_pos < 0 || fin_pos < 0)
+        return NULL;
+
     va_start (args, template);
 
-    oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+    va_list args_copy;
+    va_copy (args_copy, args);
+    int fmt_len = vsnprintf (NULL, 0, template, args_copy);
+    va_end (args_copy);
+    if (fmt_len < 0)
+    {
+        va_end (args);
+        return NULL;
+    }
+
+    size_t min_size = (size_t) init_pos + (size_t) fmt_len
+                      + strlen ((char *) (main_str + fin_pos)) + 1;
+    size_t req_size = (size_t) alloc_size + 1;
+    if (req_size < min_size)
+        req_size = min_size;
+
+    oth_sen = (unsigned char *) calloc (req_size, sizeof (char));
     CHECK_ALLOC (oth_sen, NULL);
     strncpy (oth_sen, main_str, oth_pos);
 
-    oth_pos += vsprintf (oth_sen + oth_pos, template, args);
+    oth_pos += vsnprintf ((char *) oth_sen + oth_pos, req_size - (size_t) oth_pos,
+                          template, args);
 
     strcpy (oth_sen + oth_pos, main_str + fin_pos);
 
@@ -657,7 +678,11 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
         return AEC_MEM;
 
     if (elm_sen[0] == '\0' || strcmp (qs_quant, quant))
+    {
+        free (var);
+        free (elm_sen);
         return -2;
+    }
 
     int q_pos, e_pos, cmp, tmp_0;
 
@@ -667,27 +692,45 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
     while (!cmp)
     {
         int tmp_1;
-        unsigned char * str_0, * str_1;
+        unsigned char * str_0 = NULL, * str_1 = NULL;
 
         q_pos = tmp_0 + 2;
 
-        if (elm_sen[q_pos + 1] != '(')
+        if (q_pos < 0 || elm_sen[q_pos] == '\0' || elm_sen[q_pos + 1] == '\0'
+            || elm_sen[q_pos + 1] != '(')
             break;
 
         tmp_0 = parse_parens (elm_sen, q_pos + 1, &str_0);
         if (tmp_0 == AEC_MEM)
+        {
+            free (var);
+            free (elm_sen);
             return AEC_MEM;
+        }
+
+        if (tmp_0 < 0 || !str_0)
+            break;
 
         if (elim_sen[1] != '(')
         {
             free (str_0);
-            q_pos = tmp_0 + 2;
-            continue;
+            break;
         }
 
         tmp_1 = parse_parens (elim_sen, 1, &str_1);
         if (tmp_1 == AEC_MEM)
+        {
+            free (str_0);
+            free (var);
+            free (elm_sen);
             return AEC_MEM;
+        }
+
+        if (tmp_1 < 0 || !str_1)
+        {
+            free (str_0);
+            break;
+        }
 
         cmp = !strcmp (str_0, str_1);
         free (str_0);
@@ -706,7 +749,11 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
 
     ret_chk = sexpr_get_quant_vars (quant_sen, var_offs);
     if (ret_chk == AEC_MEM)
+    {
+        free (var);
+        free (elm_sen);
         return AEC_MEM;
+    }
 
     // Use the offset to determine the position of the first variable in elim_sen.
     // Get the variable from elim_sen.
@@ -718,21 +765,52 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
     if (!off_0)
     {
         destroy_vec (var_offs);
+        free (var);
         free (elm_sen);
         return -2;
     }
     q_pos = e_pos = *off_0 - offset;
 
+    if (e_pos < 0 || elim_sen[e_pos] == '\0')
+    {
+        free (var);
+        free (elm_sen);
+        destroy_vec (var_offs);
+        return -2;
+    }
+
     if (elim_sen[e_pos] == '(')
     {
         q_pos = parse_parens (elim_sen, e_pos, &new_var);
         if (q_pos == AEC_MEM)
+        {
+            free (var);
+            free (elm_sen);
+            destroy_vec (var_offs);
             return AEC_MEM;
+        }
+
+        if (q_pos < 0 || !new_var)
+        {
+            free (var);
+            free (elm_sen);
+            destroy_vec (var_offs);
+            return -2;
+        }
     }
     else
     {
-        while (elim_sen[q_pos] != ' ' && elim_sen[q_pos] != ')')
+        while (elim_sen[q_pos] != '\0' && elim_sen[q_pos] != ' '
+               && elim_sen[q_pos] != ')')
             q_pos++;
+
+        if (elim_sen[q_pos] == '\0')
+        {
+            free (var);
+            free (elm_sen);
+            destroy_vec (var_offs);
+            return -2;
+        }
 
         new_var = (unsigned char *) calloc (q_pos - e_pos + 1, sizeof (char));
         CHECK_ALLOC (new_var, AEC_MEM);
@@ -747,6 +825,15 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
     {
         int i;
 
+        if (!cur_vars)
+        {
+            free (new_var);
+            destroy_vec (var_offs);
+            free (elm_sen);
+            free (var);
+            return -2;
+        }
+
         for (i = 0; new_var[i] != '\0'; i++)
             if (new_var[i] == ' ')
                 break;
@@ -756,6 +843,7 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
             free (new_var);
             destroy_vec (var_offs);
             free (elm_sen);
+            free (var);
             return -3;
         }
 
@@ -777,6 +865,7 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
                 free (new_var);
                 destroy_vec (var_offs);
                 free (elm_sen);
+                free (var);
                 return -3;
             }
         }
@@ -784,7 +873,13 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
 
     ret_chk = sexpr_replace_var (elm_sen, new_var, var, var_offs, &oth_sen);
     if (ret_chk == AEC_MEM)
+    {
+        free (new_var);
+        destroy_vec (var_offs);
+        free (elm_sen);
+        free (var);
         return AEC_MEM;
+    }
 
     free (var);
     free (elm_sen);

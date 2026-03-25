@@ -216,15 +216,15 @@ ls_clear (list_t * ls)
 item_t *
 ls_nth (list_t * ls, int n)
 {
-    int i = 0;
-    item_t * itm;
-    for (itm = ls->head; itm; itm = itm->next, i++)
-    {
-        if (i == n)
-            break;
-    }
+    if (!ls || n < 0)
+        return NULL;
 
-    return itm;
+    item_t * cur = ls->head;
+
+    while (n-- > 0 && cur)
+        cur = cur->next;
+
+    return cur;
 }
 
 /* Finds an item in a list based on the item's value.

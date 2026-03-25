@@ -716,6 +716,16 @@ gui_save (aris_proof * ap, int save_as)
   return 0;
 }
 
+/* Process pending GTK events so long-running evaluation work does not
+ * starve the UI thread.
+ */
+static void
+drain_gtk_events (void)
+{
+  while (gtk_events_pending ())
+    gtk_main_iteration ();
+}
+
 /* Evaluates a sentence.
  *  input:
  *    ap - the aris proof containing the sentence being evaluated.
@@ -727,8 +737,11 @@ int
 evaluate_line (aris_proof * ap, sentence * sen)
 {
   item_t * ev_itr, * ret_chk;
-  int ret;
+  int ret, safety;
   list_t * lines, * vars;
+  char * ret_str;
+  int status;
+  int did_set_value = 0;
 
   lines = init_list ();
   if (!lines)
@@ -736,23 +749,52 @@ evaluate_line (aris_proof * ap, sentence * sen)
 
   vars = init_list ();
   if (!vars)
-    return AEC_MEM;
+    {
+      destroy_list (lines);
+      return AEC_MEM;
+    }
+
+  drain_gtk_events ();
+
+  safety = 0;
+  status = VALUE_TYPE_ERROR;
 
   int sen_ln;
   sen_ln = sentence_get_line_no (sen);
 
-  for (ev_itr = SEN_PARENT (ap)->everything->head; 1;
+  for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr;
        ev_itr = ev_itr->next)
     {
       sentence * ev_sen = ev_itr->value;
       int conv_check = 0;
-      int ln = sentence_get_line_no (ev_sen);
+      int ln;
+
+      if (++safety > 5000)
+        {
+          aris_proof_set_sb (ap, _("Evaluation stopped (safety limit reached)."));
+          goto done;
+        }
+
+      if ((safety % 50) == 0)
+        drain_gtk_events ();
+
+      if (!ev_sen)
+        {
+          aris_proof_set_sb (ap,
+                             _("Evaluation stopped (encountered invalid line data)."));
+          goto done;
+        }
+
+      ln = sentence_get_line_no (ev_sen);
       if (ln == sen_ln)
         break;
 
       conv_check = sd_convert_sexpr (SD(ev_sen));
       if (conv_check == AEC_MEM)
-        return AEC_MEM;
+        {
+          status = AEC_MEM;
+          goto done;
+        }
 
       ret = sentence_can_select_as_ref (sen, ev_sen);
       if (ret == ln && conv_check == 0)
@@ -766,22 +808,39 @@ evaluate_line (aris_proof * ap, sentence * sen)
             ? 0 : 1;
           ret = sexpr_collect_vars_to_proof (vars, SD(ev_sen)->sexpr, arb);
           if (ret == AEC_MEM)
-            return AEC_MEM;
+            {
+              status = AEC_MEM;
+              goto done;
+            }
         }
 
       ret_chk = ls_push_obj (lines, SD(ev_sen));
       if (!ret_chk)
-        return AEC_MEM;
+        {
+          status = AEC_MEM;
+          goto done;
+        }
+    }
+
+  if (!ev_itr)
+    {
+      aris_proof_set_sb (ap, _("Evaluation stopped (target line was not found)."));
+      goto done;
     }
 
   sentence_refresh_refs (sen);
 
-  char * ret_str;
+  drain_gtk_events ();
   ret_str = sen_data_evaluate (SD(sen), &ret, vars, lines);
+  drain_gtk_events ();
   if (!ret_str)
-    return AEC_MEM;
+    {
+      status = AEC_MEM;
+      goto done;
+    }
 
   sentence_set_value (sen, ret);
+  did_set_value = 1;
 
   aris_proof_set_sb (ap, ret_str);
   /* Color the line number based on the evaluation result.
@@ -803,31 +862,88 @@ evaluate_line (aris_proof * ap, sentence * sen)
     {
       gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
     }
-    
-  destroy_list (lines);
 
-  return ret;
+  status = ret;
+
+done:
+  if (!did_set_value)
+    {
+      int shown_status = (status == AEC_MEM) ? VALUE_TYPE_ERROR : status;
+      sentence_set_value (sen, shown_status);
+
+      if (shown_status == VALUE_TYPE_ERROR || shown_status == VALUE_TYPE_REF
+          || shown_status == VALUE_TYPE_FALSE || shown_status == VALUE_TYPE_RULE)
+        {
+          GdkRGBA red = {0.8, 0.0, 0.0, 1.0};
+          gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &red);
+        }
+      else if (shown_status == VALUE_TYPE_TRUE)
+        {
+          GdkRGBA green = {0.0, 0.7, 0.0, 1.0};
+          gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &green);
+        }
+      else
+        {
+          gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
+        }
+
+      if (status == AEC_MEM)
+        aris_proof_set_sb (ap, _("Internal evaluation error on this line."));
+    }
+
+  destroy_list (lines);
+  destroy_list (vars);
+
+  return status;
 }
 
 /* Evaluates an aris proof.
  *  input:
  *    ap - the aris proof to evaluate.
  *  output:
- *    0 on success, -1 on error.
+ *    0 on success, -1 on memory error, non-zero on generic stop/error.
  */
 int
 evaluate_proof (aris_proof * ap)
 {
   item_t * ev_itr;
   sentence * sen;
-  int ret;
+  int ret, safety;
+  int had_errors = 0;
+
+  drain_gtk_events ();
+  safety = 0;
 
   for (ev_itr = SEN_PARENT (ap)->everything->head; ev_itr; ev_itr = ev_itr->next)
     {
+      if (++safety > 5000)
+        {
+          aris_proof_set_sb (ap, _("Evaluation stopped (safety limit reached)."));
+          return VALUE_TYPE_ERROR;
+        }
+
+      if ((safety % 50) == 0)
+        drain_gtk_events ();
+
+      if (!ev_itr->value)
+        {
+          aris_proof_set_sb (ap, _("Evaluation stopped (encountered invalid line data)."));
+          return VALUE_TYPE_ERROR;
+        }
+
       sen = ev_itr->value;
       ret = evaluate_line (ap, sen);
       if (ret == AEC_MEM)
-        return AEC_MEM;
+        {
+          had_errors = 1;
+          continue;
+        }
+
+      /* Continue evaluating the whole proof even if one line is invalid.
+       * This ensures all lines get refreshed/highlighted. */
+      if (ret == VALUE_TYPE_REF || ret == VALUE_TYPE_ERROR
+          || ret == VALUE_TYPE_FALSE || ret == VALUE_TYPE_RULE)
+        had_errors = 1;
     }
 
   /*
@@ -839,6 +955,11 @@ evaluate_proof (aris_proof * ap)
   ret = goal_check_all (ap->goal);
   if (ret == AEC_MEM)
     return AEC_MEM;
+
+  drain_gtk_events ();
+
+  if (had_errors)
+    aris_proof_set_sb (ap, _("Proof evaluated with errors."));
 
   return 0;
 }

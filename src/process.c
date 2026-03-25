@@ -717,25 +717,44 @@ check_quants (const unsigned char * chk_str)
  *    in_pos - the initial position.
  *    out_str - a string pointer that receives the generality.
  *  output:
- *    The end of the generality on success, -1 on memory error.
+ *    The end of the generality on success, -1 on memory error, -2 on parse error.
  */
 int
 get_gen (unsigned char * in_str, int in_pos, unsigned char ** out_str)
 {
     int i;
+    int in_len;
 
     CHECK_ALLOC (in_str, -1);
+    CHECK_ALLOC (out_str, -1);
+
+    *out_str = NULL;
+
+    if (in_pos < 0)
+        return -2;
+
+    in_len = strlen (in_str);
+    if (in_pos > in_len)
+        return -2;
 
     for (i = in_pos; in_str[i] != '\0'; i++)
     {
         if (in_str[i] == '(')
         {
-            i = parse_parens (in_str, i, NULL);
+            int tmp_pos;
+            tmp_pos = parse_parens (in_str, i, NULL);
+            if (tmp_pos == AEC_MEM)
+                return AEC_MEM;
+            if (tmp_pos < 0 || tmp_pos < i)
+                return -2;
+
+            i = tmp_pos;
             continue;
         }
 
-        if (!strncmp (in_str + i, AND, CL) || !strncmp (in_str + i, OR, CL)
-            || !strncmp (in_str + i, CON, CL) || !strncmp (in_str + i, BIC, CL))
+        if ((i + CL) <= in_len
+            && (!strncmp (in_str + i, AND, CL) || !strncmp (in_str + i, OR, CL)
+                || !strncmp (in_str + i, CON, CL) || !strncmp (in_str + i, BIC, CL)))
             break;
     }
 
@@ -775,6 +794,12 @@ get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
     pos = get_gen (chk_str, conn_pos, &lsen);
     if (pos == AEC_MEM)
         return AEC_MEM;
+    if (pos < 0)
+    {
+        if (lsen)
+            free (lsen);
+        return -3;
+    }
 
     // Confirm that the first part wasn't the entire sentence.
 
@@ -823,9 +848,12 @@ get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
     unsigned char * rsen = NULL;
     while (chk_str[pos] != '\0')
     {
+        int prev_pos;
         if (rsen)
             free (rsen);
         rsen = NULL;
+
+        prev_pos = pos;
 
         if (strncmp (chk_str + pos, conn, conn_len))
         {
@@ -838,6 +866,13 @@ get_generalities (unsigned char * chk_str, unsigned char * conn, vec_t * vec)
         pos = get_gen (chk_str, conn_pos, &rsen);
         if (pos == AEC_MEM)
             return AEC_MEM;
+        if (pos < 0 || pos <= prev_pos)
+        {
+            if (rsen)
+                free (rsen);
+            destroy_str_vec (vec);
+            return -2;
+        }
 
         ret = vec_str_add_obj (vec, rsen);
         if (ret < 0)
@@ -950,6 +985,8 @@ check_generalities (unsigned char * text)
     tmp_pos = get_gen (text, 0, &tmp_str);
     if (tmp_pos == AEC_MEM)
         return AEC_MEM;
+    if (tmp_pos < 0 || !tmp_str)
+        return -5;
 
     if (!strcmp (tmp_str, text))
     {

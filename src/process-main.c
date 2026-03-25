@@ -27,7 +27,7 @@ process (unsigned char * conc, vec_t * prems, const char * rule, vec_t * vars,
 
     conclusion = conc;
 
-    char * infer, * equiv, * quant, * misc, * bool;
+    char * infer, * equiv, * quant, * misc, * bool_res;
 
     infer = process_inference (conclusion, prems, rule);
     if (!infer)
@@ -42,11 +42,11 @@ process (unsigned char * conc, vec_t * prems, const char * rule, vec_t * vars,
     if (strncmp (equiv, NOT_MINE, 28))
         return equiv;
 
-    bool = process_bool (conclusion, prems, rule);
-    if (!bool)
+    bool_res = process_bool (conclusion, prems, rule);
+    if (!bool_res)
         return NULL;
-    if (strncmp (bool, NOT_MINE, 28))
-        return bool;
+    if (strncmp (bool_res, NOT_MINE, 28))
+        return bool_res;
 
     quant = process_quantifiers (conclusion, prems, rule, vars);
     if (!quant)

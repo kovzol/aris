@@ -964,7 +964,7 @@ parse_connectives (char * in_str, int cur_conn, char ** out_str)
         while (strncmp (in_str + gg, conn, CL))
         {
             gg = get_gen (in_str, gg, &new_gen);
-            if (gg == -1)
+            if (gg < 0)
                 return -1;
 
             // Need to check for the existence of an actual connective.
@@ -1796,7 +1796,7 @@ isar_parse_case (char * cs, char ** out_str)
         unsigned char * lsen, * rsen;
 
         gg = get_gen (new_str, 0, &lsen);
-        if (gg == -1)
+        if (gg < 0)
             return -1;
 
         strcpy (rsen, new_str + gg + CL);

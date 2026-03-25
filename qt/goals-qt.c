@@ -32,6 +32,9 @@
  */
 int qtgoal_check_line(proof_t *proof, unsigned char *sen_text, vec_t *rets, int *ln, int *is_valid)
 {
+    if (!proof || !proof->everything || !rets || !ln || !is_valid || !sen_text)
+        return AEC_MEM;
+
     // First, check for text errors.
     // Is that necessary?
 
@@ -52,6 +55,9 @@ int qtgoal_check_line(proof_t *proof, unsigned char *sen_text, vec_t *rets, int 
          ev_itr = ev_itr->next)
     {
         sen_data * ev_sen = ev_itr->value;
+        if (!ev_sen || !ev_sen->text)
+            continue;
+
         unsigned char * ev_cmp_text = format_string (ev_sen->text);
         unsigned char * ev_cur_ret = vec_str_nth(rets,ev_sen->line_num -1);
 
@@ -60,7 +66,7 @@ int qtgoal_check_line(proof_t *proof, unsigned char *sen_text, vec_t *rets, int 
 
         if (!strcmp (ev_cmp_text, cmp_text))
         {
-            if (strcmp(ev_cur_ret, CORRECT))
+            if (!ev_cur_ret || strcmp(ev_cur_ret, CORRECT))
                 *is_valid = 0;
 
             *ln = ev_sen->line_num;
@@ -71,7 +77,7 @@ int qtgoal_check_line(proof_t *proof, unsigned char *sen_text, vec_t *rets, int 
         }
         else
         {
-            if (strcmp(ev_cur_ret, CORRECT))
+            if (!ev_cur_ret || strcmp(ev_cur_ret, CORRECT))
                 *is_valid = 0;
         }
 

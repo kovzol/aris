@@ -333,12 +333,42 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         item_t * cur_ref;
         sen_data * ref_data;
 
-        if (sd->refs[i] > lines->num_stuff)
-            return NULL;
+        /* Safety limit: a proof cannot legitimately have >5000 references.
+           If we reach this, the refs array is corrupted (e.g. missing REF_END). */
+        if (i >= 5000)
+        {
+            destroy_str_vec (refs);
+            *ret_val = VALUE_TYPE_ERROR;
+            return _("Too many references - possible corrupted proof file.");
+        }
+
+        if (sd->refs[i] <= 0 || sd->refs[i] > lines->num_stuff)
+        {
+            destroy_str_vec (refs);
+            *ret_val = VALUE_TYPE_REF;
+            return _("Invalid reference - evaluation stopped.");
+        }
         cur_ref = ls_nth (lines, sd->refs[i] - 1);
+
+        /* Extra safety: guard both the item and its payload. */
+        if (!cur_ref || !cur_ref->value)
+        {
+            destroy_str_vec (refs);
+            *ret_val = VALUE_TYPE_REF;
+            return _("Invalid reference (NULL from ls_nth).");
+        }
         ref_data = cur_ref->value;
 
+        if (!ref_data->text)
+        {
+            destroy_str_vec (refs);
+            *ret_val = VALUE_TYPE_REF;
+            return _("Invalid reference (no value).");
+        }
+
         unsigned char * tmp_ref_str = format_string (ref_data->text);
+        if (!tmp_ref_str)
+            return NULL;
 
         ret = check_text (tmp_ref_str);
         if (ret == AEC_MEM)
@@ -366,17 +396,49 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
             {
                 sen_data * sen_0;
                 item_t * ev_itr;
+                int subproof_safety = 0;
 
                 ev_itr = ls_nth (lines, ref_data->line_num);
-                while (ev_itr->next &&
-                       SD(ev_itr->next->value)->depth >= ref_data->depth)
+
+                if (!ev_itr || !ev_itr->value)
                 {
-                    if (!ev_itr->next)
+                    destroy_str_vec (refs);
+                    *ret_val = VALUE_TYPE_REF;
+                    return _("Invalid reference in subproof.");
+                }
+
+                while (ev_itr->next)
+                {
+                    sen_data * next_sd;
+
+                    if (++subproof_safety > 5000)
+                    {
+                        destroy_str_vec (refs);
+                        *ret_val = VALUE_TYPE_REF;
+                        return _("Subproof evaluation stopped (safety limit reached).");
+                    }
+
+                    if (!ev_itr->next->value)
+                    {
+                        destroy_str_vec (refs);
+                        *ret_val = VALUE_TYPE_REF;
+                        return _("Invalid reference in subproof.");
+                    }
+
+                    next_sd = SD (ev_itr->next->value);
+                    if (next_sd->depth < ref_data->depth)
                         break;
+
                     ev_itr = ev_itr->next;
                 }
 
                 sen_0 = ev_itr->value;
+                if (!sen_0 || !sen_0->text)
+                {
+                    *ret_val = VALUE_TYPE_REF;
+                    destroy_str_vec (refs);
+                    return _("Invalid reference in subproof.");
+                }
                 tmp_ref_str = format_string (sen_0->text);
                 if (!tmp_ref_str)
                     return NULL;

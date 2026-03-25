@@ -608,9 +608,20 @@ proc_sq (unsigned char * conc, vec_t * vars)
 
     vec_t * args_1;
     unsigned char * tmp_arg = arg_1;
+    int seq_safety = 0;
 
     while (1)
     {
+        if (++seq_safety > 5000)
+        {
+            if (tmp_arg != arg_1)
+                free (tmp_arg);
+            free (var);
+            destroy_str_vec (args);
+            destroy_str_vec (args_0);
+            return _("Sequence evaluation stopped (safety limit reached).");
+        }
+
         args_1 = init_vec (sizeof (char *));
         if (!args_1)
             return NULL;
@@ -640,13 +651,37 @@ proc_sq (unsigned char * conc, vec_t * vars)
             return _("The sequence must only be used once.");
         }
 
-        if (strcmp (vec_str_nth (args_1, i - 1), var))
+        if (args_1->num_stuff == 0)
         {
             if (tmp_arg != arg_1)
                 free (tmp_arg);
-            tmp_arg = (unsigned char *) calloc (strlen (vec_str_nth (args_1, i - 1)) + 1, sizeof (char));
+            free (var);
+            destroy_str_vec (args);
+            destroy_str_vec (args_0);
+            destroy_str_vec (args_1);
+            return _("The sequence function must contain arguments.");
+        }
+
+        unsigned char * next_arg;
+        next_arg = vec_str_nth (args_1, args_1->num_stuff - 1);
+        if (!strcmp (tmp_arg, next_arg))
+        {
+            if (tmp_arg != arg_1)
+                free (tmp_arg);
+            free (var);
+            destroy_str_vec (args);
+            destroy_str_vec (args_0);
+            destroy_str_vec (args_1);
+            return _("Sequence evaluation stopped (safety limit reached).");
+        }
+
+        if (strcmp (next_arg, var))
+        {
+            if (tmp_arg != arg_1)
+                free (tmp_arg);
+            tmp_arg = (unsigned char *) calloc (strlen (next_arg) + 1, sizeof (char));
             CHECK_ALLOC (tmp_arg, NULL);
-            strcpy (tmp_arg, vec_str_nth (args_1, i - 1));
+            strcpy (tmp_arg, next_arg);
             destroy_str_vec (args_1);
             args_1 = NULL;
             continue;

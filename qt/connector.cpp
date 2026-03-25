@@ -227,6 +227,11 @@ int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
     genGoals(gls);
 //    vec_t *rets;
     returns = init_vec(sizeof(char *));
+    if (!returns || !cProof || !cProof->everything)
+    {
+        setEvalText("Evaluation failed (internal initialization error).");
+        return 0;
+    }
 
     if (!proof_eval(cProof,returns,1))
         qDebug() << "Proof Evaluated Successfully";
@@ -237,9 +242,15 @@ int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
     int f = 0;
     ev_itr = cProof->everything->head;
     for (int i = 0; i < returns->num_stuff; i++){
-        char * cur_ret, * cur_line;
+        char * cur_ret;
         cur_ret = (char *) vec_str_nth (returns, i);
+        if (!ev_itr || !ev_itr->value || !cur_ret)
+            break;
+
+        char * cur_line;
         cur_line =(char *) ((sen_data *) ev_itr->value)->text;
+        if (!cur_line)
+            cur_line = (char *) "";
 
         if (strcmp (cur_ret, CORRECT)){
             qDebug() << "Error in line " << i + 1 << "- " << cur_line;

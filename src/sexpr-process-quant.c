@@ -459,6 +459,8 @@ proc_nq (unsigned char * prem, unsigned char * conc)
     if (!scope)
         return NULL;
 
+    int v_len;
+    v_len = strlen (var);
     free (var);
 
     int gqv;
@@ -483,7 +485,7 @@ proc_nq (unsigned char * prem, unsigned char * conc)
     unsigned char * oth_sen;
     int oth_pos, alloc_size;
 
-    alloc_size = l_len - strlen (var) - S_CL - 5;
+    alloc_size = l_len - v_len - S_CL - 5;
     oth_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
     CHECK_ALLOC (oth_sen, NULL);
 
@@ -612,11 +614,11 @@ proc_pr (unsigned char * prem, unsigned char * conc)
         if (!str)
             break;
 
-        while (*(str - 1) == '(' || (str[v_len] != ' ' && str[v_len] != ')'))
+        while (str
+               && (((str > cur_gen) && *(str - 1) == '(')
+                   || (str[v_len] != ' ' && str[v_len] != ')')))
         {
-            str = strstr (cur_gen + 1, var);
-            if (str == NULL)
-                break;
+            str = strstr (str + 1, var);
         }
         if (!str)
             break;
@@ -633,9 +635,10 @@ proc_pr (unsigned char * prem, unsigned char * conc)
         str = strstr (cur_gen, var);
         while (str)
         {
-            if (*(str - 1) != '(' && (str[v_len] == ' ' || str[v_len] == ')'))
+            if (((str == cur_gen) || (*(str - 1) != '('))
+                && (str[v_len] == ' ' || str[v_len] == ')'))
                 break;
-            str = strstr (cur_gen + 1, var);
+            str = strstr (str + 1, var);
         }
 
         ret_chk = vec_str_add_obj (nul_gens, cur_gen);

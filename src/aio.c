@@ -43,6 +43,30 @@
 //#define PRINT_ALLOC() {struct mallinfo mal = mallinfo (); fprintf (stderr, "%i: blks == %i\n", __LINE__, mal.uordblks); }
 #define PRINT_ALLOC()
 
+/* Validates that a reference token is a pure positive integer.
+ * Corrupted XML (e.g. &#xFF; bytes) produces non-digit tokens that
+ * atoi() silently converts to 0, later causing ls_nth(lines,-1)
+ * to loop forever and hang the application.
+ * Returns 1 if valid, 0 otherwise.
+ */
+static int
+is_valid_ref_token (const char * tok)
+{
+    if (!tok) return 0;
+    /* skip leading whitespace */
+    while (*tok == ' ' || *tok == '\t') tok++;
+    if (*tok == '\0') return 0;
+    /* every remaining character must be a decimal digit */
+    int has_digit = 0;
+    while (*tok)
+    {
+        if (*tok < '0' || *tok > '9') return 0;
+        has_digit = 1;
+        tok++;
+    }
+    return has_digit;
+}
+
 #define IS_LINE(s) (!strcmp (CSTD_CAST (s),LINE_DATA) || !strcmp (CSTD_CAST (s),ALT_LINE_DATA))
 #define IS_TEXT(s) (!strcmp (CSTD_CAST (s),TEXT_DATA) || !strcmp (CSTD_CAST (s),ALT_TEXT_DATA))
 #define IS_RULE(s) (!strcmp (CSTD_CAST (s),RULE_DATA) || !strcmp (CSTD_CAST (s),ALT_RULE_DATA))
@@ -391,8 +415,17 @@ aio_open_conc (xmlTextReader * xml)
 
             while (tok)
             {
-                short new_ref = (short) atoi(tok);
-                refs[i++] = new_ref;
+                /* If ANY token is not a valid positive integer, stop
+                   processing refs immediately.  Corrupted r attributes
+                   (e.g. r="d\xFF" or r="\xFF\xFF") must not reach atoi(). */
+                if (!is_valid_ref_token (tok))
+                {
+                    refs[i] = REF_END;
+                    break;
+                }
+                short new_ref = (short) atoi (tok);
+                if (new_ref > 0)
+                    refs[i++] = new_ref;
                 tok = strtok (NULL, ",");
             }
             refs[i] = REF_END;

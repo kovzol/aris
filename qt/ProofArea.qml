@@ -66,7 +66,6 @@ Item {
             property bool editCombos: (!isExtFile || type === "choose")
             property var arr: model.refs
             property string type: model.type
-            property int indexx: model.index
             property bool vis: type === "premise" || type === "subproof"
                                || type === "sf"
             property string textFieldColor: (listView.currentIndex
@@ -162,12 +161,12 @@ Item {
                     id: backRectID
                     border.width: 1
                     border.color: ((cConnector.evalText).includes(
-                                       "Error in line " + (indexx + 1) + " -")
+                                       "Error in line " + model.line + " -")
                                    && cConnector.evalText !== "Evaluate Proof") ? "red" : (cConnector.evalText === "Evaluate Proof") ? (darkMode ? "white" : "black") : "springgreen"
                     color: textFieldColor
                 }
 
-                //placeholderText: indexx === 0 ? qsTr("Start Typing here..."): ""
+                //placeholderText: index === 0 ? qsTr("Start Typing here..."): ""
                 text: model.lText
 
                 MouseArea {
@@ -244,7 +243,7 @@ Item {
 
                 onActivated: {
                     editCombos = true
-                    proofModel.setData(proofModel.index(indexx, 0),
+                    proofModel.setData(proofModel.index(index, 0),
                                        conclusionRuleID.currentText, 258)
                     asteriskID.visible = false
                 }
@@ -287,7 +286,7 @@ Item {
 
                 onActivated: {
                     editCombos = true
-                    proofModel.setData(proofModel.index(indexx, 0),
+                    proofModel.setData(proofModel.index(index, 0),
                                        currentText, 258)
                     asteriskID.visible = false
                 }

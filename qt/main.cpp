@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QIcon>
 #include <QQuickStyle>
+#include <QDebug>
 #include "proofmodel.h"
 #include "proofdata.h"
 #include "goaldata.h"
@@ -23,8 +24,8 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 #else
-    app.setWindowIcon(QIcon(u"arisqt/assets/icon_simple.svg"_qs));
-    const QUrl url(u"arisqt/main.qml"_qs);
+    app.setWindowIcon(QIcon(QStringLiteral("qrc:/arisqt/assets/icon_simple.svg")));
+    const QUrl url(QStringLiteral("qrc:/arisqt/main.qml"));
 #endif
 
     // Create custom objects for interfacing with QML
@@ -58,6 +59,11 @@ int main(int argc, char *argv[])
                 QCoreApplication::exit(-1);
         }, Qt::QueuedConnection);
     engine.load(url);
+    if (engine.rootObjects().isEmpty())
+    {
+        qCritical() << "Failed to load root QML object from" << url;
+        return -1;
+    }
 
     return app.exec();
 }

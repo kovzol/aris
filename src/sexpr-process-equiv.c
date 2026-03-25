@@ -532,10 +532,20 @@ proc_dm (unsigned char * prem, unsigned char * conc, int mode_guess)
         // Construct what should be the other sentence.
 
         unsigned char * cons_sen;
-        int cons_pos, alloc_size;
+        int cons_pos;
+        size_t alloc_size;
 
-        alloc_size = n_len + (gg_vec->num_stuff - 1) * (S_NL + 3);
-        cons_sen = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
+        alloc_size = (size_t) (i - 1) + strlen ((char *) oth_conn)
+                     + strlen ((char *) (not_sen + tmp_pos)) + 1;
+        for (j = 0; j < gg_vec->num_stuff; j++)
+        {
+            unsigned char * gen = vec_str_nth (gg_vec, j);
+            if (!gen)
+                continue;
+            alloc_size += strlen ((char *) gen) + S_NL + 4; // " (%s %s)"
+        }
+
+        cons_sen = (unsigned char *) calloc (alloc_size, sizeof (char));
         CHECK_ALLOC (cons_sen, NULL);
         strncpy (cons_sen, not_sen, i - 1);
         cons_pos = i - 1;
