@@ -1544,10 +1544,6 @@ sentence_text_changed (sentence * sen)
   sen_parent * sp = sen->parent;
   sentence_set_value (sen, VALUE_TYPE_BLANK);
 
-  /* Reset the entry background color to default to clear stale
-     evaluation colors (red/green) from a previous Ctrl+E evaluation. */
-  sentence_set_bg (sen, BG_COLOR_DEFAULT);
-
   item_t * e_itr = ls_find (sp->everything, sen);
 
   for (e_itr = sp->everything->head; e_itr; e_itr = e_itr->next)
@@ -1560,13 +1556,7 @@ sentence_text_changed (sentence * sen)
           r_itr = ls_find (e_refs, sen);
 
           if (r_itr)
-            {
-              sentence_set_value (SENTENCE (e_itr->value), VALUE_TYPE_BLANK);
-              /* Also reset the eventbox of dependent sentences so their
-                 goal-check colors are cleared when a reference changes. */
-              gtk_widget_override_background_color (
-                SENTENCE (e_itr->value)->eventbox, GTK_STATE_NORMAL, NULL);
-            }
+            sentence_set_value (SENTENCE (e_itr->value), VALUE_TYPE_BLANK);
         }
     }
 
