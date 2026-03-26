@@ -47,6 +47,16 @@ ToolBar {
         }
 
         ToolButton {
+            text: qsTr("Reset")
+            icon.name: "reset"
+
+            onClicked: {
+                resetToDefault()
+                menuOptions.close()
+            }
+        }
+
+        ToolButton {
             text: qsTr("Open")
             icon.name: "folder"
             icon.color: darkMode ? "white" : "black"
@@ -149,14 +159,9 @@ ToolBar {
 
             onClicked: {
                 cConnector.evalText = "Evaluate Proof"
-                if (Qt.platform.os === "wasm") {
-                    isExtFile = true
-                    auxConnector.wasmImportProof(theData, cConnector,
-                                                 proofModel)
-                    computePremise = true
-                } else {
-                    importID.open()
-                }
+                isExtFile = true
+                computePremise = true
+                importBehaviorDialog.open()
 
                 menuOptions.close()
             }

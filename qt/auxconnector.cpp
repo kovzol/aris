@@ -26,6 +26,9 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QSaveFile>
+#include <QUrl>
+#include <QDir>
+#include <QStandardPaths>
 
 #ifndef Q_OS_WASM
 #include <QProcess>
@@ -88,145 +91,76 @@ void auxConnector::wasmLatex(const ProofData *pd, Connector *c)
  *  output:
  *    none.
  */
-void auxConnector::importProof(const QString &name, ProofData *pd, const Connector *c, ProofModel *pm)
+void auxConnector::importProof(const QString &name, const QString &mode, ProofData *pd, Connector *c, ProofModel *pm)
 {
-    QString newName = name.contains("file://")? name.mid(7): name;
+    c->reverseMapInit();
+
+    QString newName = QUrl(name).toLocalFile();
+    if (newName.isEmpty())
+        newName = name;
     char *file_name = (char *) calloc((newName.size()+1), sizeof(char));
     memcpy(file_name, newName.toStdString().c_str(), newName.size());
 
+    qDebug() << "Import proof path:" << newName;
     proof_t *proof = aio_open(file_name);
 
     if (!proof) {
-        qDebug() << "Failed to import proof";
+        qDebug() << "Failed to import proof for path:" << newName;
+        c->setEvalText("Import failed: could not open file");
         free(file_name);
         return;
     }
 
+    const QString normalized = mode.trimmed().toLower();
+    const bool isAppend = (normalized == "append");
+    const bool isPrepend = (normalized == "prepend");
+    const bool isOverwrite = (!isAppend && !isPrepend);
+
+    if (isOverwrite) {
+        while (pd->lines().size() > 0) {
+            pd->removeLineAt(0);
+        }
+        pm->updateLines();
+    }
+
+    int insertIndex = isAppend ? pd->lines().size() : 0;
+    const int refOffset = isAppend ? insertIndex : 0;
+    int insertedCount = 0;
+
     item_t *pf_itr;
-    int ref_num = 0, ev_conc = -1, ev_itr;
-    short *refs;
+    int prevDepth = 0;
+    for (pf_itr = (item_t *) proof->everything->head; pf_itr; pf_itr = pf_itr->next) {
+        sen_data *sd = (sen_data *) pf_itr->value;
 
-    refs = (short *) calloc (proof->everything->num_stuff, sizeof(int));
+        if (sd->depth > prevDepth)
+            sd->rule = -2;
 
-    while (pd->lines().size() > 0) {
-        pd->removeLineAt(0);
-    }
-    
-    // 2. TELL THE UI THE LIST IS NOW EMPTY 
-    pm->updateLines(); 
-
-    int num_ins = 0;
-    for (pf_itr =(item_t *) proof->everything->head; pf_itr != NULL; pf_itr = pf_itr->next){
-        sen_data *sd;
-        char *pf_text;
-
-        sd = (sen_data *) pf_itr->value;
-        if (!sd->premise)
-            break;
-
-        pf_text = (char *) sd->text;
-
-        for (ev_itr = 0; ev_itr < pd->lines().size(); ev_itr++){
-            char *ev_text;
-            int ln = ev_itr + 1;
-
-            if (pd->lines().at(ev_itr).pType != "premise"){
-                if (ev_conc == -1)
-                    ev_conc = ev_itr;
-                break;
-            }
-
-            std::string str = pd->lines().at(ev_itr).pText.toStdString();
-            ev_text = (char *) calloc((strlen(str.c_str()))+1, sizeof(char));
-            memcpy(ev_text, str.c_str(), strlen(str.c_str()));
-
-            if (!strcmp(ev_text, pf_text)){
-                refs[ref_num++] = (short) ln;
-                free(ev_text);
-                break;
-            }
-            if (ev_text)
-                free(ev_text);
+        QList<int> temp_refs = {-1};
+        for (int i = 0; sd->refs[i] != REF_END; i++) {
+            int ref = sd->refs[i];
+            if (refOffset > 0 && ref > 0)
+                ref += refOffset;
+            temp_refs.push_back(ref);
         }
 
-        if (ev_itr >= pd->lines().size() || pd->lines().at(ev_itr).pType != "premise"){
-            QList<int> temp_refs = {-1};
-//            for (int i = 0; sd->refs[i] != REF_END; i++)
-//                temp_refs.push_back(sd->refs[i]);
+        bool subEnd = (sd->line_num != 1 && ((sen_data *) pf_itr->prev->value)->depth > sd->depth);
 
-            if (sd->depth > 0)
-                sd->rule = -2;
-            pd->insertLine(num_ins,num_ins+1,(const char *) sd->text,c->reverseRulesMap[sd->rule],false,
-                               false,false, sd->depth * 20,temp_refs);
-            pd->setFile(num_ins,newName);
-            pm->updateLines();
-            pm->updateRefs(num_ins,true);
-            num_ins++;
+        pd->insertLine(insertIndex, insertIndex + 1, (const char *) sd->text,
+                       c->reverseRulesMap[sd->rule], (sd->depth > 0),
+                       (sd->rule == -2), subEnd, sd->depth * 20, temp_refs);
+        pd->setFile(insertIndex, newName);
 
-            refs[ref_num++] = (short) num_ins;
-        }
+        if (isPrepend)
+            pm->updateRefs(insertIndex, true);
 
+        insertIndex++;
+        insertedCount++;
+        prevDepth = sd->depth;
     }
 
-    refs[ref_num] = REF_END;
-
-    if (ev_conc == -1){
-        for (ev_itr = 0; ev_itr < pd->lines().size(); ev_itr++){
-            if (pd->lines().at(ev_itr).pType == "premise"){
-                if (ev_conc == -1)
-                    ev_conc = ev_itr;
-                break;
-            }
-        }
-    }
-
-    for (pf_itr = proof->goals->head; pf_itr != NULL; pf_itr = pf_itr->next){
-
-        unsigned char *pf_text;
-        pf_text = (unsigned char *) pf_itr->value;
-
-        for (ev_itr = ev_conc; ev_itr < pd->lines().size(); ev_itr++){
-
-            unsigned char *ev_text;
-            std::string str = pd->lines().at(ev_itr).pText.toStdString();
-            ev_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
-            memcpy(ev_text, str.c_str(), strlen(str.c_str()));
-
-
-            if (!strcmp((char *)pf_text,(char *)ev_text)){
-                free(ev_text);
-                break;
-            }
-            if (ev_text)
-                free(ev_text);
-        }
-
-        if (ev_itr >= pd->lines().size()){
-            sen_data *sd;
-            sd = sen_data_init(-1,RULE_LM,(unsigned char *)pf_text,refs,0,(unsigned char *)file_name,0,0,NULL);
-            qDebug()<< file_name;
-
-            QList<int> temp_refs = {-1};
-            for (int i = 0; sd->refs[i] != REF_END; i++)
-                temp_refs.push_back(sd->refs[i]);
-
-            int l;
-            for (l = 0; l < pd->lines().size(); l++){
-                if (pd->lines().at(l).pType != "premise")
-                    break;
-            }
-
-            pd->insertLine(l,l+1,(const char *) sd->text,c->reverseRulesMap[sd->rule],false,
-                           false,false, sd->depth * 20,temp_refs);
-            pd->setFile(l,newName);
-            pm->updateLines();
-            pm->updateRefs(l,true);
-
-        }
-
-    }
-
-    free(refs);
+    if (insertedCount > 0)
+        pm->updateLines();
+    c->setEvalText("Import complete");
     proof_destroy(proof);
     if (file_name)
         free(file_name);
@@ -240,21 +174,49 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
  *  output:
  *    none.
  */
-void auxConnector::wasmImportProof(ProofData *pd, const Connector *c, ProofModel *pm)
+void auxConnector::wasmImportProof(const QString &mode, ProofData *pd, Connector *c, ProofModel *pm)
 {
-    auto fileContentReady = [this, &c, &pd, &pm](const QString &fileName, const QByteArray &fileContent) {
+    auto fileContentReady = [this, &c, &pd, &pm, mode](const QString &fileName, const QByteArray &fileContent) {
         if (fileName.isEmpty()) {
             qDebug() << "No file was selected" ;
+            c->setEvalText("Import failed: no file selected");
         } else {
-            QSaveFile file(fileName);
-            file.open(QIODevice::WriteOnly);
+            QString tempDir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+            if (tempDir.isEmpty())
+                tempDir = ".";
+            const QString tempName = QDir(tempDir).filePath("import-temp.tle");
+            QFile file(tempName);
+            if (!file.open(QIODevice::WriteOnly)) {
+                qDebug() << "Failed to write temp import file:" << tempName;
+                c->setEvalText("Import failed: could not write temp file");
+                return;
+            }
             file.write(fileContent);
-            file.commit();
-            importProof(fileName,pd,c,pm);
-//            file.deleteLater();
+            file.flush();
+            file.close();
+            if (!QFile::exists(tempName)) {
+                qDebug() << "Temp import file missing after write:" << tempName;
+                c->setEvalText("Import failed: temp file missing");
+                return;
+            }
+            importProof(tempName, mode, pd, c, pm);
         }
     };
     QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
+}
+
+void auxConnector::resetProof(ProofData *pd, GoalData *gd, ProofModel *pm)
+{
+    while (pd->lines().size() > 0) {
+        pd->removeLineAt(0);
+    }
+    pd->insertLine(0, 1, "", "premise", false, false, false, 0, {-1});
+    pm->updateLines();
+
+    while (gd->glines().size() > 0) {
+        gd->removegLineAt(0);
+    }
+    gd->insertgLine(0, -2, false, "");
 }
 
 #ifndef Q_OS_WASM
