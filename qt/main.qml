@@ -35,6 +35,7 @@ ApplicationWindow {
     property bool fileModified: false
     property int premiseCount: 1
     property bool computePremise: false // set to true if Open or Import Proof are used
+    property string importMode: "overwrite"
 
     // Function to compute premiseCount, used when opening new file
     function computePremiseCount(item) {
@@ -50,6 +51,17 @@ ApplicationWindow {
     // Function to check if the item is a TextField QML Type
     function isTextField(item) {
         return item instanceof TextField
+    }
+
+    function resetToDefault() {
+        auxConnector.resetProof(theData, theGoals, proofModel)
+        filename = "Untitled"
+        isExtFile = false
+        fileExists = false
+        fileModified = false
+        premiseCount = 1
+        computePremise = false
+        cConnector.evalText = "Evaluate Proof"
     }
 
     width: 1200
@@ -197,8 +209,136 @@ ApplicationWindow {
             if (premiseCount === 1) {
                 premiseCount = 0
             }
-            auxConnector.importProof(selectedFile, theData, cConnector,
+            auxConnector.importProof(selectedFile, importMode, theData, cConnector,
                                      proofModel)
+        }
+    }
+
+    Dialog {
+        id: importBehaviorDialog
+
+        title: "Import Proof"
+        width: parent.width / 2.2
+        height: parent.height / 2.6
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        background: Rectangle {
+            anchors.fill: parent
+            color: darkMode ? "#1F1B24" : "#F8F8F8"
+            opacity: 1
+            border.width: 2
+            border.color: darkMode ? "#2A2A2A" : "#DADADA"
+            radius: 8
+        }
+
+        palette {
+            button: darkMode ? "#1F1A24" : "white"
+            buttonText: darkMode ? "white" : "black"
+            text: darkMode ? "white" : "black"
+            window: darkMode ? "#1F1B24" : "white"
+        }
+
+        parent: Overlay.overlay
+        focus: true
+        modal: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        standardButtons: Dialog.NoButton
+
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 0
+
+            Rectangle {
+                Layout.fillWidth: true
+                height: 70
+                color: darkMode ? "#2A2636" : "#EEEEEE"
+                radius: 8
+
+                Label {
+                    anchors.centerIn: parent
+                    text: qsTr("Import Proof")
+                    font.pointSize: 20
+                    font.bold: true
+                    color: darkMode ? "white" : "black"
+                }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                anchors.margins: 24
+                spacing: 18
+
+                Label {
+                    text: qsTr("Choose import behavior")
+                    font.pointSize: 16
+                    color: darkMode ? "white" : "black"
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 16
+
+                    Item { Layout.fillWidth: true }
+
+                    Button {
+                        text: qsTr("Overwrite")
+                        Layout.preferredWidth: 150
+                        Layout.preferredHeight: 42
+                        onClicked: {
+                            importMode = "overwrite"
+                            importBehaviorDialog.close()
+                            Qt.callLater(function() {
+                                if (Qt.platform.os === "wasm")
+                                    auxConnector.wasmImportProof(importMode, theData, cConnector, proofModel)
+                                else
+                                    importID.open()
+                            })
+                        }
+                    }
+
+                    Item { Layout.fillWidth: true }
+
+                    Button {
+                        text: qsTr("Append End")
+                        Layout.preferredWidth: 150
+                        Layout.preferredHeight: 42
+                        onClicked: {
+                            importMode = "append"
+                            importBehaviorDialog.close()
+                            Qt.callLater(function() {
+                                if (Qt.platform.os === "wasm")
+                                    auxConnector.wasmImportProof(importMode, theData, cConnector, proofModel)
+                                else
+                                    importID.open()
+                            })
+                        }
+                    }
+
+                    Item { Layout.fillWidth: true }
+
+                    Button {
+                        text: qsTr("Prepend")
+                        Layout.preferredWidth: 150
+                        Layout.preferredHeight: 42
+                        onClicked: {
+                            importMode = "prepend"
+                            importBehaviorDialog.close()
+                            Qt.callLater(function() {
+                                if (Qt.platform.os === "wasm")
+                                    auxConnector.wasmImportProof(importMode, theData, cConnector, proofModel)
+                                else
+                                    importID.open()
+                            })
+                        }
+                    }
+
+                    Item { Layout.fillWidth: true }
+                }
+            }
         }
     }
 

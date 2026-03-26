@@ -67,6 +67,7 @@ qt_add_qml_module(aris-qt
         assets/icons/arisqt/512x512/about.png
         assets/icons/arisqt/512x512/font.png
         assets/icons/arisqt/512x512/import.png
+        assets/icons/arisqt/512x512/reset.png
         assets/icons/arisqt/512x512/language.png
         assets/icons/arisqt/512x512/boolean.png
         assets/icons/arisqt/512x512/goal.png
