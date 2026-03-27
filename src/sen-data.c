@@ -334,9 +334,18 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         item_t * cur_ref;
         sen_data * ref_data;
 
-        if (sd->refs[i] > lines->num_stuff)
-            return NULL;
+        if (sd->refs[i] > lines->num_stuff) {
+            destroy_str_vec(refs);
+            *ret_val = VALUE_TYPE_REF;
+            return _("One of the sentence's references points to a non-existing line.");
+        }
         cur_ref = ls_nth (lines, sd->refs[i] - 1);
+        if (!cur_ref)
+        {
+            destroy_str_vec (refs);
+            *ret_val = VALUE_TYPE_REF;
+            return _("One of the sentence's references points to a non-existing line.");
+        }   
         ref_data = cur_ref->value;
 
         unsigned char * tmp_ref_str = format_string (ref_data->text);
