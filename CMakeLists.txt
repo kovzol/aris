@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.28)
 project(aris C)
 
 set(PACKAGE_NAME "GNU Aris")
@@ -7,7 +7,7 @@ set(ARIS_VERSION "3.0")
 set(PACKAGE_BUGREPORT "aris-bugs@gnu.org")
 
 set(CMAKE_C_STANDARD 11)
-
+cmake_policy(SET CMP0115 NEW)
 add_executable(aris
         src/aio.c
         src/aio.h
@@ -20,7 +20,7 @@ add_executable(aris
         src/callbacks.h
         src/conf-file.c
         src/conf-file.h
-        src/config.h
+        src/config.h.in
         src/goal.c
         src/goal.h
         src/interop-isar.c

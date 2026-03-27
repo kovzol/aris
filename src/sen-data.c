@@ -334,8 +334,8 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         sen_data * ref_data;
 
         if (sd->refs[i] > lines->num_stuff) {
-            dest/src/config.h.inroy_str_vec(refs);
-            *ref_val = VALUE_TYPE_REF;
+            destroy_str_vec(refs);
+            *ret_val = VALUE_TYPE_REF;
             return _("One of the sentence's references points to a non-existing line.");
         }
         cur_ref = ls_nth (lines, sd->refs[i] - 1);
