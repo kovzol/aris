@@ -124,6 +124,10 @@ sen_data_destroy (sen_data * sd)
         free (sd->indices);
     sd->indices = NULL;
 
+    if (sd->file)
+        free (sd->file);
+    sd->file = NULL;
+
     free (sd);
 }
 
@@ -216,7 +220,7 @@ sen_convert_sexpr (unsigned char * text, unsigned char ** sexpr)
 {
     int ret;
 
-    if (text[0] == '\0')
+    if (!text || !sexpr || text[0] == '\0')
         return -2;
 
     if (!(*sexpr))
@@ -267,7 +271,15 @@ sd_convert_sexpr (sen_data * sd)
 char *
 sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * lines)
 {
-    if (sd->text[0] == '\0')
+    if (!ret_val)
+        return _("Invalid return pointer.");
+
+    *ret_val = VALUE_TYPE_ERROR;
+
+    if (!sd || !pf_vars || !lines)
+        return _("Invalid sentence data.");
+
+    if (!sd->text || sd->text[0] == '\0')
     {
         if (sd->line_num == 1)
         {
@@ -283,10 +295,13 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
     unsigned char * text;
     text = format_string (sd->text);
+    if (!text)
+        return NULL;
 //    main_conns = cli_conns;
 
     int ret;
     ret = check_text (text);
+    free (text);
     if (ret == AEC_MEM)
         return NULL;
 
@@ -313,10 +328,10 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         return CORRECT;
     }
 
-    if (sd->rule == -1 || sd->rule >= NUM_RULES)
+    if (sd->rule < 0 || sd->rule >= NUM_RULES)
     {
         *ret_val = VALUE_TYPE_RULE;
-        return _("The sentence is missing a rule.");
+        return _("Invalid rule.");
     }
 
     *ret_val = VALUE_TYPE_ERROR;
@@ -326,25 +341,26 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
     refs = init_vec (sizeof (char *));
     if (!refs)
         return NULL;
+
+    if (!sd->refs)
+    {
+        *ret_val = VALUE_TYPE_ERROR;
+        destroy_str_vec (refs);
+        refs = NULL;
+        return _("Invalid references.");
+    }
+
     int i;
 
-    for (i = 0; sd->refs[i] != REF_END; i++)
+    for (i = 0; i < 1000 && sd->refs[i] != REF_END; i++)
     {
         item_t * cur_ref;
         sen_data * ref_data;
 
-        /* Safety limit: a proof cannot legitimately have >5000 references.
-           If we reach this, the refs array is corrupted (e.g. missing REF_END). */
-        if (i >= 5000)
-        {
-            destroy_str_vec (refs);
-            *ret_val = VALUE_TYPE_ERROR;
-            return _("Too many references - possible corrupted proof file.");
-        }
-
         if (sd->refs[i] <= 0 || sd->refs[i] > lines->num_stuff)
         {
             destroy_str_vec (refs);
+            refs = NULL;
             *ret_val = VALUE_TYPE_REF;
             return _("Invalid reference - evaluation stopped.");
         }
@@ -354,6 +370,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         if (!cur_ref || !cur_ref->value)
         {
             destroy_str_vec (refs);
+            refs = NULL;
             *ret_val = VALUE_TYPE_REF;
             return _("Invalid reference (NULL from ls_nth).");
         }
@@ -362,6 +379,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         if (!ref_data->text)
         {
             destroy_str_vec (refs);
+            refs = NULL;
             *ret_val = VALUE_TYPE_REF;
             return _("Invalid reference (no value).");
         }
@@ -378,6 +396,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         if (ret < 0)
         {
             destroy_str_vec (refs);
+            refs = NULL;
             *ret_val = VALUE_TYPE_REF;
 
             return _("One of the sentence's references has a text error.");
@@ -385,6 +404,14 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
         unsigned char * ref_text;
         ref_text = ref_data->sexpr;
+
+        if (!ref_text)
+        {
+            destroy_str_vec (refs);
+            refs = NULL;
+            *ret_val = VALUE_TYPE_REF;
+            return _("A referenced sentence has invalid or empty text.");
+        }
 
         ret = vec_str_add_obj (refs, ref_text);
         if (ret == AEC_MEM)
@@ -403,6 +430,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                 if (!ev_itr || !ev_itr->value)
                 {
                     destroy_str_vec (refs);
+                    refs = NULL;
                     *ret_val = VALUE_TYPE_REF;
                     return _("Invalid reference in subproof.");
                 }
@@ -414,6 +442,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                     if (++subproof_safety > 5000)
                     {
                         destroy_str_vec (refs);
+                        refs = NULL;
                         *ret_val = VALUE_TYPE_REF;
                         return _("Subproof evaluation stopped (safety limit reached).");
                     }
@@ -421,6 +450,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                     if (!ev_itr->next->value)
                     {
                         destroy_str_vec (refs);
+                        refs = NULL;
                         *ret_val = VALUE_TYPE_REF;
                         return _("Invalid reference in subproof.");
                     }
@@ -437,6 +467,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                 {
                     *ret_val = VALUE_TYPE_REF;
                     destroy_str_vec (refs);
+                    refs = NULL;
                     return _("Invalid reference in subproof.");
                 }
                 tmp_ref_str = format_string (sen_0->text);
@@ -452,11 +483,20 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                 {
                     *ret_val = VALUE_TYPE_REF;
                     destroy_str_vec (refs);
+                    refs = NULL;
                     return _("One of the sentence's references has a text error.");
                 }
 
                 unsigned char * ref_text;
                 ref_text = sen_0->sexpr;
+
+                if (!ref_text)
+                {
+                    destroy_str_vec (refs);
+                    refs = NULL;
+                    *ret_val = VALUE_TYPE_REF;
+                    return _("A referenced subproof sentence has invalid or empty text.");
+                }
 
                 ret = vec_str_add_obj (refs, ref_text);
                 if (ret == AEC_MEM)
@@ -464,14 +504,31 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
             }
             else if (sd->rule == RULE_SP)
             {
+                destroy_str_vec (refs);
+                refs = NULL;
                 return _("\'sp\' can only be used with a subproof as a reference.");
             }
         }
     }
 
+    if (i == 1000)
+    {
+        destroy_str_vec (refs);
+        refs = NULL;
+        *ret_val = VALUE_TYPE_ERROR;
+        return _("Too many references - possible corrupted proof file.");
+    }
+
     // Next, get the variables.
 
     vec_t * vars = init_vec (sizeof (variable));
+    if (!vars)
+    {
+        destroy_str_vec (refs);
+        refs = NULL;
+        return NULL;
+    }
+
     item_t * var_itr;
     proof_t * proof = NULL;
 
@@ -498,7 +555,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         int f_len;
         f_len = strlen (sd->file);
 
-        if (!strncmp (sd->file + f_len - 4, ".thy", 4))
+        if (f_len >= 4 && !strncmp (sd->file + f_len - 4, ".thy", 4))
         {
             proof = proof_init ();
             if (!proof)
@@ -518,6 +575,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
             {
                 *ret_val = VALUE_TYPE_ERROR;
                 destroy_str_vec (refs);
+                refs = NULL;
                 destroy_vec (vars);
                 return _("Unable to open lemma file.");
             }
@@ -531,6 +589,7 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         return NULL;
 
     destroy_str_vec (refs);
+    refs = NULL;
     destroy_vec (vars);
     if (proof)
         proof_destroy (proof);

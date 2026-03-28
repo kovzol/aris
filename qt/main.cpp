@@ -4,6 +4,8 @@
 #include <QIcon>
 #include <QQuickStyle>
 #include <QDebug>
+#include <QMessageBox>
+#include <exception>
 #include "proofmodel.h"
 #include "proofdata.h"
 #include "goaldata.h"
@@ -65,5 +67,19 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    return app.exec();
+    try
+    {
+        return app.exec();
+    }
+    catch (const std::exception & ex)
+    {
+        QMessageBox::critical(nullptr, "Fatal Error",
+                              QString("Unexpected crash occurred:\n%1").arg(ex.what()));
+        return -1;
+    }
+    catch (...)
+    {
+        QMessageBox::critical(nullptr, "Fatal Error", "Unexpected crash occurred.");
+        return -1;
+    }
 }

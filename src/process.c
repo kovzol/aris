@@ -27,9 +27,47 @@
 #include <math.h>
 
 
-struct connectives_list main_conns;
-
+/* Single authoritative definition – zero-initialised so all pointer
+   members are NULL and cl/nl are 0 until explicitly set. */
 struct connectives_list main_conns = { 0 };
+
+/* Sets main_conns to the GUI Unicode connectives (3-byte multibyte). */
+void
+main_conns_init_gui (void)
+{
+    main_conns.And = "\xe2\x88\xa7";  /* U+2227 ∧ */
+    main_conns.Or  = "\xe2\x88\xa8";  /* U+2228 ∨ */
+    main_conns.Not = "\xc2\xac";      /* U+00AC ¬ (2-byte) */
+    main_conns.con = "\xe2\x86\x92";  /* U+2192 → */
+    main_conns.bic = "\xe2\x86\x94";  /* U+2194 ↔ */
+    main_conns.unv = "\xe2\x88\x80";  /* U+2200 ∀ */
+    main_conns.exl = "\xe2\x88\x83";  /* U+2203 ∃ */
+    main_conns.tau = "\xe2\x8a\xa4";  /* U+22A4 ⊤ */
+    main_conns.ctr = "\xe2\x8a\xa5";  /* U+22A5 ⊥ */
+    main_conns.elm = "\xe2\x88\x88";  /* U+2208 ∈ */
+    main_conns.nil = "\xe2\x8d\x89";  /* U+2349 ⍉ */
+    main_conns.cl  = 3;
+    main_conns.nl  = 2;
+}
+
+/* Sets main_conns to the CLI ASCII connectives (1-byte). */
+void
+main_conns_init_cli (void)
+{
+    main_conns.And = "&";
+    main_conns.Or  = "|";
+    main_conns.Not = "~";
+    main_conns.con = "$";
+    main_conns.bic = "%";
+    main_conns.unv = "@";
+    main_conns.exl = "#";
+    main_conns.tau = "!";
+    main_conns.ctr = "^";
+    main_conns.elm = ":";
+    main_conns.nil = ">";
+    main_conns.cl  = 1;
+    main_conns.nl  = 1;
+}
 
 /* Eliminates a negation from a string.
  *  input:

@@ -24,6 +24,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#define INVALID_STR(s) (!(s) || (s)[0] == '\0')
+
 /* Gets a sentence part from a sexpr.
  *  input:
  *   in_str - the input string.
@@ -35,10 +37,19 @@
 int
 sexpr_get_part (unsigned char * in_str, unsigned int init_pos, unsigned char ** out_str)
 {
-    int fin_pos = init_pos;
-    int tmp_pos;
+    if (!out_str)
+        return -2;
 
     *out_str = NULL;
+
+    if (INVALID_STR (in_str))
+        return -2;
+
+    if (init_pos > strlen ((char *) in_str))
+        return -2;
+
+    int fin_pos = init_pos;
+    int tmp_pos;
 
     switch (in_str[init_pos])
     {
@@ -86,11 +97,16 @@ sexpr_car_cdr (unsigned char * in_str,
               unsigned char ** car,
               vec_t * cdr)
 {
+    if (INVALID_STR (in_str) || !car || !cdr)
+        return -2;
+
     int init_pos = (in_str[0] == '(') ? 1 : 0;
     int pos, ret_chk;
     pos = sexpr_get_part (in_str, init_pos, car);
     if (pos == AEC_MEM)
         return AEC_MEM;
+    if (pos < 0)
+        return -2;
 
     pos++;
 
@@ -102,6 +118,8 @@ sexpr_car_cdr (unsigned char * in_str,
         tmp_pos = sexpr_get_part (in_str, pos, &tmp_str);
         if (tmp_pos == AEC_MEM)
             return AEC_MEM;
+        if (tmp_pos < 0)
+            return -2;
 
         if (tmp_str)
         {
@@ -128,6 +146,9 @@ sexpr_str_car_cdr (unsigned char * in_str,
                   unsigned char ** car,
                   unsigned char ** cdr)
 {
+    if (INVALID_STR (in_str) || !car || !cdr)
+        return -2;
+
     int tmp_pos;
 
     *car = *cdr = NULL;
@@ -135,6 +156,8 @@ sexpr_str_car_cdr (unsigned char * in_str,
     tmp_pos = sexpr_get_part (in_str, 1, car);
     if (tmp_pos == AEC_MEM)
         return AEC_MEM;
+    if (tmp_pos < 0)
+        return -2;
 
     tmp_pos += 1;
 
@@ -163,6 +186,16 @@ sen_put_len (unsigned char * in0,
             unsigned char ** sh_sen,
             unsigned char ** ln_sen)
 {
+    if (!sh_sen || !ln_sen)
+        return;
+
+    if (!in0 || !in1)
+    {
+        *sh_sen = in0 ? in0 : in1;
+        *ln_sen = in1 ? in1 : in0;
+        return;
+    }
+
     int len0, len1;
     len0 = strlen (in0);
     len1 = strlen (in1);
@@ -249,6 +282,9 @@ construct_other (unsigned char * main_str,
 int
 sexpr_not_check (unsigned char * in_str)
 {
+    if (INVALID_STR (in_str))
+        return 0;
+
     int tmp_pos;
 
     tmp_pos = parse_parens (in_str, 0, NULL);
@@ -269,6 +305,9 @@ sexpr_not_check (unsigned char * in_str)
 unsigned char *
 sexpr_add_not (unsigned char * in_str)
 {
+    if (INVALID_STR (in_str))
+        return NULL;
+
     unsigned char * not_in_str;
 
     not_in_str = (unsigned char *) calloc (strlen (in_str) + S_NL + 3, sizeof (char));
@@ -287,6 +326,9 @@ sexpr_add_not (unsigned char * in_str)
 unsigned char *
 sexpr_elim_not (unsigned char * in_str)
 {
+    if (INVALID_STR (in_str))
+        return NULL;
+
     unsigned char * out_str;
     int in_len;
 
@@ -310,16 +352,23 @@ sexpr_elim_not (unsigned char * in_str)
 int
 sexpr_get_generalities (unsigned char * in_str, unsigned char * conn, vec_t * vec)
 {
+    if (INVALID_STR (in_str) || !conn || !vec)
+        return -2;
+
     int ret_chk;
     unsigned char * tmp_conn;
 
     ret_chk = sexpr_car_cdr (in_str, &tmp_conn, vec);
-    if (ret_chk == AEC_MEM)
-        return AEC_MEM;
+    if (ret_chk < 0)
+        return ret_chk;
+
+    if (!tmp_conn)
+        return -2;
 
     if (ret_chk == 0)
     {
         vec_str_add_obj (vec, tmp_conn);
+        free (tmp_conn);
         return 1;
     }
 
@@ -329,6 +378,7 @@ sexpr_get_generalities (unsigned char * in_str, unsigned char * conn, vec_t * ve
         // CLEAR vec.
         vec_str_clear (vec);
         vec_str_add_obj (vec, in_str);
+        free (tmp_conn);
         return 1;
     }
 
@@ -363,6 +413,9 @@ int
 sexpr_find_top_connective (unsigned char * in_str, unsigned char * conn,
                           unsigned char ** lsen, unsigned char ** rsen)
 {
+    if (INVALID_STR (in_str) || !conn || !lsen || !rsen)
+        return -2;
+
     int gg;
     vec_t * vec;
 
@@ -374,7 +427,15 @@ sexpr_find_top_connective (unsigned char * in_str, unsigned char * conn,
 
     gg = sexpr_get_generalities (in_str, conn, vec);
     if (gg == AEC_MEM)
+    {
+        destroy_str_vec (vec);
         return AEC_MEM;
+    }
+    if (gg < 0)
+    {
+        destroy_str_vec (vec);
+        return gg;
+    }
 
     if (gg == 1 || gg > 2)
     {
@@ -387,6 +448,11 @@ sexpr_find_top_connective (unsigned char * in_str, unsigned char * conn,
 
     gen_0 = vec_str_nth (vec, 0);
     gen_1 = vec_str_nth (vec, 1);
+    if (!gen_0 || !gen_1)
+    {
+        destroy_str_vec (vec);
+        return -2;
+    }
 
     g0_len = strlen (gen_0);
     g1_len = strlen (gen_1);
@@ -414,6 +480,9 @@ sexpr_find_top_connective (unsigned char * in_str, unsigned char * conn,
 int
 find_unmatched_o_paren (unsigned char * in_str, int in_pos)
 {
+    if (!in_str || in_pos < 0)
+        return -2;
+
     int pos = in_pos;
 
     while (pos >= 0)
@@ -447,6 +516,9 @@ int
 sexpr_find_unmatched (unsigned char * sen_a, unsigned char * sen_b,
                      int * ai, int * bi)
 {
+    if (INVALID_STR (sen_a) || INVALID_STR (sen_b) || !ai || !bi)
+        return -2;
+
     int a, b, tmp_a, tmp_b;
     unsigned char * a_str, * b_str;
 
@@ -455,10 +527,20 @@ sexpr_find_unmatched (unsigned char * sen_a, unsigned char * sen_b,
     tmp_a = parse_parens (sen_a, a, &a_str);
     if (tmp_a == AEC_MEM)
         return AEC_MEM;
+    if (tmp_a < 0 || !a_str)
+        return -2;
 
     tmp_b = parse_parens (sen_b, b, &b_str);
     if (tmp_b == AEC_MEM)
+    {
+        free (a_str);
         return AEC_MEM;
+    }
+    if (tmp_b < 0 || !b_str)
+    {
+        free (a_str);
+        return -2;
+    }
 
     while (!strcmp (a_str, b_str))
     {
@@ -474,10 +556,20 @@ sexpr_find_unmatched (unsigned char * sen_a, unsigned char * sen_b,
         tmp_a = parse_parens (sen_a, a, &a_str);
         if (tmp_a == AEC_MEM)
             return AEC_MEM;
+        if (tmp_a < 0 || !a_str)
+            return -2;
 
         tmp_b = parse_parens (sen_b, b, &b_str);
         if (tmp_b == AEC_MEM)
+        {
+            free (a_str);
             return AEC_MEM;
+        }
+        if (tmp_b < 0 || !b_str)
+        {
+            free (a_str);
+            return -2;
+        }
     }
 
     *ai = a;
@@ -499,23 +591,32 @@ sexpr_find_unmatched (unsigned char * sen_a, unsigned char * sen_b,
 int
 sexpr_get_pred_args (unsigned char * in_str, unsigned char ** pred, vec_t * vec)
 {
+    if (INVALID_STR (in_str) || !vec)
+        return 0;
+
     int ret_chk;
     unsigned char * tmp_pred;
 
     ret_chk = sexpr_car_cdr (in_str, &tmp_pred, vec);
     if (ret_chk == AEC_MEM)
         return AEC_MEM;
+    if (ret_chk < 0 || !tmp_pred)
+        return 0;
 
     if (tmp_pred[0] == '(' || ret_chk == 0)
+    {
+        free (tmp_pred);
         return 0;
+    }
 
     if (pred)
     {
         *pred = strdup (tmp_pred);
         if (!(*pred))
             return AEC_MEM;
-        free (tmp_pred);
     }
+
+    free (tmp_pred);
 
     return vec->num_stuff;
 }
@@ -532,6 +633,14 @@ unsigned char *
 sexpr_elim_quant (unsigned char * in_str, unsigned char * quant,
                  unsigned char ** var)
 {
+    if (quant)
+        quant[0] = '\0';
+    if (var)
+        *var = NULL;
+
+    if (INVALID_STR (in_str) || !quant || !var)
+        return "\0";
+
     int tmp_pos, ret_chk;
     unsigned char * tmp_str, * car;
 
@@ -546,16 +655,27 @@ sexpr_elim_quant (unsigned char * in_str, unsigned char * quant,
         return "\0";
     }
 
-    *var = NULL;
+    if (!car || strlen ((char *) car) <= (size_t) (3 + S_CL))
+    {
+        if (car) free (car);
+        if (tmp_str) free (tmp_str);
+        return "\0";
+    }
 
     int alloc_size = strlen (car) - 3 - S_CL;
     *var = (unsigned char *) calloc (alloc_size + 1, sizeof (char));
-    CHECK_ALLOC (var, NULL);
+    CHECK_ALLOC ((*var), NULL);
 
     ret_chk = sscanf (car, "(%s %[^)])", quant, *var);
     if (ret_chk != 2
         || (strcmp (quant, S_UNV) && strcmp (quant, S_EXL)))
+    {
+        free (car);
+        free (*var);
+        *var = NULL;
+        if (tmp_str) free (tmp_str);
         return "\0";
+    }
 
     free (car);
 
@@ -572,14 +692,23 @@ sexpr_elim_quant (unsigned char * in_str, unsigned char * quant,
 int
 sexpr_get_quant_vars (unsigned char * in_str, vec_t * vars)
 {
+    if (INVALID_STR (in_str) || !vars)
+        return -2;
+
     unsigned char * scope, quant[S_CL + 1], * var;
 
     scope = sexpr_elim_quant (in_str, quant, &var);
     if (!scope)
         return AEC_MEM;
 
-    if (scope[0] == '\0')
+    if (scope[0] == '\0' || !var || var[0] == '\0')
+    {
+        if (scope[0] != '\0')
+            free (scope);
+        if (var)
+            free (var);
         return -2;
+    }
 
     int i, v_len, ret_chk;
 
@@ -590,7 +719,7 @@ sexpr_get_quant_vars (unsigned char * in_str, vec_t * vars)
         if (strncmp (scope + i, var, v_len))
             continue;
 
-        if (scope[i - 1] == '(')
+        if (i == 0 || scope[i - 1] == '(')
             continue;
 
         if (scope[i + 1] != ')' && scope[i + 1] != ' ')
@@ -598,8 +727,15 @@ sexpr_get_quant_vars (unsigned char * in_str, vec_t * vars)
 
         ret_chk = vec_add_obj (vars, &i);
         if (ret_chk < 0)
+        {
+            free (scope);
+            free (var);
             return AEC_MEM;
+        }
     }
+
+    free (scope);
+    free (var);
 
     return vars->num_stuff;
 }
@@ -619,14 +755,28 @@ sexpr_replace_var (unsigned char * in_str, unsigned char * new_var,
                   unsigned char * old_var, vec_t * off_var,
                   unsigned char ** out_str)
 {
+    if (INVALID_STR (in_str)
+        || INVALID_STR (new_var)
+        || INVALID_STR (old_var)
+        || !off_var
+        || !out_str
+        || off_var->num_stuff <= 0)
+        return -2;
+
     int out_pos, i, * cur_off, old_len;
 
     old_len = strlen (old_var);
-    *out_str = (unsigned char *) calloc (strlen (in_str) + strlen (new_var) * off_var->num_stuff, sizeof (char));
+    *out_str = (unsigned char *) calloc (strlen (in_str) + strlen (new_var) * off_var->num_stuff + 1, sizeof (char));
     CHECK_ALLOC (*out_str, AEC_MEM);
 
     i = 0;
     cur_off = vec_nth (off_var, i);
+    if (!cur_off)
+    {
+        free (*out_str);
+        *out_str = NULL;
+        return -2;
+    }
     strncpy (*out_str, in_str, *cur_off);
     out_pos = *cur_off;
     out_pos += sprintf (*out_str + out_pos, "%s", new_var);
@@ -636,6 +786,12 @@ sexpr_replace_var (unsigned char * in_str, unsigned char * new_var,
         int * last_off;
         cur_off = vec_nth (off_var, i);
         last_off = vec_nth (off_var, i - 1);
+        if (!cur_off || !last_off)
+        {
+            free (*out_str);
+            *out_str = NULL;
+            return -2;
+        }
         strncpy (*out_str + out_pos, in_str + *last_off + old_len,
                 *cur_off - *last_off - old_len);
         out_pos += *cur_off - *last_off - old_len;
@@ -665,6 +821,9 @@ int
 sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
                   unsigned char * quant, int cons, vec_t * cur_vars)
 {
+    if (INVALID_STR (quant_sen) || INVALID_STR (elim_sen) || INVALID_STR (quant))
+        return -2;
+
     if (!strcmp (quant_sen, elim_sen))
         return 1;
 
@@ -745,13 +904,18 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
     offset = q_pos;
     var_offs = init_vec (sizeof (int));
     if (!var_offs)
+    {
+        free (var);
+        free (elm_sen);
         return AEC_MEM;
+    }
 
     ret_chk = sexpr_get_quant_vars (quant_sen, var_offs);
     if (ret_chk == AEC_MEM)
     {
         free (var);
         free (elm_sen);
+        destroy_vec (var_offs);
         return AEC_MEM;
     }
 
@@ -872,13 +1036,15 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
     }
 
     ret_chk = sexpr_replace_var (elm_sen, new_var, var, var_offs, &oth_sen);
-    if (ret_chk == AEC_MEM)
+    if (ret_chk != 0)
     {
         free (new_var);
         destroy_vec (var_offs);
         free (elm_sen);
         free (var);
-        return AEC_MEM;
+        if (ret_chk == AEC_MEM)
+            return AEC_MEM;
+        return -2;
     }
 
     free (var);
@@ -890,7 +1056,10 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
     {
         ret_chk = sexpr_quant_infer (oth_sen, elim_sen, quant, cons, cur_vars);
         if (ret_chk == AEC_MEM)
+        {
+            free (oth_sen);
             return AEC_MEM;
+        }
 
         ret_chk = (ret_chk == 1) ? 0 : ret_chk;
     }
@@ -917,6 +1086,9 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
 int
 sexpr_find_vars (unsigned char * in_str, unsigned char * var, vec_t * offsets)
 {
+    if (INVALID_STR (in_str) || INVALID_STR (var) || !offsets)
+        return 0;
+
     int i, var_len, ret_chk;
 
     var_len = strlen (var);
@@ -926,7 +1098,7 @@ sexpr_find_vars (unsigned char * in_str, unsigned char * var, vec_t * offsets)
         if (strncmp (in_str + i, var, var_len))
             continue;
 
-        if (in_str[i - 1] == '(')
+        if (i == 0 || in_str[i - 1] == '(')
             continue;
 
         if (in_str[i + var_len] != ')' && in_str[i + var_len] != ' ')
@@ -951,6 +1123,9 @@ sexpr_find_vars (unsigned char * in_str, unsigned char * var, vec_t * offsets)
 int
 sexpr_parse_vars (unsigned char * in_str, vec_t * vars, int quant)
 {
+    if (INVALID_STR (in_str) || !vars)
+        return 0;
+
     // There are no variables in this string.
     if (in_str[0] != '(')
         return 0;
@@ -961,7 +1136,7 @@ sexpr_parse_vars (unsigned char * in_str, vec_t * vars, int quant)
         if (!islower (in_str[i]))
             continue;
 
-        if (in_str[i - 1] == '(' || in_str[i - 1] != ' ')
+        if (i == 0 || in_str[i - 1] == '(' || in_str[i - 1] != ' ')
             continue;
 
         if (i > (S_CL + 1) &&
@@ -1016,6 +1191,9 @@ sexpr_parse_vars (unsigned char * in_str, vec_t * vars, int quant)
 int
 sexpr_collect_vars_to_proof (list_t * vars, unsigned char * text, int arb)
 {
+    if (!vars || INVALID_STR (text))
+        return 0;
+
     int ret, i, is_arbitrary;
     vec_t * sen_vars;
 
@@ -1082,6 +1260,9 @@ sexpr_collect_vars_to_proof (list_t * vars, unsigned char * text, int arb)
 int
 sexpr_get_ids (unsigned char * sen, int ** ids, vec_t * sen_ids)
 {
+    if (INVALID_STR (sen) || !ids)
+        return -2;
+
     int i, j;
     int sen_start_id;
     int sen_len;
@@ -1100,7 +1281,7 @@ sexpr_get_ids (unsigned char * sen, int ** ids, vec_t * sen_ids)
         }
     }
 
-    *ids = (int *) calloc (sen_len, sizeof (int));
+    *ids = (int *) calloc (sen_len + 1, sizeof (int));
     CHECK_ALLOC (*ids, AEC_MEM);
 
     j = 0;

@@ -934,10 +934,7 @@ evaluate_proof (aris_proof * ap)
       sen = ev_itr->value;
       ret = evaluate_line (ap, sen);
       if (ret == AEC_MEM)
-        {
-          had_errors = 1;
-          continue;
-        }
+        return AEC_MEM;
 
       /* Continue evaluating the whole proof even if one line is invalid.
        * This ensures all lines get refreshed/highlighted. */
@@ -1701,6 +1698,11 @@ menu_activated (aris_proof * ap, int menu_id)
       break;
 
     case CONF_MENU_EVAL_LINE:
+      if (!SEN_PARENT (ap)->focused || !SEN_PARENT (ap)->focused->value)
+        {
+          aris_proof_set_sb (ap, _("No line selected."));
+          break;
+        }
       evaluate_line (ap, SENTENCE (SEN_PARENT (ap)->focused->value));
       break;
 

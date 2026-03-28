@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 
 #include "vec.h"
 
@@ -97,7 +96,8 @@ destroy_str_vec (vec_t * v)
 int
 vec_add_obj (vec_t * v, const void * more)
 {
-    assert (more != NULL);
+    if (!more)
+        return AEC_MEM;
 
     v->num_stuff++;
 

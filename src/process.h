@@ -176,6 +176,10 @@ static struct connectives_list sexpr_conns = {
 
 extern struct connectives_list main_conns;
 
+/* Initialise main_conns to GUI (Unicode) or CLI (ASCII) connectives. */
+void main_conns_init_gui (void);
+void main_conns_init_cli (void);
+
 // Definitions.
 
 #define AND main_conns.And

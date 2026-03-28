@@ -53,6 +53,7 @@ public:
     void setGlines(GoalData *newGlines);
 
     Q_INVOKABLE void evalGoals(GoalData *gls, Connector *c);
+    Q_INVOKABLE void resetGoalState(GoalData *gls);
 
 
 private:

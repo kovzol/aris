@@ -381,7 +381,7 @@ proc_lm (vec_t * prems, unsigned char * conc, proof_t * proof)
     for (i = 0; i < pf_sens->num_stuff; i++)
     {
         ret_chk = sexpr_get_ids (vec_str_nth (pf_sens, i), &pf_ids[i], pf_sen_ids);
-        if (ret_chk == AEC_MEM)
+        if (ret_chk < 0)
             return NULL;
     }
 

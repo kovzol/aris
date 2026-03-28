@@ -111,10 +111,28 @@ recurse_mode (unsigned char * sen_0, unsigned char * sen_1, int mode)
         pos0 = sexpr_str_car_cdr (sen_0, &car_0, &cdr_0);
         if (pos0 == AEC_MEM)
             return AEC_MEM;
+        if (pos0 < 0 || !car_0 || !cdr_0)
+        {
+            if (car_0) free (car_0);
+            if (cdr_0) free (cdr_0);
+            return -2;
+        }
 
         pos1 = sexpr_str_car_cdr (sen_1, &car_1, &cdr_1);
         if (pos1 == AEC_MEM)
+        {
+            free (car_0);
+            free (cdr_0);
             return AEC_MEM;
+        }
+        if (pos1 < 0 || !car_1 || !cdr_1)
+        {
+            free (car_0);
+            free (cdr_0);
+            if (car_1) free (car_1);
+            if (cdr_1) free (cdr_1);
+            return -2;
+        }
 
         // Check for a negation.
         if (!strcmp (car_0, S_NOT) && !strcmp (car_1, S_NOT))
@@ -437,11 +455,11 @@ proc_dm (unsigned char * prem, unsigned char * conc, int mode_guess)
         return NO_DIFFERENCE;
 
     int p_len, c_len, mode;
+    p_len = strlen (prem);
+    c_len = strlen (conc);
 
     if (mode_guess == -1)
     {
-        p_len = strlen (prem);
-        c_len = strlen (conc);
         if (p_len != c_len)
             mode = 0;
         else

@@ -103,7 +103,6 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
     item_t * sen_itr;
     int got_prems, cur_line;
     list_t * pf_vars;
-    vec_t * sexpr_text;
     int ret;
 
     got_prems = 0;
@@ -113,9 +112,6 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
     if (!pf_vars)
         return AEC_MEM;
 
-    sexpr_text = init_vec (sizeof (char *));
-    if (!sexpr_text)
-        return AEC_MEM;
 
     for (sen_itr = everything->head; sen_itr; sen_itr = sen_itr->next)
     {
@@ -124,7 +120,10 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
 
         ret = sd_convert_sexpr (sd);
         if (ret == AEC_MEM)
+        {
+            destroy_list (pf_vars);
             return AEC_MEM;
+        }
         if (ret == -2)
             continue;
     }
@@ -145,12 +144,15 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
                                     everything);
 
         if (!ret_chk)
+        {
+            destroy_list (pf_vars);
             return AEC_MEM;
+        }
 
         if (verbose)
         {
             if (sd->premise)
-                printf (" %3i | %s\n", cur_line, sd->text);
+                printf (" %3i | %s\n", cur_line, sd->text ? (char*)sd->text : "");
 
             if (!sd->premise)
             {
@@ -161,15 +163,21 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
                     got_prems = 0;
                 }
 
-                printf (" %3i | %s %s", cur_line, sd->text,
-                       rules_list[sd->rule]);
-                if (sd->rule == RULE_LM)
+                const char * rule_text = "invalid";
+                if (sd->subproof)
+                    rule_text = "assume";
+                else if (sd->rule >= 0 && sd->rule < NUM_RULES)
+                    rule_text = rules_list[sd->rule];
+
+                printf (" %3i | %s %s", cur_line, sd->text ? (char*)sd->text : "",
+                       rule_text);
+                if (sd->rule == RULE_LM && sd->file)
                     printf  (":%s", sd->file);
 
                 printf (" ");
 
                 int j;
-                for (j = 0; sd->refs[j] != REF_END; j++)
+                for (j = 0; sd->refs && sd->refs[j] != REF_END; j++)
                 {
                     printf ("%i", sd->refs[j]);
                     if (sd->refs[j + 1] != REF_END)
@@ -184,7 +192,10 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
         {
             ret = vec_str_add_obj (rets, ret_chk);
             if (ret == AEC_MEM)
+            {
+                destroy_list (pf_vars);
                 return AEC_MEM;
+            }
         }
         if (verbose)
             printf ("%i: %s\n", sd->line_num, ret_chk);
@@ -194,10 +205,14 @@ eval_proof (list_t * everything, vec_t * rets, int verbose)
         {
             ret = sexpr_collect_vars_to_proof (pf_vars, sd->sexpr, arb);
             if (ret < 0)
+            {
+                destroy_list (pf_vars);
                 return AEC_MEM;
+            }
         }
     }
 
+    destroy_list (pf_vars);
     return 0;
 }
 
@@ -266,7 +281,11 @@ convert_proof_latex (proof_t * proof, const char * filename)
         if (!text)
             return AEC_MEM;
 
-        const char * rule = sd->subproof ? "assume" : rules_list[sd->rule];
+        const char * rule = "invalid";
+        if (sd->subproof)
+            rule = "assume";
+        else if (sd->rule >= 0 && sd->rule < NUM_RULES)
+            rule = rules_list[sd->rule];
 
         fprintf (file, "\t\\stdline{%i}{%s}{%s} ", sd->line_num,
                 text, rule);

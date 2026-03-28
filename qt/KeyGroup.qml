@@ -131,8 +131,11 @@ ToolBar {
             }
 
             onClicked: {
-                cConnector.evalProof(theData, theGoals)
-                goalDataID.evalGoals(theGoals, cConnector)
+                var ok = cConnector.evalProof(theData, theGoals)
+                if (ok)
+                    goalDataID.evalGoals(theGoals, cConnector)
+                else
+                    goalDataID.resetGoalState(theGoals)
                 animationID.start()
             }
 

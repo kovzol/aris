@@ -137,12 +137,20 @@ void GoalModel::setGlines(GoalData *newGlines)
 // Evaluate goals and set the valid role
 void GoalModel::evalGoals(GoalData *gls, Connector *c)
 {
+    if (!gls || !c || !c->getCProof() || !c->getReturns())
+    {
+        qDebug() << "Skipping goal evaluation: missing proof evaluation context";
+        return;
+    }
+
     for (int i = 0; i < gls->glines().size(); i++){
         int ln, is_valid;
         unsigned char *temp_text;
 
         std::string str = gls->glines().at(i).gText.toStdString();
         temp_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
+        if (!temp_text)
+            continue;
         memcpy(temp_text, str.c_str(), strlen(str.c_str()));
 
 
@@ -152,5 +160,19 @@ void GoalModel::evalGoals(GoalData *gls, Connector *c)
         }
         else
             qDebug() << "Error in checking goal " << i + 1 << ":\n\t Goal was probably empty";
+
+        free(temp_text);
+    }
+}
+
+void GoalModel::resetGoalState(GoalData *gls)
+{
+    if (!gls)
+        return;
+
+    for (int i = 0; i < gls->glines().size(); i++)
+    {
+        setData(index(i, 0), -2, LineRole);
+        setData(index(i, 0), false, ValidRole);
     }
 }

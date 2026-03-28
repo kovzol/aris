@@ -30,9 +30,76 @@
 #include <QFileDialog>
 #include <QSaveFile>
 #include <QUrl>
+#include <QMessageBox>
+#include <exception>
+
+static void connector_free_proof (proof_t * proof)
+{
+    if (!proof)
+        return;
+
+    if (proof->everything)
+    {
+        item_t * itm = proof->everything->head;
+        while (itm)
+        {
+            item_t * next = itm->next;
+            if (itm->value)
+                sen_data_destroy ((sen_data *) itm->value);
+            free (itm);
+            itm = next;
+        }
+        free (proof->everything);
+    }
+
+    if (proof->goals)
+    {
+        item_t * itm = proof->goals->head;
+        while (itm)
+        {
+            item_t * next = itm->next;
+            if (itm->value)
+                free (itm->value);
+            free (itm);
+            itm = next;
+        }
+        free (proof->goals);
+    }
+
+    free (proof);
+}
+
+static int connector_show_eval_dialog (Connector * connector,
+                                       QMessageBox::Icon icon,
+                                       const QString & title,
+                                       const QString & message,
+                                       bool reset_eval_state)
+{
+    if (connector && reset_eval_state)
+        connector->setEvalText ("Evaluate Proof");
+
+    QMessageBox msg (icon, title, message, QMessageBox::Ok, nullptr);
+    msg.exec ();
+    return 0;
+}
+
+static bool connector_has_nonempty_goal (const GoalData * goals)
+{
+    if (!goals)
+        return false;
+
+    const QVector<GoalLine> goal_lines = goals->glines ();
+    for (const GoalLine & line : goal_lines)
+    {
+        if (!line.gText.trimmed ().isEmpty ())
+            return true;
+    }
+
+    return false;
+}
 
 Connector::Connector(QObject *parent)
-    : QObject{parent}, m_evalText{"Evaluate Proof"}
+    : QObject{parent}, cProof(nullptr), returns(nullptr), m_evalText{"Evaluate Proof"}
 {   
     // Initialize rulesMap
 
@@ -125,31 +192,63 @@ void Connector::genIndices(const ProofData *toBeEval)
  */
 void Connector::genProof(const ProofData *toBeEval)
 {
-    main_conns = gui_conns;
+    if (!toBeEval)
+        return;
+
+    if (cProof)
+    {
+        connector_free_proof(cProof);
+        cProof = nullptr;
+    }
+
+    main_conns_init_gui();
     int conn = 1;
     std::regex pat("[&|~$%@#!^:>]");
     cProof = proof_init();
+    if (!cProof)
+        return;
     genIndices(toBeEval);
     for (int i = 0; i < toBeEval->lines().size(); i++){
         sen_data *sd;
         item_t *itm;
         unsigned char *temp_text;
         sd = (sen_data *) calloc (1, sizeof(sen_data));
-        int *ind = (int *) calloc(m_indices[i].size(), sizeof(int));
-        short *temp_refs = (short *) calloc(toBeEval->lines().at(i).pRefs.size(), sizeof(short));
+        size_t ind_count = m_indices[i].size();
+        size_t ind_alloc = ind_count > 0 ? ind_count : 1;
+        int *ind = (int *) calloc(ind_alloc, sizeof(int));
+        int ref_count = toBeEval->lines().at(i).pRefs.size();
+        int actual_refs = 0;
+        for (int ii = 0; ii < ref_count; ii++)
+            if (toBeEval->lines().at(i).pRefs.at(ii) > 0)
+                actual_refs++;
+
+        short *temp_refs = (short *) calloc(actual_refs + 1, sizeof(short));
+
+        if (!sd || !ind || !temp_refs)
+        {
+            if (sd)
+                free(sd);
+            if (ind)
+                free(ind);
+            if (temp_refs)
+                free(temp_refs);
+            continue;
+        }
 
         sd->line_num = i+1;
         sd->rule = rulesMap[toBeEval->lines().at(i).pType];
         sd->depth = toBeEval->lines().at(i).pInd/20;
         sd->premise = (sd->rule == -1)?1:0;
         sd->subproof = (sd->rule == -2)?1:0;
-        sd->file = toBeEval->lines().at(i).fname;
+        sd->file = toBeEval->lines().at(i).fname
+                   ? (unsigned char *) strdup((const char *) toBeEval->lines().at(i).fname)
+                   : NULL;
 
         if (sd->rule == -2)
             sd->rule = -1;
 
         // Assign Indices
-        for (int ii = 0; ii < m_indices[i].size(); ii++)
+        for (int ii = 0; ii < (int) ind_count; ii++)
             ind[ii] = m_indices[i][ii];
 
         sd->indices = ind;
@@ -159,29 +258,43 @@ void Connector::genProof(const ProofData *toBeEval)
         std::string str = toBeEval->lines().at(i).pText.toStdString();
 
         if (conn && std::regex_search(str,pat)){
-            main_conns = cli_conns;
+            main_conns_init_cli();
             conn = 0;
         }
 
         temp_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
+        if (!temp_text)
+        {
+            free(sd);
+            free(ind);
+            free(temp_refs);
+            continue;
+        }
         memcpy(temp_text, str.c_str(), strlen(str.c_str()));
         sd->text = temp_text;
 
 
-        // Assign references
-        if (toBeEval->lines().at(i).pRefs.size() == 1)
-            temp_refs[0] = REF_END;
-        else{
-            for (int ii = 1; ii < toBeEval->lines().at(i).pRefs.size(); ii++)
-                temp_refs[ii-1] = toBeEval->lines().at(i).pRefs.at(ii);
-            temp_refs[toBeEval->lines().at(i).pRefs.size()-1] = REF_END;
+        // Assign references (accept only positive line numbers).
+        int ref_pos = 0;
+        for (int ii = 0; ii < ref_count; ii++)
+        {
+            int ref_val = toBeEval->lines().at(i).pRefs.at(ii);
+            if (ref_val > 0)
+                temp_refs[ref_pos++] = (short) ref_val;
         }
+        temp_refs[ref_pos] = REF_END;
         sd->refs = temp_refs;
 
         // Insert into proof object
         itm = ls_ins_obj (cProof->everything, sd, cProof->everything->tail);
         if (!itm)
+        {
+            free(sd->text);
+            free(sd->refs);
+            free(sd->indices);
+            free(sd);
             qDebug() << "proof: could not insert sen_data ";
+        }
     }
 
     // TODO : Fix boolean
@@ -197,6 +310,8 @@ void Connector::genProof(const ProofData *toBeEval)
  */
 void Connector::genGoals(const GoalData *toBeEval)
 {
+    if (!toBeEval || !cProof || !cProof->goals)
+        return;
 
     for (int i = 0; i < toBeEval->glines().size(); i++){
 
@@ -205,11 +320,16 @@ void Connector::genGoals(const GoalData *toBeEval)
 
         std::string str = toBeEval->glines().at(i).gText.toStdString();
         temp_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
+        if (!temp_text)
+            continue;
         memcpy(temp_text, str.c_str(), strlen(str.c_str()));
 
         itm = ls_ins_obj (cProof->goals, temp_text, cProof->goals->tail);
         if (!itm)
+        {
+            free(temp_text);
             qDebug() << "proof: could not insert goal data ";
+        }
 
     }
 }
@@ -223,49 +343,103 @@ void Connector::genGoals(const GoalData *toBeEval)
  */
 int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
 {
-    genProof(toBeEval);
-    genGoals(gls);
-//    vec_t *rets;
-    returns = init_vec(sizeof(char *));
-    if (!returns || !cProof || !cProof->everything)
+    try
     {
-        setEvalText("Evaluation failed (internal initialization error).");
-        return 0;
-    }
+        if (!toBeEval || !gls)
+            return connector_show_eval_dialog(this, QMessageBox::Critical,
+                                              "Evaluation Error",
+                                              "Invalid evaluation input.",
+                                              true);
 
-    if (!proof_eval(cProof,returns,1))
-        qDebug() << "Proof Evaluated Successfully";
-    else
-        qDebug() << "Memory Error";
+        if (!connector_has_nonempty_goal(gls))
+            return connector_show_eval_dialog(this, QMessageBox::Warning,
+                                              "Error",
+                                              "Please set a goal before evaluating the proof.",
+                                              true);
 
-    item_t * ev_itr;
-    int f = 0;
-    ev_itr = cProof->everything->head;
-    for (int i = 0; i < returns->num_stuff; i++){
-        char * cur_ret;
-        cur_ret = (char *) vec_str_nth (returns, i);
-        if (!ev_itr || !ev_itr->value || !cur_ret)
-            break;
-
-        char * cur_line;
-        cur_line =(char *) ((sen_data *) ev_itr->value)->text;
-        if (!cur_line)
-            cur_line = (char *) "";
-
-        if (strcmp (cur_ret, CORRECT)){
-            qDebug() << "Error in line " << i + 1 << "- " << cur_line;
-            setEvalText(((f)?m_evalText:"") + QString("Error in line %1 - \n      ").arg(i+1) + cur_ret + "\n");
-            f = 1;
-            qDebug() << "  "<< cur_ret;
+        if (returns)
+        {
+            destroy_str_vec(returns);
+            returns = nullptr;
         }
+
+        genProof(toBeEval);
+        if (!cProof || !cProof->everything)
+            return connector_show_eval_dialog(this, QMessageBox::Critical,
+                                              "Evaluation Error",
+                                              "Evaluation failed (proof generation error).",
+                                              true);
+
+        genGoals(gls);
+        returns = init_vec(sizeof(char *));
+        if (!returns)
+            return connector_show_eval_dialog(this, QMessageBox::Critical,
+                                              "Evaluation Error",
+                                              "Evaluation failed (internal initialization error).",
+                                              true);
+
+        int eval_rc = proof_eval(cProof, returns, 0);
+        if (!eval_rc)
+            qDebug() << "Proof Evaluated Successfully";
         else
-            qDebug() <<"Line " << i + 1 << ": " << CORRECT;
+        {
+            qDebug() << "Memory Error";
+            return connector_show_eval_dialog(this, QMessageBox::Critical,
+                                              "Evaluation Error",
+                                              "Evaluation failed (internal memory error).",
+                                              true);
+        }
 
-        ev_itr = ev_itr->next;
+        item_t * ev_itr;
+        int f = 0;
+        ev_itr = cProof->everything->head;
+        for (int i = 0; i < returns->num_stuff; i++){
+            char * cur_ret;
+            cur_ret = (char *) vec_str_nth (returns, i);
+            if (!ev_itr || !ev_itr->value || !cur_ret)
+                break;
+
+            char * cur_line;
+            cur_line =(char *) ((sen_data *) ev_itr->value)->text;
+            if (!cur_line)
+                cur_line = (char *) "";
+
+            if (strcmp (cur_ret, CORRECT)){
+                qDebug() << "Error in line " << i + 1 << "- " << cur_line;
+                setEvalText(((f)?m_evalText:"") + QString("Error in line %1 - \n      ").arg(i+1) + cur_ret + "\n");
+                f = 1;
+                qDebug() << "  "<< cur_ret;
+            }
+            else
+                qDebug() <<"Line " << i + 1 << ": " << CORRECT;
+
+            ev_itr = ev_itr->next;
+        }
+        if (!f)
+        {
+            setEvalText("Correct!");
+            return 1;
+        }
+
+        return connector_show_eval_dialog(this, QMessageBox::Critical,
+                                          "Evaluation Error",
+                                          m_evalText,
+                                          false);
     }
-    if (!f) setEvalText("Correct!");
-
-    return 1;
+    catch (const std::exception & ex)
+    {
+        return connector_show_eval_dialog(this, QMessageBox::Critical,
+                                          "Evaluation Error",
+                                          QString("An error occurred during evaluation:\n%1").arg(ex.what()),
+                                          true);
+    }
+    catch (...)
+    {
+        return connector_show_eval_dialog(this, QMessageBox::Critical,
+                                          "Evaluation Error",
+                                          "An error occurred during evaluation.",
+                                          true);
+    }
 }
 
 /* Generates cProof and saves file (using aio_save).
@@ -308,6 +482,14 @@ void Connector::saveProof(const QString &name, const ProofData *toBeSaved, const
  */
 void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
 {
+    if (!openTo || !gls)
+        return;
+
+    if (cProof)
+    {
+        connector_free_proof(cProof);
+        cProof = nullptr;
+    }
 
     // selectedFile from QML FileDialog is a file:// URL; convert to a local path.
     QString localName = QUrl(name).toLocalFile();
@@ -333,6 +515,11 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
         qDebug() << "Cannot populate UI: proof is null.";
         return;
     }
+    if (!cProof->everything || !cProof->goals)
+    {
+        qDebug() << "Cannot populate UI: proof lists are null.";
+        return;
+    }
 
     int s = openTo->lines().size();
     for (int i = 0; i < s; i++)
@@ -343,14 +530,20 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
     int d = 0;
     for (pf_itr = cProof->everything->head; pf_itr; pf_itr = pf_itr->next){
         sen_data *sd = (sen_data *) pf_itr->value;
+        if (!sd)
+            continue;
         QList<int> temp_refs = {-1};
-        for (int i = 0; sd->refs[i] != REF_END; i++)
+        for (int i = 0; sd->refs && i < 5000 && sd->refs[i] != REF_END; i++)
             temp_refs.push_back(sd->refs[i]);
 
         if (sd->depth > d)
             sd->rule = -2;
-        openTo->insertLine(sd->line_num-1,sd->line_num,(const char *) sd->text,reverseRulesMap[sd->rule],(sd->depth > 0),
-                           (sd->rule == -2),(sd->line_num != 1 && ((sen_data *) pf_itr->prev->value)->depth > sd->depth), sd->depth * 20,temp_refs);
+        bool is_end_sub = false;
+        if (sd->line_num != 1 && pf_itr->prev && pf_itr->prev->value)
+            is_end_sub = ((sen_data *) pf_itr->prev->value)->depth > sd->depth;
+        const char *line_text = (const char *) (sd->text ? sd->text : (unsigned char *) "");
+        openTo->insertLine(sd->line_num-1,sd->line_num,line_text,reverseRulesMap[sd->rule],(sd->depth > 0),
+                           (sd->rule == -2),is_end_sub, sd->depth * 20,temp_refs);
         d = sd->depth;
     }
 
@@ -360,7 +553,8 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
 
     int i = 0;
     for (pf_itr = cProof->goals->head; pf_itr; pf_itr = pf_itr->next){
-        gls->insertgLine(i,-2,false,(const char *) pf_itr->value);
+        const char *goal_text = (const char *) (pf_itr->value ? pf_itr->value : (unsigned char *) "");
+        gls->insertgLine(i,-2,false,goal_text);
         i++;
     }
 
