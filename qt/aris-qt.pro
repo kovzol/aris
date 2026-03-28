@@ -1,5 +1,7 @@
 QT += quick widgets quickcontrols2
 
+CONFIG += lrelease embed_translations
+
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
@@ -11,6 +13,7 @@ SOURCES += \
         goaldata.cpp \
         goalmodel.cpp \
         goals-qt.c \
+        settings.cpp \
         ../src/interop-isar.c \
         ../src/list.c \
         main.cpp \
@@ -31,6 +34,9 @@ SOURCES += \
 
 RESOURCES += qml.qrc \
     resources.qrc
+
+TRANSLATIONS += i18n/aris-qt_ar.ts \
+    i18n/aris-qt_en.ts
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -66,6 +72,7 @@ HEADERS += \
     goaldata.h \
     goalmodel.h \
     goals-qt.h \
+    settings.h \
     ../src/interop-isar.h \
     ../src/list.h \
     ../src/process.h \
