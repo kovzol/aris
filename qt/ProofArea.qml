@@ -95,25 +95,14 @@ Item {
                 height: theTextID.height
                 width: height
                 palette {
-                    // Preserve green background for conclusion lines (non-premise, non-subproof),
-                    // matching the original GTK Aris behavior.
-                    button: !vis ? (darkMode ? "#1A3A1A" : "#90EE90")
-                                 : (darkMode ? "#1F1A24" : "white")
+                    button: darkMode ? "#1F1A24" : "white"
                 }
 
                 Text {
                     anchors.centerIn: parent
                     font.italic: true
                     text: model.line
-                    // Apply evaluation result via foreground (text) color only.
-                    // Resets automatically when cConnector.evalText is reset to "Evaluate Proof".
-                    color: {
-                        if (cConnector.evalText === "Evaluate Proof")
-                            return darkMode ? "white" : "black"
-                        if ((cConnector.evalText).includes("Error in line " + (indexx + 1) + " -"))
-                            return "red"
-                        return "springgreen"
-                    }
+                    color: theTextID.color
                 }
 
                 // Add this button's line to the current line's references
@@ -198,8 +187,6 @@ Item {
 
                 // Implementation for Keyboard Macros
                 onTextChanged: {
-                    // Reset evaluation color when the sentence text is modified
-                    cConnector.evalText = "Evaluate Proof"
 
                     // TODO: Improve implementation later
                     if (theTextID.length >= 2) {
