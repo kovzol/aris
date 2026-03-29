@@ -1556,7 +1556,15 @@ sentence_text_changed (sentence * sen)
           r_itr = ls_find (e_refs, sen);
 
           if (r_itr)
-            sentence_set_value (SENTENCE (e_itr->value), VALUE_TYPE_BLANK);
+            {
+              sentence_set_value (SENTENCE (e_itr->value), VALUE_TYPE_BLANK);
+              /* Also reset the eventbox of dependent sentences so their
+                 goal-check colors are cleared when a reference changes. */
+              gtk_widget_override_background_color (
+                SENTENCE (e_itr->value)->eventbox, GTK_STATE_NORMAL, NULL);
+              gtk_widget_override_color (
+                SENTENCE (e_itr->value)->line_no, GTK_STATE_FLAG_NORMAL, NULL);
+            }
         }
     }
 
@@ -1598,6 +1606,7 @@ sentence_text_changed (sentence * sen)
         return AEC_MEM;
 
       gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
+      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
 
       if (SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->num_stuff > 0)
         {
@@ -1634,6 +1643,7 @@ sentence_text_changed (sentence * sen)
         {
           mod_sen = mod_itm->value;
           gtk_widget_override_background_color (mod_sen->eventbox, GTK_STATE_NORMAL, NULL);
+          gtk_widget_override_color (mod_sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
           sentence_set_line_no (sen, -1);
         }
     }
