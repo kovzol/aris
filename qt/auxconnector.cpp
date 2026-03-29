@@ -96,13 +96,26 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
 
     proof_t *proof = aio_open(file_name);
 
+    if (!proof) {
+        qDebug() << "Failed to import proof";
+        free(file_name);
+        return;
+    }
+
     item_t *pf_itr;
     int ref_num = 0, ev_conc = -1, ev_itr;
     short *refs;
 
     refs = (short *) calloc (proof->everything->num_stuff, sizeof(int));
 
-    int num_ins = 1;
+    while (pd->lines().size() > 0) {
+        pd->removeLineAt(0);
+    }
+    
+    // 2. TELL THE UI THE LIST IS NOW EMPTY 
+    pm->updateLines(); 
+
+    int num_ins = 0;
     for (pf_itr =(item_t *) proof->everything->head; pf_itr != NULL; pf_itr = pf_itr->next){
         sen_data *sd;
         char *pf_text;

@@ -209,7 +209,12 @@ Item {
                 }
 
                 // Save Text inside Model
-                onEditingFinished: model.lText = text
+                onEditingFinished: {
+                    if (model.lText !== text) {
+                        fileModified = true
+                    }
+                    model.lText = text
+                }
             }
 
             // Label for premise, subproofs
@@ -455,16 +460,28 @@ Item {
 
                     Action {
                         text: "Remove this Line"
-                        enabled: !((premiseCount == listView.count)
-                                   && (listView.count == 1))
+                        enabled: true 
 
                         onTriggered: {
-                            if (type === "premise")
-                                premiseCount--
-                            var i = index
-                            theData.removeLineAt(index)
-                            proofModel.updateLines()
-                            proofModel.updateRefs(i, false)
+                            if (listView.count > 1) {
+                              
+                                if (type === "premise")
+                                    premiseCount--
+                                
+                                var i = index
+                                theData.removeLineAt(index)
+                                proofModel.updateLines()
+                                proofModel.updateRefs(i, false)
+                            } else {
+                                
+                                theData.removeLineAt(0)
+                                theData.insertLine(0, 1, "", "premise", false, false, false, 0, [-1])   
+                                premiseCount = 1
+                                proofModel.updateLines()
+                                listView.currentIndex = 0
+                                console.log("Goal 3: Last line reset to prevent blank screen crash.")
+                            }
+                            
                             cConnector.evalText = "Evaluate Proof"
                         }
                     }

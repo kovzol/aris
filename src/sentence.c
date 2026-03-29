@@ -185,6 +185,7 @@ sentence_gui_init (sentence * sen)
   sen->entry = gtk_text_view_new ();
   gtk_widget_set_hexpand (sen->entry, TRUE);
   gtk_widget_set_halign (sen->entry, GTK_ALIGN_FILL);
+  gtk_widget_set_size_request (sen->entry, 0, -1);
 
   sen->value = gtk_image_new_from_icon_name (sen_values[0], GTK_ICON_SIZE_MENU);
 
@@ -201,7 +202,10 @@ sentence_gui_init (sentence * sen)
   sen->rule_box = gtk_label_new (NULL);
   gtk_label_set_justify (GTK_LABEL (sen->rule_box), GTK_JUSTIFY_FILL);
   gtk_label_set_width_chars (GTK_LABEL (sen->rule_box), 2);
-
+  gtk_widget_set_hexpand(sen->rule_box, FALSE);
+  gtk_widget_set_halign(sen->rule_box, GTK_ALIGN_END);
+  gtk_widget_set_size_request(sen->rule_box, 30, -1);
+  
   gtk_grid_attach (GTK_GRID (sen->panel), sen->rule_box, left++, 0, 1, 1);
 
   sen->mark = NULL;
