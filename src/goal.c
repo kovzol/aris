@@ -206,14 +206,14 @@ goal_check_line (goal_t * goal, sentence * sen)
 
 	   if (is_valid)
 	    {
-	      GdkRGBA green = {0.0, 0.8, 0.0, 1.0};
-	      gtk_widget_override_color (ev_sen->line_no, GTK_STATE_FLAG_NORMAL, &green);
+	      gtk_widget_override_background_color (
+	        ev_sen->eventbox, GTK_STATE_NORMAL, the_app->bg_colors[BG_COLOR_GOOD]);
 	      sentence_set_value (sen, VALUE_TYPE_TRUE);
 	    }
 	  else
 	    {
-	      GdkRGBA red = {0.8, 0.0, 0.0, 1.0};
-	      gtk_widget_override_color (ev_sen->line_no, GTK_STATE_FLAG_NORMAL, &red);
+	      gtk_widget_override_background_color (
+	        ev_sen->eventbox, GTK_STATE_NORMAL, the_app->bg_colors[BG_COLOR_BAD]);
 	      sentence_set_value (sen, VALUE_TYPE_REF);
 	    }
 

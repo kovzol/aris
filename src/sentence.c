@@ -1558,6 +1558,8 @@ sentence_text_changed (sentence * sen)
                  goal-check colors are cleared when a reference changes. */
               gtk_widget_override_background_color (
                 SENTENCE (e_itr->value)->eventbox, GTK_STATE_NORMAL, NULL);
+              gtk_widget_override_color (
+                SENTENCE (e_itr->value)->line_no, GTK_STATE_FLAG_NORMAL, NULL);
             }
         }
     }
@@ -1599,6 +1601,7 @@ sentence_text_changed (sentence * sen)
       if (ret < 0)
         return AEC_MEM;
 
+      gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
       gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
 
       if (SEN_PARENT (ARIS_PROOF (sp)->goal)->everything->num_stuff > 0)
@@ -1636,6 +1639,7 @@ sentence_text_changed (sentence * sen)
         {
           mod_sen = mod_itm->value;
           gtk_widget_override_background_color (mod_sen->eventbox, GTK_STATE_NORMAL, NULL);
+          gtk_widget_override_color (mod_sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
           sentence_set_line_no (sen, -1);
         }
     }

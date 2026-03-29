@@ -788,21 +788,29 @@ evaluate_line (aris_proof * ap, sentence * sen)
    * Red  = error or incorrect reference.
    * Green = correct / true.
    * Reset = anything else (blank, rule, etc.). */
-  if (ret == VALUE_TYPE_ERROR || ret == VALUE_TYPE_REF
-      || ret == VALUE_TYPE_FALSE || ret == VALUE_TYPE_RULE)
+  if (!SEN_PREM (sen) && !SEN_SUB (sen))
     {
-      GdkRGBA red = {0.8, 0.0, 0.0, 1.0};
-      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &red);
-    }
-  else if (ret == VALUE_TYPE_TRUE)
-    {
-      GdkRGBA green = {0.0, 0.7, 0.0, 1.0};
-      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &green);
+      if (ret == VALUE_TYPE_ERROR || ret == VALUE_TYPE_REF
+          || ret == VALUE_TYPE_FALSE || ret == VALUE_TYPE_RULE)
+        {
+          gtk_widget_override_background_color (
+            sen->eventbox, GTK_STATE_NORMAL, the_app->bg_colors[BG_COLOR_BAD]);
+        }
+      else if (ret == VALUE_TYPE_TRUE)
+        {
+          gtk_widget_override_background_color (
+            sen->eventbox, GTK_STATE_NORMAL, the_app->bg_colors[BG_COLOR_GOOD]);
+        }
+      else
+        gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
     }
   else
     {
-      gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
+      gtk_widget_override_background_color (sen->eventbox, GTK_STATE_NORMAL, NULL);
     }
+
+  /* Keep default text color; evaluation is shown via background only. */
+  gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
     
   destroy_list (lines);
 
@@ -1580,7 +1588,27 @@ menu_activated (aris_proof * ap, int menu_id)
       break;
 
     case CONF_MENU_EVAL_LINE:
-      evaluate_line (ap, SENTENCE (SEN_PARENT (ap)->focused->value));
+      sen = SENTENCE (SEN_PARENT (ap)->focused->value);
+      ret = evaluate_line (ap, sen);
+      if (ret == AEC_MEM)
+        return AEC_MEM;
+
+      /* One-line evaluation: color line-number text by result. */
+      if (ret == VALUE_TYPE_ERROR || ret == VALUE_TYPE_REF
+          || ret == VALUE_TYPE_FALSE || ret == VALUE_TYPE_RULE)
+        {
+          GdkRGBA red = {0.8, 0.0, 0.0, 1.0};
+          gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &red);
+        }
+      else if (ret == VALUE_TYPE_TRUE)
+        {
+          GdkRGBA green = {0.0, 0.7, 0.0, 1.0};
+          gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, &green);
+        }
+      else
+        {
+          gtk_widget_override_color (sen->line_no, GTK_STATE_FLAG_NORMAL, NULL);
+        }
       break;
 
     case CONF_MENU_EVAL_PROOF:
