@@ -297,19 +297,20 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
     case 0:
         break;
     case -2:
-        return _("The sentence has mismatched parenthesis.");
+        return _("Mismatched parentheses. Please check opening and closing brackets.");
     case -3:
-        return _("The sentence has invalid connectives.");
+        return _("Invalid logical operator. For example, avoid '&&' and use logical symbols like ∧ (AND) or ∨ (OR).");
     case -4:
-        return _("The sentence has invalid quantifiers.");
+        return _("Invalid quantifier usage. Please check symbols like ∀ (for all) or ∃ (exists).");
     case -5:
-        return _("The sentence has syntactical errors.");
+        return _("Syntax error in the sentence. Please check the structure and logical format.");
     }
 
     *ret_val = VALUE_TYPE_BLANK;
 
     if (sd->premise || sd->subproof)
     {
+
         *ret_val = VALUE_TYPE_TRUE;
         return CORRECT;
     }
