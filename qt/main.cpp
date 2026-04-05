@@ -9,6 +9,7 @@
 #include "goalmodel.h"
 #include "connector.h"
 #include "auxconnector.h"
+#include "settings.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,31 +20,39 @@ int main(int argc, char *argv[])
 
     // preprocessor macros because url/link resolution works differently on qmake vis a vis cmake
 #ifndef WITH_CMAKE
+    QIcon::setThemeSearchPaths({ u":/assets/icons"_qs });
     app.setWindowIcon(QIcon(":/assets/icon_simple.svg"));
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 #else
+    QIcon::setThemeSearchPaths({ u"arisqt/assets/icons"_qs });
     app.setWindowIcon(QIcon(u"arisqt/assets/icon_simple.svg"_qs));
     const QUrl url(QStringLiteral("qrc:/arisqt/main.qml"));
 #endif
 
+    QIcon::setThemeName("arisqt");
+
     // Create custom objects for interfacing with QML
+    Settings settings(&app);
     ProofData theData;
     GoalData theGoals;
     Connector cConnector;
     auxConnector auxConnector;
 
     // Register models with QML
+    qmlRegisterType<Settings>("settings.model",1,0,"Settings");
     qmlRegisterType<ProofModel>("proof.model",1,0,"ProofModel");
     qmlRegisterUncreatableType<ProofData>("proof.model",1,0,"ProofData","Should not be created inside QML");
     qmlRegisterType<GoalModel>("goal.model",1,0,"GoalModel");
     qmlRegisterUncreatableType<GoalData>("goal.model",1,0,"GoalData","Should not be created inside QML");
 
     QQmlApplicationEngine engine;
+    settings.setEngine(&engine);
 
     // Set Application Style
     QQuickStyle::setStyle("Fusion");
 
     // Provide context to QML engine to use custom objects as properties
+    engine.rootContext()->setContextProperty("settings",&settings);
     engine.rootContext()->setContextProperty("theData",&theData);
     engine.rootContext()->setContextProperty("theGoals",&theGoals);
     engine.rootContext()->setContextProperty("cConnector",&cConnector);
