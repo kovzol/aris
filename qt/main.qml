@@ -60,16 +60,36 @@ ApplicationWindow {
     font: thefont
     color: darkMode ? "#121212" : "white"
 
-    // Footer to display error messages
-    footer: Label {
-        height: statusID.implicitHeight
+    // Footer to display evaluation messages in a bounded, scrollable area.
+    footer: Frame {
+        id: statusFrame
         visible: !(cConnector.evalText === "Correct!"
                    || cConnector.evalText === "Evaluate Proof")
 
-        Text {
-            id: statusID
-            text: cConnector.evalText
-            color: darkMode ? "#CF6679" : "red"
+        width: parent ? parent.width : implicitWidth
+        padding: 8
+        height: visible ? Math.min(160, statusText.implicitHeight + 16) : 0
+
+        background: Rectangle {
+            color: darkMode ? "#1F1B24" : "#FFF5F5"
+            border.width: 1
+            border.color: darkMode ? "#CF6679" : "#DD3333"
+        }
+
+        ScrollView {
+            anchors.fill: parent
+            clip: true
+
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AsNeeded
+
+            Text {
+                id: statusText
+                width: statusFrame.availableWidth
+                wrapMode: Text.Wrap
+                text: cConnector.evalText
+                color: darkMode ? "#CF6679" : "red"
+            }
         }
     }
 

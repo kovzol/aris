@@ -19,8 +19,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 
 #if defined(__MACH__)
 #include <stdlib.h>
@@ -179,6 +180,92 @@ aio_get_next_attribute (xmlTextReader * xml, xmlChar ** name)
 #endif
 }
 
+/* Parses a comma-separated list of references into a REF_END-terminated array.
+ *  input:
+ *    ref_buffer - the buffer that stores references (eg. "1,2,3").
+ *    refs_out - receives a newly allocated short array terminated by REF_END.
+ *  output:
+ *    0 on success, -1 on memory error, -2 on malformed input.
+ */
+static int
+aio_parse_refs (const char * ref_buffer, short ** refs_out)
+{
+    short * refs = NULL;
+    char * ref_str = NULL;
+    char * tok = NULL;
+    int i = 0, num_refs = 0;
+
+    if (!refs_out)
+        return -2;
+    *refs_out = NULL;
+
+    if (!ref_buffer || ref_buffer[0] == '\0')
+    {
+        refs = (short *) calloc (1, sizeof (short));
+        if (!refs)
+            return AEC_MEM;
+
+        refs[0] = REF_END;
+        *refs_out = refs;
+        return 0;
+    }
+
+    for (i = 0; ref_buffer[i]; i++)
+        if (ref_buffer[i] == ',')
+            num_refs++;
+
+    num_refs++;
+    refs = (short *) calloc (num_refs + 1, sizeof (short));
+    if (!refs)
+        return AEC_MEM;
+
+    ref_str = strdup (ref_buffer);
+    if (!ref_str)
+    {
+        free (refs);
+        return AEC_MEM;
+    }
+
+    i = 0;
+    tok = strtok (ref_str, ",");
+    while (tok)
+    {
+        char * start = tok;
+        char * endptr;
+        long new_ref;
+
+        while (*start && isspace ((unsigned char) *start))
+            start++;
+
+        if (*start == '\0')
+        {
+            free (ref_str);
+            free (refs);
+            return -2;
+        }
+
+        errno = 0;
+        new_ref = strtol (start, &endptr, 10);
+        while (*endptr && isspace ((unsigned char) *endptr))
+            endptr++;
+
+        if (errno || *endptr != '\0' || new_ref <= 0 || new_ref > SHRT_MAX)
+        {
+            free (ref_str);
+            free (refs);
+            return -2;
+        }
+
+        refs[i++] = (short) new_ref;
+        tok = strtok (NULL, ",");
+    }
+    refs[i] = REF_END;
+
+    free (ref_str);
+    *refs_out = refs;
+    return 0;
+}
+
 ///* Write the line number of a sentence object to an XML stream.
 // *  input:
 // *    xml - the XML stream to which to write.
@@ -323,7 +410,6 @@ aio_open_conc (xmlTextReader * xml)
     unsigned char * text, * file;
     text = file = NULL;
     short * refs = 0;
-    int i;
 
     got_rule = got_refs = got_depth = got_file = got_text = 0;
 
@@ -369,35 +455,9 @@ aio_open_conc (xmlTextReader * xml)
             if (got_refs)
                 XML_ERR (NULL);
 
-            int num_refs;
-            i = num_refs = 0;
-
-            // strtok?
-
-            for (; buffer[i]; i++)
-                if (buffer[i] == ',')
-                    num_refs ++;
-
-            num_refs++;
-            refs = (short *) calloc (num_refs + 1, sizeof (int));
-            CHECK_ALLOC (refs, NULL);
-
-            char * ref_str = strdup ((const char *) buffer);
-
-            char * tok;
-            tok = strtok (ref_str, ",");
-            num_refs++;
-            i = 0;
-
-            while (tok)
-            {
-                short new_ref = (short) atoi(tok);
-                refs[i++] = new_ref;
-                tok = strtok (NULL, ",");
-            }
-            refs[i] = REF_END;
-
-            free (ref_str);
+            ret = aio_parse_refs ((const char *) buffer, &refs);
+            if (ret != 0)
+                XML_ERR (NULL);
 
             got_refs = 1;
 
@@ -576,7 +636,8 @@ aio_save (proof_t * proof, const char * file_name)
         // Wriet each of the conclusions.
         sen_data * sd = itr->value;
         char * refs;
-        int i = 0, num_refs = 0, ref_off = 0, max_line = 0;
+        int i = 0, ref_off = 0, refs_len = 1;
+        char ref_buf[16];
 
         ret = xmlTextWriterStartElement (xml, XML_CAST(SENTENCE_ENTRY));
         if (ret < 0) XML_ERR (-1);
@@ -593,15 +654,18 @@ aio_save (proof_t * proof, const char * file_name)
         {
             while (sd->refs[i] != REF_END)
             {
-                max_line = (max_line > sd->refs[i]) ? max_line : sd->refs[i];
-                num_refs++;
+                int written = snprintf (ref_buf, sizeof (ref_buf), "%i", sd->refs[i]);
+                if (written < 0 || written >= (int) sizeof (ref_buf))
+                    XML_ERR (-1);
+
+                refs_len += written;
+                if (sd->refs[i + 1] != REF_END)
+                    refs_len++;
                 i++;
             }
         }
 
-        max_line = (max_line > 0) ? (int) log10 (max_line) + 1 : 0;
-
-        refs = (char *) calloc (num_refs * (max_line + 1), sizeof (char));
+        refs = (char *) calloc (refs_len, sizeof (char));
         CHECK_ALLOC (refs, -1);
 
         i = 0;
@@ -614,13 +678,16 @@ aio_save (proof_t * proof, const char * file_name)
                 ref_off += sprintf (refs + ref_off, "%i", ref_line);
 
                 if (sd->refs[i+1] != REF_END)
-                    ref_off += sprintf (refs + ref_off, ",");
+                    refs[ref_off++] = ',';
                 i++;
             }
+
+            refs[ref_off] = '\0';
         }
 
         ret = xmlTextWriterWriteAttribute (xml, XML_CAST(ALT_REF_DATA),
                                           XML_CAST(refs));
+        free (refs);
         if (ret < 0) XML_ERR (-1);
 
         ret = xmlTextWriterWriteFormatAttribute (xml, XML_CAST(DEPTH_DATA),

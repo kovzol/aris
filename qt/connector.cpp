@@ -135,7 +135,9 @@ void Connector::genProof(const ProofData *toBeEval)
         unsigned char *temp_text;
         sd = (sen_data *) calloc (1, sizeof(sen_data));
         int *ind = (int *) calloc(m_indices[i].size(), sizeof(int));
-        short *temp_refs = (short *) calloc(toBeEval->lines().at(i).pRefs.size(), sizeof(short));
+        int refs_count = toBeEval->lines().at(i).pRefs.size();
+        int refs_buf_len = refs_count > 0 ? refs_count + 1 : 1;
+        short *temp_refs = (short *) calloc(refs_buf_len, sizeof(short));
 
         sd->line_num = i+1;
         sd->rule = rulesMap[toBeEval->lines().at(i).pType];
@@ -168,13 +170,18 @@ void Connector::genProof(const ProofData *toBeEval)
 
 
         // Assign references
-        if (toBeEval->lines().at(i).pRefs.size() == 1)
-            temp_refs[0] = REF_END;
-        else{
-            for (int ii = 1; ii < toBeEval->lines().at(i).pRefs.size(); ii++)
-                temp_refs[ii-1] = toBeEval->lines().at(i).pRefs.at(ii);
-            temp_refs[toBeEval->lines().at(i).pRefs.size()-1] = REF_END;
+        int ref_start = 0;
+        if (refs_count > 0 && toBeEval->lines().at(i).pRefs.at(0) == REF_END)
+            ref_start = 1;
+        int ref_idx = 0;
+        for (int ii = ref_start; ii < refs_count && ref_idx < refs_buf_len - 1; ii++) {
+            int ref_val = toBeEval->lines().at(i).pRefs.at(ii);
+            if (ref_val == REF_END)
+                continue;
+            temp_refs[ref_idx] = ref_val;
+            ref_idx++;
         }
+        temp_refs[ref_idx] = REF_END;
         sd->refs = temp_refs;
 
         // Insert into proof object
@@ -227,15 +234,23 @@ int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
 //    vec_t *rets;
     returns = init_vec(sizeof(char *));
 
-    if (!proof_eval(cProof,returns,1))
+    int eval_rc = proof_eval(cProof,returns,1);
+    if (!eval_rc)
         qDebug() << "Proof Evaluated Successfully";
-    else
-        qDebug() << "Memory Error";
+    else{
+        qDebug() << "Proof evaluation failed";
+        setEvalText("Unable to evaluate proof: invalid proof data.");
+        return 0;
+    }
 
     item_t * ev_itr;
     int f = 0;
     ev_itr = cProof->everything->head;
     for (int i = 0; i < returns->num_stuff; i++){
+        if (!ev_itr || !ev_itr->value) {
+            setEvalText("Unable to evaluate proof: inconsistent proof state.");
+            return 0;
+        }
         char * cur_ret, * cur_line;
         cur_ret = (char *) vec_str_nth (returns, i);
         cur_line =(char *) ((sen_data *) ev_itr->value)->text;
@@ -293,10 +308,15 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
     memcpy(file_name, name.toStdString().c_str(), name.size());
 
     cProof = aio_open((const char *) file_name);
-    if (cProof)
-        qDebug() << "File Opened Successfully";
     if (file_name)
         free(file_name);
+    if (!cProof){
+        qDebug() << "Unable to open proof file";
+        setEvalText("Unable to open file: invalid proof format.");
+        return;
+    }
+
+    qDebug() << "File Opened Successfully";
 
     reverseMapInit();
     int s = openTo->lines().size();
@@ -309,13 +329,17 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
     for (pf_itr = cProof->everything->head; pf_itr; pf_itr = pf_itr->next){
         sen_data *sd = (sen_data *) pf_itr->value;
         QList<int> temp_refs = {-1};
-        for (int i = 0; sd->refs[i] != REF_END; i++)
+        for (int i = 0; sd->refs && sd->refs[i] != REF_END; i++)
             temp_refs.push_back(sd->refs[i]);
 
+        bool closesSubproof = false;
+        if (sd->line_num != 1 && pf_itr->prev && pf_itr->prev->value)
+            closesSubproof = ((sen_data *) pf_itr->prev->value)->depth > sd->depth;
         if (sd->depth > d)
             sd->rule = -2;
-        openTo->insertLine(sd->line_num-1,sd->line_num,(const char *) sd->text,reverseRulesMap[sd->rule],(sd->depth > 0),
-                           (sd->rule == -2),(sd->line_num != 1 && ((sen_data *) pf_itr->prev->value)->depth > sd->depth), sd->depth * 20,temp_refs);
+        QString mappedRule = reverseRulesMap.contains(sd->rule) ? reverseRulesMap[sd->rule] : "premise";
+        openTo->insertLine(sd->line_num-1,sd->line_num,(const char *) sd->text,mappedRule,(sd->depth > 0),
+                           (sd->rule == -2),closesSubproof, sd->depth * 20,temp_refs);
         d = sd->depth;
     }
 
@@ -350,7 +374,6 @@ void Connector::wasmOpenProof(ProofData *open, GoalData *gls)
             file.write(fileContent);
             file.commit();
             openProof(fileName,open,gls);
-            file.deleteLater();
         }
     };
     QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);

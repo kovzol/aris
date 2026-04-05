@@ -329,15 +329,41 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         return NULL;
     int i;
 
+    if (!sd->refs)
+    {
+        *ret_val = VALUE_TYPE_REF;
+        destroy_str_vec (refs);
+        return _("The sentence's references are malformed.");
+    }
+
     for (i = 0; sd->refs[i] != REF_END; i++)
     {
         item_t * cur_ref;
         sen_data * ref_data;
+        int ref_line = sd->refs[i];
 
-        if (sd->refs[i] > lines->num_stuff)
-            return NULL;
-        cur_ref = ls_nth (lines, sd->refs[i] - 1);
+        if (ref_line <= 0 || ref_line >= sd->line_num || ref_line > lines->num_stuff)
+        {
+            *ret_val = VALUE_TYPE_REF;
+            destroy_str_vec (refs);
+            return _("One of the sentence's references is invalid.");
+        }
+
+        cur_ref = ls_nth (lines, ref_line - 1);
+        if (!cur_ref || !cur_ref->value)
+        {
+            *ret_val = VALUE_TYPE_REF;
+            destroy_str_vec (refs);
+            return _("One of the sentence's references is invalid.");
+        }
         ref_data = cur_ref->value;
+
+        if (!ref_data->text)
+        {
+            destroy_str_vec (refs);
+            *ret_val = VALUE_TYPE_REF;
+            return _("One of the sentence's references has a text error.");
+        }
 
         unsigned char * tmp_ref_str = format_string (ref_data->text);
 
@@ -356,6 +382,12 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
         unsigned char * ref_text;
         ref_text = ref_data->sexpr;
+        if (!ref_text)
+        {
+            destroy_str_vec (refs);
+            *ret_val = VALUE_TYPE_REF;
+            return _("One of the sentence's references has a text error.");
+        }
 
         ret = vec_str_add_obj (refs, ref_text);
         if (ret == AEC_MEM)
@@ -369,6 +401,12 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                 item_t * ev_itr;
 
                 ev_itr = ls_nth (lines, ref_data->line_num);
+                if (!ev_itr || !ev_itr->value)
+                {
+                    destroy_str_vec (refs);
+                    *ret_val = VALUE_TYPE_REF;
+                    return _("One of the sentence's references is invalid.");
+                }
                 while (ev_itr->next &&
                        SD(ev_itr->next->value)->depth >= ref_data->depth)
                 {
@@ -378,6 +416,12 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
                 }
 
                 sen_0 = ev_itr->value;
+                if (!sen_0 || !sen_0->text)
+                {
+                    *ret_val = VALUE_TYPE_REF;
+                    destroy_str_vec (refs);
+                    return _("One of the sentence's references has a text error.");
+                }
                 tmp_ref_str = format_string (sen_0->text);
                 if (!tmp_ref_str)
                     return NULL;
@@ -396,6 +440,12 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
 
                 unsigned char * ref_text;
                 ref_text = sen_0->sexpr;
+                if (!ref_text)
+                {
+                    *ret_val = VALUE_TYPE_REF;
+                    destroy_str_vec (refs);
+                    return _("One of the sentence's references has a text error.");
+                }
 
                 ret = vec_str_add_obj (refs, ref_text);
                 if (ret == AEC_MEM)
