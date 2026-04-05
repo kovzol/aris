@@ -11,7 +11,6 @@
 #include "auxconnector.h"
 #include "settings.h"
 
-
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -27,7 +26,7 @@ int main(int argc, char *argv[])
 #else
     QIcon::setThemeSearchPaths({ u"arisqt/assets/icons"_qs });
     app.setWindowIcon(QIcon(u"arisqt/assets/icon_simple.svg"_qs));
-    const QUrl url(u"arisqt/main.qml"_qs);
+    const QUrl url(QStringLiteral("qrc:/arisqt/main.qml"));
 #endif
 
     QIcon::setThemeName("arisqt");
@@ -60,7 +59,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("auxConnector",&auxConnector);
 
 
-//    const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
         &app, [url](QObject *obj, const QUrl &objUrl) {
             if (!obj && url == objUrl)
