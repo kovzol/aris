@@ -381,20 +381,29 @@ sentence_update_line_no (sentence * sen, int new)
       const char * label =
         gtk_menu_item_get_label (GTK_MENU_ITEM (gl->data));
 
+      if (label == NULL)
+        continue;
+
       int chk, line_num, lbl_len;
       char * file_name;
 
       lbl_len = strlen (label);
 
-      file_name = (char *) calloc (lbl_len, sizeof (char));
+      file_name = (char *) calloc (lbl_len + 1, sizeof (char));
       CHECK_ALLOC (file_name, AEC_MEM);
 
       chk = sscanf (label, "%i - %s", &line_num, file_name);
       if (chk != 2)
-        continue;
+        {
+          free (file_name);
+          continue;
+        }
 
       if (line_num < old)
-        continue;
+        {
+          free (file_name);
+          continue;
+        }
 
       line_num = new;
 
@@ -409,6 +418,7 @@ sentence_update_line_no (sentence * sen, int new)
       free (file_name);
 
       gtk_menu_item_set_label (GTK_MENU_ITEM (gl->data), new_label);
+      free (new_label);
     }
 
   return 0;
