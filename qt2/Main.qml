@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
-import GNU.Aris
+import GNU.Aris.Widgets
 
 ApplicationWindow {
     id: window

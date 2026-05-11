@@ -1,31 +1,35 @@
-#ifndef DOCUMENTHIGHLIGHTER_H
-#define DOCUMENTHIGHLIGHTER_H
+#pragma once
 
 #include <QQuickItem>
 #include <QQuickTextDocument>
-#include "ProofLineSyntaxHighlighter.h"
+#include <QtQml/qqmlregistration.h>
+#include "Highlighter.h"
 
-class ProofLineHighlighter : public QQuickItem
+class HighlighterBridge : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(QQuickTextDocument* document MEMBER m_doc WRITE setDocument REQUIRED)
     Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition REQUIRED)
     QML_ELEMENT
+
 public:
-    ProofLineHighlighter();
+    HighlighterBridge();
+
     void setDocument(QQuickTextDocument* doc);
+
     void setCursorPosition(int newCursorPosition);
     int cursorPosition() const;
 
 public slots:
     void resetCursorPosition();
-    int setMousePosition(float x, float y);
+    int hitTest(qreal x, qreal y);
+    void highlight(int start, int count = 1);
+    void unhighlight();
 
 private:
     void handleTextDocumentChanged();
 
     QQuickTextDocument* m_doc = nullptr;
-    ProofLineSyntaxHighlighter m_highlighter { nullptr };
+    Highlighter m_highlighter { this };
+    int m_cursorPosition;
 };
-
-#endif // DOCUMENTHIGHLIGHTER_H

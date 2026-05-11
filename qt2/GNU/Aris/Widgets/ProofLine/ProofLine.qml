@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import GNU.Aris
+import GNU.Aris.Widgets
 
 Item {
     Layout.fillWidth: true
@@ -24,7 +24,7 @@ Item {
                 insert(cursorPosition, "→");
             }
         }
-        ProofLineHighlighter {
+        HighlighterBridge {
             id: highlighter
             document: textEdit.textDocument
             cursorPosition: textEdit.cursorPosition
@@ -39,30 +39,32 @@ Item {
         hoverEnabled: true
         preventStealing: false
         propagateComposedEvents: true
-        onEntered: highlighter.setMousePosition(-1.0, -1.0)
+        onEntered: highlighter.unhighlight()
         onExited: {
-            highlighter.setMousePosition(-1.0, -1.0)
+            highlighter.unhighlight()
             symbolTooltip.close()
             hoverTimer.stop();
         }
         onPositionChanged: (mouse) => {
-            if (textEdit.length > 0) {
-                let lastCharRect = textEdit.positionToRectangle(textEdit.length);
-                let endOfTextBoundary = lastCharRect.x + lastCharRect.width;
-                if (mouse.x > endOfTextBoundary) {
-                    highlighter.setMousePosition(-1.0, -1.0)
-                    return;
-                }
+            if (textEdit.length === 0)
+                return
+            let lastCharRect = textEdit.positionToRectangle(textEdit.length);
+            let endOfTextBoundary = lastCharRect.x + lastCharRect.width;
+            if (mouse.x > endOfTextBoundary) {
+                highlighter.unhighlight()
+                return;
             }
             hoverTimer.stop();
-            let pos = highlighter.setMousePosition(mouse.x, mouse.y)
+            let pos = highlighter.hitTest(mouse.x, mouse.y)
+            highlighter.unhighlight()
             if (pos >= 0 && textEdit.text[pos] === "→")
             {
+                highlighter.highlight(pos, 1)
                 hoverTimer.id = "→"
                 hoverTimer.toolTipX = Qt.binding(()=>mapToGlobal(mouseX, mouseY).x)
                 hoverTimer.toolTipY = Qt.binding(()=>mapToGlobal(mouseX, mouseY).y-10)
                 hoverTimer.text = "Implication: If, then."
-                hoverTimer.start();
+                hoverTimer.start()
             }
             else
             {

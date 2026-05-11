@@ -1,28 +1,32 @@
-#include "ProofLineSyntaxHighlighter.h"
+#include "Highlighter.h"
 #include <QRegularExpression>
 #include <QStack>
 
-const int ProofLineSyntaxHighlighter::DEFAULT_POSITION = -1;
+const int Highlighter::NPOS = -1;
 
-ProofLineSyntaxHighlighter::ProofLineSyntaxHighlighter(QTextDocument *parent)
+Highlighter::Highlighter(QObject *parent)
     : QSyntaxHighlighter(parent)
 {
-    connect(this, &ProofLineSyntaxHighlighter::cursorPositionChanged, this, &ProofLineSyntaxHighlighter::rehighlight);
-    connect(this, &ProofLineSyntaxHighlighter::mousePositionChanged, this, &ProofLineSyntaxHighlighter::rehighlight);
+    connect(this, &Highlighter::cursorPositionChanged, this, &Highlighter::rehighlight);
+    connect(this, &Highlighter::highlightChanged, this, &Highlighter::rehighlight);
 }
 
-void ProofLineSyntaxHighlighter::highlightBlock(const QString &text) {
+Highlighter::Highlighter(QTextDocument *parent)
+    : QSyntaxHighlighter(parent)
+{
+    connect(this, &Highlighter::cursorPositionChanged, this, &Highlighter::rehighlight);
+    connect(this, &Highlighter::highlightChanged, this, &Highlighter::rehighlight);
+}
+
+void Highlighter::highlightBlock(const QString &text) {
     QTextCharFormat defaultFormat;
     setFormat(0, text.length(), defaultFormat);
 
-    QTextCharFormat variableFormat;
-    variableFormat.setFontItalic(false); //TODO
-
     QTextCharFormat highlightFormat;
-    QColor glassBlue(0x26,0x75,0xBF,75);
+    QColor glassBlue(0x26,0x75,0xBF,75); //TODO Parameterize
     highlightFormat.setBackground(glassBlue);
-    if (m_mousePosition != DEFAULT_POSITION && m_mousePosition < text.length() && text[m_mousePosition] == "→")
-        setFormat(m_mousePosition, 1, highlightFormat);
+    if (m_highlightStart != NPOS)
+        setFormat(m_highlightStart, m_highlightCount, highlightFormat);
 
     QTextCharFormat parenthesisCursorMatchFormat;
     parenthesisCursorMatchFormat.setFontWeight(QFont::Bold);
@@ -43,8 +47,6 @@ void ProofLineSyntaxHighlighter::highlightBlock(const QString &text) {
             } else {
                 pairs.append(qMakePair(stack.pop(), i));
             }
-        } else if (text[i].isLetter()) {
-            setFormat(i, 1, variableFormat);
         }
     }
 
@@ -60,12 +62,12 @@ void ProofLineSyntaxHighlighter::highlightBlock(const QString &text) {
     }
 }
 
-int ProofLineSyntaxHighlighter::cursorPosition() const
+int Highlighter::cursorPosition() const
 {
     return m_cursorPosition;
 }
 
-void ProofLineSyntaxHighlighter::setCursorPosition(int newCursorPosition)
+void Highlighter::setCursorPosition(int newCursorPosition)
 {
     if (m_cursorPosition == newCursorPosition)
         return;
@@ -73,15 +75,11 @@ void ProofLineSyntaxHighlighter::setCursorPosition(int newCursorPosition)
     emit cursorPositionChanged();
 }
 
-int ProofLineSyntaxHighlighter::mousePosition() const
+void Highlighter::setHighlight(int start, int count)
 {
-    return m_mousePosition;
-}
-
-void ProofLineSyntaxHighlighter::setMousePosition(int newMousePosition)
-{
-    if (m_mousePosition == newMousePosition)
+    if (m_highlightStart == start && m_highlightCount == count)
         return;
-    m_mousePosition = newMousePosition;
-    emit mousePositionChanged();
+    m_highlightStart = start;
+    m_highlightCount = count;
+    emit highlightChanged();
 }

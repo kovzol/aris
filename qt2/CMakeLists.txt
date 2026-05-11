@@ -12,25 +12,19 @@ qt_add_executable(aris
     main.cpp
 )
 
+add_subdirectory(GNU/Aris/Widgets/)
+
 qt_add_qml_module(aris
     URI GNU.Aris
-    RESOURCE_PREFIX /qt/qml
+    RESOURCE_PREFIX /org.gnu.aris/qml/
 
     QML_FILES
         Main.qml
 
-    QML_FILES
-        Components/ProofLine/ProofLine.qml
-    SOURCES
-        Components/ProofLine/ProofLineHighlighter.cpp
-        Components/ProofLine/ProofLineHighlighter.h
-        Components/ProofLine/ProofLineSyntaxHighlighter.cpp
-        Components/ProofLine/ProofLineSyntaxHighlighter.h
+    IMPORTS
+        GNU.Aris.Widgets
 )
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
 set_target_properties(aris PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER org.gnu.aris
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
