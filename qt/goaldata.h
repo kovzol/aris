@@ -46,6 +46,7 @@ signals:
 public slots:
     void insertgLine(int index, int gLine, bool gValid, QString gText);
     void removegLineAt(int index);
+    Q_INVOKABLE void reset();
 
 private:
     QVector<GoalLine> m_goalLines;

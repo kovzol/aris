@@ -52,6 +52,34 @@ ApplicationWindow {
         return item instanceof TextField
     }
 
+    function resetMainWindow() {
+        theData.reset()
+        proofModel.updateLines()
+
+        theGoals.reset()
+
+        premiseCount = 1
+        computePremise = false
+        isExtFile = false
+        fileExists = false
+        fileModified = false
+        filename = "Untitled"
+        cConnector.evalText = "Evaluate Proof"
+
+        if (goalDialogID.opened)
+            goalDialogID.close()
+
+        proofID.resetViewState()
+        menuOptions.close()
+    }
+
+    function requestResetWindow() {
+        if (fileModified)
+            resetDialogID.open()
+        else
+            resetMainWindow()
+    }
+
     width: 1200
     height: 700
     visible: true
@@ -291,6 +319,74 @@ ApplicationWindow {
             text: isExtFile
                  ? qsTr("Save file before closing?")
                  : qsTr("Save new file before closing?")
+        }
+    }
+
+    Dialog {
+        id: resetDialogID
+
+        width: Math.min(rootID.width * 0.40, 420)
+        anchors.centerIn: parent
+
+        parent: Overlay.overlay
+        modal: true
+        closePolicy: Popup.CloseOnEscape
+        padding: 20
+
+        Overlay.modal: Rectangle {
+            color: darkMode ? "#66121212" : "#66CFCFCF"
+        }
+
+        background: Rectangle {
+            radius: 12
+            color: darkMode ? "#1F1B24" : "white"
+            border.width: 1
+            border.color: darkMode ? "#50485A" : "#D9D9D9"
+        }
+
+        contentItem: ColumnLayout {
+            width: resetDialogID.availableWidth
+            spacing: 20
+
+            Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                text: qsTr("Reset the current proof and goals?")
+                color: darkMode ? "white" : "black"
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 18
+
+                Button {
+                    text: qsTr("Cancel")
+                    Layout.fillWidth: true
+
+                    palette {
+                        button: darkMode ? "#2A2631" : "white"
+                        buttonText: darkMode ? "white" : "black"
+                    }
+
+                    onClicked: resetDialogID.close()
+                }
+
+                Button {
+                    text: qsTr("Reset")
+                    Layout.fillWidth: true
+
+                    palette {
+                        button: darkMode ? "#2A2631" : "white"
+                        buttonText: darkMode ? "white" : "black"
+                    }
+
+                    onClicked: {
+                        resetDialogID.close()
+                        resetMainWindow()
+                    }
+                }
+            }
         }
     }
 

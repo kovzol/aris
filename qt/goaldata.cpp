@@ -68,3 +68,11 @@ void GoalData::removegLineAt(int index)
 
     emit postgLineRemove();
 }
+// Reset the proof and goal data to the default state 
+void GoalData::reset()
+{
+    while (!m_goalLines.isEmpty())
+        removegLineAt(0);
+
+    insertgLine(0, -2, false, "");
+}
