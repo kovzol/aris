@@ -156,19 +156,7 @@ ToolBar {
             icon.name: "import"
             icon.color: darkMode ? "white" : "black"
 
-            onClicked: {
-                cConnector.evalText = "Evaluate Proof"
-                if (Qt.platform.os === "wasm") {
-                    isExtFile = true
-                    auxConnector.wasmImportProof(theData, cConnector,
-                                                 proofModel)
-                    computePremise = true
-                } else {
-                    importID.open()
-                }
-
-                menuOptions.close()
-            }
+            onClicked: importBehaviorID.open()
         }
 
         ToolSeparator {

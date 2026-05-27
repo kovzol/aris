@@ -35,6 +35,7 @@ ApplicationWindow {
     property bool fileModified: false
     property int premiseCount: 1
     property bool computePremise: false // set to true if Open or Import Proof are used
+    property int importMode: 0
 
     // Function to compute premiseCount, used when opening new file
     function computePremiseCount(item) {
@@ -78,6 +79,21 @@ ApplicationWindow {
             resetDialogID.open()
         else
             resetMainWindow()
+    }
+
+    function startImportFlow(mode) {
+        importMode = mode
+        cConnector.evalText = "Evaluate Proof"
+        isExtFile = true
+        computePremise = true
+
+        if (Qt.platform.os === "wasm")
+            auxConnector.wasmImportProofWithMode(theData, cConnector, proofModel, importMode)
+        else
+            importID.open()
+
+        importBehaviorID.close()
+        menuOptions.close()
     }
 
     width: 1200
@@ -166,6 +182,15 @@ ApplicationWindow {
         }
     }
 
+    Connections {
+        target: auxConnector
+
+        function onImportFinished(success) {
+            if (success)
+                fileModified = true
+        }
+    }
+
     // Dialogs associated with the DrawerTools
     FileDialog {
         id: fileDialogID
@@ -220,13 +245,8 @@ ApplicationWindow {
         fileMode: FileDialog.OpenFile
         defaultSuffix: "tle"
         onAccepted: {
-            isExtFile = true
-            computePremise = true
-            if (premiseCount === 1) {
-                premiseCount = 0
-            }
-            auxConnector.importProof(selectedFile, theData, cConnector,
-                                     proofModel)
+            auxConnector.importProofWithMode(selectedFile, theData, cConnector,
+                                     proofModel, importMode)
         }
     }
 
@@ -385,6 +405,83 @@ ApplicationWindow {
                         resetDialogID.close()
                         resetMainWindow()
                     }
+                }
+            }
+        }
+    }
+
+    Dialog {
+        id: importBehaviorID
+
+        width: Math.min(rootID.width * 0.42, 440)
+        anchors.centerIn: parent
+
+        parent: Overlay.overlay
+        modal: true
+        closePolicy: Popup.CloseOnEscape
+        padding: 20
+
+        Overlay.modal: Rectangle {
+            color: darkMode ? "#66121212" : "#66CFCFCF"
+        }
+
+        background: Rectangle {
+            radius: 12
+            color: darkMode ? "#1F1B24" : "white"
+            border.width: 1
+            border.color: darkMode ? "#50485A" : "#D9D9D9"
+        }
+
+        contentItem: ColumnLayout {
+            width: importBehaviorID.availableWidth
+            spacing: 20
+
+            Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                text: qsTr("Choose import behavior")
+                color: darkMode ? "white" : "black"
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 14
+
+                Button {
+                    text: qsTr("Overwrite")
+                    Layout.fillWidth: true
+
+                    palette {
+                        button: darkMode ? "#2A2631" : "white"
+                        buttonText: darkMode ? "white" : "black"
+                    }
+
+                    onClicked: startImportFlow(0)
+                }
+
+                Button {
+                    text: qsTr("Append End")
+                    Layout.fillWidth: true
+
+                    palette {
+                        button: darkMode ? "#2A2631" : "white"
+                        buttonText: darkMode ? "white" : "black"
+                    }
+
+                    onClicked: startImportFlow(1)
+                }
+
+                Button {
+                    text: qsTr("Prepend")
+                    Layout.fillWidth: true
+
+                    palette {
+                        button: darkMode ? "#2A2631" : "white"
+                        buttonText: darkMode ? "white" : "black"
+                    }
+
+                    onClicked: startImportFlow(2)
                 }
             }
         }

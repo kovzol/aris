@@ -31,6 +31,61 @@
 #include <QProcess>
 #endif
 
+namespace {
+enum ImportMode {
+    ImportOverwrite = 0,
+    ImportAppendEnd = 1,
+    ImportPrepend = 2
+};
+
+bool hasOnlyBlankProof(const ProofData *pd)
+{
+    const QVector<ProofLine> lines = pd->lines();
+
+    if (lines.size() != 1)
+        return false;
+
+    const ProofLine &line = lines.at(0);
+    return line.pType == "premise" && line.pText.isEmpty() && line.pInd == 0;
+}
+
+void clearProofLines(ProofData *pd)
+{
+    while (!pd->lines().isEmpty())
+        pd->removeLineAt(0);
+}
+
+void shiftReferences(ProofData *pd, ProofModel *pm, int startIndex, int delta)
+{
+    for (int i = startIndex; i < pd->lines().size(); ++i) {
+        QList<int> refs = pd->lines().at(i).pRefs;
+
+        for (int refIndex = 1; refIndex < refs.size(); ++refIndex) {
+            if (refs[refIndex] >= 0)
+                refs[refIndex] += delta;
+        }
+
+        QList<QVariant> updatedRefs;
+        for (int ref: refs)
+            updatedRefs.append(ref);
+
+        pm->setData(pm->index(i, 0), updatedRefs, ProofModel::RefsRole);
+    }
+}
+
+QList<int> shiftedRefs(const QList<int> &refs, int delta)
+{
+    QList<int> adjusted = refs;
+
+    for (int i = 1; i < adjusted.size(); ++i) {
+        if (adjusted[i] >= 0)
+            adjusted[i] += delta;
+    }
+
+    return adjusted;
+}
+}
+
 auxConnector::auxConnector(QObject *parent)
     : QObject{parent}
 {
@@ -99,6 +154,7 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
     if (!proof) {
         qDebug() << "Failed to import proof";
         free(file_name);
+        emit importFinished(false);
         return;
     }
 
@@ -230,6 +286,8 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
     proof_destroy(proof);
     if (file_name)
         free(file_name);
+
+    emit importFinished(true);
 }
 
 /* Imports a proof into the current proof (for WebAssembly).
@@ -245,6 +303,7 @@ void auxConnector::wasmImportProof(ProofData *pd, const Connector *c, ProofModel
     auto fileContentReady = [this, &c, &pd, &pm](const QString &fileName, const QByteArray &fileContent) {
         if (fileName.isEmpty()) {
             qDebug() << "No file was selected" ;
+            emit importFinished(false);
         } else {
             QSaveFile file(fileName);
             file.open(QIODevice::WriteOnly);
@@ -252,6 +311,63 @@ void auxConnector::wasmImportProof(ProofData *pd, const Connector *c, ProofModel
             file.commit();
             importProof(fileName,pd,c,pm);
 //            file.deleteLater();
+        }
+    };
+    QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
+}
+
+void auxConnector::importProofWithMode(const QString &name, ProofData *pd, const Connector *c, ProofModel *pm, int mode)
+{
+    if (mode < ImportOverwrite || mode > ImportPrepend)
+        mode = ImportOverwrite;
+
+    const bool blankProof = hasOnlyBlankProof(pd);
+
+    if (mode == ImportOverwrite || blankProof) {
+        importProof(name, pd, c, pm);
+        return;
+    }
+
+    ProofData importedData;
+    ProofModel importedModel;
+    importedModel.setlines(&importedData);
+    importProof(name, &importedData, c, &importedModel);
+
+    const QVector<ProofLine> importedLines = importedData.lines();
+    const int existingCount = pd->lines().size();
+    const int insertIndex = (mode == ImportAppendEnd) ? existingCount : 0;
+    const int refDelta = (mode == ImportAppendEnd) ? existingCount : 0;
+
+    for (int i = 0; i < importedLines.size(); ++i) {
+        const ProofLine &line = importedLines.at(i);
+        const int targetIndex = insertIndex + i;
+        const QList<int> refs = shiftedRefs(line.pRefs, refDelta);
+
+        pd->insertLine(targetIndex, targetIndex + 1, line.pText, line.pType,
+                       line.pSub, line.pSubStart, line.pSubEnd, line.pInd, refs);
+
+        if (line.fname)
+            pd->setFile(targetIndex, QString::fromUtf8((const char *) line.fname));
+    }
+
+    pm->updateLines();
+
+    if (mode == ImportPrepend && existingCount > 0)
+        shiftReferences(pd, pm, importedLines.size(), importedLines.size());
+}
+
+void auxConnector::wasmImportProofWithMode(ProofData *pd, const Connector *c, ProofModel *pm, int mode)
+{
+    auto fileContentReady = [this, &c, &pd, &pm, mode](const QString &fileName, const QByteArray &fileContent) {
+        if (fileName.isEmpty()) {
+            qDebug() << "No file was selected" ;
+            emit importFinished(false);
+        } else {
+            QSaveFile file(fileName);
+            file.open(QIODevice::WriteOnly);
+            file.write(fileContent);
+            file.commit();
+            importProofWithMode(fileName, pd, c, pm, mode);
         }
     };
     QFileDialog::getOpenFileContent("Aris Proof (*.tle)",  fileContentReady);
