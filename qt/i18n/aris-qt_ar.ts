@@ -10,6 +10,11 @@
     </message>
     <message>
         <location filename="../DrawerTools.qml" line="49"/>
+        <source>Reset</source>
+        <translation>إعادة التعيين</translation>
+    </message>
+    <message>
+        <location filename="../DrawerTools.qml" line="57"/>
         <source>Open</source>
         <translation>فتح</translation>
     </message>
@@ -71,6 +76,51 @@
         <source>QT_LAYOUT_DIRECTION</source>
         <comment>QGuiApplication</comment>
         <translation>RTL</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="359"/>
+        <source>Reset Proof</source>
+        <translation>إعادة تعيين البرهان</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="423"/>
+        <source>Import Proof</source>
+        <translation>استيراد البرهان</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="434"/>
+        <source>Choose import behavior</source>
+        <translation>اختر طريقة الاستيراد</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="446"/>
+        <source>Overwrite</source>
+        <translation>استبدال</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="459"/>
+        <source>Append End</source>
+        <translation>إلحاق في النهاية</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="472"/>
+        <source>Prepend</source>
+        <translation>إضافة في البداية</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="370"/>
+        <source>Reset the current proof and goals?</source>
+        <translation>هل تريد إعادة تعيين البرهان والأهداف الحالية؟</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="380"/>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <location filename="../main.qml" line="391"/>
+        <source>Reset</source>
+        <translation>إعادة التعيين</translation>
     </message>
 </context>
 </TS>

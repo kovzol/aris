@@ -32,12 +32,15 @@ public:
     Q_INVOKABLE void wasmLatex(const ProofData *pd, Connector *c);
     Q_INVOKABLE void importProof(const QString &name, ProofData *pd, const Connector *c, ProofModel *pm);
     Q_INVOKABLE void wasmImportProof(ProofData *pd, const Connector *c, ProofModel *pm);
+    Q_INVOKABLE void importProofWithMode(const QString &name, ProofData *pd, const Connector *c, ProofModel *pm, int mode);
+    Q_INVOKABLE void wasmImportProofWithMode(ProofData *pd, const Connector *c, ProofModel *pm, int mode);
 
 #ifndef Q_OS_WASM
     Q_INVOKABLE void newWindow();
 #endif
 
 signals:
+    void importFinished(bool success);
 
 private:
 

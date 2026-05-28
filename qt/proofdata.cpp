@@ -83,3 +83,11 @@ void ProofData::removeLineAt(int index)
 
     emit postLineRemove();
 }
+
+void ProofData::reset()
+{
+    while (!m_proofLines.isEmpty())
+        removeLineAt(0);
+
+    insertLine(0, 1, "", "premise", false, false, false, 0, {-1});
+}

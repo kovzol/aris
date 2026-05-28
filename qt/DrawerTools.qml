@@ -47,6 +47,15 @@ ToolBar {
         }
 
         ToolButton {
+            text: qsTr("Reset")
+            icon.source: darkMode
+                         ? "assets/icons/arisqt/512x512/reset-white.png"
+                         : "assets/icons/arisqt/512x512/reset.png"
+
+            onClicked: requestResetWindow()
+        }
+
+        ToolButton {
             text: qsTr("Open")
             icon.name: "folder"
             icon.color: darkMode ? "white" : "black"
@@ -147,19 +156,7 @@ ToolBar {
             icon.name: "import"
             icon.color: darkMode ? "white" : "black"
 
-            onClicked: {
-                cConnector.evalText = "Evaluate Proof"
-                if (Qt.platform.os === "wasm") {
-                    isExtFile = true
-                    auxConnector.wasmImportProof(theData, cConnector,
-                                                 proofModel)
-                    computePremise = true
-                } else {
-                    importID.open()
-                }
-
-                menuOptions.close()
-            }
+            onClicked: importBehaviorID.open()
         }
 
         ToolSeparator {
