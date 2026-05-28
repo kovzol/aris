@@ -13,6 +13,7 @@ notice and this notice are preserved.
   - [gtk version](#gtk-version)
   - [qt version](#qt-version)
   - [WebAssembly](#webassembly)
+  - [Docker](#docker)
 - [Contributing Guide](#contributing-guide)
   - [Getting Started](#getting-started)
   - [How to Contribute](#how-to-contribute)
@@ -156,6 +157,35 @@ Now, run:
 python -m http.server 8000
 ```
 The project can be found at `http://0.0.0.0:8000/` .
+
+### Docker
+
+Dockerfiles for all three builds are in the `docker/` directory.
+
+#### Build
+
+```
+docker build -f docker/gtk.Dockerfile  -t aris-gtk  .
+docker build -f docker/qt.Dockerfile   -t aris-qt   .
+docker build -f docker/wasm.Dockerfile -t aris-wasm .
+```
+
+#### Run
+
+WASM (serves at `http://localhost:8000`):
+```
+docker run --rm -p 8000:8000 aris-wasm
+```
+
+GTK and Qt are GUI apps and need X11 forwarding to display on the host:
+```
+docker run --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix aris-gtk
+docker run --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix aris-qt
+```
+
+For software rendering (if OpenGL is unavailable), add `-e QT_QUICK_BACKEND=software` to the Qt command.
+
+**Note for macOS:** Running GUI containers requires an X11 display server like [XQuartz](https://www.xquartz.org/).
 
 
 ### Contributing Guide
