@@ -228,13 +228,14 @@ int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
 //    vec_t *rets;
     returns = init_vec(sizeof(char *));
 
-    if (!proof_eval(cProof,returns,1))
+    int eval_result = proof_eval(cProof,returns,1);
+    if (!eval_result)
         qDebug() << "Proof Evaluated Successfully";
     else
         qDebug() << "Memory Error";
 
     item_t * ev_itr;
-    int f = 0;
+    int f = (eval_result != 0) ? 1 : 0;
     ev_itr = cProof->everything->head;
     for (int i = 0; i < returns->num_stuff; i++){
         char * cur_ret, * cur_line;
