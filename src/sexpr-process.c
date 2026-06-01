@@ -252,7 +252,7 @@ sexpr_add_not (unsigned char * in_str)
 
     not_in_str = (unsigned char *) calloc (strlen (in_str) + S_NL + 3, sizeof (char));
     CHECK_ALLOC (not_in_str, NULL);
-    sprintf (not_in_str, "(%s %s)\0", S_NOT, in_str);
+    sprintf (not_in_str, "(%s %s)", S_NOT, in_str);
 
     return not_in_str;
 }
@@ -681,8 +681,7 @@ sexpr_quant_infer (unsigned char * quant_sen, unsigned char * elim_sen,
         if (elim_sen[1] != '(')
         {
             free (str_0);
-            q_pos = tmp_0 + 2;
-            continue;
+            break;
         }
 
         tmp_1 = parse_parens (elim_sen, 1, &str_1);
