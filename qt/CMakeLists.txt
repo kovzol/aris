@@ -81,6 +81,8 @@ qt_add_qml_module(aris-qt
         assets/icons/arisqt/512x512/eval.png
         assets/icons/arisqt/512x512/reset.png
         assets/icons/arisqt/512x512/reset-white.png
+        assets/icons/arisqt/512x512/zoom.png
+        assets/icons/arisqt/512x512/zoom-white.png
 
 )
 

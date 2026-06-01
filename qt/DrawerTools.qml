@@ -151,6 +151,82 @@ ToolBar {
             onClicked: darkMode = !darkMode
         }
 
+        ToolSeparator { orientation: Qt.Horizontal }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: 12  // Matches standard ToolButton padding
+            Layout.rightMargin: 12
+            spacing: 12            // Matches ToolButton icon-to-text spacing
+
+            // Magnifying glass icon (user will provide the image files)
+            Image {
+                source: darkMode
+                        ? "assets/icons/arisqt/512x512/zoom-white.png"
+                        : "assets/icons/arisqt/512x512/zoom.png"
+                sourceSize: Qt.size(24, 24)
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
+                Layout.alignment: Qt.AlignVCenter
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Label {
+                text: qsTr("Zoom")
+                color: darkMode ? "white" : "black"
+                Layout.fillWidth: true
+                font.pointSize: 14 // Standard drawer text size
+            }
+
+            // Tightly group the + / - controls
+            RowLayout {
+                spacing: 0
+                Layout.alignment: Qt.AlignVCenter
+
+                ToolButton {
+                    text: "−"
+                    font.pointSize: 16
+                    enabled: zoomFactor > zoomMin
+                    onClicked: zoomOut()
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+                }
+
+                Label {
+                    id: zoomLabelID
+                    text: Math.round(zoomFactor * 100) + "%"
+                    color: darkMode ? "white" : "black"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.preferredWidth: 42
+                    Layout.preferredHeight: 32
+                }
+
+                ToolButton {
+                    text: "+"
+                    font.pointSize: 16
+                    enabled: zoomFactor < zoomMax
+                    onClicked: zoomIn()
+                    Layout.preferredWidth: 32
+                    Layout.preferredHeight: 32
+                }
+            }
+
+            ToolButton {
+                icon.source: darkMode
+                             ? "assets/icons/arisqt/512x512/reset-white.png"
+                             : "assets/icons/arisqt/512x512/reset.png"
+                enabled: zoomFactor !== 1.0
+                onClicked: zoomReset()
+                Layout.preferredWidth: 32
+                Layout.preferredHeight: 32
+                ToolTip.visible: hovered
+                ToolTip.text: qsTr("Reset Zoom")
+            }
+        }
+
+        ToolSeparator { orientation: Qt.Horizontal }
+
         ToolButton {
             text: qsTr("Import Proof")
             icon.name: "import"

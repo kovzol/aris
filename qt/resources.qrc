@@ -17,5 +17,7 @@
         <file>assets/icons/arisqt/512x512/language.png</file>
         <file>assets/icons/arisqt/512x512/reset.png</file>
         <file>assets/icons/arisqt/512x512/reset-white.png</file>
+        <file>assets/icons/arisqt/512x512/zoom.png</file>
+        <file>assets/icons/arisqt/512x512/zoom-white.png</file>
     </qresource>
 </RCC>

@@ -36,9 +36,9 @@ Item {
 
         anchors {
             fill: parent
-            leftMargin: keyboardID.width + 20
-            topMargin: 20
-            rightMargin: 20
+            leftMargin: keyboardID.width + scaledSpacing * 2
+            topMargin: scaledSpacing * 2
+            rightMargin: scaledSpacing * 2
         }
 
         ListView {
@@ -52,7 +52,7 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 10
+            spacing: scaledSpacing
             ScrollBar.vertical: ScrollBar {}
 
             onCurrentItemChanged: {
@@ -89,7 +89,7 @@ Item {
                 listView.currentIndex = temp
             }
 
-            spacing: 10
+            spacing: scaledSpacing
             width: (parent) ? parent.width : 0
             Layout.fillWidth: true
 
@@ -97,15 +97,19 @@ Item {
             Button {
                 id: lineNumberID
 
-                height: theTextID.height
-                width: height
+                Layout.preferredHeight: theTextID.height
+                // Content-aware width: at least as tall as it is wide (square),
+                // but expands for 2-digit line numbers at high zoom.
+                Layout.preferredWidth: Math.max(height, lineNumTextID.implicitWidth + scaledSpacing)
                 palette {
                     button: darkMode ? "#1F1A24" : "white"
                 }
 
                 Text {
+                    id: lineNumTextID
                     anchors.centerIn: parent
                     font.italic: true
+                    font.pointSize: scaledFontSize
                     text: model.line
                     color: theTextID.color
                 }
@@ -159,7 +163,8 @@ Item {
                 id: theTextID
 
                 color: darkMode ? "white" : "black"
-                height: font.pointSize + 10
+                height: scaledFontSize + scaledSpacing
+                font.pointSize: scaledFontSize
                 Layout.leftMargin: model.ind
                 Layout.fillWidth: true
 
@@ -227,16 +232,30 @@ Item {
                 id: ruleID
 
                 height: theTextID.height
-                width: 50
+                // Cap width so it never squeezes the TextField;
+                // shorter  text at high zoom via the text binding below.
+                width: Math.min(implicitWidth + 8, 80 * Math.min(zoomFactor, 1.5))
                 visible: vis
+                clip: true
 
-                Text {
-                    anchors.centerIn: parent
-                    font.italic: true
-                    text: model.type
-                    color: darkMode ? "white" : "black"
-                    opacity: darkMode ? 0.87 : 1
+                font.italic: true
+                font.pointSize: scaledFontSize
+                // Short form when zoomed in (>150%) so label stays compact
+                text: {
+                    if (zoomFactor > 1.5) {
+                        if (model.type === "premise")  return "P"
+                        if (model.type === "subproof") return "SP"
+                        if (model.type === "sf")       return "SF"
+                    }
+                    return model.type
                 }
+                color: darkMode ? "white" : "black"
+                opacity: darkMode ? 0.87 : 1
+
+                // Tooltip shows full word when abbreviated
+                ToolTip.visible: zoomFactor > 1.5 && ruleHoverID.containsMouse
+                ToolTip.text: model.type
+                MouseArea { id: ruleHoverID; anchors.fill: parent; hoverEnabled: true }
             }
 
             // First ComboBox to select rule
@@ -250,7 +269,25 @@ Item {
                 }
 
                 visible: !vis
-                height: theTextID.height
+                Layout.preferredHeight: theTextID.height
+                // Width tracks the scaled font; stays compact via capped font above 150%
+                Layout.preferredWidth: implicitWidth
+                font.pointSize: zoomFactor > 1.5
+                                ? Math.round(scaledFontSize * 0.8)
+                                : scaledFontSize
+
+                // Short display labels above 150% zoom; full names still in the popup
+                displayText: {
+                    if (zoomFactor > 1.5) {
+                        var shorts1 = ["Inf", "Eq", "Pred", "Misc", "Bool"]
+                        return shorts1[currentIndex] ?? currentText
+                    }
+                    return currentText
+                }
+
+                hoverEnabled: true
+                ToolTip.visible: zoomFactor > 1.5 && hovered
+                ToolTip.text: currentText
 
                 onActivated: {
                     editCombos = true
@@ -289,10 +326,40 @@ Item {
 
                 // TODO: Fix width maybe
                 visible: !vis
-                height: theTextID.height
+                Layout.preferredHeight: theTextID.height
+                // Width tracks the scaled font; stays compact via capped font above 150%
+                Layout.preferredWidth: implicitWidth
+                font.pointSize: zoomFactor > 1.5
+                                ? Math.round(scaledFontSize * 0.8)
+                                : scaledFontSize
+
+                // Short display labels above 150% zoom; full names still in the popup
+                displayText: {
+                    if (zoomFactor > 1.5) {
+                        var shorts = {
+                            "Modus Ponens": "MP", "Addition": "Add", "Simplification": "Simp", 
+                            "Conjunction": "Conj", "Hypothetical Syllogism": "HS", 
+                            "Disjunctive Syllogism": "DS", "Excluded middle": "EM", 
+                            "Constructive Dilemma": "CD",
+                            "Implication": "Impl", "DeMorgan": "DeM", "Association": "Assoc", 
+                            "Commutativity": "Comm", "Idempotence": "Idem", "Distribution": "Dist", 
+                            "Equivalence": "Equiv", "Double Negation": "DN", "Exportation": "Exp", 
+                            "Subsumption": "Sub",
+                            "Universal Generalization": "UG", "Universal Instantiation": "UI", 
+                            "Existential Generalization": "EG", "Existential Instantiation": "EI", 
+                            "Bound Variable Substitution": "BVS", "Null Quantifier": "NQ", 
+                            "Prenex": "Prenex", "Identity": "Iden", "Free Variable Substitution": "FVS",
+                            "Lemma": "Lem", "Subproof": "SP", "Sequence": "Seq", "Induction": "Ind",
+                            "Identity ": "Iden", "Negation": "Neg", "Dominance": "Dom", 
+                            "Symbol Negation": "SymNeg"
+                        }
+                        return shorts[currentText] || currentText
+                    }
+                    return currentText
+                }
 
                 hoverEnabled: true
-                ToolTip.visible: hovered
+                ToolTip.visible: hovered && currentText !== ""
                 ToolTip.text: currentText
 
                 onActivated: {
@@ -319,9 +386,10 @@ Item {
 
                 text: "*"
                 font.bold: true
+                font.pointSize: scaledFontSize
 
                 height: theTextID.height
-                width: 50
+                width: implicitWidth + 8
                 visible: !vis && editCombos
 
                 ToolTip.visible: toolTipText ? mID.containsMouse : false
@@ -347,6 +415,9 @@ Item {
                     }
 
                     Button {
+                        // Box height and width both scale with zoom
+                        height: theTextID.height
+                        width: Math.max(height, refNumTextID.implicitWidth + scaledSpacing)
                         visible: (modelData === -1) ? false : true
 
                         palette {
@@ -364,8 +435,10 @@ Item {
                         }
 
                         Text {
+                            id: refNumTextID
                             anchors.centerIn: parent
                             font.italic: true
+                            font.pointSize: scaledFontSize
                             text: modelData
                             color: darkMode ? "white" : "black"
                         }
@@ -377,7 +450,9 @@ Item {
             Button {
                 id: plusID
 
-                height: theTextID.height
+                Layout.preferredHeight: theTextID.height
+                // Extra padding so the "/" never clips at max zoom
+                Layout.preferredWidth: plusTextID.implicitWidth + scaledSpacing * 4
                 palette {
                     button: darkMode ? "#1F1A24" : "white"
                 }
@@ -391,8 +466,10 @@ Item {
                 }
 
                 Text {
+                    id: plusTextID
                     anchors.centerIn: parent
                     text: "+ / \u2013"
+                    font.pointSize: scaledFontSize
                     color: theTextID.color
                 }
 

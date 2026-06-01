@@ -37,6 +37,21 @@ ApplicationWindow {
     property bool computePremise: false // set to true if Open or Import Proof are used
     property int importMode: 0
 
+    //  Zoom infrastructure (Proof Line section only) 
+    property real zoomFactor: 1.0          // single source of truth
+    readonly property real zoomMin:  0.3
+    readonly property real zoomMax:  2.0
+    readonly property real zoomStep: 0.1
+
+    // Convenience helpers consumed by ProofArea.qml
+    readonly property real scaledFontSize: Math.round(thefont.pointSize * zoomFactor)
+    readonly property real scaledSpacing:  Math.round(10 * zoomFactor)
+
+    function zoomIn()    { zoomFactor = Math.min(zoomMax, Math.round((zoomFactor + zoomStep) * 10) / 10) }
+    function zoomOut()   { zoomFactor = Math.max(zoomMin, Math.round((zoomFactor - zoomStep) * 10) / 10) }
+    function zoomReset() { zoomFactor = 1.0 }
+   
+
     // Function to compute premiseCount, used when opening new file
     function computePremiseCount(item) {
         premiseCount = 0
@@ -496,6 +511,12 @@ ApplicationWindow {
         id: proofModel
         lines: theData
     }
+
+    //  Zoom keyboard shortcuts
+    Shortcut { sequence: StandardKey.ZoomIn;  onActivated: zoomIn()    }
+    Shortcut { sequence: "Ctrl+=";            onActivated: zoomIn()    }
+    Shortcut { sequence: StandardKey.ZoomOut; onActivated: zoomOut()   }
+    Shortcut { sequence: "Ctrl+0";            onActivated: zoomReset() }
 
     ProofArea {
         id: proofID
