@@ -139,7 +139,7 @@ void Connector::genProof(const ProofData *toBeEval)
         short *temp_refs = (short *) calloc(toBeEval->lines().at(i).pRefs.size(), sizeof(short));
 
         sd->line_num = i+1;
-        sd->rule = rulesMap[toBeEval->lines().at(i).pType];
+        sd->rule = rulesMap.value(toBeEval->lines().at(i).pType, -1);
         sd->depth = toBeEval->lines().at(i).pInd/20;
         sd->premise = (sd->rule == -1)?1:0;
         sd->subproof = (sd->rule == -2)?1:0;

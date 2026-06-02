@@ -266,6 +266,8 @@ Item {
                     button: darkMode ? "#CF6679" : "white"
                     buttonText: "black"
                     window: darkMode ? "#CF6679" : "white"
+                    base: darkMode ? "#CF6679" : "white"
+                    text: "black"
                 }
 
                 visible: !vis
@@ -322,6 +324,8 @@ Item {
                     button: darkMode ? "#CF6679" : "white"
                     buttonText: "black"
                     window: darkMode ? "#CF6679" : "white"
+                    base: darkMode ? "#CF6679" : "white"
+                    text: "black"
                 }
 
                 // TODO: Fix width maybe
