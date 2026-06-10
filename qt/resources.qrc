@@ -20,5 +20,8 @@
         <file>assets/icons/arisqt/512x512/zoom.png</file>
         <file>assets/icons/arisqt/512x512/zoom-white.png</file>
         <file>assets/icons/arisqt/512x512/paste.png</file>
+        <file>assets/icons/arisqt/512x512/paste-white.png</file>
+        <file>assets/icons/arisqt/512x512/copy.png</file>
+        <file>assets/icons/arisqt/512x512/copy-white.png</file>
     </qresource>
 </RCC>

@@ -18,6 +18,7 @@
 #ifndef CONNECTOR_H
 #define CONNECTOR_H
 
+#include <QVariantList>
 #include <QObject>
 #include <QHash>
 #include "../src/typedef.h"
@@ -48,6 +49,7 @@ public:
     Q_INVOKABLE void wasmOpenProof(ProofData *open, GoalData *gls);
     Q_INVOKABLE void wasmSaveProof(const ProofData *pd, const GoalData *gls);
     Q_INVOKABLE void smartPaste(ProofData *pd, ProofModel *pm);
+    Q_INVOKABLE void smartCopy(const ProofData *pd, const QVariantList &selectedIndices);
 
     proof_t *getCProof() const;
     vec_t *getReturns() const;

@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <iostream>
 #include <regex>
+#include <algorithm>
 #include <QFileDialog>
 #include <QSaveFile>
 #include <QUrl>
@@ -685,4 +686,53 @@ void Connector::smartPaste(ProofData *pd, ProofModel *pm)
         pm->updateLines();
 
     emit smartPasteDone();
+}
+
+void Connector::smartCopy(const ProofData *pd, const QVariantList &selectedIndices)
+{
+    if (!pd) return;
+
+    QList<int> sortedIndices;
+    for (const QVariant &v : selectedIndices) {
+        sortedIndices.append(v.toInt());
+    }
+
+    QString copyText;
+    const auto &lines = pd->lines();
+
+    for (int idx : sortedIndices) {
+        if (idx < 0 || idx >= lines.size()) continue;
+        const ProofLine &pl = lines.at(idx);
+
+        // Reconstruct indentation (pInd is in pixels, ~20 per indent, 4 spaces per indent)
+        QString indentStr;
+        int spaces = (pl.pInd / 20) * 4;
+        indentStr.fill(' ', spaces);
+
+        // Reconstruct references
+        QString refsStr;
+        if (pl.pRefs.size() > 1) { 
+            for (int j = 1; j < pl.pRefs.size(); j++) {
+                refsStr += QString::number(pl.pRefs[j]);
+                if (j < pl.pRefs.size() - 1) refsStr += ", ";
+            }
+        }
+
+        // Format: [indent][text] [rule] [refs]
+        QString lineStr = indentStr + pl.pText;
+        if (!pl.pType.isEmpty() && pl.pType != "undefined") {
+            if (!lineStr.isEmpty() && !lineStr.endsWith(' ')) lineStr += " ";
+            lineStr += pl.pType;
+        }
+        if (!refsStr.isEmpty()) {
+            if (!lineStr.isEmpty() && !lineStr.endsWith(' ')) lineStr += " ";
+            lineStr += refsStr;
+        }
+
+        copyText += lineStr + "\n";
+    }
+
+    if (QClipboard *clipboard = QGuiApplication::clipboard()) {
+        clipboard->setText(copyText);
+    }
 }

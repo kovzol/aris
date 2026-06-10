@@ -22,13 +22,56 @@ import QtQuick.Controls 2.5
 import proof.model 1.0
 
 Item {
+    id: rootProofArea
+
+    property var selectedIndices: []
+    property int lastSelectedIndex: -1
 
     property var combo2: [["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"], ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence", "Distribution", "Equivalence", "Double Negation", "Exportation", "Subsumption"], ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"], ["Lemma", "Subproof", "Sequence", "Induction"], ["Identity ", "Negation", "Dominance", "Symbol Negation"]]
     anchors.fill: parent
 
+    Shortcut {
+        sequences: ["Ctrl+A", "Meta+A"]
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            var all = []
+            for (var i = 0; i < listView.count; i++) {
+                all.push(i)
+            }
+            rootProofArea.selectedIndices = all
+            rootProofArea.lastSelectedIndex = listView.count > 0 ? listView.count - 1 : -1
+            
+            // Defocus any active text field so the selection is visually obvious
+            rootProofArea.forceActiveFocus()
+        }
+    }
+
+    Shortcut {
+        sequence: StandardKey.Cancel // Maps to Escape
+        onActivated: {
+            if (rootProofArea.selectedIndices.length > 0) {
+                rootProofArea.selectedIndices = []
+                rootProofArea.lastSelectedIndex = -1
+                rootProofArea.forceActiveFocus()
+            }
+        }
+    }
+
     function resetViewState() {
         listView.currentIndex = 0
         listView.positionViewAtBeginning()
+    }
+
+    MouseArea {
+        anchors.fill: proofAreaID
+        z: -1
+        onClicked: {
+            if (rootProofArea.selectedIndices.length > 0) {
+                rootProofArea.selectedIndices = []
+                rootProofArea.lastSelectedIndex = -1
+                rootProofArea.forceActiveFocus()
+            }
+        }
     }
 
     ColumnLayout {
@@ -74,13 +117,12 @@ Item {
             property int indexx: model.index
             property bool vis: type === "premise" || type === "subproof"
                                || type === "sf"
-            property string textFieldColor: (listView.currentIndex
-                                             !== -1) ? (proofModel.data(
-                                                            proofModel.index(
-                                                                listView.currentIndex,
-                                                                0),
-                                                            263).includes(
-                                                            model.line) ? (darkMode ? "brown" : "yellow") : (darkMode ? "#1F1A24" : "white")) : (darkMode ? "#332940" : "lightgrey")
+            property string textFieldColor: {
+                if (rootProofArea.selectedIndices.includes(indexx)) {
+                    return darkMode ? "#5C469C" : "#E6E6FA"
+                }
+                return (listView.currentIndex !== -1) ? (proofModel.data(proofModel.index(listView.currentIndex, 0), 263).includes(model.line) ? (darkMode ? "brown" : "yellow") : (darkMode ? "#1F1A24" : "white")) : (darkMode ? "#332940" : "lightgrey")
+            }
 
             // Function to refresh the line color after selecting/de-selecting references
             function refreshTextFieldColor() {
@@ -168,6 +210,19 @@ Item {
                 Layout.leftMargin: model.ind
                 Layout.fillWidth: true
 
+                Keys.onPressed: (event) => {
+                    if ((event.modifiers & Qt.ControlModifier || event.modifiers & Qt.MetaModifier) && event.key === Qt.Key_A) {
+                        var all = []
+                        for (var i = 0; i < listView.count; i++) {
+                            all.push(i)
+                        }
+                        rootProofArea.selectedIndices = all
+                        rootProofArea.lastSelectedIndex = listView.count > 0 ? listView.count - 1 : -1
+                        rootProofArea.forceActiveFocus()
+                        event.accepted = true
+                    }
+                }
+
                 background: Rectangle {
                     id: backRectID
                     border.width: 1
@@ -183,12 +238,76 @@ Item {
                 MouseArea {
 
                     anchors.fill: parent
+                    
+                    property int dragStartIndex: -1
+                    
+                    onPressed: (mouse) => {
+                        if (mouse.modifiers & Qt.ControlModifier || mouse.modifiers & Qt.ShiftModifier || mouse.modifiers & Qt.MetaModifier) {
+                            dragStartIndex = -1
+                        } else {
+                            dragStartIndex = indexx
+                        }
+                    }
+                    
+                    onPositionChanged: (mouse) => {
+                        if (dragStartIndex !== -1) {
+                            var mappedPos = mapToItem(listView.contentItem, mouse.x, mouse.y)
+                            var currentIndexHovered = listView.indexAt(mappedPos.x, mappedPos.y)
+
+                            if (currentIndexHovered !== -1) {
+                                var start = Math.min(dragStartIndex, currentIndexHovered)
+                                var end = Math.max(dragStartIndex, currentIndexHovered)
+
+                                var newSel = []
+                                for (var i = start; i <= end; i++) {
+                                    newSel.push(i)
+                                }
+
+                                if (rootProofArea.lastSelectedIndex !== currentIndexHovered || rootProofArea.selectedIndices.length !== newSel.length) {
+                                    rootProofArea.selectedIndices = newSel
+                                    rootProofArea.lastSelectedIndex = currentIndexHovered
+                                }
+                            }
+                        }
+                    }
+
+                    onReleased: (mouse) => {
+                        dragStartIndex = -1
+                    }
+                    
                     //propagateComposedEvents: true
-                    onClicked: {
-                        listView.currentIndex = index
-                        parent.forceActiveFocus()
-                        parent.cursorPosition = parent.positionAt(mouseX,
-                                                                  mouseY)
+                    onClicked: (mouse) => {
+                        if (mouse.modifiers & Qt.ControlModifier || mouse.modifiers & Qt.MetaModifier) {
+                            var sel = Array.from(rootProofArea.selectedIndices)
+                            var pos = sel.indexOf(indexx)
+                            if (pos !== -1) {
+                                sel.splice(pos, 1)
+                            } else {
+                                sel.push(indexx)
+                            }
+                            rootProofArea.selectedIndices = sel
+                            rootProofArea.lastSelectedIndex = indexx
+                            parent.forceActiveFocus()
+                        } else if (mouse.modifiers & Qt.ShiftModifier) {
+                            var start = rootProofArea.lastSelectedIndex !== -1 ? rootProofArea.lastSelectedIndex : 0
+                            var end = indexx
+                            if (start > end) {
+                                var temp = start; start = end; end = temp;
+                            }
+                            var sel2 = Array.from(rootProofArea.selectedIndices)
+                            for (var i = start; i <= end; i++) {
+                                if (sel2.indexOf(i) === -1) sel2.push(i)
+                            }
+                            rootProofArea.selectedIndices = sel2
+                            rootProofArea.lastSelectedIndex = indexx
+                            parent.forceActiveFocus()
+                        } else {
+                            rootProofArea.selectedIndices = []
+                            rootProofArea.lastSelectedIndex = indexx
+                            listView.currentIndex = index
+                            parent.forceActiveFocus()
+                            parent.cursorPosition = parent.positionAt(mouse.x, mouse.y)
+                        }
                     }
                 }
 

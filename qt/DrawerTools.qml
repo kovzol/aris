@@ -229,14 +229,30 @@ ToolBar {
 
         ToolButton {
             text: qsTr("Paste Proof from Clipboard")
-            icon.name: "paste"
-            icon.color: darkMode ? "white" : "black"
+            icon.source: darkMode
+                         ? "assets/icons/arisqt/512x512/paste-white.png"
+                         : "assets/icons/arisqt/512x512/paste.png"
 
             ToolTip.visible: hovered
             ToolTip.text: qsTr("(Ctrl+Shift+V)")
 
             onClicked: {
                 cConnector.smartPaste(theData, proofModel)
+                menuOptions.close()
+            }
+        }
+
+        ToolButton {
+            text: qsTr("Copy Selected Lines")
+            icon.source: darkMode
+                         ? "assets/icons/arisqt/512x512/copy-white.png"
+                         : "assets/icons/arisqt/512x512/copy.png"
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("(Ctrl+Shift+C)")
+
+            onClicked: {
+                cConnector.smartCopy(theData, proofID.selectedIndices)
                 menuOptions.close()
             }
         }

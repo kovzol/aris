@@ -544,6 +544,14 @@ ApplicationWindow {
             cConnector.smartPaste(theData, proofModel)
         }
     }
+    
+    Shortcut {
+        sequence: "Ctrl+Shift+C"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            cConnector.smartCopy(theData, proofID.selectedIndices)
+        }
+    }
 
     ProofArea {
         id: proofID
