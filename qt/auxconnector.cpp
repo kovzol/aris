@@ -236,6 +236,12 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
         }
     }
 
+    int l;
+    for (l = 0; l < pd->lines().size(); l++){
+        if (pd->lines().at(l).pType != "premise")
+            break;
+    }
+
     for (pf_itr = proof->goals->head; pf_itr != NULL; pf_itr = pf_itr->next){
 
         unsigned char *pf_text;
@@ -266,18 +272,12 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
             for (int i = 0; sd->refs[i] != REF_END; i++)
                 temp_refs.push_back(sd->refs[i]);
 
-            int l;
-            for (l = 0; l < pd->lines().size(); l++){
-                if (pd->lines().at(l).pType != "premise")
-                    break;
-            }
-
             pd->insertLine(l,l+1,(const char *) sd->text,c->reverseRulesMap[sd->rule],false,
                            false,false, sd->depth * 20,temp_refs);
             pd->setFile(l,newName);
             pm->updateLines();
             pm->updateRefs(l,true);
-
+            l++;
         }
 
     }

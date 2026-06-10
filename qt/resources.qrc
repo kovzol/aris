@@ -19,5 +19,6 @@
         <file>assets/icons/arisqt/512x512/reset-white.png</file>
         <file>assets/icons/arisqt/512x512/zoom.png</file>
         <file>assets/icons/arisqt/512x512/zoom-white.png</file>
+        <file>assets/icons/arisqt/512x512/paste.png</file>
     </qresource>
 </RCC>

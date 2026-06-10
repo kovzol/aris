@@ -206,6 +206,25 @@ ApplicationWindow {
         }
     }
 
+    Connections {
+        target: cConnector
+
+        function onSmartPasteStarted() {
+            // Called at the very start of smartPaste() — mark proof as
+            // coming from an external source so the UI renders ref numbers.
+            isExtFile = true
+            computePremise = true
+            cConnector.evalText = "Evaluate Proof"
+        }
+
+        function onSmartPasteDone() {
+            // Called at the end of smartPaste() — proof rows are all inserted.
+            // isExtFile stays true (the proof is now an "opened" document).
+            fileModified = true
+            menuOptions.close()
+        }
+    }
+
     // Dialogs associated with the DrawerTools
     FileDialog {
         id: fileDialogID
@@ -517,6 +536,14 @@ ApplicationWindow {
     Shortcut { sequence: "Ctrl+=";            onActivated: zoomIn()    }
     Shortcut { sequence: StandardKey.ZoomOut; onActivated: zoomOut()   }
     Shortcut { sequence: "Ctrl+0";            onActivated: zoomReset() }
+    Shortcut {
+        sequence: "Ctrl+Shift+V"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            // smartPasteStarted signal sets isExtFile/computePremise before rows are inserted
+            cConnector.smartPaste(theData, proofModel)
+        }
+    }
 
     ProofArea {
         id: proofID

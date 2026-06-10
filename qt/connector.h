@@ -23,6 +23,7 @@
 #include "../src/typedef.h"
 #include "proofdata.h"
 #include "goaldata.h"
+#include "proofmodel.h"
 
 class Connector : public QObject
 {
@@ -46,6 +47,7 @@ public:
     Q_INVOKABLE void openProof(const QString &name, ProofData *openTo, GoalData *gls);
     Q_INVOKABLE void wasmOpenProof(ProofData *open, GoalData *gls);
     Q_INVOKABLE void wasmSaveProof(const ProofData *pd, const GoalData *gls);
+    Q_INVOKABLE void smartPaste(ProofData *pd, ProofModel *pm);
 
     proof_t *getCProof() const;
     vec_t *getReturns() const;
@@ -56,6 +58,8 @@ public:
 signals:
 
     void evalTextChanged();
+    void smartPasteStarted();
+    void smartPasteDone();
 
 
 private:

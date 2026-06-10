@@ -228,6 +228,20 @@ ToolBar {
         ToolSeparator { orientation: Qt.Horizontal }
 
         ToolButton {
+            text: qsTr("Paste Proof from Clipboard")
+            icon.name: "paste"
+            icon.color: darkMode ? "white" : "black"
+
+            ToolTip.visible: hovered
+            ToolTip.text: qsTr("(Ctrl+Shift+V)")
+
+            onClicked: {
+                cConnector.smartPaste(theData, proofModel)
+                menuOptions.close()
+            }
+        }
+
+        ToolButton {
             text: qsTr("Import Proof")
             icon.name: "import"
             icon.color: darkMode ? "white" : "black"
