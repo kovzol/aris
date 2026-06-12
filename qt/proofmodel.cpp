@@ -56,12 +56,14 @@ QVariant ProofModel::data(const QModelIndex &index, int role) const
         return QVariant(someLine.pSubEnd);
     case IndentRole:
         return QVariant(someLine.pInd);
-    case RefsRole:
+    case RefsRole: {
         QList<QVariant> ret;
         for (int x: someLine.pRefs)
             ret.append(x);
         return ret;
-
+    }
+    case ErrorRole:
+        return QVariant(someLine.pErrorMsg);
     }
     return QVariant();
 }
@@ -98,11 +100,17 @@ bool ProofModel::setData(const QModelIndex &index, const QVariant &value, int ro
         break;
     case RefsRole:
         someLine.pRefs.clear();
-        QVariantList temp = value.toList();
-        for (const QVariant &x: qAsConst(temp))
-            someLine.pRefs.append(x.toInt());
+        {
+            QVariantList temp = value.toList();
+            for (const QVariant &x: qAsConst(temp))
+                someLine.pRefs.append(x.toInt());
+        }
         break;
-
+    case ErrorRole:
+        // Call setErrorAt directly, then emit dataChanged ourselves.
+        mLines->setErrorAt(index.row(), value.toString());
+        emit dataChanged(index, index, {role});
+        return true;
     }
 
     if (mLines->setLineAt(index.row(),someLine)) {
@@ -132,6 +140,7 @@ QHash<int, QByteArray> ProofModel::roleNames() const
     names[SubEndRole] = "subEnd";
     names[IndentRole] = "ind";
     names[RefsRole] = "refs";
+    names[ErrorRole] = "errMsg";
     return names;
 }
 
@@ -205,4 +214,15 @@ void ProofModel::updateRefs(int ln, bool op)
         setData(index(i,0),ret,RefsRole);
     }
 
+}
+
+// Clear all inline error messages in the model (called before each evaluation).
+void ProofModel::clearErrors()
+{
+    if (!mLines) return;
+    const int n = mLines->lines().size();
+    for (int i = 0; i < n; i++) {
+        mLines->setErrorAt(i, QString());
+        emit dataChanged(index(i, 0), index(i, 0), {ErrorRole});
+    }
 }

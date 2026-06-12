@@ -108,9 +108,12 @@ Item {
     Component {
         id: proofLineID
 
-        RowLayout {
-            id: root_delegate
+        Column {
+            id: outerColumn
+            width: parent ? parent.width : 0
+            spacing: 0
 
+            // Properties here so ALL descendants (RowLayout + Text) can access by bare name
             property bool editCombos: (!isExtFile || type === "choose")
             property var arr: model.refs
             property string type: model.type
@@ -121,7 +124,11 @@ Item {
                 if (rootProofArea.selectedIndices.includes(indexx)) {
                     return darkMode ? "#5C469C" : "#E6E6FA"
                 }
-                return (listView.currentIndex !== -1) ? (proofModel.data(proofModel.index(listView.currentIndex, 0), 263).includes(model.line) ? (darkMode ? "brown" : "yellow") : (darkMode ? "#1F1A24" : "white")) : (darkMode ? "#332940" : "lightgrey")
+                if (listView.currentIndex !== -1) {
+                    var currentRefs = proofModel.data(proofModel.index(listView.currentIndex, 0), 263)
+                    return (currentRefs && currentRefs.includes(model.line)) ? (darkMode ? "brown" : "yellow") : (darkMode ? "#1F1A24" : "white")
+                }
+                return darkMode ? "#332940" : "lightgrey"
             }
 
             // Function to refresh the line color after selecting/de-selecting references
@@ -131,9 +138,11 @@ Item {
                 listView.currentIndex = temp
             }
 
-            spacing: scaledSpacing
-            width: (parent) ? parent.width : 0
-            Layout.fillWidth: true
+            RowLayout {
+                id: root_delegate
+                spacing: scaledSpacing
+                width: parent.width
+                Layout.fillWidth: true
 
             // Line Number Button
             Button {
@@ -177,6 +186,7 @@ Item {
                         console.log("Invalid Operation: Invalid reference to subproof")
                     else {
                         cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         var array = Array.from(proofModel.data(
                                                    proofModel.index(
                                                        listView.currentIndex,
@@ -226,9 +236,13 @@ Item {
                 background: Rectangle {
                     id: backRectID
                     border.width: 1
-                    border.color: ((cConnector.evalText).includes(
-                                       "Error in line " + (indexx + 1) + " -")
-                                   && cConnector.evalText !== "Evaluate Proof") ? "red" : (cConnector.evalText === "Evaluate Proof") ? (darkMode ? "white" : "black") : "springgreen"
+                    border.color: {
+                        if (cConnector.evalText === "Evaluate Proof")
+                            return darkMode ? "white" : "black"
+                        if (model.errMsg !== "")
+                            return "red"
+                        return "springgreen"
+                    }
                     color: textFieldColor
                 }
 
@@ -534,7 +548,7 @@ Item {
                     model: arr
 
                     onModelChanged: {
-                        root_delegate.refreshTextFieldColor()
+                        outerColumn.refreshTextFieldColor()
                     }
 
                     Button {
@@ -555,6 +569,7 @@ Item {
                                                    listView.currentIndex,
                                                    0), ar, 263)
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
 
                         Text {
@@ -615,6 +630,7 @@ Item {
                             proofModel.updateRefs(insertIndex, true)
                             listView.currentIndex = insertIndex
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                             premiseCount = premiseCount + 1
                         }
                     }
@@ -630,6 +646,7 @@ Item {
                             proofModel.updateRefs(index + 1, true)
                             listView.currentIndex = index + 1
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
                     }
 
@@ -643,6 +660,7 @@ Item {
                             proofModel.updateRefs(index + 1, true)
                             listView.currentIndex = index + 1
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
                     }
 
@@ -660,6 +678,7 @@ Item {
                             proofModel.updateRefs(index + 1, true)
                             listView.currentIndex = index + 1
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
                     }
 
@@ -688,12 +707,30 @@ Item {
                             }
                             
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
                     }
                 }
             }
-        }
-    }
+            } // end RowLayout
+
+            // Inline error — slides in when errMsg is non-empty
+            Text {
+                id: errorDetailID
+                visible: model.errMsg !== ""
+                text: model.errMsg
+                color: "#FF6B6B"
+                font.pointSize: Math.max(10, scaledFontSize)
+                font.italic: true
+                leftPadding: scaledSpacing * 2
+                wrapMode: Text.WordWrap
+                width: outerColumn.width
+                opacity: 0.0
+                onVisibleChanged: opacity = visible ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 180 } }
+            }
+        } // end Column
+    } // end Component
 
     // Background to highlight current line
     Component {

@@ -131,7 +131,8 @@ ToolBar {
             }
 
             onClicked: {
-                cConnector.evalProof(theData, theGoals)
+                evalButton.forceActiveFocus()
+                cConnector.evalProof(theData, theGoals, proofModel)
                 goalDataID.evalGoals(theGoals, cConnector)
                 animationID.start()
             }

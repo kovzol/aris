@@ -43,7 +43,7 @@ public:
     void genProof(const ProofData * toBeEval);
     void genGoals(const GoalData * toBeEval);
 
-    Q_INVOKABLE int evalProof(const ProofData * toBeEval, const GoalData * gls);
+    Q_INVOKABLE int evalProof(const ProofData *toBeEval, const GoalData *gls, ProofModel *pm);
     Q_INVOKABLE void saveProof(const QString &name,  const ProofData *toBeSaved, const GoalData *gls);
     Q_INVOKABLE void openProof(const QString &name, ProofData *openTo, GoalData *gls);
     Q_INVOKABLE void wasmOpenProof(ProofData *open, GoalData *gls);

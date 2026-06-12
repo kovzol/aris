@@ -271,14 +271,15 @@ void Connector::genGoals(const GoalData *toBeEval)
     }
 }
 
-/* Evaluates the proof and updates m_evalText accordingly.
+/* Evaluates the proof and updates the model with per-line error details.
  *  input:
  *    toBeEval  - pointer to the ProofData object.
  *    gls       - pointer to the GoalData object.
+ *    pm        - pointer to the ProofModel (receives ErrorRole per line).
  *  output:
  *    1 on success.
  */
-int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
+int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls, ProofModel *pm)
 {
     genProof(toBeEval);
     genGoals(gls);
@@ -287,31 +288,46 @@ int Connector::evalProof(const ProofData *toBeEval, const GoalData *gls)
         destroy_str_vec(returns);
     returns = init_vec(sizeof(char *));
 
-    if (!proof_eval(cProof,returns,1))
+    if (!proof_eval(cProof, returns, 1))
         qDebug() << "Proof Evaluated Successfully";
     else
         qDebug() << "Memory Error";
 
-    item_t * ev_itr;
-    int f = 0;
-    ev_itr = cProof->everything->head;
-    for (int i = 0; i < returns->num_stuff; i++){
-        char * cur_ret, * cur_line;
-        cur_ret = (char *) vec_str_nth (returns, i);
-        cur_line =(char *) ((sen_data *) ev_itr->value)->text;
+    // Clear any stale errors from a previous evaluation.
+    pm->clearErrors();
 
-        if (strcmp (cur_ret, CORRECT)){
-            qDebug() << "Error in line " << i + 1 << "- " << cur_line;
-            setEvalText(((f)?m_evalText:"") + QString("Error in line %1 - \n      ").arg(i+1) + cur_ret + "\n");
-            f = 1;
-            qDebug() << "  "<< cur_ret;
+    item_t *ev_itr = cProof->everything->head;
+    bool anyError = false;
+
+    for (int i = 0; i < returns->num_stuff; i++) {
+        char *cur_ret = (char *) vec_str_nth(returns, i);
+        sen_data *sd  = (sen_data *) ev_itr->value;
+
+        if (strcmp(cur_ret, CORRECT)) {
+            anyError = true;
+
+            // Build "Line N · RuleName: <message>" for inline display.
+            int lineNum     = i + 1;
+            QString ruleName = reverseRulesMap.value(sd->rule, QStringLiteral("?"));
+            QString message  = QString::fromUtf8(cur_ret);
+            QString fullMsg  = QStringLiteral("Line %1 · %2: %3")
+                                   .arg(lineNum)
+                                   .arg(ruleName)
+                                   .arg(message);
+
+            // Write error text directly into the model row (0-based).
+            pm->setData(pm->index(i, 0), fullMsg, ProofModel::ErrorRole);
+
+            qDebug() << "[eval] Error line" << lineNum << "(" << ruleName << ") -" << message;
+        } else {
+            qDebug() << "[eval] Line" << i + 1 << ": Correct!";
         }
-        else
-            qDebug() <<"Line " << i + 1 << ": " << CORRECT;
 
         ev_itr = ev_itr->next;
     }
-    if (!f) setEvalText("Correct!");
+
+    // evalText stays as the global status,  detail is now in the model.
+    setEvalText(anyError ? QStringLiteral("Errors found") : QStringLiteral("Correct!"));
 
     return 1;
 }

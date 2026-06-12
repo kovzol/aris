@@ -81,6 +81,7 @@ ApplicationWindow {
         fileModified = false
         filename = "Untitled"
         cConnector.evalText = "Evaluate Proof"
+        proofModel.clearErrors()
 
         if (goalDialogID.opened)
             goalDialogID.close()
@@ -99,6 +100,7 @@ ApplicationWindow {
     function startImportFlow(mode) {
         importMode = mode
         cConnector.evalText = "Evaluate Proof"
+        proofModel.clearErrors()
         isExtFile = true
         computePremise = true
 
@@ -125,14 +127,22 @@ ApplicationWindow {
 
     // Footer to display error messages
     footer: Label {
-        height: statusID.implicitHeight
+        height: statusID.implicitHeight + 10
+        leftPadding: 12
         visible: !(cConnector.evalText === "Correct!"
                    || cConnector.evalText === "Evaluate Proof")
 
         Text {
             id: statusID
-            text: cConnector.evalText
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 12
+            text: cConnector.evalText === "Errors found"
+                  ? "⚠ Errors found — see inline details above each failing line."
+                  : cConnector.evalText
             color: darkMode ? "#CF6679" : "red"
+            font.pointSize: thefont.pointSize + 1
+            font.bold: true
         }
     }
 
@@ -215,6 +225,7 @@ ApplicationWindow {
             isExtFile = true
             computePremise = true
             cConnector.evalText = "Evaluate Proof"
+            proofModel.clearErrors()
         }
 
         function onSmartPasteDone() {
