@@ -142,6 +142,13 @@ void GoalModel::evalGoals(GoalData *gls, Connector *c)
         unsigned char *temp_text;
 
         std::string str = gls->glines().at(i).gText.toStdString();
+        
+        if (str.empty()) {
+            setData(index(i,0), -2, 256);
+            setData(index(i,0), false, 258);
+            continue;
+        }
+
         temp_text = (unsigned char *) calloc((strlen(str.c_str()))+1, sizeof(unsigned char));
         memcpy(temp_text, str.c_str(), strlen(str.c_str()));
 
@@ -151,6 +158,6 @@ void GoalModel::evalGoals(GoalData *gls, Connector *c)
             setData(index(i,0),(is_valid == 1),258);
         }
         else
-            qDebug() << "Error in checking goal " << i + 1 << ":\n\t Goal was probably empty";
+            qDebug() << "Error in checking goal " << i + 1 << ":\n\t Goal was probably empty or invalid";
     }
 }

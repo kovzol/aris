@@ -335,7 +335,12 @@ sen_data_evaluate (sen_data * sd, int * ret_val, list_t * pf_vars, list_t * line
         sen_data * ref_data;
 
         if (sd->refs[i] > lines->num_stuff)
-            return NULL;
+        {
+            destroy_str_vec (refs);
+            *ret_val = VALUE_TYPE_ERROR;
+            return _("A referenced line does not exist in this proof.");
+        }
+
         cur_ref = ls_nth (lines, sd->refs[i] - 1);
         ref_data = cur_ref->value;
 

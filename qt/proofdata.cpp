@@ -38,7 +38,8 @@ bool ProofData::setLineAt(int index, const ProofLine &proofLine)
     if (oldLine.pLine == proofLine.pLine && oldLine.pText == proofLine.pText \
         && oldLine.pSub == proofLine.pSub && oldLine.pSubEnd == proofLine.pSubEnd \
         && oldLine.pSubStart == proofLine.pSubStart && oldLine.pInd == proofLine.pInd \
-        && oldLine.pType == proofLine.pType && oldLine.pRefs == proofLine.pRefs)
+        && oldLine.pType == proofLine.pType && oldLine.pRefs == proofLine.pRefs \
+        && oldLine.pErrorMsg == proofLine.pErrorMsg)
     {
         return false;
     }
@@ -69,6 +70,7 @@ void ProofData::insertLine(int index,int a, QString b, QString c, bool d, bool e
     aLine.pInd = g;
     aLine.pRefs = h;
     aLine.fname = NULL;
+    aLine.pErrorMsg = QString();  // always start with no error
     m_proofLines.insert(index,aLine);
 
     emit postLineInsert();
@@ -90,4 +92,12 @@ void ProofData::reset()
         removeLineAt(0);
 
     insertLine(0, 1, "", "premise", false, false, false, 0, {-1});
+}
+
+// Set the inline error message for a proof line at the given 0-based index.
+void ProofData::setErrorAt(int index, const QString &msg)
+{
+    if (index < 0 || index >= m_proofLines.size())
+        return;
+    m_proofLines[index].pErrorMsg = msg;
 }

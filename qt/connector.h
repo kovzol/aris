@@ -18,11 +18,13 @@
 #ifndef CONNECTOR_H
 #define CONNECTOR_H
 
+#include <QVariantList>
 #include <QObject>
 #include <QHash>
 #include "../src/typedef.h"
 #include "proofdata.h"
 #include "goaldata.h"
+#include "proofmodel.h"
 
 class Connector : public QObject
 {
@@ -41,11 +43,13 @@ public:
     void genProof(const ProofData * toBeEval);
     void genGoals(const GoalData * toBeEval);
 
-    Q_INVOKABLE int evalProof(const ProofData * toBeEval, const GoalData * gls);
+    Q_INVOKABLE int evalProof(const ProofData *toBeEval, const GoalData *gls, ProofModel *pm);
     Q_INVOKABLE void saveProof(const QString &name,  const ProofData *toBeSaved, const GoalData *gls);
     Q_INVOKABLE void openProof(const QString &name, ProofData *openTo, GoalData *gls);
     Q_INVOKABLE void wasmOpenProof(ProofData *open, GoalData *gls);
     Q_INVOKABLE void wasmSaveProof(const ProofData *pd, const GoalData *gls);
+    Q_INVOKABLE void smartPaste(ProofData *pd, ProofModel *pm);
+    Q_INVOKABLE void smartCopy(const ProofData *pd, const QVariantList &selectedIndices);
 
     proof_t *getCProof() const;
     vec_t *getReturns() const;
@@ -56,6 +60,8 @@ public:
 signals:
 
     void evalTextChanged();
+    void smartPasteStarted();
+    void smartPasteDone();
 
 
 private:

@@ -38,7 +38,8 @@ public:
         SubStartRole,
         SubEndRole,
         IndentRole,
-        RefsRole
+        RefsRole,
+        ErrorRole      // carries pErrorMsg — "errMsg" in QML
     };
 
     // Basic functionality:
@@ -58,6 +59,7 @@ public:
     void setlines(ProofData *newLines);
     Q_INVOKABLE void updateLines();
     Q_INVOKABLE void updateRefs(int ln, bool op);
+    Q_INVOKABLE void clearErrors();  // reset ErrorRole on every row
 
 private:
     ProofData *mLines;

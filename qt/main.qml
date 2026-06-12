@@ -37,6 +37,21 @@ ApplicationWindow {
     property bool computePremise: false // set to true if Open or Import Proof are used
     property int importMode: 0
 
+    //  Zoom infrastructure (Proof Line section only) 
+    property real zoomFactor: 1.0          // single source of truth
+    readonly property real zoomMin:  0.3
+    readonly property real zoomMax:  2.0
+    readonly property real zoomStep: 0.1
+
+    // Convenience helpers consumed by ProofArea.qml
+    readonly property real scaledFontSize: Math.round(thefont.pointSize * zoomFactor)
+    readonly property real scaledSpacing:  Math.round(10 * zoomFactor)
+
+    function zoomIn()    { zoomFactor = Math.min(zoomMax, Math.round((zoomFactor + zoomStep) * 10) / 10) }
+    function zoomOut()   { zoomFactor = Math.max(zoomMin, Math.round((zoomFactor - zoomStep) * 10) / 10) }
+    function zoomReset() { zoomFactor = 1.0 }
+   
+
     // Function to compute premiseCount, used when opening new file
     function computePremiseCount(item) {
         premiseCount = 0
@@ -66,6 +81,7 @@ ApplicationWindow {
         fileModified = false
         filename = "Untitled"
         cConnector.evalText = "Evaluate Proof"
+        proofModel.clearErrors()
 
         if (goalDialogID.opened)
             goalDialogID.close()
@@ -84,6 +100,7 @@ ApplicationWindow {
     function startImportFlow(mode) {
         importMode = mode
         cConnector.evalText = "Evaluate Proof"
+        proofModel.clearErrors()
         isExtFile = true
         computePremise = true
 
@@ -110,14 +127,22 @@ ApplicationWindow {
 
     // Footer to display error messages
     footer: Label {
-        height: statusID.implicitHeight
+        height: statusID.implicitHeight + 10
+        leftPadding: 12
         visible: !(cConnector.evalText === "Correct!"
                    || cConnector.evalText === "Evaluate Proof")
 
         Text {
             id: statusID
-            text: cConnector.evalText
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 12
+            text: cConnector.evalText === "Errors found"
+                  ? "⚠ Errors found — see inline details above each failing line."
+                  : cConnector.evalText
             color: darkMode ? "#CF6679" : "red"
+            font.pointSize: thefont.pointSize + 1
+            font.bold: true
         }
     }
 
@@ -188,6 +213,26 @@ ApplicationWindow {
         function onImportFinished(success) {
             if (success)
                 fileModified = true
+        }
+    }
+
+    Connections {
+        target: cConnector
+
+        function onSmartPasteStarted() {
+            // Called at the very start of smartPaste() — mark proof as
+            // coming from an external source so the UI renders ref numbers.
+            isExtFile = true
+            computePremise = true
+            cConnector.evalText = "Evaluate Proof"
+            proofModel.clearErrors()
+        }
+
+        function onSmartPasteDone() {
+            // Called at the end of smartPaste() — proof rows are all inserted.
+            // isExtFile stays true (the proof is now an "opened" document).
+            fileModified = true
+            menuOptions.close()
         }
     }
 
@@ -495,6 +540,28 @@ ApplicationWindow {
     ProofModel {
         id: proofModel
         lines: theData
+    }
+
+    //  Zoom keyboard shortcuts
+    Shortcut { sequence: StandardKey.ZoomIn;  onActivated: zoomIn()    }
+    Shortcut { sequence: "Ctrl+=";            onActivated: zoomIn()    }
+    Shortcut { sequence: StandardKey.ZoomOut; onActivated: zoomOut()   }
+    Shortcut { sequence: "Ctrl+0";            onActivated: zoomReset() }
+    Shortcut {
+        sequence: "Ctrl+Shift+V"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            // smartPasteStarted signal sets isExtFile/computePremise before rows are inserted
+            cConnector.smartPaste(theData, proofModel)
+        }
+    }
+    
+    Shortcut {
+        sequence: "Ctrl+Shift+C"
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            cConnector.smartCopy(theData, proofID.selectedIndices)
+        }
     }
 
     ProofArea {

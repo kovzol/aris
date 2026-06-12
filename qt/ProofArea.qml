@@ -22,13 +22,56 @@ import QtQuick.Controls 2.5
 import proof.model 1.0
 
 Item {
+    id: rootProofArea
+
+    property var selectedIndices: []
+    property int lastSelectedIndex: -1
 
     property var combo2: [["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"], ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence", "Distribution", "Equivalence", "Double Negation", "Exportation", "Subsumption"], ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"], ["Lemma", "Subproof", "Sequence", "Induction"], ["Identity ", "Negation", "Dominance", "Symbol Negation"]]
     anchors.fill: parent
 
+    Shortcut {
+        sequences: ["Ctrl+A", "Meta+A"]
+        context: Qt.ApplicationShortcut
+        onActivated: {
+            var all = []
+            for (var i = 0; i < listView.count; i++) {
+                all.push(i)
+            }
+            rootProofArea.selectedIndices = all
+            rootProofArea.lastSelectedIndex = listView.count > 0 ? listView.count - 1 : -1
+            
+            // Defocus any active text field so the selection is visually obvious
+            rootProofArea.forceActiveFocus()
+        }
+    }
+
+    Shortcut {
+        sequence: StandardKey.Cancel // Maps to Escape
+        onActivated: {
+            if (rootProofArea.selectedIndices.length > 0) {
+                rootProofArea.selectedIndices = []
+                rootProofArea.lastSelectedIndex = -1
+                rootProofArea.forceActiveFocus()
+            }
+        }
+    }
+
     function resetViewState() {
         listView.currentIndex = 0
         listView.positionViewAtBeginning()
+    }
+
+    MouseArea {
+        anchors.fill: proofAreaID
+        z: -1
+        onClicked: {
+            if (rootProofArea.selectedIndices.length > 0) {
+                rootProofArea.selectedIndices = []
+                rootProofArea.lastSelectedIndex = -1
+                rootProofArea.forceActiveFocus()
+            }
+        }
     }
 
     ColumnLayout {
@@ -36,9 +79,9 @@ Item {
 
         anchors {
             fill: parent
-            leftMargin: keyboardID.width + 20
-            topMargin: 20
-            rightMargin: 20
+            leftMargin: keyboardID.width + scaledSpacing * 2
+            topMargin: scaledSpacing * 2
+            rightMargin: scaledSpacing * 2
         }
 
         ListView {
@@ -52,7 +95,7 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            spacing: 10
+            spacing: scaledSpacing
             ScrollBar.vertical: ScrollBar {}
 
             onCurrentItemChanged: {
@@ -65,22 +108,28 @@ Item {
     Component {
         id: proofLineID
 
-        RowLayout {
-            id: root_delegate
+        Column {
+            id: outerColumn
+            width: parent ? parent.width : 0
+            spacing: 0
 
+            // Properties here so ALL descendants (RowLayout + Text) can access by bare name
             property bool editCombos: (!isExtFile || type === "choose")
             property var arr: model.refs
             property string type: model.type
             property int indexx: model.index
             property bool vis: type === "premise" || type === "subproof"
                                || type === "sf"
-            property string textFieldColor: (listView.currentIndex
-                                             !== -1) ? (proofModel.data(
-                                                            proofModel.index(
-                                                                listView.currentIndex,
-                                                                0),
-                                                            263).includes(
-                                                            model.line) ? (darkMode ? "brown" : "yellow") : (darkMode ? "#1F1A24" : "white")) : (darkMode ? "#332940" : "lightgrey")
+            property string textFieldColor: {
+                if (rootProofArea.selectedIndices.includes(indexx)) {
+                    return darkMode ? "#5C469C" : "#E6E6FA"
+                }
+                if (listView.currentIndex !== -1) {
+                    var currentRefs = proofModel.data(proofModel.index(listView.currentIndex, 0), 263)
+                    return (currentRefs && currentRefs.includes(model.line)) ? (darkMode ? "brown" : "yellow") : (darkMode ? "#1F1A24" : "white")
+                }
+                return darkMode ? "#332940" : "lightgrey"
+            }
 
             // Function to refresh the line color after selecting/de-selecting references
             function refreshTextFieldColor() {
@@ -89,23 +138,29 @@ Item {
                 listView.currentIndex = temp
             }
 
-            spacing: 10
-            width: (parent) ? parent.width : 0
-            Layout.fillWidth: true
+            RowLayout {
+                id: root_delegate
+                spacing: scaledSpacing
+                width: parent.width
+                Layout.fillWidth: true
 
             // Line Number Button
             Button {
                 id: lineNumberID
 
-                height: theTextID.height
-                width: height
+                Layout.preferredHeight: theTextID.height
+                // Content-aware width: at least as tall as it is wide (square),
+                // but expands for 2-digit line numbers at high zoom.
+                Layout.preferredWidth: Math.max(height, lineNumTextID.implicitWidth + scaledSpacing)
                 palette {
                     button: darkMode ? "#1F1A24" : "white"
                 }
 
                 Text {
+                    id: lineNumTextID
                     anchors.centerIn: parent
                     font.italic: true
+                    font.pointSize: scaledFontSize
                     text: model.line
                     color: theTextID.color
                 }
@@ -131,6 +186,7 @@ Item {
                         console.log("Invalid Operation: Invalid reference to subproof")
                     else {
                         cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         var array = Array.from(proofModel.data(
                                                    proofModel.index(
                                                        listView.currentIndex,
@@ -159,16 +215,34 @@ Item {
                 id: theTextID
 
                 color: darkMode ? "white" : "black"
-                height: font.pointSize + 10
+                height: scaledFontSize + scaledSpacing
+                font.pointSize: scaledFontSize
                 Layout.leftMargin: model.ind
                 Layout.fillWidth: true
+
+                Keys.onPressed: (event) => {
+                    if ((event.modifiers & Qt.ControlModifier || event.modifiers & Qt.MetaModifier) && event.key === Qt.Key_A) {
+                        var all = []
+                        for (var i = 0; i < listView.count; i++) {
+                            all.push(i)
+                        }
+                        rootProofArea.selectedIndices = all
+                        rootProofArea.lastSelectedIndex = listView.count > 0 ? listView.count - 1 : -1
+                        rootProofArea.forceActiveFocus()
+                        event.accepted = true
+                    }
+                }
 
                 background: Rectangle {
                     id: backRectID
                     border.width: 1
-                    border.color: ((cConnector.evalText).includes(
-                                       "Error in line " + (indexx + 1) + " -")
-                                   && cConnector.evalText !== "Evaluate Proof") ? "red" : (cConnector.evalText === "Evaluate Proof") ? (darkMode ? "white" : "black") : "springgreen"
+                    border.color: {
+                        if (cConnector.evalText === "Evaluate Proof")
+                            return darkMode ? "white" : "black"
+                        if (model.errMsg !== "")
+                            return "red"
+                        return "springgreen"
+                    }
                     color: textFieldColor
                 }
 
@@ -178,12 +252,76 @@ Item {
                 MouseArea {
 
                     anchors.fill: parent
+                    
+                    property int dragStartIndex: -1
+                    
+                    onPressed: (mouse) => {
+                        if (mouse.modifiers & Qt.ControlModifier || mouse.modifiers & Qt.ShiftModifier || mouse.modifiers & Qt.MetaModifier) {
+                            dragStartIndex = -1
+                        } else {
+                            dragStartIndex = indexx
+                        }
+                    }
+                    
+                    onPositionChanged: (mouse) => {
+                        if (dragStartIndex !== -1) {
+                            var mappedPos = mapToItem(listView.contentItem, mouse.x, mouse.y)
+                            var currentIndexHovered = listView.indexAt(mappedPos.x, mappedPos.y)
+
+                            if (currentIndexHovered !== -1) {
+                                var start = Math.min(dragStartIndex, currentIndexHovered)
+                                var end = Math.max(dragStartIndex, currentIndexHovered)
+
+                                var newSel = []
+                                for (var i = start; i <= end; i++) {
+                                    newSel.push(i)
+                                }
+
+                                if (rootProofArea.lastSelectedIndex !== currentIndexHovered || rootProofArea.selectedIndices.length !== newSel.length) {
+                                    rootProofArea.selectedIndices = newSel
+                                    rootProofArea.lastSelectedIndex = currentIndexHovered
+                                }
+                            }
+                        }
+                    }
+
+                    onReleased: (mouse) => {
+                        dragStartIndex = -1
+                    }
+                    
                     //propagateComposedEvents: true
-                    onClicked: {
-                        listView.currentIndex = index
-                        parent.forceActiveFocus()
-                        parent.cursorPosition = parent.positionAt(mouseX,
-                                                                  mouseY)
+                    onClicked: (mouse) => {
+                        if (mouse.modifiers & Qt.ControlModifier || mouse.modifiers & Qt.MetaModifier) {
+                            var sel = Array.from(rootProofArea.selectedIndices)
+                            var pos = sel.indexOf(indexx)
+                            if (pos !== -1) {
+                                sel.splice(pos, 1)
+                            } else {
+                                sel.push(indexx)
+                            }
+                            rootProofArea.selectedIndices = sel
+                            rootProofArea.lastSelectedIndex = indexx
+                            parent.forceActiveFocus()
+                        } else if (mouse.modifiers & Qt.ShiftModifier) {
+                            var start = rootProofArea.lastSelectedIndex !== -1 ? rootProofArea.lastSelectedIndex : 0
+                            var end = indexx
+                            if (start > end) {
+                                var temp = start; start = end; end = temp;
+                            }
+                            var sel2 = Array.from(rootProofArea.selectedIndices)
+                            for (var i = start; i <= end; i++) {
+                                if (sel2.indexOf(i) === -1) sel2.push(i)
+                            }
+                            rootProofArea.selectedIndices = sel2
+                            rootProofArea.lastSelectedIndex = indexx
+                            parent.forceActiveFocus()
+                        } else {
+                            rootProofArea.selectedIndices = []
+                            rootProofArea.lastSelectedIndex = indexx
+                            listView.currentIndex = index
+                            parent.forceActiveFocus()
+                            parent.cursorPosition = parent.positionAt(mouse.x, mouse.y)
+                        }
                     }
                 }
 
@@ -227,16 +365,30 @@ Item {
                 id: ruleID
 
                 height: theTextID.height
-                width: 50
+                // Cap width so it never squeezes the TextField;
+                // shorter  text at high zoom via the text binding below.
+                width: Math.min(implicitWidth + 8, 80 * Math.min(zoomFactor, 1.5))
                 visible: vis
+                clip: true
 
-                Text {
-                    anchors.centerIn: parent
-                    font.italic: true
-                    text: model.type
-                    color: darkMode ? "white" : "black"
-                    opacity: darkMode ? 0.87 : 1
+                font.italic: true
+                font.pointSize: scaledFontSize
+                // Short form when zoomed in (>150%) so label stays compact
+                text: {
+                    if (zoomFactor > 1.5) {
+                        if (model.type === "premise")  return "P"
+                        if (model.type === "subproof") return "SP"
+                        if (model.type === "sf")       return "SF"
+                    }
+                    return model.type
                 }
+                color: darkMode ? "white" : "black"
+                opacity: darkMode ? 0.87 : 1
+
+                // Tooltip shows full word when abbreviated
+                ToolTip.visible: zoomFactor > 1.5 && ruleHoverID.containsMouse
+                ToolTip.text: model.type
+                MouseArea { id: ruleHoverID; anchors.fill: parent; hoverEnabled: true }
             }
 
             // First ComboBox to select rule
@@ -247,10 +399,30 @@ Item {
                     button: darkMode ? "#CF6679" : "white"
                     buttonText: "black"
                     window: darkMode ? "#CF6679" : "white"
+                    base: darkMode ? "#CF6679" : "white"
+                    text: "black"
                 }
 
                 visible: !vis
-                height: theTextID.height
+                Layout.preferredHeight: theTextID.height
+                // Width tracks the scaled font; stays compact via capped font above 150%
+                Layout.preferredWidth: implicitWidth
+                font.pointSize: zoomFactor > 1.5
+                                ? Math.round(scaledFontSize * 0.8)
+                                : scaledFontSize
+
+                // Short display labels above 150% zoom; full names still in the popup
+                displayText: {
+                    if (zoomFactor > 1.5) {
+                        var shorts1 = ["Inf", "Eq", "Pred", "Misc", "Bool"]
+                        return shorts1[currentIndex] ?? currentText
+                    }
+                    return currentText
+                }
+
+                hoverEnabled: true
+                ToolTip.visible: zoomFactor > 1.5 && hovered
+                ToolTip.text: currentText
 
                 onActivated: {
                     editCombos = true
@@ -285,14 +457,46 @@ Item {
                     button: darkMode ? "#CF6679" : "white"
                     buttonText: "black"
                     window: darkMode ? "#CF6679" : "white"
+                    base: darkMode ? "#CF6679" : "white"
+                    text: "black"
                 }
 
                 // TODO: Fix width maybe
                 visible: !vis
-                height: theTextID.height
+                Layout.preferredHeight: theTextID.height
+                // Width tracks the scaled font; stays compact via capped font above 150%
+                Layout.preferredWidth: implicitWidth
+                font.pointSize: zoomFactor > 1.5
+                                ? Math.round(scaledFontSize * 0.8)
+                                : scaledFontSize
+
+                // Short display labels above 150% zoom; full names still in the popup
+                displayText: {
+                    if (zoomFactor > 1.5) {
+                        var shorts = {
+                            "Modus Ponens": "MP", "Addition": "Add", "Simplification": "Simp", 
+                            "Conjunction": "Conj", "Hypothetical Syllogism": "HS", 
+                            "Disjunctive Syllogism": "DS", "Excluded middle": "EM", 
+                            "Constructive Dilemma": "CD",
+                            "Implication": "Impl", "DeMorgan": "DeM", "Association": "Assoc", 
+                            "Commutativity": "Comm", "Idempotence": "Idem", "Distribution": "Dist", 
+                            "Equivalence": "Equiv", "Double Negation": "DN", "Exportation": "Exp", 
+                            "Subsumption": "Sub",
+                            "Universal Generalization": "UG", "Universal Instantiation": "UI", 
+                            "Existential Generalization": "EG", "Existential Instantiation": "EI", 
+                            "Bound Variable Substitution": "BVS", "Null Quantifier": "NQ", 
+                            "Prenex": "Prenex", "Identity": "Iden", "Free Variable Substitution": "FVS",
+                            "Lemma": "Lem", "Subproof": "SP", "Sequence": "Seq", "Induction": "Ind",
+                            "Identity ": "Iden", "Negation": "Neg", "Dominance": "Dom", 
+                            "Symbol Negation": "SymNeg"
+                        }
+                        return shorts[currentText] || currentText
+                    }
+                    return currentText
+                }
 
                 hoverEnabled: true
-                ToolTip.visible: hovered
+                ToolTip.visible: hovered && currentText !== ""
                 ToolTip.text: currentText
 
                 onActivated: {
@@ -319,9 +523,10 @@ Item {
 
                 text: "*"
                 font.bold: true
+                font.pointSize: scaledFontSize
 
                 height: theTextID.height
-                width: 50
+                width: implicitWidth + 8
                 visible: !vis && editCombos
 
                 ToolTip.visible: toolTipText ? mID.containsMouse : false
@@ -343,10 +548,13 @@ Item {
                     model: arr
 
                     onModelChanged: {
-                        root_delegate.refreshTextFieldColor()
+                        outerColumn.refreshTextFieldColor()
                     }
 
                     Button {
+                        // Box height and width both scale with zoom
+                        height: theTextID.height
+                        width: Math.max(height, refNumTextID.implicitWidth + scaledSpacing)
                         visible: (modelData === -1) ? false : true
 
                         palette {
@@ -361,11 +569,14 @@ Item {
                                                    listView.currentIndex,
                                                    0), ar, 263)
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
 
                         Text {
+                            id: refNumTextID
                             anchors.centerIn: parent
                             font.italic: true
+                            font.pointSize: scaledFontSize
                             text: modelData
                             color: darkMode ? "white" : "black"
                         }
@@ -377,7 +588,9 @@ Item {
             Button {
                 id: plusID
 
-                height: theTextID.height
+                Layout.preferredHeight: theTextID.height
+                // Extra padding so the "/" never clips at max zoom
+                Layout.preferredWidth: plusTextID.implicitWidth + scaledSpacing * 4
                 palette {
                     button: darkMode ? "#1F1A24" : "white"
                 }
@@ -391,8 +604,10 @@ Item {
                 }
 
                 Text {
+                    id: plusTextID
                     anchors.centerIn: parent
                     text: "+ / \u2013"
+                    font.pointSize: scaledFontSize
                     color: theTextID.color
                 }
 
@@ -415,6 +630,7 @@ Item {
                             proofModel.updateRefs(insertIndex, true)
                             listView.currentIndex = insertIndex
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                             premiseCount = premiseCount + 1
                         }
                     }
@@ -430,6 +646,7 @@ Item {
                             proofModel.updateRefs(index + 1, true)
                             listView.currentIndex = index + 1
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
                     }
 
@@ -443,6 +660,7 @@ Item {
                             proofModel.updateRefs(index + 1, true)
                             listView.currentIndex = index + 1
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
                     }
 
@@ -460,6 +678,7 @@ Item {
                             proofModel.updateRefs(index + 1, true)
                             listView.currentIndex = index + 1
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
                     }
 
@@ -488,12 +707,30 @@ Item {
                             }
                             
                             cConnector.evalText = "Evaluate Proof"
+                            proofModel.clearErrors()
                         }
                     }
                 }
             }
-        }
-    }
+            } // end RowLayout
+
+            // Inline error — slides in when errMsg is non-empty
+            Text {
+                id: errorDetailID
+                visible: model.errMsg !== ""
+                text: model.errMsg
+                color: "#FF6B6B"
+                font.pointSize: Math.max(10, scaledFontSize)
+                font.italic: true
+                leftPadding: scaledSpacing * 2
+                wrapMode: Text.WordWrap
+                width: outerColumn.width
+                opacity: 0.0
+                onVisibleChanged: opacity = visible ? 1.0 : 0.0
+                Behavior on opacity { NumberAnimation { duration: 180 } }
+            }
+        } // end Column
+    } // end Component
 
     // Background to highlight current line
     Component {

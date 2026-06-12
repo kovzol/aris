@@ -30,6 +30,7 @@ struct ProofLine{
     int pInd;
     QList<int> pRefs;
     unsigned char *fname;
+    QString pErrorMsg;   // inline error text, empty = no error
 };
 
 class ProofData : public QObject
@@ -53,6 +54,7 @@ signals:
 public slots:
     void insertLine(int index, int a, QString b, QString c, bool d, bool e, bool f, int g, QList<int> h);
     void removeLineAt(int index);
+    void setErrorAt(int index, const QString &msg);   // set inline error for a line
     Q_INVOKABLE void reset();
 
 private:
