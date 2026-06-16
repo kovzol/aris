@@ -33,7 +33,6 @@ ApplicationWindow {
     property string filename: "Untitled"
     property bool fileExists: isExtFile
     property bool fileModified: false
-    property int premiseCount: 1
     property bool computePremise: false // set to true if Open or Import Proof are used
     property int importMode: 0
 
@@ -52,16 +51,8 @@ ApplicationWindow {
     function zoomReset() { zoomFactor = 1.0 }
    
 
-    // Function to compute premiseCount, used when opening new file
-    function computePremiseCount(item) {
-        premiseCount = 0
-        for (var child in item.contentItem.children) {
-            if (item.contentItem.children[child].type === "premise")
-                premiseCount++
-            //            else if (item.contentItem.children[child].type !== "undefined")
-            //                break
-        }
-    }
+    // premiseCount is now a C++ Q_PROPERTY on proofModel.
+    // Use proofModel.recomputePremiseCount() after opening/importing a file.
 
     // Function to check if the item is a TextField QML Type
     function isTextField(item) {
@@ -74,7 +65,7 @@ ApplicationWindow {
 
         theGoals.reset()
 
-        premiseCount = 1
+        proofModel.premiseCount = 1
         computePremise = false
         isExtFile = false
         fileExists = false
@@ -104,13 +95,17 @@ ApplicationWindow {
         isExtFile = true
         computePremise = true
 
-        if (Qt.platform.os === "wasm")
-            auxConnector.wasmImportProofWithMode(theData, cConnector, proofModel, importMode)
-        else
-            importID.open()
-
         importBehaviorID.close()
         menuOptions.close()
+
+        if (Qt.platform.os === "wasm") {
+            auxConnector.wasmImportProofWithMode(theData, cConnector, proofModel, importMode)
+        } else {
+            // Defer the native dialog so the QML dialog can close smoothly first
+            Qt.callLater(function() {
+                importID.open()
+            })
+        }
     }
 
     width: 1200
@@ -251,6 +246,7 @@ ApplicationWindow {
             isExtFile = true
             fileModified = false
             computePremise = true
+            proofModel.recomputePremiseCount()
         }
     }
 
@@ -292,6 +288,7 @@ ApplicationWindow {
         onAccepted: {
             auxConnector.importProofWithMode(selectedFile, theData, cConnector,
                                      proofModel, importMode)
+            proofModel.recomputePremiseCount()
         }
     }
 
@@ -543,22 +540,24 @@ ApplicationWindow {
     }
 
     //  Zoom keyboard shortcuts
-    Shortcut { sequence: StandardKey.ZoomIn;  onActivated: zoomIn()    }
+    Shortcut { sequences: [ StandardKey.ZoomIn ];  onActivated: zoomIn()    }
     Shortcut { sequence: "Ctrl+=";            onActivated: zoomIn()    }
-    Shortcut { sequence: StandardKey.ZoomOut; onActivated: zoomOut()   }
+    Shortcut { sequences: [ StandardKey.ZoomOut ]; onActivated: zoomOut()   }
     Shortcut { sequence: "Ctrl+0";            onActivated: zoomReset() }
+
+    // Smart paste — Ctrl+V at window scope so TextFields still handle their own Ctrl+V.
+    // Only fires when no text-editing widget has consumed the key.
     Shortcut {
-        sequence: "Ctrl+Shift+V"
-        context: Qt.ApplicationShortcut
+        sequence: "Ctrl+V"
         onActivated: {
             // smartPasteStarted signal sets isExtFile/computePremise before rows are inserted
             cConnector.smartPaste(theData, proofModel)
         }
     }
-    
+
+    // Smart copy — Ctrl+C at window scope; TextFields consume it first when focused.
     Shortcut {
-        sequence: "Ctrl+Shift+C"
-        context: Qt.ApplicationShortcut
+        sequence: "Ctrl+C"
         onActivated: {
             cConnector.smartCopy(theData, proofID.selectedIndices)
         }

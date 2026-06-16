@@ -226,3 +226,64 @@ void ProofModel::clearErrors()
         emit dataChanged(index(i, 0), index(i, 0), {ErrorRole});
     }
 }
+
+// premiseCount property 
+
+int ProofModel::premiseCount() const
+{
+    return mPremiseCount;
+}
+
+void ProofModel::setPremiseCount(int n)
+{
+    if (mPremiseCount == n) return;
+    mPremiseCount = n;
+    emit premiseCountChanged(n);
+}
+
+// Toggle a single row between "premise" and "choose".
+// Also clears the row's refs to {-1} and adjusts mPremiseCount by ±1.
+// Returns false if the row is out of range or is a subproof/sf line.
+bool ProofModel::toggleLineType(int row)
+{
+    if (!mLines || row < 0 || row >= mLines->lines().size())
+        return false;
+
+    ProofLine ln = mLines->lines().at(row);
+
+    // Refuse to touch structural subproof lines.
+    if (ln.pType == "sf" || ln.pType == "subproof")
+        return false;
+
+    if (ln.pType == "premise") {
+        ln.pType = "choose";
+        ln.pRefs = {-1};
+        if (!mLines->setLineAt(row, ln)) return false;
+        emit dataChanged(index(row, 0), index(row, 0), {TypeRole, RefsRole});
+        setPremiseCount(mPremiseCount - 1);
+    } else {
+        // Any non-premise, non-subproof type → "premise"
+        ln.pType = "premise";
+        ln.pRefs = {-1};
+        if (!mLines->setLineAt(row, ln)) return false;
+        emit dataChanged(index(row, 0), index(row, 0), {TypeRole, RefsRole});
+        setPremiseCount(mPremiseCount + 1);
+    }
+    return true;
+}
+
+// Rescan all rows and recompute premiseCount from scratch.
+// A "premise" is any leading row whose type == "premise" (contiguous from row 0).
+void ProofModel::recomputePremiseCount()
+{
+    if (!mLines) return;
+    int count = 0;
+    const int n = mLines->lines().size();
+    for (int i = 0; i < n; i++) {
+        if (mLines->lines().at(i).pType == "premise")
+            count++;
+        else
+            break;
+    }
+    setPremiseCount(count);
+}
