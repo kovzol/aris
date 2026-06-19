@@ -1,0 +1,40 @@
+name: Qt Build Check
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-qt-native:
+    name: Native Qt Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -f docker/qt.Dockerfile -t aris-qt .
+
+     
+
+  build-qt-wasm:
+    name: WebAssembly Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -f docker/wasm.Dockerfile -t aris-wasm .
+
+     
+
+  all-builds:
+    name: All Builds Passed
+    runs-on: ubuntu-latest
+    needs: [build-qt-native, build-qt-wasm]
+    steps:
+      - name: Confirm success
+        run: echo "All builds passed successfully."
