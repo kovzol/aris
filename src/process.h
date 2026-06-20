@@ -43,17 +43,20 @@ extern "C" {
                || !strncmp (s, t.tau, t.cl)		\
                || !strncmp (s, t.ctr, t.cl)		\
                || !strncmp (s, t.elm, t.cl)		\
-               || !strncmp (s, t.nil, t.cl))
+               || !strncmp (s, t.nil, t.cl)		\
+               || !strncmp (s, t.x_or, t.cl))
 
 #define IS_BIN_CONN(s) (!strncmp (s,AND,CL)	\
             || !strncmp (s,OR,CL)	\
             || !strncmp (s,CON,CL)	\
-            || !strncmp (s,BIC,CL))
+            || !strncmp (s,BIC,CL)	\
+            || !strncmp (s,XOR,CL))
 
 #define IS_SBIN_CONN(s) (!strncmp (s,S_AND,S_CL)            \
                          || !strncmp (s,S_OR,S_CL)          \
                          || !strncmp (s,S_CON,S_CL)         \
-                         || !strncmp (s,S_BIC,S_CL))
+                         || !strncmp (s,S_BIC,S_CL)         \
+                         || !strncmp (s,S_XOR,S_CL))
 
 #define ISCONN(s) IS_TYPE_CONN (s, main_conns)
 
@@ -82,6 +85,7 @@ enum CONN_ORDER {
   CTR_CONN,
   ELM_CONN,
   NIL_CONN,
+  XOR_CONN,
   NUM_CONNS
 };
 
@@ -99,6 +103,7 @@ struct connectives_list {
   char * ctr;
   char * elm;
   char * nil;
+  char * x_or;
   int cl;
   int nl;
 };
@@ -106,7 +111,8 @@ struct connectives_list {
 // Command-line interface connectives.
 
 static struct connectives_list cli_conns = {
-  "&", "|", "~", "$", "%", "@", "#", "!", "^", ":", ">", 1, 1
+  /* And  Or   Not  Con  Bic  Unv  Exl  Tau  Ctr  Elm  Nil  Xor  cl nl */
+  "&", "|", "~", "$", "%", "@", "#", "!", "?", ":", ">", "^", 1, 1
 };
 
 // GUI connectives.
@@ -121,54 +127,56 @@ static struct connectives_list cli_conns = {
 // Got a work around - using pixbufs.
 
 static struct connectives_list gui_conns = {
-  "\u2227",
-  "\u2228",
-  "\u00AC",
-  "\u2192",
-  "\u2194",
-  "\u2200",
-  "\u2203",
-  "\u22A4",
-  "\u22A5",
-  "\u2208",
-  "\u2349",
+  "\u2227",  /* AND  ∧ */
+  "\u2228",  /* OR   ∨ */
+  "\u00AC",  /* NOT  ¬ */
+  "\u2192",  /* CON  → */
+  "\u2194",  /* BIC  ↔ */
+  "\u2200",  /* UNV  ∀ */
+  "\u2203",  /* EXL  ∃ */
+  "\u22A4",  /* TAU  ⊤ */
+  "\u22A5",  /* CTR  ⊥ */
+  "\u2208",  /* ELM  ∈ */
+  "\u2349",  /* NIL  ⍉ */
+  "\u2295",  /* XOR  ⊕ */
   3, 2
-//    1, 1
 };
 
 
 static const char * conn_list_back[] = {
-  "\u2227",
-  "\u2228",
-  "\u00AC",
-  "\u2192",
-  "\u2194",
-  "\u2200",
-  "\u2203",
-  "\u22A4",
-  "\u22A5",
-  "\u2208",
-  "\u2349"
+  "\u2227",  /* AND */
+  "\u2228",  /* OR  */
+  "\u00AC",  /* NOT */
+  "\u2192",  /* CON */
+  "\u2194",  /* BIC */
+  "\u2200",  /* UNV */
+  "\u2203",  /* EXL */
+  "\u22A4",  /* TAU */
+  "\u22A5",  /* CTR */
+  "\u2208",  /* ELM */
+  "\u2349",  /* NIL */
+  "\u2295"   /* XOR */
 };
 
 static const char * conn_list[] = {
-  "&", "|", "~", "$", "%", "@", "#", "!", "^", ":", ">"
+  "&", "|", "~", "$", "%", "@", "#", "!", "?", ":", ">", "^"
 };
 
 // Sexpr connectives.
 
 static struct connectives_list sexpr_conns = {
-  "<a>",
-  "<o>",
-  "<n>",
-  "<i>",
-  "<b>",
-  "<u>",
-  "<e>",
-  "<t>",
-  "<c>",
-  "<l>",
-  "<d>",
+  "<a>",  /* AND */
+  "<o>",  /* OR  */
+  "<n>",  /* NOT */
+  "<i>",  /* CON */
+  "<b>",  /* BIC */
+  "<u>",  /* UNV */
+  "<e>",  /* EXL */
+  "<t>",  /* TAU */
+  "<c>",  /* CTR */
+  "<l>",  /* ELM */
+  "<d>",  /* NIL */
+  "<x>",  /* XOR */
   3, 3
 };
 
@@ -189,6 +197,7 @@ extern struct connectives_list main_conns;
 #define CTR main_conns.ctr
 #define ELM main_conns.elm
 #define NIL main_conns.nil
+#define XOR main_conns.x_or
 #define CL main_conns.cl
 #define NL main_conns.nl
 
@@ -203,6 +212,7 @@ extern struct connectives_list main_conns;
 #define U_CTR (unsigned char *) CTR
 #define U_ELM (unsigned char *) ELM
 #define U_NIL (unsigned char *) NIL
+#define U_XOR (unsigned char *) XOR
 
 // Commonly used error messages.
 
@@ -229,7 +239,8 @@ enum SEN_IDS {
   SEN_ID_LT = -11,
   SEN_ID_ELM = -12,
   SEN_ID_NIL = -13,
-  SEN_ID_END = -14
+  SEN_ID_XOR = -14,
+  SEN_ID_END = -15
 };
 
 // Sentence id structure.

@@ -89,7 +89,7 @@ Item {
         proofModel.clearErrors()
     }
 
-    property var combo2: [["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma"], ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence", "Distribution", "Equivalence", "Double Negation", "Exportation", "Subsumption"], ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"], ["Lemma", "Subproof", "Sequence", "Induction"], ["Identity ", "Negation", "Dominance", "Symbol Negation"]]
+    property var combo2: [["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma", "XOR Introduction", "XOR Elimination"], ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence", "Distribution", "Equivalence", "Double Negation", "Exportation", "Subsumption", "Contrapositive"], ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"], ["Lemma", "Subproof", "Sequence", "Induction"], ["Identity ", "Negation", "Dominance", "Symbol Negation"]]
     anchors.fill: parent
 
     Shortcut {

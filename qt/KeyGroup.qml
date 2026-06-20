@@ -107,6 +107,13 @@ ToolBar {
             ToolTip.text: "Null"
         }
 
+        KeyButton {
+            id: xorButton
+
+            txt: "\u2295"
+            ToolTip.text: "XOR"
+        }
+
         ToolSeparator {
             orientation: Qt.Horizontal
         }

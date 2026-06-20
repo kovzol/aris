@@ -81,16 +81,18 @@ Connector::Connector(QObject *parent)
     rulesMap["premise"] = -1;                       rulesMap["Modus Ponens"] = 0;                   rulesMap["Addition"] = 1;
     rulesMap["Simplification"] = 2;                 rulesMap["Conjunction"] = 3;                    rulesMap["Hypothetical Syllogism"] = 4;
     rulesMap["Disjunctive Syllogism"] = 5;          rulesMap["Excluded middle"] = 6;                rulesMap["Constructive Dilemma"] = 7;
-    rulesMap["Implication"] = 8;                    rulesMap["DeMorgan"] = 9;                       rulesMap["Association"] = 10;
-    rulesMap["Commutativity"] = 11;                 rulesMap["Idempotence"] = 12;                   rulesMap["Distribution"] = 13;
-    rulesMap["Equivalence"] = 14;                   rulesMap["Double Negation"] = 15;               rulesMap["Exportation"] = 16;
-    rulesMap["Subsumption"] = 17;                   rulesMap["Universal Generalization"] = 18;      rulesMap["Universal Instantiation"] = 19;
-    rulesMap["Existential Generalization"] = 20;    rulesMap["Existential Instantiation"] = 21;     rulesMap["Bound Variable Substitution"] = 22;
-    rulesMap["Null Quantifier"] = 23;               rulesMap["Prenex"] = 24;                        rulesMap["Identity"] = 25;
-    rulesMap["Free Variable Substitution"] = 26;    rulesMap["Lemma"] = 27;                         rulesMap["subproof"] = 28;
-    rulesMap["Sequence"] = 29;                      rulesMap["Induction"] = 30;                     rulesMap["Boolean Identity"] = 31;
-    rulesMap["Boolean Negation"] = 32;              rulesMap["Boolean Dominance"] = 33;             rulesMap["Symbol Negation"] = 34;
+    rulesMap["Implication"] = 10;                   rulesMap["DeMorgan"] = 11;                      rulesMap["Association"] = 12;
+    rulesMap["Commutativity"] = 13;                 rulesMap["Idempotence"] = 14;                   rulesMap["Distribution"] = 15;
+    rulesMap["Equivalence"] = 16;                   rulesMap["Double Negation"] = 17;               rulesMap["Exportation"] = 18;
+    rulesMap["Subsumption"] = 19;                   rulesMap["Contrapositive"] = 20;
+    rulesMap["Universal Generalization"] = 21;      rulesMap["Universal Instantiation"] = 22;
+    rulesMap["Existential Generalization"] = 23;    rulesMap["Existential Instantiation"] = 24;     rulesMap["Bound Variable Substitution"] = 25;
+    rulesMap["Null Quantifier"] = 26;               rulesMap["Prenex"] = 27;                        rulesMap["Identity"] = 28;
+    rulesMap["Free Variable Substitution"] = 29;    rulesMap["Lemma"] = 30;                         rulesMap["subproof"] = 31;
+    rulesMap["Sequence"] = 32;                      rulesMap["Induction"] = 33;                     rulesMap["Boolean Identity"] = 34;
+    rulesMap["Boolean Negation"] = 35;              rulesMap["Boolean Dominance"] = 36;             rulesMap["Symbol Negation"] = 37;
     rulesMap["Excluded Middle"] = 6;                rulesMap["Excluded middle"] = 6;
+    rulesMap["XOR Introduction"] = 8;               rulesMap["XOR Elimination"] = 9;
     rulesMap["sf"] = -2;
     
     reverseMapInit();
@@ -103,15 +105,17 @@ void Connector::reverseMapInit()
     reverseRulesMap[-1] = "premise";                        reverseRulesMap[0] = "Modus Ponens";                    reverseRulesMap[1] = "Addition";
     reverseRulesMap[2] = "Simplification";                  reverseRulesMap[3] = "Conjunction";                     reverseRulesMap[4] = "Hypothetical Syllogism";
     reverseRulesMap[5] = "Disjunctive Syllogism";           reverseRulesMap[6] = "Excluded middle";                 reverseRulesMap[7] = "Constructive Dilemma";
-    reverseRulesMap[8] = "Implication";                     reverseRulesMap[9] = "DeMorgan";                        reverseRulesMap[10] = "Association";
-    reverseRulesMap[11] = "Commutativity";                  reverseRulesMap[12] = "Idempotence";                    reverseRulesMap[13] = "Distribution";
-    reverseRulesMap[14] = "Equivalence";                    reverseRulesMap[15] = "Double Negation";                reverseRulesMap[16] = "Exportation";
-    reverseRulesMap[17] = "Subsumption";                    reverseRulesMap[18] = "Universal Generalization";       reverseRulesMap[19] = "Universal Instantiation";
-    reverseRulesMap[20] = "Existential Generalization";     reverseRulesMap[21] = "Existential Instantiation";      reverseRulesMap[22] = "Bound Variable Substitution";
-    reverseRulesMap[23] = "Null Quantifier";                reverseRulesMap[24] = "Prenex";                         reverseRulesMap[25] = "Identity";
-    reverseRulesMap[26] = "Free Variable Substitution";     reverseRulesMap[27] = "Lemma";                          reverseRulesMap[28] = "subproof";
-    reverseRulesMap[29] = "Sequence";                       reverseRulesMap[30] = "Induction";                      reverseRulesMap[31] = "Identity ";
-    reverseRulesMap[32] = "Negation";                       reverseRulesMap[33] = "Dominance";                      reverseRulesMap[34] = "Symbol Negation";
+    reverseRulesMap[8] = "XOR Introduction";               reverseRulesMap[9] = "XOR Elimination";
+    reverseRulesMap[10] = "Implication";                    reverseRulesMap[11] = "DeMorgan";                       reverseRulesMap[12] = "Association";
+    reverseRulesMap[13] = "Commutativity";                  reverseRulesMap[14] = "Idempotence";                    reverseRulesMap[15] = "Distribution";
+    reverseRulesMap[16] = "Equivalence";                    reverseRulesMap[17] = "Double Negation";                reverseRulesMap[18] = "Exportation";
+    reverseRulesMap[19] = "Subsumption";                    reverseRulesMap[20] = "Contrapositive";
+    reverseRulesMap[21] = "Universal Generalization";       reverseRulesMap[22] = "Universal Instantiation";
+    reverseRulesMap[23] = "Existential Generalization";     reverseRulesMap[24] = "Existential Instantiation";      reverseRulesMap[25] = "Bound Variable Substitution";
+    reverseRulesMap[26] = "Null Quantifier";                reverseRulesMap[27] = "Prenex";                         reverseRulesMap[28] = "Identity";
+    reverseRulesMap[29] = "Free Variable Substitution";     reverseRulesMap[30] = "Lemma";                          reverseRulesMap[31] = "subproof";
+    reverseRulesMap[32] = "Sequence";                       reverseRulesMap[33] = "Induction";                      reverseRulesMap[34] = "Boolean Identity";
+    reverseRulesMap[35] = "Boolean Negation";               reverseRulesMap[36] = "Boolean Dominance";              reverseRulesMap[37] = "Symbol Negation";
     reverseRulesMap[-2] = "sf";
 }
 
@@ -509,6 +513,8 @@ void Connector::smartPaste(ProofData *pd, ProofModel *pm)
         {"disjunctive syllogism",     "Disjunctive Syllogism"},  {"ds", "Disjunctive Syllogism"},
         {"excluded middle",           "Excluded Middle"}, {"em", "Excluded Middle"}, {"ex", "Excluded Middle"},
         {"constructive dilemma",      "Constructive Dilemma"}, {"cd", "Constructive Dilemma"},
+        {"xor introduction",          "XOR Introduction"}, {"xi", "XOR Introduction"},
+        {"xor elimination",           "XOR Elimination"}, {"xe", "XOR Elimination"},
         // Equivalence rules
         {"implication",               "Implication"},  {"impl", "Implication"}, {"im", "Implication"},
         {"demorgan",                  "DeMorgan"},     {"dem",  "DeMorgan"},    {"dm", "DeMorgan"},
@@ -521,6 +527,7 @@ void Connector::smartPaste(ProofData *pd, ProofModel *pm)
         {"double negation",           "Double Negation"},{"dn", "Double Negation"},
         {"exportation",               "Exportation"},  {"exp", "Exportation"},  {"ep", "Exportation"},
         {"subsumption",               "Subsumption"},  {"sub", "Subsumption"},  {"sb", "Subsumption"},
+        {"contrapositive",            "Contrapositive"},{"cp",  "Contrapositive"},
         // Predicate / quantifier rules
         {"universal generalization",  "Universal Generalization"},  {"ug", "Universal Generalization"},
         {"universal instantiation",   "Universal Instantiation"},   {"ui", "Universal Instantiation"},

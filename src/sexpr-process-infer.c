@@ -116,6 +116,30 @@ process_inference (unsigned char * conc, vec_t * prems, const char * rule)
             return NULL;
     }  /* End of constructive dilemma. */
 
+    if (!strcmp (rule, "xi"))
+    {
+        if (prems->num_stuff != 2)
+            return _("XOR Introduction requires exactly two (2) references.");
+
+        unsigned char * prem_0, * prem_1;
+        prem_0 = vec_str_nth (prems, 0);
+        prem_1 = vec_str_nth (prems, 1);
+
+        ret = proc_xi (prem_0, prem_1, conc);
+        if (!ret)
+            return NULL;
+    }  /* End of XOR introduction. */
+
+    if (!strcmp (rule, "xe"))
+    {
+        if (prems->num_stuff != 2)
+            return _("XOR Elimination requires exactly two (2) references.");
+
+        ret = proc_xe (prems, conc);
+        if (!ret)
+            return NULL;
+    }  /* End of XOR elimination. */
+
     if (!ret)
         return NOT_MINE;
     return ret;
@@ -661,3 +685,132 @@ proc_cd (vec_t * prems, unsigned char * conc)
     }
     return _("Error with Constructive Dilemma.");
 }
+
+/* XOR Introduction (xi).
+ *  Validates: conc = (P xor Q), prem_0 = P, prem_1 = Q
+ *  where one of P, Q must be the negation of the other.
+ *  input:
+ *    prem_0 - first premise.
+ *    prem_1 - second premise.
+ *    conc   - conclusion.
+ *  output:
+ *    CORRECT or an error string.
+ */
+char *
+proc_xi (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc)
+{
+    /* The conclusion must have XOR as its top connective. */
+    int ftc;
+    unsigned char * lsen, * rsen;
+
+    ftc = sexpr_find_top_connective (conc, S_XOR, &lsen, &rsen);
+    if (ftc == AEC_MEM)
+        return NULL;
+
+    if (ftc < 0)
+    {
+        if (lsen) free (lsen);
+        if (rsen) free (rsen);
+        return _("The conclusion must contain an XOR.");
+    }
+    int match_direct  = (!strcmp (lsen, prem_0) && !strcmp (rsen, prem_1));
+    int match_swapped = (!strcmp (lsen, prem_1) && !strcmp (rsen, prem_0));
+
+    free (lsen); free (rsen);
+
+    if (!match_direct && !match_swapped)
+        return _("The two references must match the two disjuncts of the XOR conclusion.");
+
+    return CORRECT;
+}
+
+/* XOR Elimination (xe).
+ *  From (P xor Q) and ~P (or ~Q), derive Q (or P).
+ *  From (P xor Q) and P (or Q), derive ~Q (or ~P).
+ *  input:
+ *    prems - vector of premises (one must be the XOR, the other is the minor premise).
+ *    conc  - the conclusion.
+ *  output:
+ *    CORRECT or an error string.
+ */
+char *
+proc_xe (vec_t * prems, unsigned char * conc)
+{
+    if (prems->num_stuff != 2)
+        return _("XOR Elimination requires exactly two (2) references.");
+
+    unsigned char * prem_0 = vec_str_nth (prems, 0);
+    unsigned char * prem_1 = vec_str_nth (prems, 1);
+
+    unsigned char * xor_ref = NULL, * minor_ref = NULL;
+    int ftc;
+    unsigned char * lsen = NULL, * rsen = NULL;
+
+    /* Try prem_0 as XOR */
+    ftc = sexpr_find_top_connective (prem_0, S_XOR, &lsen, &rsen);
+    if (ftc == AEC_MEM) return NULL;
+
+    if (ftc >= 0)
+    {
+        xor_ref = prem_0;
+        minor_ref = prem_1;
+    }
+    else
+    {
+        if (lsen) free (lsen);
+        if (rsen) free (rsen);
+        lsen = rsen = NULL;
+
+        /* Try prem_1 as XOR */
+        ftc = sexpr_find_top_connective (prem_1, S_XOR, &lsen, &rsen);
+        if (ftc == AEC_MEM) return NULL;
+        if (ftc < 0)
+        {
+            if (lsen) free (lsen);
+            if (rsen) free (rsen);
+            return _("One of the references must contain an XOR as its top connective.");
+        }
+        xor_ref = prem_1;
+        minor_ref = prem_0;
+    }
+
+    unsigned char * not_minor_ref;
+    if (sexpr_not_check (minor_ref))
+        not_minor_ref = sexpr_elim_not (minor_ref);
+    else
+        not_minor_ref = sexpr_add_not (minor_ref);
+
+    if (!not_minor_ref) { free (lsen); free (rsen); return NULL; }
+
+    unsigned char * not_conc;
+    if (sexpr_not_check (conc))
+        not_conc = sexpr_elim_not (conc);
+    else
+        not_conc = sexpr_add_not (conc);
+
+    if (!not_conc) { free (lsen); free (rsen); free (not_minor_ref); return NULL; }
+
+    int valid = 0;
+
+    /* Mode 1: minor_ref is ~disjunct, conc is disjunct */
+    if ((!strcmp(not_minor_ref, lsen) && !strcmp(conc, rsen)) ||
+        (!strcmp(not_minor_ref, rsen) && !strcmp(conc, lsen)))
+    {
+        valid = 1;
+    }
+
+    /* Mode 2: minor_ref is disjunct, conc is ~disjunct */
+    if ((!strcmp(minor_ref, lsen) && !strcmp(not_conc, rsen)) ||
+        (!strcmp(minor_ref, rsen) && !strcmp(not_conc, lsen)))
+    {
+        valid = 1;
+    }
+
+    free (lsen); free (rsen); free (not_minor_ref); free (not_conc);
+
+    if (valid)
+        return CORRECT;
+
+    return _("The minor premise and conclusion do not match the XOR disjuncts correctly.");
+}
+
