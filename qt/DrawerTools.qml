@@ -302,6 +302,10 @@ ToolBar {
                     text: "العربية"
                     onTriggered: settings.setLanguage("ar")
                 }
+                MenuItem {
+                    text: "Deutsch"
+                    onTriggered: settings.setLanguage("de")
+                }
             }
         }
 

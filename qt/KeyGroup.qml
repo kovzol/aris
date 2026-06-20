@@ -34,84 +34,84 @@ ToolBar {
             id: conjunctionButton
 
             txt: "\u2227"
-            ToolTip.text: "Conjunction"
+            ToolTip.text: qsTr("Conjunction")
         }
 
         KeyButton {
             id: disjunctionButton
 
             txt: "\u2228"
-            ToolTip.text: "Disjunction"
+            ToolTip.text: qsTr("Disjunction")
         }
 
         KeyButton {
             id: negationButton
 
             txt: "\u00ac"
-            ToolTip.text: "Negation"
+            ToolTip.text: qsTr("Negation")
         }
 
         KeyButton {
             id: implicationButton
 
             txt: "\u2192"
-            ToolTip.text: "Implication"
+            ToolTip.text: qsTr("Implication")
         }
 
         KeyButton {
             id: biconditionalButton
 
             txt: "\u2194"
-            ToolTip.text: "Bi-conditional"
+            ToolTip.text: qsTr("Bi-conditional")
         }
 
         KeyButton {
             id: forAllButton
 
             txt: "\u2200"
-            ToolTip.text: "For all"
+            ToolTip.text: qsTr("For all")
         }
 
         KeyButton {
             id: thereExistsButton
 
             txt: "\u2203"
-            ToolTip.text: "There exists"
+            ToolTip.text: qsTr("There exists")
         }
 
         KeyButton {
             id: tautologyButton
 
             txt: "\u22a4"
-            ToolTip.text: "Tautology"
+            ToolTip.text: qsTr("Tautology")
         }
 
         KeyButton {
             id: contradictionButton
 
             txt: "\u22a5"
-            ToolTip.text: "Contradiction"
+            ToolTip.text: qsTr("Contradiction")
         }
 
         KeyButton {
             id: belongsToButton
 
             txt: "\u2208"
-            ToolTip.text: "Belongs To"
+            ToolTip.text: qsTr("Belongs To")
         }
 
         KeyButton {
             id: nullButton
 
             txt: "\u2205"
-            ToolTip.text: "Null"
+            ToolTip.text: qsTr("Null")
         }
 
         KeyButton {
             id: xorButton
 
             txt: "\u2295"
-            ToolTip.text: "XOR"
+            ToolTip.text: qsTr("XOR")
         }
 
         ToolSeparator {

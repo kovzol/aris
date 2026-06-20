@@ -6,5 +6,6 @@
         <file>KeyGroup.qml</file>
         <file>DrawerTools.qml</file>
         <file>GoalLine.qml</file>
+        <file>RuleAbbreviations.js</file>
     </qresource>
 </RCC>

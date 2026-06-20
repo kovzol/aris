@@ -20,6 +20,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 import proof.model 1.0
+import "RuleAbbreviations.js" as Abbrevs
 
 Item {
     id: rootProofArea
@@ -89,7 +90,13 @@ Item {
         proofModel.clearErrors()
     }
 
-    property var combo2: [["Modus Ponens", "Addition", "Simplification", "Conjunction", "Hypothetical Syllogism", "Disjunctive Syllogism", "Excluded middle", "Constructive Dilemma", "XOR Introduction", "XOR Elimination"], ["Implication", "DeMorgan", "Association", "Commutativity", "Idempotence", "Distribution", "Equivalence", "Double Negation", "Exportation", "Subsumption", "Contrapositive"], ["Universal Generalization", "Universal Instantiation", "Existential Generalization", "Existential Instantiation", "Bound Variable Substitution", "Null Quantifier", "Prenex", "Identity", "Free Variable Substitution"], ["Lemma", "Subproof", "Sequence", "Induction"], ["Identity ", "Negation", "Dominance", "Symbol Negation"]]
+    property var combo2: [
+        [qsTr("Modus Ponens"), qsTr("Addition"), qsTr("Simplification"), qsTr("Conjunction"), qsTr("Hypothetical Syllogism"), qsTr("Disjunctive Syllogism"), qsTr("Excluded middle"), qsTr("Constructive Dilemma"), qsTr("XOR Introduction"), qsTr("XOR Elimination")],
+        [qsTr("Implication"), qsTr("DeMorgan"), qsTr("Association"), qsTr("Commutativity"), qsTr("Idempotence"), qsTr("Distribution"), qsTr("Equivalence"), qsTr("Double Negation"), qsTr("Exportation"), qsTr("Subsumption"), qsTr("Contrapositive")],
+        [qsTr("Universal Generalization"), qsTr("Universal Instantiation"), qsTr("Existential Generalization"), qsTr("Existential Instantiation"), qsTr("Bound Variable Substitution"), qsTr("Null Quantifier"), qsTr("Prenex"), qsTr("Identity"), qsTr("Free Variable Substitution")],
+        [qsTr("Lemma"), qsTr("Subproof"), qsTr("Sequence"), qsTr("Induction")],
+        [qsTr("Identity "), qsTr("Negation"), qsTr("Dominance"), qsTr("Symbol Negation")]
+    ]
     anchors.fill: parent
 
     Shortcut {
@@ -138,9 +145,9 @@ Item {
             id: ctxConvertAction
 
             text: {
-                if (rootProofArea.contextMenuTargetIdx < 0) return "Convert"
+                if (rootProofArea.contextMenuTargetIdx < 0) return qsTr("Convert")
                 var t = proofModel.data(proofModel.index(rootProofArea.contextMenuTargetIdx, 0), 258)
-                return t === "premise" ? "Convert to Conclusion" : "Convert to Premise"
+                return t === "premise" ? qsTr("Convert to Conclusion") : qsTr("Convert to Premise")
             }
 
             enabled: {
@@ -179,7 +186,7 @@ Item {
 
         // Add Premise above 
         Action {
-            text: "Add Premise Above"
+            text: qsTr("Add Premise Above")
             onTriggered: {
                 var myIdx = rootProofArea.contextMenuTargetIdx
                 if (myIdx < 0) return
@@ -198,7 +205,7 @@ Item {
 
         // Add Conclusion below 
         Action {
-            text: "Add Conclusion Below"
+            text: qsTr("Add Conclusion Below")
             onTriggered: {
                 var myIdx = rootProofArea.contextMenuTargetIdx
                 if (myIdx < 0) return
@@ -658,6 +665,9 @@ Item {
                         if (model.type === "subproof") return "SP"
                         if (model.type === "sf")       return "SF"
                     }
+                    if (model.type === "premise")  return qsTr("premise")
+                    if (model.type === "subproof") return qsTr("subproof")
+                    if (model.type === "sf")       return qsTr("sf")
                     return model.type
                 }
                 color: darkMode ? "white" : "black"
@@ -709,7 +719,7 @@ Item {
                     asteriskID.visible = false
                 }
 
-                model: ["Inference", "Equivalence", "Predicate", "Miscellaneous", "Boolean"]
+                model: [qsTr("Inference"), qsTr("Equivalence"), qsTr("Predicate"), qsTr("Miscellaneous"), qsTr("Boolean")]
 
                 Component.onCompleted: {
                     if (!editCombos) {
@@ -748,27 +758,12 @@ Item {
                                 ? Math.round(scaledFontSize * 0.8)
                                 : scaledFontSize
 
-                // Short display labels above 150% zoom; full names still in the popup
+                // Short display labels above 150% zoom; full names still in the popup.
+                // Abbreviations are sourced from RuleAbbreviations.js (locale-invariant).
                 displayText: {
                     if (zoomFactor > 1.5) {
-                        var shorts = {
-                            "Modus Ponens": "MP", "Addition": "Add", "Simplification": "Simp", 
-                            "Conjunction": "Conj", "Hypothetical Syllogism": "HS", 
-                            "Disjunctive Syllogism": "DS", "Excluded middle": "EM", 
-                            "Constructive Dilemma": "CD",
-                            "Implication": "Impl", "DeMorgan": "DeM", "Association": "Assoc", 
-                            "Commutativity": "Comm", "Idempotence": "Idem", "Distribution": "Dist", 
-                            "Equivalence": "Equiv", "Double Negation": "DN", "Exportation": "Exp", 
-                            "Subsumption": "Sub",
-                            "Universal Generalization": "UG", "Universal Instantiation": "UI", 
-                            "Existential Generalization": "EG", "Existential Instantiation": "EI", 
-                            "Bound Variable Substitution": "BVS", "Null Quantifier": "NQ", 
-                            "Prenex": "Prenex", "Identity": "Iden", "Free Variable Substitution": "FVS",
-                            "Lemma": "Lem", "Subproof": "SP", "Sequence": "Seq", "Induction": "Ind",
-                            "Identity ": "Iden", "Negation": "Neg", "Dominance": "Dom", 
-                            "Symbol Negation": "SymNeg"
-                        }
-                        return shorts[currentText] || currentText
+                        var abbr = Abbrevs.get(chooseID.currentIndex, conclusionRuleID.currentIndex)
+                        return abbr || currentText
                     }
                     return currentText
                 }
@@ -898,7 +893,7 @@ Item {
                     }
 
                     Action {
-                        text: "Add Premise"
+                        text: qsTr("Add Premise")
                         onTriggered: {
                             var insertIndex = (index < proofModel.premiseCount) ? index + 1 : proofModel.premiseCount
                             theData.insertLine(insertIndex, insertIndex + 1,
@@ -913,7 +908,7 @@ Item {
                         }
                     }
                     Action {
-                        text: "Add Conclusion"
+                        text: qsTr("Add Conclusion")
                         enabled: index + 1 >= proofModel.premiseCount
 
                         onTriggered: {
@@ -929,7 +924,7 @@ Item {
                     }
 
                     Action {
-                        text: type === "premise" ? "Convert to Conclusion" : "Convert to Premise"
+                        text: type === "premise" ? qsTr("Convert to Conclusion") : qsTr("Convert to Premise")
 
                         // Disabled for subproof structural lines and the
                         // last remaining premise (a proof must keep at least one).
@@ -965,7 +960,7 @@ Item {
 
 
                     Action {
-                        text: "Start Subproof"
+                        text: qsTr("Start Subproof")
                         onTriggered: {
                             theData.insertLine(index + 1, index + 2, "", "sf",
                                                true, true, false,
@@ -979,7 +974,7 @@ Item {
                     }
 
                     Action {
-                        text: "End Subproof"
+                        text: qsTr("End Subproof")
                         enabled: model.sub
 
                         onTriggered: {
@@ -997,7 +992,7 @@ Item {
                     }
 
                     Action {
-                        text: "Remove this Line"
+                        text: qsTr("Remove this Line")
                         enabled: true
 
                         onTriggered: {
