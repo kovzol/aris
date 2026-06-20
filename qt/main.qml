@@ -545,19 +545,19 @@ ApplicationWindow {
     Shortcut { sequences: [ StandardKey.ZoomOut ]; onActivated: zoomOut()   }
     Shortcut { sequence: "Ctrl+0";            onActivated: zoomReset() }
 
-    // Smart paste — Ctrl+V at window scope so TextFields still handle their own Ctrl+V.
+    // Smart paste — OS-native paste shortcut at window scope so TextFields still handle their own paste.
     // Only fires when no text-editing widget has consumed the key.
     Shortcut {
-        sequence: "Ctrl+V"
+        sequences: [StandardKey.Paste]
         onActivated: {
             // smartPasteStarted signal sets isExtFile/computePremise before rows are inserted
             cConnector.smartPaste(theData, proofModel)
         }
     }
 
-    // Smart copy — Ctrl+C at window scope; TextFields consume it first when focused.
+    // Smart copy — OS-native copy shortcut at window scope; TextFields consume it first when focused.
     Shortcut {
-        sequence: "Ctrl+C"
+        sequences: [StandardKey.Copy]
         onActivated: {
             cConnector.smartCopy(theData, proofID.selectedIndices)
         }
