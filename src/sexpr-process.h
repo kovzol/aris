@@ -36,6 +36,7 @@ extern "C" {
 #define S_CTR sexpr_conns.ctr
 #define S_ELM sexpr_conns.elm
 #define S_NIL sexpr_conns.nil
+#define S_XOR sexpr_conns.x_or
 #define S_CL  sexpr_conns.cl
 #define S_NL  sexpr_conns.nl
 
@@ -121,6 +122,10 @@ char * proc_ex (unsigned char * conc);
 
 char * proc_cd (vec_t * prems, unsigned char * conc);
 
+char * proc_xi (unsigned char * prem_0, unsigned char * prem_1, unsigned char * conc);
+
+char * proc_xe (vec_t * prems, unsigned char * conc);
+
 /* Equivalence rule functions */
 
 char * proc_im (unsigned char * prem, unsigned char * conc);
@@ -142,6 +147,7 @@ char * proc_dn (unsigned char * prem, unsigned char * conc);
 char * proc_ep (unsigned char * prem, unsigned char * conc);
 
 char * proc_sb (unsigned char * prem, unsigned char * conc);
+char * proc_cp (unsigned char * prem, unsigned char * conc);
 
 /* Predicate rule functions. */
 

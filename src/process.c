@@ -735,7 +735,8 @@ get_gen (unsigned char * in_str, int in_pos, unsigned char ** out_str)
         }
 
         if (!strncmp (in_str + i, AND, CL) || !strncmp (in_str + i, OR, CL)
-            || !strncmp (in_str + i, CON, CL) || !strncmp (in_str + i, BIC, CL))
+            || !strncmp (in_str + i, CON, CL) || !strncmp (in_str + i, BIC, CL)
+            || !strncmp (in_str + i, XOR, CL))
             break;
     }
 
@@ -932,7 +933,8 @@ check_generalities (unsigned char * text)
 
     if (!ISGOOD (text)
         && !(strstr (text, AND) || strstr (text, OR)
-             || strstr (text, CON) || strstr (text, BIC)))
+             || strstr (text, CON) || strstr (text, BIC)
+             || strstr (text, XOR)))
     {
         if (strstr (text, ELM) || strchr (text, '=') || strchr (text, '<'))
         {
@@ -1043,7 +1045,7 @@ check_generalities (unsigned char * text)
 
     if (gens->num_stuff >= 3)
     {
-        if (!strcmp (conn, CON) || !strcmp (conn, BIC))
+        if (!strcmp (conn, CON) || !strcmp (conn, BIC) || !strcmp (conn, XOR))
         {
             // Connective Error.
             destroy_str_vec (gens);
@@ -1353,6 +1355,9 @@ conn_to_sexpr (unsigned char * conn)
 
     if (!strcmp (conn, NIL))
         ret_conn = sexpr_conns.nil;
+
+    if (!strcmp (conn, XOR))
+        ret_conn = sexpr_conns.x_or;
 
     return ret_conn;
 }

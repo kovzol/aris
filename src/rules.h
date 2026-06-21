@@ -43,6 +43,8 @@ enum RULES_INDEX {
     RULE_DS,
     RULE_EX,
     RULE_CD,
+    RULE_XI,
+    RULE_XE,
     RULE_IM,
     RULE_DM,
     RULE_AS,
@@ -53,6 +55,7 @@ enum RULES_INDEX {
     RULE_DN,
     RULE_EP,
     RULE_SB,
+    RULE_CP,
     RULE_UG,
     RULE_UI,
     RULE_EG,
@@ -82,8 +85,8 @@ enum RULES_INDEX {
 // The rules list.
 
 static const char rules_list[NUM_RULES][3] = {
-    "mp", "ad", "sm", "cn", "hs", "ds", "ex", "cd",
-    "im", "dm", "as", "co", "id", "dt", "eq", "dn", "ep", "sb",
+    "mp", "ad", "sm", "cn", "hs", "ds", "ex", "cd", "xi", "xe",
+    "im", "dm", "as", "co", "id", "dt", "eq", "dn", "ep", "sb", "cp",
     "ug", "ui", "eg", "ei", "bv", "nq", "pr", "ii", "fv",
     "lm", "sp", "sq", "in",
     "bi", "bn", "bd", "sn"
@@ -93,9 +96,10 @@ static char * rules_names[NUM_RULES] = {
     N_("Modus Ponens"), N_("Addition"), N_("Simplification"), N_("Conjunction"),
     N_("Hypothetical Syllogism"), N_("Disjunctive Syllogism"), N_("Excluded Middle"),
     N_("Constructive Dilemma"),
+    N_("XOR Introduction"), N_("XOR Elimination"),
     N_("Implication"), N_("DeMorgan"), N_("Association"), N_("Commutativity"),
     N_("Idempotence"), N_("Distribution"), N_("Equivalence"), N_("Double Negation"),
-    N_("Exportation"), N_("Subsumption"),
+    N_("Exportation"), N_("Subsumption"), N_("Contrapositive"),
     N_("Universal Generalization"), N_("Universal Instantiation"),
     N_("Existential Generalization"), N_("Existential Instantiation"),
     N_("Bound Variable Substitution"), N_("Null Quantifier"), N_("Prenex"), N_("Identity"),

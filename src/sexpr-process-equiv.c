@@ -329,6 +329,16 @@ process_equivalence (unsigned char * conc, vec_t * prems, const char * rule)
             return NULL;
     }
 
+    if (!strcmp (rule, "cp"))
+    {
+        if (prems->num_stuff != 1)
+            return _("Contrapositive requires one (1) reference.");
+
+        ret = proc_cp (prem, conc);
+        if (!ret)
+            return NULL;
+    }  /* End of contrapositive. */
+
     if (!strcmp (rule, "sb"))
     {
         if (prems->num_stuff != 1)
@@ -1335,6 +1345,108 @@ proc_ep (unsigned char * prem, unsigned char * conc)
         return CORRECT;
 
     return _("Exportation constructed incorrectly.");
+}
+
+char *
+proc_cp (unsigned char * prem, unsigned char * conc)
+{
+    unsigned char * ln_sen, * sh_sen;
+    int l_len;
+
+    sen_put_len (prem, conc, &sh_sen, &ln_sen);
+    l_len = strlen (ln_sen);
+
+    int i = find_difference (ln_sen, sh_sen);
+    if (i == -1)
+        return NO_DIFFERENCE;
+
+    /* Navigate to the opening paren in ln_sen that covers position i. */
+    int li = i;
+    if (ln_sen[li] != '(')
+    {
+        li = find_unmatched_o_paren (ln_sen, li);
+        if (li < 0)
+            return _("Contrapositive constructed incorrectly.");
+    }
+
+    // Attempt 1: parse the sub-expression at li  
+    int tmp_pos;
+    unsigned char * tmp_str;
+    tmp_pos = parse_parens (ln_sen, li, &tmp_str);
+    if (tmp_pos == AEC_MEM) return NULL;
+
+    unsigned char * lsen = NULL, * rsen = NULL;
+    int ftc = -1;
+
+    if (tmp_str)
+    {
+        ftc = sexpr_find_top_connective (tmp_str, S_CON, &lsen, &rsen);
+        free (tmp_str);
+        if (ftc == AEC_MEM) return NULL;
+    }
+
+    /* Attempt 2: if not a conditional, go up one paren level
+       This is the key fix for the simple case (A->B <-> ~B->~A):
+       find_difference lands inside (~B), so we must walk up to the
+       enclosing conditional (-> (~B) (~A)). */
+    if (ftc < 0)
+    {
+        if (lsen) { free (lsen); lsen = NULL; }
+        if (rsen) { free (rsen); rsen = NULL; }
+
+        if (li == 0)
+            return _("There must be a conditional in both sentences.");
+
+        li = find_unmatched_o_paren (ln_sen, li - 1);
+        if (li < 0)
+            return _("There must be a conditional in both sentences.");
+
+        tmp_pos = parse_parens (ln_sen, li, &tmp_str);
+        if (tmp_pos == AEC_MEM) return NULL;
+        if (!tmp_str)
+            return _("There must be a conditional in both sentences.");
+
+        ftc = sexpr_find_top_connective (tmp_str, S_CON, &lsen, &rsen);
+        free (tmp_str);
+        if (ftc == AEC_MEM) return NULL;
+
+        if (ftc < 0)
+        {
+            if (lsen) free (lsen);
+            if (rsen) free (rsen);
+            return _("There must be a conditional in both sentences.");
+        }
+    }
+
+    /* Both sides of the conditional in the longer sentence must be negated. */
+    if (!sexpr_not_check (lsen) || !sexpr_not_check (rsen))
+    {
+        free (lsen); free (rsen);
+        return _("Both sides of the conditional must be negated in the longer sentence.");
+    }
+
+    unsigned char * n_lsen = sexpr_elim_not (lsen);
+    free (lsen);
+    if (!n_lsen) { free (rsen); return NULL; }
+
+    unsigned char * n_rsen = sexpr_elim_not (rsen);
+    free (rsen);
+    if (!n_rsen) { free (n_lsen); return NULL; }
+
+    /* Build the de-negated conditional and compare to sh_sen. */
+    unsigned char * oth_sen = construct_other (ln_sen, li, tmp_pos + 1, l_len,
+                                               "(%s %s %s)", S_CON, n_rsen, n_lsen);
+    free (n_lsen); free (n_rsen);
+
+    if (!oth_sen) return NULL;
+
+    int cmp = strcmp ((char *) oth_sen, (char *) sh_sen);
+    free (oth_sen);
+
+    if (cmp == 0)
+        return CORRECT;
+
+    return _("Contrapositive constructed incorrectly.");
 }
 
 char *

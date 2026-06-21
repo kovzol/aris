@@ -1063,6 +1063,13 @@ sexpr_get_ids (unsigned char * sen, int ** ids, vec_t * sen_ids)
             continue;
         }
 
+        if (!strncmp (sen + i, S_XOR, S_CL))
+        {
+            (*ids)[j++] = SEN_ID_XOR;
+            i += (S_CL - 1);
+            continue;
+        }
+
         if (!strncmp (sen + i, S_UNV, S_CL))
         {
             (*ids)[j++] = SEN_ID_UNV;

@@ -62,7 +62,7 @@ add_executable(aris-qt
 qt_add_qml_module(aris-qt
     URI arisqt
     VERSION 1.0
-    QML_FILES main.qml ProofArea.qml DrawerTools.qml GoalLine.qml KeyButton.qml KeyGroup.qml
+    QML_FILES main.qml ProofArea.qml DrawerTools.qml GoalLine.qml KeyButton.qml KeyGroup.qml RuleAbbreviations.js
     RESOURCES
         assets/icon_simple.svg
         assets/icons/arisqt/index.theme
@@ -93,7 +93,8 @@ qt_add_qml_module(aris-qt
 qt_add_translations(aris-qt
     TS_FILES
         i18n/aris-qt_ar.ts
-        i18n/aris-qt_en.ts)
+        i18n/aris-qt_en.ts
+        i18n/aris-qt_de.ts)
 
 set_target_properties(aris-qt PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
