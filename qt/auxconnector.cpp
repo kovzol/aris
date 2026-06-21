@@ -300,7 +300,7 @@ void auxConnector::importProof(const QString &name, ProofData *pd, const Connect
  */
 void auxConnector::wasmImportProof(ProofData *pd, const Connector *c, ProofModel *pm)
 {
-    auto fileContentReady = [this, &c, &pd, &pm](const QString &fileName, const QByteArray &fileContent) {
+    auto fileContentReady = [this, c, pd, pm](const QString &fileName, const QByteArray &fileContent) {
         if (fileName.isEmpty()) {
             qDebug() << "No file was selected" ;
             emit importFinished(false);
@@ -358,7 +358,7 @@ void auxConnector::importProofWithMode(const QString &name, ProofData *pd, const
 
 void auxConnector::wasmImportProofWithMode(ProofData *pd, const Connector *c, ProofModel *pm, int mode)
 {
-    auto fileContentReady = [this, &c, &pd, &pm, mode](const QString &fileName, const QByteArray &fileContent) {
+    auto fileContentReady = [this, c, pd, pm, mode](const QString &fileName, const QByteArray &fileContent) {
         if (fileName.isEmpty()) {
             qDebug() << "No file was selected" ;
             emit importFinished(false);

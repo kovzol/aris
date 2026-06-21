@@ -447,7 +447,7 @@ void Connector::openProof(const QString &name, ProofData *openTo, GoalData *gls)
  */
 void Connector::wasmOpenProof(ProofData *open, GoalData *gls)
 {
-    auto fileContentReady = [&open, this, &gls](const QString &fileName, const QByteArray &fileContent) {
+    auto fileContentReady = [open, this, gls](const QString &fileName, const QByteArray &fileContent) {
         if (fileName.isEmpty()) {
             qDebug() << "No file was selected" ;
         } else {
