@@ -79,6 +79,11 @@ ApplicationWindow {
 
         proofID.resetViewState()
         menuOptions.close()
+
+        // On WASM: overwrite the autosave with the now-blank proof so that
+        // the next browser reload restores a blank state, not the old proof.
+        if (Qt.platform.os === "wasm")
+            cConnector.autoSave(theData, theGoals)
     }
 
     function requestResetWindow() {
@@ -119,6 +124,48 @@ ApplicationWindow {
     // Automatic layout mirroring for RTL languages
     LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
     LayoutMirroring.childrenInherit: true
+
+    // One-time persistence warning banner (WASM only).
+    Rectangle {
+        id: persistenceWarning
+        visible: Qt.platform.os === "wasm" && cConnector.shouldShowPersistenceWarning()
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: visible ? warnRow.implicitHeight + 20 : 0
+        color: darkMode ? "#2A2631" : "#FFF3CD"
+        z: 10
+
+        RowLayout {
+            id: warnRow
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 12
+            spacing: 12
+
+            Label {
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                text: "⚠  Your proof is auto-saved in this browser only. " +
+                      "Clearing browser site data or switching browsers will erase it."
+                color: darkMode ? "#FFD700" : "#856404"
+                font.pointSize: thefont.pointSize - 1
+            }
+
+            Button {
+                text: qsTr("Got it")
+                palette {
+                    button: darkMode ? "#3A3141" : "#FFEEBA"
+                    buttonText: darkMode ? "white" : "#533f03"
+                }
+                onClicked: {
+                    cConnector.dismissPersistenceWarning()
+                    persistenceWarning.visible = false
+                }
+            }
+        }
+    }
 
     // Footer to display error messages
     footer: Label {
@@ -206,8 +253,13 @@ ApplicationWindow {
         target: auxConnector
 
         function onImportFinished(success) {
-            if (success)
+            if (success) {
                 fileModified = true
+                // Immediately autosave the newly imported content so the
+                // autosave reflects what was imported, not the previous state.
+                if (Qt.platform.os === "wasm")
+                    cConnector.autoSave(theData, theGoals)
+            }
         }
     }
 
@@ -231,6 +283,74 @@ ApplicationWindow {
         }
     }
 
+    
+    Timer {
+        id: idbfsRestoreTimer
+        interval: 100
+        running: Qt.platform.os === "wasm"
+        repeat: true
+        property int elapsed: 0
+        onTriggered: {
+            elapsed += 100
+            if (cConnector.isIdbfsReady()) {
+                stop()
+                cConnector.autoLoad(theData, theGoals)
+            } else if (elapsed >= 10000) {
+                // Safety net: give up after 10s, user starts with blank proof
+                console.warn("[ARIS] IDBFS sync timed out after 10s — starting fresh.")
+                stop()
+            }
+        }
+    }
+
+    // Debounce timer: autosave fires 500ms after the user stops making changes.
+    Timer {
+        id: autoSaveDebounce
+        interval: 500
+        running: false
+        repeat: false
+        onTriggered: {
+            if (Qt.platform.os === "wasm")
+                cConnector.autoSave(theData, theGoals)
+        }
+    }
+
+    // Autosave on every proof change (WASM only).
+    onFileModifiedChanged: {
+        if (Qt.platform.os === "wasm" && fileModified) {
+            autoSaveDebounce.restart()  // reset 500ms countdown on every change
+            fileModified = false        // reset so next change re-triggers
+        }
+    }
+
+    // Autosave status indicator — small label in bottom-right corner, WASM only.
+    Label {
+        id: autoSaveIndicator
+        visible: Qt.platform.os === "wasm" && cConnector.autoSaveStatus !== ""
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.bottomMargin: 6
+        anchors.rightMargin: 10
+        font.pointSize: Math.max(thefont.pointSize - 2, 8)
+        color: cConnector.autoSaveStatus === "error"
+               ? (darkMode ? "#CF6679" : "red")
+               : (darkMode ? "#808080" : "#707070")
+        text: {
+            if (cConnector.autoSaveStatus === "saving") return "💾 Saving..."
+            if (cConnector.autoSaveStatus === "saved")  return "✓ Saved"
+            if (cConnector.autoSaveStatus === "error")  return "⚠ Autosave failed"
+            return ""
+        }
+
+        // Auto-clear the "✓ Saved" message 2 seconds after it appears.
+        Timer {
+            interval: 2000
+            running: cConnector.autoSaveStatus === "saved"
+            repeat: false
+            onTriggered: cConnector.setAutoSaveStatus("")
+        }
+    }
+
     // Dialogs associated with the DrawerTools
     FileDialog {
         id: fileDialogID
@@ -247,6 +367,9 @@ ApplicationWindow {
             fileModified = false
             computePremise = true
             proofModel.recomputePremiseCount()
+            // Immediately autosave the newly opened file so the autosave
+            if (Qt.platform.os === "wasm")
+                cConnector.autoSave(theData, theGoals)
         }
     }
 

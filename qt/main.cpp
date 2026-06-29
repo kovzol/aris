@@ -11,6 +11,10 @@
 #include "auxconnector.h"
 #include "settings.h"
 
+#ifdef Q_OS_WASM
+#include <emscripten.h>
+#endif
+
 
 int main(int argc, char *argv[])
 {
@@ -67,6 +71,35 @@ int main(int argc, char *argv[])
                 QCoreApplication::exit(-1);
         }, Qt::QueuedConnection);
     engine.load(url);
+
+#ifdef Q_OS_WASM
+    // Mount a persistent virtual directory backed by the browser's IndexedDB.
+    // On first load: /persistent is empty and autoLoad() will find no file.
+    // On subsequent loads: /persistent already contains autosave.tle in IndexedDB.
+    EM_ASM({
+        // Flag polled by Connector::isIdbfsReady() every 100ms from QML.
+        window._aris_idbfs_ready = false;
+
+        try { FS.mkdir('/persistent'); } catch(e) {}
+
+        // Mount the IDBFS backend to /persistent
+        FS.mount(IDBFS, {}, '/persistent');
+
+        // Sync FROM IndexedDB INTO the virtual FS (populate = true).
+        FS.syncfs(true, function(err) {
+            if (err)
+                console.error('[ARIS] IDBFS startup sync failed:', err);
+            else
+                console.log('[ARIS] IDBFS mounted and synced successfully.');
+            window._aris_idbfs_ready = true;
+        });
+
+        // Best-effort sync on tab close / reload.
+        window.addEventListener('beforeunload', function() {
+            try { FS.syncfs(false, function(){}); } catch(e) {}
+        });
+    });
+#endif
 
     return app.exec();
 }

@@ -90,6 +90,9 @@ HEADERS += \
 
 # Uncomment the below lines when compiling to webassembly
 wasm{
+    # Enable IDBFS backend for persistent browser storage (IndexedDB)
+    QMAKE_LFLAGS += -lidbfs.js
+
     win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libxml2/release/ -lxml2
     else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libxml2/debug/ -lxml2
     else:unix: LIBS += -L$$PWD/../libxml2/ -lxml2
