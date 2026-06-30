@@ -37,7 +37,8 @@ RESOURCES += qml.qrc \
 
 TRANSLATIONS += i18n/aris-qt_ar.ts \
     i18n/aris-qt_en.ts \
-    i18n/aris-qt_de.ts
+    i18n/aris-qt_de.ts \
+    i18n/aris-qt_fr.ts
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -89,6 +90,9 @@ HEADERS += \
 
 # Uncomment the below lines when compiling to webassembly
 wasm{
+    # Enable IDBFS backend for persistent browser storage (IndexedDB)
+    QMAKE_LFLAGS += -lidbfs.js
+
     win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../libxml2/release/ -lxml2
     else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../libxml2/debug/ -lxml2
     else:unix: LIBS += -L$$PWD/../libxml2/ -lxml2

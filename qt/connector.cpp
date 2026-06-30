@@ -32,9 +32,14 @@
 #include <QFileDialog>
 #include <QSaveFile>
 #include <QUrl>
+#include <QFile>
 #include <QClipboard>
 #include <QGuiApplication>
 #include <QRegularExpression>
+
+#ifdef Q_OS_WASM
+#include <emscripten.h>
+#endif
 
 namespace {
 
@@ -132,6 +137,63 @@ void Connector::setEvalText(const QString &newEvalText)
         return;
     m_evalText = newEvalText;
     emit evalTextChanged();
+}
+
+// Getter for m_autoSaveStatus
+QString Connector::autoSaveStatus() const
+{
+    return m_autoSaveStatus;
+}
+
+// Setter for m_autoSaveStatus — called from QML Timer to clear "saved" message
+void Connector::setAutoSaveStatus(const QString &status)
+{
+    if (m_autoSaveStatus == status)
+        return;
+    m_autoSaveStatus = status;
+    emit autoSaveStatusChanged();
+}
+
+/* Returns true once the IDBFS FS.syncfs(true) startup callback has fired.
+  * Reads a JS flag set by main.cpp's EM_ASM block.
+  * Uses EM_ASM_INT which is compiled at build time — NOT runtime eval
+ */
+bool Connector::isIdbfsReady() const
+{
+#ifdef Q_OS_WASM
+    return EM_ASM_INT({
+        return window._aris_idbfs_ready ? 1 : 0;
+    }) == 1;
+#else
+    return false;
+#endif
+}
+
+/* Returns true the very first time Aris WASM runs in this browser 
+   Uses localStorage (separate from IDBFS) for instant, synchronous access.
+ */
+bool Connector::shouldShowPersistenceWarning() const
+{
+#ifdef Q_OS_WASM
+    int warned = EM_ASM_INT({
+        return localStorage.getItem('aris_persistence_warned') === '1' ? 1 : 0;
+    });
+    return warned == 0;
+#else
+    return false;
+#endif
+}
+
+/* Persists the "user has been warned" flag to localStorage so the banner
+  * never appears again in this browser.
+ */
+void Connector::dismissPersistenceWarning()
+{
+#ifdef Q_OS_WASM
+    EM_ASM({
+        localStorage.setItem('aris_persistence_warned', '1');
+    });
+#endif
 }
 
 /* Populates m_indices, with array of indices for sen-data corresponding to a line.
@@ -758,4 +820,74 @@ void Connector::smartCopy(const ProofData *pd, const QVariantList &selectedIndic
     if (QClipboard *clipboard = QGuiApplication::clipboard()) {
         clipboard->setText(copyText);
     }
+}
+
+/* Saves the current proof to /persistent/autosave.tle in the Emscripten
+ * virtual filesystem, then flushes that virtual file to the browser's
+ * IndexedDB via FS.syncfs(false, ...). On desktop builds this is a no-op.
+ *  input:
+ *    pd   - pointer to the ProofData object.
+ *    gls  - pointer to the GoalData object.
+ *  output:
+ *    none.
+ */
+void Connector::autoSave(const ProofData *pd, const GoalData *gls)
+{
+#ifdef Q_OS_WASM
+    // Note: saveProof() internally calls genProof() which rebuilds cProof.
+    
+    setAutoSaveStatus(QStringLiteral("saving"));
+    
+    saveProof("/persistent/autosave.tle", pd, gls);
+
+    // Flush the in-memory virtual FS to the browser's real IndexedDB.
+    // false = push from virtual FS TO IndexedDB (opposite direction of startup).
+    EM_ASM({
+        FS.syncfs(false, function(err) {
+            if (err)
+                console.error('[ARIS] autoSave: syncfs to IndexedDB failed:', err);
+            else
+                console.log('[ARIS] autoSave: proof persisted to IndexedDB.');
+        });
+    });
+
+    // Optimistically show "saved" — FS.syncfs is async but succeeds in normal use.
+    setAutoSaveStatus(QStringLiteral("saved"));
+#else
+    // Desktop builds have proper native file save dialogs; autoSave does nothing.
+    Q_UNUSED(pd)
+    Q_UNUSED(gls)
+#endif
+}
+
+/* Loads /persistent/autosave.tle from the Emscripten virtual filesystem
+ * (which was previously populated from IndexedDB) and restores it into the
+ * ProofData/GoalData models. Called after IDBFS startup sync completes.
+ * On desktop builds this is a no-op.
+ *  input:
+ *    openTo - pointer to the ProofData object to load into.
+ *    gls    - pointer to the GoalData object to load into.
+ *  output:
+ *    none.
+ */
+void Connector::autoLoad(ProofData *openTo, GoalData *gls)
+{
+#ifdef Q_OS_WASM
+
+    QFile autosaveCheck("/persistent/autosave.tle");
+    if (!autosaveCheck.exists()) {
+        qDebug() << "[ARIS] autoLoad: No autosave found — starting with a blank proof.";
+        return;
+    }
+
+    qDebug() << "[ARIS] autoLoad: Autosave found — restoring proof from IndexedDB...";
+
+    // Reuse the existing openProof() which calls aio_open() internally.
+    openProof("/persistent/autosave.tle", openTo, gls);
+
+    qDebug() << "[ARIS] autoLoad: Proof restored successfully.";
+#else
+    Q_UNUSED(openTo)
+    Q_UNUSED(gls)
+#endif
 }
