@@ -39,7 +39,7 @@ TRANSLATIONS += i18n/aris-qt_ar.ts \
     i18n/aris-qt_en.ts \
     i18n/aris-qt_de.ts \
     i18n/aris-qt_fr.ts \
-    i18n/aris-qt_de.ts
+    i18n/aris-qt_hu.ts
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
