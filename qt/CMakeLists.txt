@@ -95,7 +95,8 @@ qt_add_translations(aris-qt
         i18n/aris-qt_ar.ts
         i18n/aris-qt_en.ts
         i18n/aris-qt_de.ts
-        i18n/aris-qt_fr.ts)
+        i18n/aris-qt_fr.ts
+	i18n/aris-qt_hu.ts)
 
 set_target_properties(aris-qt PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

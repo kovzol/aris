@@ -310,6 +310,10 @@ ToolBar {
                     text: "Français"
                     onTriggered: settings.setLanguage("fr")
                 }
+                MenuItem {
+                    text: "Magyar"
+                    onTriggered: settings.setLanguage("hu")
+                }
             }
         }
 
